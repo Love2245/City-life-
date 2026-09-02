@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "npcs": [
+    {
+      "id": "npc_lin_xiaoyu",
+      "name": "林小雨",
+      "avatar": "👩‍🦰",
+      "gender": "female",
+      "romanceable": true,
+      "title": "咖啡厅常客",
+      "intro": "总坐在靠窗第三张桌子，笔记本上贴满便利贴。听说在准备考研。",
+      "meetLocation": "cafe",
+      "meetChance": 0.25,
+      "meetConditions": { "minCharm": 15, "hourRange": [9, 21] },
+      "initialAffinity": 5,
+      "likes": ["item_coffee", "item_book"],
+      "dislikes": ["item_cigarette"],
+      "datePreference": ["cafe", "library", "park"],
+      "contactAt": 25,
+      "dialogues": {
+        "stranger": "她抬头看了你一眼，又低下头。",
+        "acquaintance": "「又见面了。这家的美式还行。」",
+        "friend": "「今天也来充电？我这周被导师折磨死了。」",
+        "close_friend": "「跟你说话比看书轻松多了……你别笑。」",
+        "lover": "「等你下班等了半小时，晚饭想吃什么？」"
+      }
+    },
+    {
+      "id": "npc_zhao_gang",
+      "name": "赵刚",
+      "avatar": "🧔",
+      "gender": "male",
+      "romanceable": false,
+      "title": "工地老乡",
+      "intro": "同一个县出来的，嗓门大，讲义气，手里永远有半包烟。",
+      "meetLocation": "labor_market",
+      "meetChance": 0.3,
+      "initialAffinity": 10,
+      "likes": ["item_cigarette", "item_liquor"],
+      "contactAt": 20,
+      "perks": { "friend": "borrow", "close_friend": "referral_job_construction" }
+    },
+    {
+      "id": "npc_chen_jie",
+      "name": "陈姐",
+      "avatar": "👩‍🍳",
+      "gender": "female",
+      "romanceable": false,
+      "title": "快餐店后厨",
+      "intro": "四十来岁，手脚麻利，见你瘦总多给两勺菜。",
+      "meetLocation": "fastfood",
+      "meetChance": 0.35,
+      "initialAffinity": 15,
+      "contactAt": 30,
+      "perks": { "friend": "free_meal", "close_friend": "referral_job_cook_helper" }
+    }
+  ]
+}

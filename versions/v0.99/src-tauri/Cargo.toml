@@ -1,0 +1,26 @@
+[package]
+name = "urban-life"
+version = "0.99.0"
+description = "都市生活 - 桌面端都市生活模拟游戏"
+authors = ["Urban Life Team"]
+edition = "2021"
+
+[lib]
+name = "urban_life_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

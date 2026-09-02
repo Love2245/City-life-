@@ -1,0 +1,16 @@
+{
+  "difficulty": {
+    "daysPerLevel": 30,
+    "maxLevel": 6,
+    "inflationStep": 0.02,
+    "inflationRateScale": 0.3,
+    "inflationCap": 0.5,
+    "reqBonusPerLevel": 1,
+    "reqBonusCap": 5,
+    "eventProbBase": 0.16,
+    "eventProbPerLevel": 0.02,
+    "eventProbCap": 0.38,
+    "negativeWeightStep": 0.15,
+    "netWorthTier": 25000
+  }
+}
