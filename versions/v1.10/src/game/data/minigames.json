@@ -1,0 +1,1094 @@
+{
+  "difficulty": 0.965,
+  "games": {
+    "job_factory_line": {
+      "type": "sequence",
+      "title": "流水线装配",
+      "icon": "🏭",
+      "desc": "电子厂流水线：按工序依次操作，共 4 轮，每轮按钮顺序随机打乱",
+      "steps": [
+        "贴标签",
+        "装箱",
+        "封口",
+        "扫码"
+      ],
+      "stepIcons": [
+        "🏷️",
+        "📦",
+        "📎",
+        "📱"
+      ],
+      "rounds": 4,
+      "shuffleEachRound": true,
+      "timeLimit": 24,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_sorting": {
+      "type": "quiz",
+      "title": "快递分拣",
+      "icon": "📦",
+      "desc": "快速判断包裹该进哪个分拣区",
+      "questions": [
+        {
+          "q": "包裹：生鲜水果 → 哪个分拣区？",
+          "options": [
+            "冷链区",
+            "普通区",
+            "贵重区"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "包裹：易碎瓷器 → 哪个分拣区？",
+          "options": [
+            "普通区",
+            "轻拿轻放区",
+            "冷链区"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "包裹：普通衣物 → 哪个分拣区？",
+          "options": [
+            "贵重区",
+            "冷链区",
+            "普通区"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "包裹：金饰首饰 → 哪个分拣区？",
+          "options": [
+            "贵重区",
+            "普通区",
+            "冷链区"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "包裹：冷冻水饺 → 哪个分拣区？",
+          "options": [
+            "普通区",
+            "冷链区",
+            "轻拿轻放区"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "包裹：手机充电器 → 哪个分拣区？",
+          "options": [
+            "贵重区",
+            "普通区",
+            "冷链区"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "包裹：进口红酒 → 哪个分拣区？",
+          "options": [
+            "轻拿轻放区",
+            "普通区",
+            "冷链区"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "包裹：儿童玩具 → 哪个分拣区？",
+          "options": [
+            "冷链区",
+            "普通区",
+            "贵重区"
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 14,
+      "wrongLimit": 2
+    },
+    "job_convenience_day": {
+      "type": "quiz",
+      "title": "收银找零",
+      "icon": "🏪",
+      "desc": "算对找零金额，别让顾客等太久",
+      "questions": [
+        {
+          "q": "商品 34 元，顾客付 50 元，应找？",
+          "options": [
+            "16 元",
+            "14 元",
+            "18 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "商品 27 元，顾客付 100 元，应找？",
+          "options": [
+            "63 元",
+            "73 元",
+            "77 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 9.5 元，顾客付 20 元，应找？",
+          "options": [
+            "11.5 元",
+            "10.5 元",
+            "12.5 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 58 元，顾客付 100 元，应找？",
+          "options": [
+            "32 元",
+            "42 元",
+            "38 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "商品 66 元，顾客付 100 元，应找？",
+          "options": [
+            "34 元",
+            "44 元",
+            "36 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "商品 12 元 + 8 元，顾客付 30 元，应找？",
+          "options": [
+            "20 元",
+            "10 元",
+            "12 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 45 元，顾客付 50 元，应找？",
+          "options": [
+            "15 元",
+            "5 元",
+            "10 元"
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 12,
+      "wrongLimit": 1
+    },
+    "job_convenience_clerk": {
+      "type": "quiz",
+      "title": "便利店收银",
+      "icon": "🏪",
+      "desc": "正式店员上岗，算准每一笔找零（按钮顺序随机打乱）",
+      "questions": [
+        {
+          "q": "商品 19 元，顾客付 50 元，应找？",
+          "options": [
+            "31 元",
+            "29 元",
+            "21 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "商品 33 元，顾客付 100 元，应找？",
+          "options": [
+            "67 元",
+            "77 元",
+            "63 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 7.5 元，顾客付 20 元，应找？",
+          "options": [
+            "12.5 元",
+            "13.5 元",
+            "11.5 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "商品 88 元，顾客付 100 元，应找？",
+          "options": [
+            "22 元",
+            "12 元",
+            "18 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 15 元 + 9 元，顾客付 50 元，应找？",
+          "options": [
+            "34 元",
+            "24 元",
+            "26 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "商品 52 元，顾客付 100 元，应找？",
+          "options": [
+            "48 元",
+            "58 元",
+            "42 元"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 12,
+      "wrongLimit": 1
+    },
+    "job_cafe_staff": {
+      "type": "sequence",
+      "title": "咖啡师出杯",
+      "icon": "☕",
+      "desc": "看顾客订单，按配方顺序投入原料（共 2 杯，按钮顺序每杯打乱）",
+      "steps": [
+        "浓缩咖啡",
+        "热牛奶",
+        "焦糖糖浆",
+        "奶泡"
+      ],
+      "stepIcons": [
+        "🫘",
+        "🥛",
+        "🍯",
+        "☁️"
+      ],
+      "recipeTable": [
+        {
+          "name": "拿铁",
+          "recipe": [
+            "浓缩咖啡",
+            "热牛奶",
+            "奶泡"
+          ]
+        },
+        {
+          "name": "美式",
+          "recipe": [
+            "浓缩咖啡",
+            "热牛奶"
+          ]
+        },
+        {
+          "name": "焦糖玛奇朵",
+          "recipe": [
+            "浓缩咖啡",
+            "焦糖糖浆",
+            "热牛奶",
+            "奶泡"
+          ]
+        }
+      ],
+      "rounds": 2,
+      "shuffleEachRound": true,
+      "timeLimit": 18,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_market_cleaner": {
+      "type": "whack",
+      "title": "市场大扫除",
+      "icon": "🧹",
+      "desc": "垃圾从摊位间冒出来，快点清理；别碰摊主的商品",
+      "targets": 10,
+      "timeLimit": 12,
+      "wrongLimit": 2,
+      "goodLabel": "垃圾",
+      "goodIcon": "🗑️",
+      "badLabel": "商品",
+      "badIcon": "🍎"
+    },
+    "job_delivery": {
+      "type": "sequence",
+      "title": "外卖送单",
+      "icon": "🛵",
+      "desc": "按顺序取餐并送达 3 个订单点（限时）",
+      "steps": [
+        "取餐柜",
+        "金水区",
+        "新城区",
+        "火车站"
+      ],
+      "stepIcons": [
+        "🍱",
+        "🏘️",
+        "🏢",
+        "🚉"
+      ],
+      "rounds": 1,
+      "shuffleEachRound": false,
+      "timeLimit": 15,
+      "wrongLimit": 1,
+      "perfectBonusRate": 0.05
+    },
+    "job_express": {
+      "type": "sequence",
+      "title": "快递扫码派件",
+      "icon": "📮",
+      "desc": "包裹依次上流水线，逐个扫码入库（限时）",
+      "steps": [
+        "包裹 A",
+        "包裹 B",
+        "包裹 C",
+        "包裹 D",
+        "包裹 E"
+      ],
+      "stepIcons": [
+        "📦",
+        "📦",
+        "📦",
+        "📦",
+        "📦"
+      ],
+      "rounds": 1,
+      "shuffleEachRound": false,
+      "timeLimit": 12,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_loading": {
+      "type": "whack",
+      "title": "装车卸货",
+      "icon": "🚚",
+      "desc": "货物从传送带落下，快点击装车；破损箱别碰",
+      "targets": 12,
+      "timeLimit": 13,
+      "wrongLimit": 2,
+      "goodLabel": "好货",
+      "goodIcon": "📦",
+      "badLabel": "破损箱",
+      "badIcon": "💥"
+    },
+    "job_warehouse": {
+      "type": "sequence",
+      "title": "仓库上架",
+      "icon": "🏬",
+      "desc": "记住货物摆放顺序，按记忆依次点回货位（2 轮）",
+      "steps": [
+        "A 区货架",
+        "B 区货架",
+        "C 区货架",
+        "D 区货架"
+      ],
+      "stepIcons": [
+        "🅰️",
+        "🅱️",
+        "🅲",
+        "🅳"
+      ],
+      "rounds": 2,
+      "memory": true,
+      "timeLimit": 16,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_office_assistant": {
+      "type": "quiz",
+      "title": "文件归档",
+      "icon": "🗂️",
+      "desc": "快速判断文件该归档到哪个档案夹",
+      "questions": [
+        {
+          "q": "员工劳动合同 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "差旅报销单 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "会议纪要 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "采购订单 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "保密协议 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "机密档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "供应商报价单 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "员工请假条 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "年度预算表 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 12,
+      "wrongLimit": 2
+    },
+    "job_security": {
+      "type": "sequence",
+      "title": "夜间巡逻",
+      "icon": "🚨",
+      "desc": "按顺序巡逻打卡 4 个点位（限时）",
+      "steps": [
+        "大门",
+        "后门",
+        "停车场",
+        "监控室"
+      ],
+      "stepIcons": [
+        "🚪",
+        "🚪",
+        "🅿️",
+        "📹"
+      ],
+      "rounds": 1,
+      "shuffleEachRound": false,
+      "timeLimit": 14,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_sales": {
+      "type": "quiz",
+      "title": "销售话术",
+      "icon": "💼",
+      "desc": "顾客提问时选出最合适的应答",
+      "questions": [
+        {
+          "q": "顾客嫌贵：\"能不能便宜点？\" → 怎么答？",
+          "options": [
+            "\"我们是最低价了\"",
+            "\"贵有贵的道理，这个材质更耐用\"",
+            "\"那你去别家看看吧\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客犹豫：\"我再考虑考虑\" → 怎么答？",
+          "options": [
+            "\"好的，您慢慢考虑\"并递名片",
+            "\"爱买不买\"",
+            "\"今天不买明天涨价\""
+          ],
+          "answer": 0
+        },
+        {
+          "q": "顾客问功能：\"这个能用多久？\" → 怎么答？",
+          "options": [
+            "\"不知道\"",
+            "\"质保一年，正常用三五年没问题\"",
+            "\"坏了再说\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客要赠品：\"送点什么吧\" → 怎么答？",
+          "options": [
+            "\"不可能\"",
+            "\"今天下单可以送一个小礼品\"",
+            "\"赠品要加钱\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客对比竞品：\"隔壁更便宜\" → 怎么答？",
+          "options": [
+            "\"那您去隔壁买\"",
+            "\"他们便宜但是没售后，我们的服务不一样\"",
+            "\"闭嘴别比价\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客问售后：\"坏了找谁？\" → 怎么答？",
+          "options": [
+            "\"找我也没用\"",
+            "\"凭小票一年内免费修，随时找我\"",
+            "\"坏了再买新的\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客砍价 8 折：\"能不能八折？\" → 怎么答？",
+          "options": [
+            "\"八折没利润，我给您送个赠品\"",
+            "\"行行行八折就八折\"",
+            "\"不可能\""
+          ],
+          "answer": 0
+        },
+        {
+          "q": "顾客看完要走：\"我再逛逛\" → 怎么答？",
+          "options": [
+            "\"慢走不送\"",
+            "\"好的，需要随时喊我\"并递上名片",
+            "\"别走啊，再聊聊\""
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 13,
+      "wrongLimit": 2
+    },
+    "job_factory_qc": {
+      "type": "quiz",
+      "title": "质检找次品",
+      "icon": "🔍",
+      "desc": "从一批产品中找出规格异常的次品",
+      "questions": [
+        {
+          "q": "零件规格：22mm、22mm、22mm、19mm → 哪个是次品？",
+          "options": [
+            "22mm 的那批",
+            "19mm 的那个"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "屏幕检测：A 无坏点、B 有亮点、C 无坏点 → 哪个不合格？",
+          "options": [
+            "A",
+            "B",
+            "C"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "称重检查：100g、100g、95g、100g → 哪个不合格？",
+          "options": [
+            "100g",
+            "95g"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "色差检查：A 偏黄、B 标准、C 标准 → 哪个不合格？",
+          "options": [
+            "A",
+            "B",
+            "C"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "电池电压：3.7V、3.7V、3.2V → 哪个不合格？",
+          "options": [
+            "3.7V",
+            "3.2V"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "包装检查：A 封口完好、B 封口开裂、C 封口完好 → 哪个不合格？",
+          "options": [
+            "A",
+            "B",
+            "C"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "标签核对：A 码与箱内不符、B 码正确 → 哪个有问题？",
+          "options": [
+            "A",
+            "B"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 12,
+      "wrongLimit": 1
+    },
+    "job_factory_tech": {
+      "type": "quiz",
+      "title": "参数核对",
+      "icon": "🔧",
+      "desc": "核对设备参数是否符合标准（快速判断）",
+      "questions": [
+        {
+          "q": "标准电压 220V，当前 220V → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "标准温度 40℃，当前 55℃ → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "标准转速 3000，当前 2998 → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "标准气压 0.6MPa，当前 0.4MPa → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "标准转速 3000，当前 3200 → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "标准气压 0.6MPa，当前 0.6MPa → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "标准电流 2A，当前 1.9A → 合格吗？",
+          "options": [
+            "合格",
+            "不合格"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 10,
+      "wrongLimit": 1
+    },
+    "job_driving_tutor": {
+      "type": "whack",
+      "title": "信号灯反应",
+      "icon": "🚦",
+      "desc": "教练信号反应测试：绿灯亮马上点击，红灯亮了千万别点",
+      "targets": 8,
+      "timeLimit": 11,
+      "wrongLimit": 2,
+      "goodLabel": "绿灯",
+      "goodIcon": "🟢",
+      "badLabel": "红灯",
+      "badIcon": "🔴"
+    },
+    "job_ride_hailing": {
+      "type": "sequence",
+      "title": "网约车接单",
+      "icon": "🚗",
+      "desc": "按导航顺序完成：接乘客 → 上高架 → 商圈 → 送达",
+      "steps": [
+        "接到乘客",
+        "上高架",
+        "穿过商圈",
+        "到达目的地"
+      ],
+      "stepIcons": [
+        "🧑",
+        "🌉",
+        "🏬",
+        "🏁"
+      ],
+      "rounds": 1,
+      "shuffleEachRound": false,
+      "timeLimit": 15,
+      "wrongLimit": 1,
+      "perfectBonusRate": 0.05
+    },
+    "job_taxi": {
+      "type": "sequence",
+      "title": "出租车载客",
+      "icon": "🚕",
+      "desc": "按顺序完成：候客 → 机场 → 酒店 → 结算",
+      "steps": [
+        "机场接客",
+        "酒店下客",
+        "再拉一单",
+        "交班结算"
+      ],
+      "stepIcons": [
+        "✈️",
+        "🏨",
+        "🧳",
+        "💰"
+      ],
+      "rounds": 1,
+      "shuffleEachRound": false,
+      "timeLimit": 15,
+      "wrongLimit": 1,
+      "perfectBonusRate": 0.05
+    },
+    "job_waiter_west": {
+      "type": "sequence",
+      "title": "西餐上菜",
+      "icon": "🍽️",
+      "desc": "记住客人的点单顺序，按顺序上菜（2 轮）",
+      "steps": [
+        "前菜",
+        "主菜",
+        "甜点",
+        "咖啡"
+      ],
+      "stepIcons": [
+        "🥗",
+        "🥩",
+        "🍰",
+        "☕"
+      ],
+      "rounds": 2,
+      "memory": true,
+      "timeLimit": 16,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_waiter_fast": {
+      "type": "quiz",
+      "title": "快餐配餐",
+      "icon": "🍔",
+      "desc": "按订单快速选对套餐组合",
+      "questions": [
+        {
+          "q": "套餐 A：汉堡+薯条+可乐 → 点哪个按钮出餐？",
+          "options": [
+            "A 套餐",
+            "B 套餐",
+            "C 套餐"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "顾客要 1 个汉堡、不要薯条 → 怎么配？",
+          "options": [
+            "套餐 A（含薯条）",
+            "单点汉堡+小杯可乐"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "套餐 C：鸡翅+薯条+可乐 → 点哪个按钮出餐？",
+          "options": [
+            "A 套餐",
+            "C 套餐",
+            "B 套餐"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客打包带走 3 份套餐 A → 需要几个袋子？",
+          "options": [
+            "1 个",
+            "3 个"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "套餐 B：鸡腿堡+鸡米花+奶茶 → 点哪个按钮出餐？",
+          "options": [
+            "A 套餐",
+            "B 套餐",
+            "C 套餐"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客带小孩，要求儿童套餐 → 怎么配？",
+          "options": [
+            "儿童餐（小汉堡+果汁+玩具）",
+            "普通套餐 A"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "外送订单：3 份薯条 2 杯可乐 → 装几号袋？",
+          "options": [
+            "1 个",
+            "2 个"
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 12,
+      "wrongLimit": 1
+    },
+    "exercise_gym": {
+      "type": "rhythm",
+      "title": "健身节拍",
+      "icon": "🏋️",
+      "desc": "跟着节奏敲击：音符落到判定线时按下 1/2/3 键（或点击对应轨道）",
+      "tracks": 3,
+      "notes": 9,
+      "intervalMs": 500,
+      "fallMs": 2000,
+      "perfectBonusRate": 0.05
+    },
+    "exercise_park": {
+      "type": "rhythm",
+      "title": "晨练步点",
+      "icon": "🏃",
+      "desc": "公园晨练：按节奏点击左右步点（1/2 键）",
+      "tracks": 2,
+      "notes": 8,
+      "intervalMs": 520,
+      "fallMs": 2100,
+      "perfectBonusRate": 0.05
+    },
+    "exercise_home_equip": {
+      "type": "rhythm",
+      "title": "居家训练",
+      "icon": "🏋️",
+      "desc": "家用器材训练：跟上节拍（1/2 键）",
+      "tracks": 2,
+      "notes": 8,
+      "intervalMs": 480,
+      "fallMs": 2000,
+      "perfectBonusRate": 0.05
+    },
+    "street_perform": {
+      "type": "rhythm",
+      "title": "街头演唱",
+      "icon": "🎤",
+      "desc": "跟着旋律打节拍：音符落到判定线时按下 1/2/3 键，唱得准打赏多",
+      "tracks": 3,
+      "notes": 10,
+      "intervalMs": 460,
+      "fallMs": 2100,
+      "perfectBonusRate": 0.05
+    },
+    "stall_street_night": {
+      "type": "sequence",
+      "title": "摆摊招客",
+      "icon": "🍢",
+      "desc": "顾客连续上门：按需求顺序递上烤串/饮料/小吃（3 波顾客）",
+      "steps": [
+        "烤串",
+        "饮料",
+        "小吃"
+      ],
+      "stepIcons": [
+        "🍢",
+        "🥤",
+        "🥟"
+      ],
+      "rounds": 3,
+      "shuffleEachRound": false,
+      "timeLimit": 15,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_farm_hand": {
+      "type": "sequence",
+      "title": "农活流程",
+      "icon": "🌾",
+      "desc": "王大伯交代的活儿：按农时顺序干（共 3 垄，每垄按钮顺序打乱）",
+      "steps": [
+        "翻地",
+        "下种",
+        "覆土",
+        "浇水"
+      ],
+      "stepIcons": [
+        "⛏️",
+        "🌱",
+        "🪱",
+        "💧"
+      ],
+      "recipeTable": [
+        {
+          "name": "春播垄",
+          "recipe": [
+            "翻地",
+            "下种",
+            "覆土",
+            "浇水"
+          ]
+        },
+        {
+          "name": "补苗垄",
+          "recipe": [
+            "翻地",
+            "下种",
+            "浇水"
+          ]
+        },
+        {
+          "name": "抗旱垄",
+          "recipe": [
+            "翻地",
+            "浇水",
+            "下种",
+            "覆土"
+          ]
+        }
+      ],
+      "rounds": 3,
+      "shuffleEachRound": true,
+      "timeLimit": 20,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_pasture_milk": {
+      "type": "sequence",
+      "title": "牧场挤奶",
+      "icon": "🐄",
+      "desc": "李婶盯着呢：按规程伺候好每头奶牛（共 3 头，顺序不能乱）",
+      "steps": [
+        "安抚奶牛",
+        "清洗乳房",
+        "手工挤奶",
+        "过滤装桶"
+      ],
+      "stepIcons": [
+        "🤚",
+        "🧼",
+        "🥛",
+        "🪣"
+      ],
+      "rounds": 3,
+      "shuffleEachRound": true,
+      "timeLimit": 18,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_orchard_pick": {
+      "type": "whack",
+      "title": "果园采摘",
+      "icon": "🍎",
+      "desc": "熟透的果子冒出来就摘；青果和虫果碰了要扣钱",
+      "targets": 12,
+      "timeLimit": 14,
+      "wrongLimit": 2,
+      "goodLabel": "熟果",
+      "goodIcon": "🍎",
+      "badLabel": "青果",
+      "badIcon": "🍏"
+    },
+    "temple_volunteer": {
+      "type": "sequence",
+      "title": "寺中出坡",
+      "icon": "🧹",
+      "desc": "知客僧安排的出坡功课：按次第做完（共 2 轮，心要静、手要稳）",
+      "steps": [
+        "扫落叶",
+        "劈柴",
+        "挑水",
+        "上香"
+      ],
+      "stepIcons": [
+        "🧹",
+        "🪓",
+        "🪣",
+        "🕯️"
+      ],
+      "rounds": 2,
+      "shuffleEachRound": true,
+      "timeLimit": 20,
+      "wrongLimit": 3,
+      "perfectBonusRate": 0.05
+    },
+    "job_training_assistant": {
+      "type": "quiz",
+      "title": "课堂答疑",
+      "icon": "🎓",
+      "desc": "学员举手提问，选出正确的知识点回答，答对越多助教做得越顺",
+      "questions": [
+        {
+          "q": "学员问：函数返回值怎么写？",
+          "options": [
+            "return 值",
+            "output 值",
+            "send 值",
+            "give 值"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：这段代码循环了几次？",
+          "options": [
+            "3 次",
+            "5 次",
+            "7 次",
+            "10 次"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "学员问：数据结构里 FIFO 是什么？",
+          "options": [
+            "队列",
+            "栈",
+            "哈希表",
+            "链表"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：本地文件用什么路径写法？",
+          "options": [
+            "相对路径",
+            "绝对路径",
+            "任意路径",
+            "不需要路径"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：调试第一步应该做什么？",
+          "options": [
+            "看报错信息",
+            "重装系统",
+            "删代码",
+            "重启电脑"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 20,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    }
+  }
+}

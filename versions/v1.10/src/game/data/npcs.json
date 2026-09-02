@@ -1,0 +1,239 @@
+[
+  {
+    "id": "npc_lin_xiaoyu",
+    "name": "林小雨",
+    "nick": "咖啡馆的姑娘",
+    "icon": "👩‍🎨",
+    "romanceable": true,
+    "meetLocation": "cafe",
+    "meetChance": 0.25,
+    "meetVisitCount": 3,
+    "metText": "在咖啡馆坐了几回，靠窗的姑娘冲你点了点头——你们算是认识了。",
+    "meetConditions": {
+      "minCharm": 15,
+      "hourRange": [
+        9,
+        21
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "salad",
+      "sandwich"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "咖啡馆常客，学设计的，喜欢安静和轻食。"
+  },
+  {
+    "id": "npc_zhao_gang",
+    "name": "赵刚",
+    "nick": "劳务市场的老哥",
+    "icon": "👷",
+    "romanceable": false,
+    "meetLocation": "labor_market",
+    "meetChance": 0.3,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ]
+    },
+    "initialAffinity": 10,
+    "likes": [
+      "meat",
+      "noodles",
+      "drink"
+    ],
+    "dislikes": [
+      "salad"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "borrow",
+      "close_friend": "referral_job_loading"
+    },
+    "desc": "劳务市场的老工头，路子野，讲义气。",
+    "meetVisitCount": 2,
+    "metText": "总在劳务市场碰见这个老哥，一来二去就熟了，他拍着你肩膀说：以后有活想着你。"
+  },
+  {
+    "id": "npc_chen_jie",
+    "name": "陈姐",
+    "nick": "快餐店大姐",
+    "icon": "👩‍🍳",
+    "romanceable": false,
+    "meetLocation": "fast_food",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        20
+      ]
+    },
+    "initialAffinity": 15,
+    "likes": [
+      "vegetable",
+      "farm_egg",
+      "drink"
+    ],
+    "dislikes": [
+      "luxury_bag"
+    ],
+    "contactAt": 30,
+    "perks": {
+      "friend": "free_meal",
+      "close_friend": "referral_job_waiter_fast"
+    },
+    "desc": "快餐店掌勺大姐，心善，爱给人塞吃的。",
+    "meetVisitCount": 3,
+    "metText": "在快餐店吃了两回，大姐说你跟别人不一样，非拉你坐下聊了会儿。"
+  },
+  {
+    "id": "npc_wang_lei",
+    "name": "王磊",
+    "nick": "公园晨练大爷",
+    "icon": "👴",
+    "romanceable": false,
+    "meetLocation": "park",
+    "meetChance": 0.2,
+    "meetConditions": {
+      "minCharm": 10,
+      "hourRange": [
+        6,
+        12
+      ]
+    },
+    "initialAffinity": 8,
+    "likes": [
+      "plant",
+      "certificate"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "close_friend": "referral_job_office_assistant"
+    },
+    "desc": "公园晨练的退休干部，爱提携年轻人。",
+    "introducedBy": "npc_chen_jie",
+    "introduceAt": 40,
+    "metText": "陈姐说你人实在，非要把她认识的退休干部老王介绍给你——公园晨练的大爷，看着挺精神。"
+  },
+  {
+    "id": "npc_li_na",
+    "name": "？？？",
+    "nick": "工位旁的姐姐",
+    "icon": "👩‍💻",
+    "romanceable": false,
+    "type": "colleague",
+    "meetLocation": "electronics_factory",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ],
+      "requireEmployed": true
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "bento"
+    ],
+    "dislikes": [],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "电子厂流水线旁边的同事，上班时经常互相搭把手。"
+  },
+  {
+    "id": "npc_netbar_boss",
+    "name": "网咖老板",
+    "nick": "网吧老板",
+    "icon": "🎮",
+    "romanceable": false,
+    "meetLocation": "internet_cafe",
+    "meetChance": 0.35,
+    "meetVisitCount": 3,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        24
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "drink",
+      "noodles"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "referral_job_security"
+    },
+    "desc": "网吧老板，面冷心热，常给熟客打折。",
+    "metText": "老板看你来了好几回，熟了之后说：小伙子，常来就给你个会员价。"
+  },
+  {
+    "id": "npc_librarian",
+    "name": "图书馆大姐",
+    "nick": "图书管理员",
+    "icon": "📚",
+    "romanceable": false,
+    "meetLocation": "library",
+    "meetChance": 0.3,
+    "meetVisitCount": 3,
+    "meetConditions": {
+      "hourRange": [
+        9,
+        18
+      ]
+    },
+    "initialAffinity": 8,
+    "likes": [
+      "certificate",
+      "plant"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "close_friend": "referral_job_office_assistant"
+    },
+    "desc": "图书馆管理员，安静温柔，爱推荐书。",
+    "metText": "大姐帮你找了本编程入门，说：多看看书，比在网吧打游戏强。"
+  },
+  {
+    "id": "npc_pharmacist",
+    "name": "药房大哥",
+    "nick": "药房老哥",
+    "icon": "💊",
+    "romanceable": false,
+    "meetLocation": "clinic",
+    "meetChance": 0.35,
+    "meetVisitCount": 2,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        22
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "farm_egg"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "referral_job_convenience_clerk"
+    },
+    "desc": "社区药房老板，懂点医，爱唠叨养生。",
+    "metText": "老哥看你买药，多送了你一包板蓝根：年轻人，多注意身体。"
+  }
+]

@@ -1,0 +1,42 @@
+{
+  "holidays": [
+    {
+      "id": "new_year",
+      "name": "元旦",
+      "icon": "🎉",
+      "date": { "month": 1, "day": 1 }
+    },
+    {
+      "id": "labor_day",
+      "name": "劳动节",
+      "icon": "🛠️",
+      "date": { "month": 5, "day": 1 }
+    },
+    {
+      "id": "national_day",
+      "name": "国庆节",
+      "icon": "🇨🇳",
+      "date": { "month": 10, "day": 1 }
+    },
+    {
+      "id": "mid_autumn",
+      "name": "中秋节",
+      "icon": "🌕",
+      "date": { "month": 9, "day": 15 }
+    },
+    {
+      "id": "spring_festival",
+      "name": "春节",
+      "icon": "🧧",
+      "byYear": {
+        "2027": { "month": 2, "day": 6 },
+        "2028": { "month": 1, "day": 26 },
+        "2029": { "month": 2, "day": 13 },
+        "2030": { "month": 2, "day": 3 },
+        "2031": { "month": 1, "day": 23 },
+        "2032": { "month": 2, "day": 11 },
+        "2033": { "month": 1, "day": 31 }
+      }
+    }
+  ]
+}
