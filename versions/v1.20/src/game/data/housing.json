@@ -1,0 +1,188 @@
+{
+ "gov": {
+  "id": "gov",
+  "name": "政府免费住宿",
+  "icon": "🏛️",
+  "price": 0,
+  "recovery": 0.65,
+  "moodBonus": 5,
+  "facilities": [
+   "rest",
+   "shower"
+  ],
+  "desc": "过渡性免费床位，最多住 7 晚",
+  "area": "residential",
+  "region": "downtown_residential"
+ },
+ "nightly": [
+  {
+   "id": "atm",
+   "name": "露宿街头",
+   "icon": "🏕️",
+   "price": 0,
+   "recovery": 0.45,
+   "moodBonus": -6,
+   "facilities": [
+    "rest"
+   ],
+   "sideEffects": {
+    "health": -2,
+    "stress": 8,
+    "hygiene": -4
+   },
+   "desc": "桥洞/公园长椅凑合一晚，第二天浑身难受",
+   "area": "residential",
+   "region": "downtown_residential"
+  },
+  {
+   "id": "hostel",
+   "name": "青年旅舍",
+   "icon": "🛏️",
+   "price": 25,
+   "recovery": 0.6,
+   "moodBonus": 2,
+   "facilities": [
+    "rest",
+    "shower"
+   ],
+   "desc": "上下铺，能洗澡（住宅区）",
+   "area": "residential",
+   "region": "downtown_residential"
+  },
+  {
+   "id": "minsu",
+   "name": "民宿",
+   "icon": "🏡",
+   "price": 40,
+   "recovery": 0.65,
+   "moodBonus": 5,
+   "facilities": [
+    "rest",
+    "shower"
+   ],
+   "desc": "老小区改造的民宿单间（住宅区）",
+   "area": "residential",
+   "region": "downtown_residential"
+  },
+  {
+   "id": "hotel",
+   "name": "连锁酒店",
+   "icon": "🏨",
+   "price": 120,
+   "recovery": 0.95,
+   "moodBonus": 10,
+   "facilities": [
+    "rest",
+    "shower"
+   ],
+   "desc": "市中心大酒店，大床房睡个好觉",
+   "area": "center",
+   "region": "downtown_center"
+  },
+  {
+   "id": "temple",
+   "name": "寺庙禅房",
+   "icon": "🛕",
+   "price": 0,
+   "recovery": 0.75,
+   "moodBonus": 6,
+   "facilities": [
+    "rest",
+    "shower"
+   ],
+   "desc": "义工换来的禅房，清静一夜，醒来钟声悠悠（仅寺内可住）",
+   "area": "residential",
+   "region": "suburban_edge",
+   "hidden": true
+  }
+ ],
+ "lease": [
+  {
+   "id": "old_apartment",
+   "name": "普通出租屋",
+   "icon": "🏠",
+   "price": 1000,
+   "recovery": 0.8,
+   "moodBonus": 5,
+   "facilities": [
+    "rest",
+    "shower",
+    "cook"
+   ],
+   "rentGrowthRate": 0.2,
+   "desc": "住宅区老小区，月租 1000，签约后免去每晚找地方住",
+   "area": "residential",
+   "region": "downtown_center"
+  },
+  {
+   "id": "rental_apartment",
+   "name": "出租公寓",
+   "icon": "🏢",
+   "price": 2000,
+   "recovery": 0.88,
+   "moodBonus": 8,
+   "facilities": [
+    "rest",
+    "shower",
+    "cook"
+   ],
+   "rentGrowthRate": 0.1,
+   "desc": "市中心精装公寓，月租 2000，条件好不少",
+   "area": "center",
+   "region": "downtown_center"
+  }
+ ],
+ "buy": [
+  {
+   "id": "own_old_unit",
+   "name": "老破小产权房",
+   "icon": "🏚️",
+   "price": 0,
+   "buyPrice": 30000,
+   "recovery": 0.8,
+   "moodBonus": 6,
+   "facilities": [
+    "rest",
+    "shower",
+    "cook"
+   ],
+   "desc": "住宅区老小区的旧房子，一次性买断产权，从此不用再交房租",
+   "area": "residential",
+   "region": "downtown_residential"
+  },
+  {
+   "id": "own_apartment",
+   "name": "精装公寓",
+   "icon": "🏢",
+   "price": 0,
+   "buyPrice": 80000,
+   "recovery": 0.9,
+   "moodBonus": 10,
+   "facilities": [
+    "rest",
+    "shower",
+    "cook"
+   ],
+   "desc": "市中心电梯公寓，电梯直达，买下就是自己的小窝",
+   "area": "center",
+   "region": "downtown_center"
+  },
+  {
+   "id": "own_villa",
+   "name": "城市住宅",
+   "icon": "🏡",
+   "price": 0,
+   "buyPrice": 200000,
+   "recovery": 0.95,
+   "moodBonus": 15,
+   "facilities": [
+    "rest",
+    "shower",
+    "cook"
+   ],
+   "desc": "独门独院的城市住宅，安身立命不再是梦",
+   "area": "residential",
+   "region": "downtown_center"
+  }
+ ]
+}

@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "allocationRates": {
+    "moneyPerPoint": 100,
+    "charmPerPoint": 3,
+    "intelligencePerPoint": 3,
+    "staminaPerPoint": 5
+  },
+  "families": [
+    {
+      "id": "destitute",
+      "name": "赤贫",
+      "icon": "🪙",
+      "desc": "家徒四壁，从小就要为一口饭发愁。没有退路，只有自己",
+      "initialMoney": 0,
+      "monthlyPayment": -1000,
+      "monthlyNote": "每月 20 号寄 1000 元补贴家里",
+      "attrMods": { "charm": -5, "stamina": -10, "log": "赤贫出身：营养不良（体力-10），没穿过好衣服（魅力-5）" },
+      "staminaCapMod": -10,
+      "pointQuota": 10,
+      "freeHousingNights": 15,
+      "rentDiscount": 0.15,
+      "tags": ["初始 ¥0", "20号寄 ¥1000", "魅力-5 体力-10", "免费住宿 15 晚", "租房 -15%", "属性点 10"]
+    },
+    {
+      "id": "tight",
+      "name": "拮据",
+      "icon": "🍚",
+      "desc": "日子紧巴巴，但家里总有一口热饭。安稳，却没多少余粮",
+      "initialMoney": 200,
+      "monthlyPayment": -200,
+      "monthlyNote": "每月 20 号寄 200 元补贴家里",
+      "pointQuota": 5,
+      "freeHousingNights": 7,
+      "rentDiscount": 0,
+      "tags": ["初始 ¥200", "20号寄 ¥200", "属性点 5"]
+    },
+    {
+      "id": "ordinary",
+      "name": "普通",
+      "icon": "🏠",
+      "desc": "普普通通的家庭，普普通通的长大。家里帮不上什么忙，也不拖后腿",
+      "initialMoney": 500,
+      "monthlyPayment": 0,
+      "pointQuota": 10,
+      "freeHousingNights": 7,
+      "rentDiscount": 0,
+      "tags": ["初始 ¥500", "无月供", "属性点 10"]
+    },
+    {
+      "id": "wealthy",
+      "name": "富裕",
+      "icon": "💎",
+      "desc": "衣食无忧的长大，家里每月还会打钱。但家里的温室，第一天就要自己闯",
+      "initialMoney": 2000,
+      "monthlyPayment": 500,
+      "monthlyNote": "每月 20 号家里打来 500 元",
+      "pointQuota": 10,
+      "freeHousingNights": 0,
+      "rentDiscount": 0,
+      "tags": ["初始 ¥2000", "20号收 ¥500", "无免费住宿", "属性点 10"]
+    }
+  ]
+}
