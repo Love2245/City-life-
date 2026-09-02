@@ -1,0 +1,6 @@
+node_modules/
+dist/
+dist-portable/
+.vite-cache/
+*.timestamp-*.mjs
+都市生活_v*.html

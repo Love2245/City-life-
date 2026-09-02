@@ -1,0 +1,149 @@
+[
+  {
+    "id": "npc_lin_xiaoyu",
+    "name": "林小雨",
+    "nick": "咖啡馆的姑娘",
+    "icon": "👩‍🎨",
+    "romanceable": true,
+    "meetLocation": "cafe",
+    "meetChance": 0.25,
+    "meetConditions": {
+      "minCharm": 15,
+      "hourRange": [
+        9,
+        21
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "salad",
+      "sandwich"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "咖啡馆常客，学设计的，喜欢安静和轻食。"
+  },
+  {
+    "id": "npc_zhao_gang",
+    "name": "赵刚",
+    "nick": "劳务市场的老哥",
+    "icon": "👷",
+    "romanceable": false,
+    "meetLocation": "labor_market",
+    "meetChance": 0.3,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ]
+    },
+    "initialAffinity": 10,
+    "likes": [
+      "meat",
+      "noodles",
+      "drink"
+    ],
+    "dislikes": [
+      "salad"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "borrow",
+      "close_friend": "referral_job_loading"
+    },
+    "desc": "劳务市场的老工头，路子野，讲义气。"
+  },
+  {
+    "id": "npc_chen_jie",
+    "name": "陈姐",
+    "nick": "快餐店大姐",
+    "icon": "👩‍🍳",
+    "romanceable": false,
+    "meetLocation": "fast_food",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        20
+      ]
+    },
+    "initialAffinity": 15,
+    "likes": [
+      "vegetable",
+      "farm_egg",
+      "drink"
+    ],
+    "dislikes": [
+      "luxury_bag"
+    ],
+    "contactAt": 30,
+    "perks": {
+      "friend": "free_meal",
+      "close_friend": "referral_job_waiter_fast"
+    },
+    "desc": "快餐店掌勺大姐，心善，爱给人塞吃的。"
+  },
+  {
+    "id": "npc_wang_lei",
+    "name": "王磊",
+    "nick": "公园晨练大爷",
+    "icon": "👴",
+    "romanceable": false,
+    "meetLocation": "park",
+    "meetChance": 0.2,
+    "meetConditions": {
+      "minCharm": 10,
+      "hourRange": [
+        6,
+        12
+      ]
+    },
+    "initialAffinity": 8,
+    "likes": [
+      "plant",
+      "certificate"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "close_friend": "referral_job_office_assistant"
+    },
+    "desc": "公园晨练的退休干部，爱提携年轻人。"
+  },
+  {
+    "id": "npc_li_na",
+    "name": "？？？",
+    "nick": "工位旁的姐姐",
+    "icon": "👩‍💻",
+    "romanceable": false,
+    "type": "colleague",
+    "meetLocation": "electronics_factory",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ],
+      "requireEmployed": true
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "bento"
+    ],
+    "dislikes": [],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "电子厂流水线旁边的同事，上班时经常互相搭把手。"
+  }
+]
