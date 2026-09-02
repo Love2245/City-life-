@@ -1,0 +1,566 @@
+{
+  "version": 1,
+  "pointCost": 2,
+  "items": [
+    {
+      "id": "driving_license",
+      "name": "驾驶本",
+      "icon": "🚗",
+      "desc": "提前考好的驾照，解锁驾驶类岗位",
+      "cost": 2,
+      "tags": [
+        "解锁驾驶类岗位"
+      ],
+      "effects": {
+        "flags": {
+          "item_driving_license": true
+        },
+        "log": "持有驾驶本"
+      },
+      "unlocks": {
+        "jobs": [
+          "job_driving_tutor"
+        ]
+      },
+      "startOffer": true,
+      "startCost": 4
+    },
+    {
+      "id": "bicycle",
+      "name": "自行车",
+      "icon": "🚲",
+      "desc": "二八大杠，通勤省力（效果待填）",
+      "cost": 2,
+      "tags": [
+        "通勤/移动"
+      ],
+      "effects": {
+        "flags": {
+          "item_bicycle": true
+        },
+        "log": "有了一辆自行车"
+      },
+      "unlocks": {
+        "jobs": [
+          "job_delivery"
+        ]
+      },
+      "keyDisplay": "自行车钥匙",
+      "startOffer": true,
+      "startCost": 3
+    },
+    {
+      "id": "laptop",
+      "name": "笔记本电脑",
+      "icon": "💻",
+      "desc": "二手笔记本，学习/工作利器（效果待填）",
+      "cost": 2,
+      "tags": [
+        "学习/工作"
+      ],
+      "effects": {
+        "flags": {
+          "item_laptop": true
+        },
+        "log": "有了一台笔记本电脑"
+      },
+      "unlocks": {
+        "actions": [
+          "study_online"
+        ]
+      },
+      "startOffer": true,
+      "startCost": 4
+    },
+    {
+      "id": "certificate",
+      "name": "技能证书",
+      "icon": "📜",
+      "desc": "提前考好的技能证书，可提前进入卡证书的岗位",
+      "cost": 2,
+      "tags": [
+        "解锁卡证书岗位"
+      ],
+      "effects": {
+        "flags": {
+          "item_certificate": true
+        },
+        "log": "持有技能证书"
+      },
+      "unlocks": {
+        "jobs": [
+          "job_cafe_staff"
+        ]
+      },
+      "startOffer": true,
+      "startCost": 4
+    },
+    {
+      "id": "item_manuscript",
+      "name": "书法手稿",
+      "icon": "📜",
+      "desc": "公园书法大爷赠你的手稿，临摹可静心养性（+3 魅力 +2 心情）",
+      "consumable": true,
+      "useEffects": {
+        "charm": 3,
+        "mood": 2,
+        "log": "临摹了书法大爷的手稿，心静了不少"
+      },
+      "tags": [
+        "礼物"
+      ]
+    },
+    {
+      "id": "e_bike",
+      "name": "二手电动车",
+      "icon": "🛵",
+      "desc": "跑外卖效率翻倍，也可在劳务市场 800 元直接买",
+      "cost": 2,
+      "tags": [
+        "外卖高薪档"
+      ],
+      "effects": {
+        "flags": {
+          "item_e_bike": true
+        },
+        "log": "有了一辆二手电动车"
+      },
+      "keyDisplay": "电动车钥匙",
+      "startOffer": true,
+      "startCost": 5
+    },
+    {
+      "id": "phone",
+      "name": "手机",
+      "icon": "📱",
+      "desc": "人手一部的手机，打电话、玩游戏、学网课",
+      "cost": 0,
+      "consumable": false,
+      "startOffer": false
+    },
+    {
+      "id": "medicine",
+      "name": "感冒药",
+      "icon": "💊",
+      "desc": "治感冒发烧，恢复 15 点健康",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "health": 15,
+        "log": "吃了片感冒药，感觉好些了",
+        "cureStatuses": [
+          "sick"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "bandage",
+      "name": "绷带",
+      "icon": "🩹",
+      "desc": "处理小伤口，恢复 8 点健康",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "health": 8,
+        "log": "缠上绷带，处理了下伤口"
+      },
+      "startOffer": false
+    },
+    {
+      "id": "noodles",
+      "name": "泡面",
+      "icon": "🍜",
+      "desc": "方便面，+35 饱腹 -3 心情（需热水，便利店/住处食用）",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 26,
+        "mood": -3,
+        "health": -2,
+        "log": "泡了碗面，将就一顿",
+        "cureStatuses": [
+          "hungry"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "fruit",
+      "name": "水果",
+      "icon": "🍎",
+      "desc": "新鲜水果，解馋补维生素，但只能垫垫肚子（+8 饱腹 +5 健康 +4 心情）",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 8,
+        "health": 5,
+        "mood": 4,
+        "log": "洗了个苹果啃，健康又解馋",
+        "cureStatuses": [
+          "hungry"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "salad",
+      "name": "沙拉",
+      "icon": "🥗",
+      "desc": "蔬菜沙拉，+20 饱腹 +3 心情（便利店有售，也可在厨房自制）",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 18,
+        "health": 6,
+        "mood": 3,
+        "log": "吃了份沙拉，健康了一回",
+        "cureStatuses": [
+          "hungry"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "bento",
+      "name": "盒饭",
+      "icon": "🍱",
+      "desc": "便利店盒饭，+34 饱腹",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 34,
+        "mood": 4,
+        "log": "热了盒饭吃，简单一餐",
+        "cureStatuses": [
+          "hungry"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "drink",
+      "name": "饮料",
+      "icon": "🧋",
+      "desc": "冰镇饮料，+10 饱腹 +3 心情",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 4,
+        "stamina": 10,
+        "mood": 3,
+        "log": "喝了瓶饮料，精神了点"
+      },
+      "startOffer": false
+    },
+    {
+      "id": "tricycle",
+      "name": "三轮车",
+      "icon": "🛺",
+      "desc": "快递配送神器（月租）",
+      "cost": 0,
+      "keyDisplay": "三轮车钥匙",
+      "effects": {
+        "flags": {
+          "item_tricycle": true
+        },
+        "log": "租了一辆三轮车"
+      },
+      "startOffer": false
+    },
+    {
+      "id": "car",
+      "name": "汽车",
+      "icon": "🚗",
+      "desc": "开局自带一辆代步车，解锁网约车/出租车类岗位，出行更有底气",
+      "cost": 0,
+      "keyDisplay": "汽车钥匙",
+      "effects": {
+        "flags": {
+          "item_car": true
+        },
+        "mood": 4,
+        "stamina": 4,
+        "log": "开局自带一辆汽车"
+      },
+      "startOffer": true,
+      "startCost": 10
+    },
+    {
+      "id": "vegetable",
+      "name": "蔬菜",
+      "icon": "🥬",
+      "desc": "菜市场的新鲜蔬菜，生的不能直接吃，得回住处下厨",
+      "cost": 0,
+      "consumable": false,
+      "raw": true,
+      "tags": [
+        "生鲜食材",
+        "需烹饪"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "meat",
+      "name": "肉类",
+      "icon": "🥩",
+      "desc": "新鲜猪肉/鸡肉，生的不能直接吃，得回住处下厨",
+      "cost": 0,
+      "consumable": false,
+      "raw": true,
+      "tags": [
+        "生鲜食材",
+        "需烹饪"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "sandwich",
+      "name": "三明治",
+      "icon": "🥪",
+      "desc": "便利店三明治，+28 饱腹，开袋即食",
+      "cost": 0,
+      "consumable": true,
+      "useEffects": {
+        "satiety": 22,
+        "mood": 2,
+        "health": 1,
+        "log": "啃完一个三明治，垫了垫肚子",
+        "cureStatuses": [
+          "hungry"
+        ]
+      },
+      "startOffer": false
+    },
+    {
+      "id": "gym_card",
+      "name": "健身月卡",
+      "icon": "💳",
+      "desc": "健身房月卡，30 天有效期，过期需重新办理",
+      "cost": 0,
+      "consumable": false,
+      "keyDisplay": "健身月卡",
+      "tags": [
+        "会籍",
+        "30 天有效"
+      ],
+      "startOffer": true,
+      "startCost": 3
+    },
+    {
+      "id": "luxury_coat",
+      "name": "羊绒大衣",
+      "icon": "🧥",
+      "desc": "纯羊绒大衣，穿出去倍儿有面子（奢侈品）",
+      "cost": 0,
+      "luxury": true,
+      "effects": {
+        "mood": 6,
+        "log": "入手一件羊绒大衣，气质都不一样了"
+      },
+      "keyDisplay": "羊绒大衣",
+      "tags": [
+        "奢侈品"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "luxury_watch",
+      "name": "名表",
+      "icon": "⌚",
+      "desc": "瑞士名表，男人/女人的顶级配饰（奢侈品）",
+      "cost": 0,
+      "luxury": true,
+      "effects": {
+        "mood": 10,
+        "charm": 3,
+        "log": "买下一块名表，举手投足都讲究起来了"
+      },
+      "keyDisplay": "名表",
+      "tags": [
+        "奢侈品"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "luxury_bag",
+      "name": "名牌包",
+      "icon": "👜",
+      "desc": "限量款名牌包，身份与品位的象征（奢侈品）",
+      "cost": 0,
+      "luxury": true,
+      "effects": {
+        "mood": 12,
+        "charm": 5,
+        "log": "拎上名牌包，整个人都不一样了"
+      },
+      "keyDisplay": "名牌包",
+      "tags": [
+        "奢侈品"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "shirt",
+      "name": "衬衫",
+      "icon": "👔",
+      "desc": "干净得体的衬衫，穿上后魅力 +2（可装备）",
+      "cost": 0,
+      "slot": "clothes",
+      "bonus": {
+        "charm": 2
+      },
+      "tags": [
+        "装备",
+        "魅力 +2"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "suit",
+      "name": "西装",
+      "icon": "🤵",
+      "desc": "笔挺的西装，穿上后魅力 +5（可装备）",
+      "cost": 0,
+      "slot": "clothes",
+      "bonus": {
+        "charm": 5
+      },
+      "tags": [
+        "装备",
+        "魅力 +5"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "lamp",
+      "name": "暖光灯",
+      "icon": "💡",
+      "desc": "暖黄色台灯，摆上后心情 +2（可摆放）",
+      "cost": 0,
+      "slot": "furniture",
+      "bonus": {
+        "mood": 2
+      },
+      "tags": [
+        "家具",
+        "心情 +2"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "sofa",
+      "name": "布艺沙发",
+      "icon": "🛋️",
+      "desc": "松软的布艺沙发，摆上后心情 +4（可摆放）",
+      "cost": 0,
+      "slot": "furniture",
+      "bonus": {
+        "mood": 4
+      },
+      "tags": [
+        "家具",
+        "心情 +4"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "plant",
+      "name": "绿植盆栽",
+      "icon": "🪴",
+      "desc": "生机勃勃的绿植，摆上后心情 +3（可摆放）",
+      "cost": 0,
+      "slot": "furniture",
+      "bonus": {
+        "mood": 3
+      },
+      "tags": [
+        "家具",
+        "心情 +3"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "kitchen_set",
+      "name": "厨具套装",
+      "icon": "🍳",
+      "desc": "锅碗瓢盆一应俱全，解锁在家做大餐",
+      "cost": 0,
+      "effects": {
+        "log": "入手一套厨具，可以在家做大餐了"
+      },
+      "unlocks": {
+        "actions": [
+          "cook_steak_home"
+        ]
+      },
+      "tags": [
+        "解锁新菜谱"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "gym_equipment",
+      "name": "家用健身器材",
+      "icon": "🏋️",
+      "desc": "哑铃+瑜伽垫，在家也能锻炼",
+      "cost": 0,
+      "effects": {
+        "log": "添置了家用健身器材，在家也能锻炼了"
+      },
+      "unlocks": {
+        "actions": [
+          "exercise_home_equip"
+        ]
+      },
+      "tags": [
+        "解锁新活动"
+      ],
+      "startOffer": false
+    },
+    {
+      "id": "farm_vegetable",
+      "name": "新鲜蔬菜",
+      "icon": "🥬",
+      "desc": "农场直采蔬菜，比菜市场便宜。可加工或转售",
+      "consumable": true,
+      "useEffects": { "satiety": 12, "health": 2, "log": "吃了一份新鲜农场蔬菜" },
+      "tags": [
+        "农产"
+      ]
+    },
+    {
+      "id": "farm_egg",
+      "name": "土鸡蛋",
+      "icon": "🥚",
+      "desc": "农场散养土鸡蛋，一打 12 枚",
+      "consumable": true,
+      "useEffects": { "satiety": 8, "health": 1, "log": "煮了几个土鸡蛋吃" },
+      "tags": [
+        "农产"
+      ]
+    },
+    {
+      "id": "farm_milk",
+      "name": "鲜牛奶",
+      "icon": "🥛",
+      "desc": "牧场清晨现挤鲜奶，1 升装",
+      "consumable": true,
+      "useEffects": { "satiety": 10, "health": 2, "log": "喝了一杯鲜牛奶" },
+      "tags": [
+        "农产"
+      ]
+    },
+    {
+      "id": "farm_fruit",
+      "name": "时令水果",
+      "icon": "🍊",
+      "desc": "果园刚摘的新鲜水果，比超市便宜一半",
+      "consumable": true,
+      "useEffects": { "satiety": 8, "mood": 2, "log": "吃了一份果园摘的新鲜水果" },
+      "tags": [
+        "农产"
+      ]
+    }
+  ]
+}

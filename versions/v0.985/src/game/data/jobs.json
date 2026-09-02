@@ -1,0 +1,900 @@
+[
+ {
+  "id": "job_delivery",
+  "name": "外卖骑手（日结）",
+  "icon": "🛵",
+  "kind": "day",
+  "duration": 10,
+  "desc": "风里雨里跑 10 小时，赚得多耗得狠",
+  "requirements": {
+   "attr": {
+    "health": 35,
+    "stamina": 45
+   }
+  },
+  "effects": {
+   "money": 140,
+   "stamina": -75,
+   "stress": 18,
+   "skills": {
+    "driving": 1
+   },
+   "log": "跑了一天外卖，赚了 140 元（腿快断了）",
+   "health": -2
+  },
+  "verdicts": [
+   "风里雨里跑了一整天，腿都快不是自己的了",
+   "今天单子不少，但也晒脱了一层皮",
+   "电梯等了五分钟，超时被扣了钱，心累",
+   "爬了 20 层楼梯送了一单，赚的真是血汗钱",
+   "下雨天单多，但路也难走",
+   "碰到个差评，白干一单",
+   "晚上最后一单是高层，电梯坏了，爬上去的"
+  ],
+  "weight": 25,
+  "quota": 1,
+  "heavy": true,
+  "incomeTiers": {
+   "none": {
+    "money": 45,
+    "stamina": -50,
+    "stress": 16,
+    "moneyRange": {
+     "min": 35,
+     "max": 55
+    },
+    "log": "步行跑了一整天外卖，赚了 {money} 元",
+    "desc": "步行配送"
+   },
+   "bicycle": {
+    "money": 65,
+    "stamina": -60,
+    "stress": 14,
+    "moneyRange": {
+     "min": 55,
+     "max": 80
+    },
+    "log": "骑自行车送了一天外卖，赚了 {money} 元",
+    "desc": "骑车配送"
+   },
+   "e_bike": {
+    "money": 90,
+    "stamina": -70,
+    "stress": 12,
+    "moneyRange": {
+     "min": 80,
+     "max": 120
+    },
+    "log": "骑电动车送了一天外卖，赚了 {money} 元",
+    "desc": "电动车配送"
+   }
+  },
+  "sound": "cashier",
+  "punctual": false,
+  "restDays": []
+ },
+ {
+  "id": "job_express",
+  "name": "快递配送员（日结）",
+  "icon": "📦",
+  "kind": "day",
+  "duration": 10,
+  "desc": "流水线搬货 8 小时，腰酸背痛",
+  "requirements": {
+   "attr": {
+    "health": 30,
+    "stamina": 35
+   }
+  },
+  "effects": {
+   "money": 75,
+   "stamina": -80,
+   "stress": 15,
+   "log": "配送了一天快递，赚了 {money} 元"
+  },
+  "verdicts": [
+   "从来没有这么累过，手都抬不起来了",
+   "流水线上的每一秒都是煎熬",
+   "腰都快断了，明天还得来",
+   "今天的货特别多，累到怀疑人生",
+   "分拣的时候打了个盹，差点被包裹埋了",
+   "指甲缝里全是灰，洗澡都洗不掉",
+   "流水线不停，人就不能停"
+  ],
+  "weight": 30,
+  "quota": 2,
+  "heavy": true,
+  "sound": "coin",
+  "incomeTiers": {
+   "none": {
+    "money": 55,
+    "stamina": -80,
+    "stress": 15,
+    "log": "蹬着腿跑了一天快递，赚了 {money} 元",
+    "desc": "步行配送"
+   },
+   "bicycle": {
+    "money": 75,
+    "stamina": -75,
+    "stress": 12,
+    "log": "骑自行车送了一天快递，赚了 {money} 元",
+    "desc": "自行车配送"
+   },
+   "tricycle": {
+    "money": 105,
+    "stamina": -70,
+    "stress": 10,
+    "log": "开着三轮车送了一天快递，赚了 {money} 元",
+    "desc": "三轮车配送",
+    "moneyRange": {
+     "min": 95,
+     "max": 120
+    }
+   }
+  },
+  "punctual": false,
+  "restDays": []
+ },
+ {
+  "id": "job_convenience_day",
+  "name": "便利店日结",
+  "icon": "🧾",
+  "kind": "day",
+  "duration": 8,
+  "desc": "站 8 小时柜台，相对清闲但也不轻松",
+  "requirements": {
+   "attr": {
+    "health": 30,
+    "stamina": 20
+   }
+  },
+  "effects": {
+   "money": 85,
+   "stamina": -60,
+   "stress": 8,
+   "skills": {
+    "service": 1
+   },
+   "log": "便利店顶了一天班，赚了 85 元",
+   "health": -1
+  },
+  "verdicts": [
+   "站了一天，脚底板生疼",
+   "清闲是清闲，但一天下来也累",
+   "收银机的声音在脑子里循环",
+   "今天碰到个难缠的顾客，忍了",
+   "补了一天的货，腰酸",
+   "夜班换白班，生物钟有点乱",
+   "微笑服务一整天，脸都僵了"
+  ],
+  "weight": 40,
+  "quota": 2,
+  "sound": "cashier",
+  "startHour": 9,
+  "endHour": 17,
+  "punctual": true
+},
+{
+  "id": "job_convenience_clerk",
+  "name": "便利店正式店员（固定）",
+  "icon": "🏪",
+  "kind": "fixed",
+  "locationId": "convenience_store",
+  "duration": 8,
+  "desc": "便利店固定店员，需服务技能与技能证书（有店长内推可免证书）",
+  "requirements": {
+   "attr": {
+    "health": 30,
+    "stamina": 20
+   },
+   "skill": {
+    "service": 2
+   },
+   "flag": "item_certificate"
+  },
+  "effects": {
+   "money": 90,
+   "stamina": -55,
+   "stress": 8,
+   "skills": {
+    "service": 1
+   },
+   "log": "在便利店上了一天班，赚了 90 元"
+  },
+  "verdicts": [
+   "理货、收银、冲咖啡，一天没闲着",
+   "熟客来了聊两句，时间过得快",
+   "夜班看着城市入睡，挺安静",
+   "店长夸你上手快",
+   "今天盘点，眼睛都看花了",
+   "碰到个可爱的小孩，被治愈了",
+   "下班前把店门口扫得干干净净"
+  ],
+  "weight": 30,
+  "sound": "cashier",
+  "startHour": 9,
+  "endHour": 17,
+  "punctual": true
+},
+{
+  "id": "job_market_cleaner",
+  "name": "市场保洁（日结）",
+  "icon": "🧹",
+  "kind": "day",
+  "duration": 8,
+  "desc": "菜场收摊后的清扫，6 小时短班",
+  "requirements": {
+   "attr": {
+    "stamina": 25
+   }
+  },
+  "effects": {
+   "money": 70,
+   "stamina": -55,
+   "stress": 5,
+   "log": "在菜场做了半天保洁，赚了 70 元",
+   "health": -1
+  },
+  "verdicts": [
+   "鱼腥味冲得脑壳疼",
+   "扫把都快抡冒烟了",
+   "虽然短，但一点不轻松",
+   "菜叶子和泥水混在一起，真难搞",
+   "收摊后的菜市场，比想象中脏得多",
+   "干完这活，看啥都觉得干净",
+   "保洁大姐们是真不容易"
+  ],
+  "weight": 30,
+  "quota": 1,
+  "sound": "coin",
+  "startHour": 6,
+  "endHour": 14,
+  "punctual": true
+ },
+ {
+  "id": "job_farm_hand",
+  "name": "农场帮工（日结）",
+  "icon": "🌾",
+  "kind": "day",
+  "locationId": "farm",
+  "duration": 4,
+  "desc": "翻地除草施水肥，干半天日结 45 元",
+  "requirements": { "attr": { "stamina": 30, "health": 25 } },
+  "effects": { "money": 45, "stamina": -40, "stress": -3, "mood": 1, "skills": { "cooking": 1 }, "log": "在农场帮了半天工" },
+  "verdicts": [
+   "锄头比想象中沉，出一身汗",
+   "太阳底下蹲了一上午，腿麻了",
+   "农场主大妈给了一篮子菜，午饭有了",
+   "泥土的味道还挺好闻",
+   "干农活虽然累，但心里踏实",
+   "收工时农场主塞给你一袋新米"
+  ],
+  "weight": 30,
+  "quota": 2,
+  "sound": "coin",
+  "startHour": 7,
+  "endHour": 11,
+  "punctual": true
+ },
+ {
+  "id": "job_pasture_milk",
+  "name": "牧场挤奶（日结）",
+  "icon": "🥛",
+  "kind": "day",
+  "locationId": "pasture",
+  "duration": 4,
+  "desc": "给奶牛挤奶、打扫牛棚，半天 50 元",
+  "requirements": { "attr": { "stamina": 25 } },
+  "effects": { "money": 50, "stamina": -35, "stress": -2, "mood": 2, "skills": { "cooking": 1 }, "log": "在牧场挤了半天奶，赚了 50 元" },
+  "verdicts": [
+   "奶牛太温顺了，挤奶还挺解压",
+   "牛棚味道冲，但干完挺有成就感",
+   "牧场主人夸你手脚麻利",
+   "挤奶是个技术活，刚开始手酸",
+   "没想到和牛能相处得这么和谐",
+   "挤完最后一桶，牛还回头看了你一眼"
+  ],
+  "weight": 30,
+  "quota": 2,
+  "sound": "coin",
+  "startHour": 6,
+  "endHour": 10,
+  "punctual": true
+ },
+ {
+  "id": "job_orchard_pick",
+  "name": "果园采摘（日结）",
+  "icon": "🍊",
+  "kind": "day",
+  "locationId": "orchard",
+  "duration": 4,
+  "desc": "摘时令水果、分拣装箱，半天 40 元",
+  "requirements": { "attr": { "stamina": 25 } },
+  "effects": { "money": 40, "stamina": -30, "stress": -4, "mood": 3, "skills": { "cooking": 1 }, "log": "在果园摘了半天水果，赚了 40 元" },
+  "verdicts": [
+   "爬上爬下摘果子，腿脚还挺利索",
+   "果香四溢，心情好了一整天",
+   "树荫下比大太阳舒服多了",
+   "拣出不少烂果子，眼力见长了",
+   "果园老板送了几个品相不好的，也挺甜",
+   "收工大爷递来一碗自酿果酒"
+  ],
+  "weight": 30,
+  "quota": 2,
+  "sound": "coin",
+  "startHour": 7,
+  "endHour": 11,
+  "punctual": true
+ },
+ {
+  "id": "job_cafe_staff",
+  "name": "咖啡厅正式店员（固定）",
+  "icon": "🍮",
+  "kind": "fixed",
+  "locationId": "cafe",
+  "duration": 8,
+  "desc": "固定工作，需服务技能与技能证书",
+  "requirements": {
+   "attr": {
+    "health": 40
+   },
+   "skill": {
+    "service": 3
+   },
+   "flag": "item_certificate"
+  },
+  "effects": {
+   "money": 95,
+   "stamina": -50,
+   "stress": 10,
+   "skills": {
+    "service": 1
+   },
+   "log": "在咖啡厅上了一天班"
+  },
+  "verdicts": [
+   "咖啡香里站了一天，腿酸",
+   "客人络绎不绝，忙得脚不沾地",
+   "打奶泡打得手都僵了",
+   "今天学了个新拉花，有点成就感",
+   "碰到个话多的顾客，聊了一下午",
+   "下班前终于闲下来，喝了杯自己拉的咖啡",
+   "被店长夸了两句，心情不错"
+  ],
+  "sound": "cashier",
+  "startHour": 9,
+  "endHour": 17,
+  "punctual": true
+ },
+ {
+  "id": "job_driving_tutor",
+  "name": "驾校助教（固定）",
+  "icon": "🚗",
+  "kind": "fixed",
+  "locationId": "driving_school",
+  "duration": 8,
+  "desc": "教新学员开车，需驾驶本（驾校上班）",
+  "requirements": {
+   "attr": {
+    "health": 30
+   },
+   "flag": "item_driving_license"
+  },
+  "effects": {
+   "money": 100,
+   "stamina": -40,
+   "stress": 5,
+   "skills": {
+    "driving": 2
+   },
+   "log": "在驾校做助教一天，赚了 100 元"
+  },
+  "verdicts": [
+   "学员把油门当刹车踩，冷汗直冒",
+   "嗓子喊哑了，赚的都是喊出来的",
+   "还好有驾驶本，这活不难",
+   "新学员手忙脚乱，我得眼观六路",
+   "教了十遍倒车入库，终于会了",
+   "今天的学员悟性不错，省心",
+   "坐在副驾一整天，比开车还累"
+  ],
+  "sound": "coin",
+  "startHour": 9,
+  "endHour": 17,
+  "punctual": true
+ },
+ {
+  "id": "job_factory_line",
+  "name": "流水线普工（日结）",
+  "icon": "🏭",
+  "kind": "day",
+  "locationId": "electronics_factory",
+  "duration": 8,
+  "desc": "电子厂流水线组装，站着干一天，日结 65 元",
+  "requirements": {
+   "attr": {
+    "health": 40,
+    "stamina": 50
+   }
+  },
+  "effects": {
+   "money": 65,
+   "stamina": -60,
+   "stress": 12,
+   "skills": {
+    "operation": 1
+   },
+   "log": "在电子厂流水线干了一天，赚了 65 元"
+  },
+  "verdicts": [
+   "流水线一刻不停，手都麻了",
+   "焊了三百个点，眼睛发酸",
+   "工友说下个月旺季加班多",
+   "站着干了一天，腿像灌了铅",
+   "流水线的活没什么技术含量，就是熬",
+   "下班打卡，腰都直不起来"
+  ],
+  "sound": "cashier",
+  "heavy": true,
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true
+ },
+ {
+  "id": "job_factory_qc",
+  "name": "质检员（周结）",
+  "icon": "🔍",
+  "kind": "weekly",
+  "locationId": "electronics_factory",
+  "duration": 8,
+  "desc": "检查出厂产品，周薪 75 元/天，周日发薪",
+  "requirements": {
+   "attr": {
+    "intelligence": 30
+   }
+  },
+  "effects": {
+   "money": 75,
+   "stamina": -45,
+   "stress": 8,
+   "skills": {
+    "operation": 1
+   },
+   "log": "在电子厂当了一天质检员"
+  },
+  "verdicts": [
+   "挑出了十几个次品，很有成就感",
+   "盯了一整天屏幕，眼睛干涩",
+   "质检比流水线轻松些",
+   "组长说干得好月底有奖金",
+   "重复的工作，慢慢就熟练了",
+   "质检这活，细心最重要"
+  ],
+  "sound": "coin",
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true,
+  "restDays": [
+   "sat",
+   "sun"
+  ]
+ },
+ {
+  "id": "job_factory_tech",
+  "name": "产线技工（正式工）",
+  "icon": "⚙️",
+  "kind": "monthly",
+  "locationId": "electronics_factory",
+  "duration": 8,
+  "desc": "设备调试维护，月薪 90 元/天，每月 30 号发薪",
+  "requirements": {
+   "attr": {
+    "intelligence": 40
+   }
+  },
+  "effects": {
+   "money": 90,
+   "stamina": -55,
+   "stress": 10,
+   "skills": {
+    "operation": 2
+   },
+   "log": "在电子厂做设备调试"
+  },
+  "verdicts": [
+   "调了一台老机器，参数对了",
+   "技工师傅教的，学到了真东西",
+   "设备的毛病一听就猜个大概",
+   "厂里缺技术员，你来的正好",
+   "保养了三条产线，机器转得顺",
+   "正式工的活，稳定但责任也大"
+  ],
+  "sound": "coin",
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true
+ },
+ {
+  "id": "job_sorting",
+  "name": "物流分拣员（日结）",
+  "icon": "📦",
+  "kind": "day",
+  "locationId": "logistics_center",
+  "duration": 8,
+  "desc": "分拣快递包裹，日结 55 元",
+  "requirements": {
+   "attr": {
+    "health": 40,
+    "stamina": 50
+   }
+  },
+  "effects": {
+   "money": 55,
+   "stamina": -60,
+   "stress": 10,
+   "log": "在物流中心分拣了一天快递，赚了 55 元"
+  },
+  "verdicts": [
+   "包裹堆成山，扫码扫到手软",
+   "按区域分拣，练出了眼力",
+   "双十一的包裹比平时多一倍",
+   "仓库里冬暖夏凉，就是累",
+   "分错一个件要扣钱，小心再小心",
+   "下班时手指头都僵硬了"
+  ],
+  "sound": "cashier",
+  "heavy": true,
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true
+ },
+ {
+  "id": "job_loading",
+  "name": "装卸工（周结）",
+  "icon": "🏋️",
+  "kind": "weekly",
+  "locationId": "logistics_center",
+  "duration": 8,
+  "desc": "装卸货车，周薪 65 元/天，周日发薪",
+  "requirements": {
+   "attr": {
+    "health": 50,
+    "stamina": 60
+   }
+  },
+  "effects": {
+   "money": 65,
+   "stamina": -70,
+   "stress": 12,
+   "log": "在物流中心装卸了一天货"
+  },
+  "verdicts": [
+   "搬了一天的货，肌肉酸胀",
+   "大件两个人抬，小件自己扛",
+   "装卸是纯体力活，累但实在",
+   "队长递了根烟，说小伙子行",
+   "手套磨破了两双",
+   "收工时夕阳刚好，疲惫但充实"
+  ],
+  "sound": "coin",
+  "heavy": true,
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true
+ },
+ {
+  "id": "job_warehouse",
+  "name": "仓储管理员（正式工）",
+  "icon": "🗃️",
+  "kind": "monthly",
+  "locationId": "logistics_center",
+  "duration": 8,
+  "desc": "管理仓库进出库，月薪 80 元/天，每月 30 号发薪",
+  "requirements": {
+   "attr": {
+    "health": 55,
+    "stamina": 60
+   }
+  },
+  "effects": {
+   "money": 80,
+   "stamina": -50,
+   "stress": 8,
+   "skills": {
+    "management": 1
+   },
+   "log": "在物流中心管理仓库一天"
+  },
+  "verdicts": [
+   "盘点库存，账实相符",
+   "安排了三次装卸，井井有条",
+   "仓库主管教你怎么管账",
+   "扫码入库出库，流程熟练",
+   "月底盘库最累，但平时还好",
+   "这份工作稳定，慢慢能攒下钱"
+  ],
+  "sound": "coin",
+  "startHour": 8,
+  "endHour": 16,
+  "punctual": true
+ },
+ {
+  "id": "job_office_assistant",
+  "name": "办公室文员（正式工）",
+  "icon": "💼",
+  "kind": "monthly",
+  "locationId": "labor_company",
+  "duration": 8,
+  "desc": "劳务公司办公室文员，月薪 100 元/天，每月 30 号发薪",
+  "requirements": {
+   "attr": {
+    "intelligence": 50
+   },
+   "flag": "item_laptop"
+  },
+  "effects": {
+   "money": 100,
+   "stamina": -35,
+   "stress": 10,
+   "skills": {
+    "writing": 1,
+    "operation": 1
+   },
+   "log": "在劳务公司做了一天文员"
+  },
+  "verdicts": [
+   "整理了一整天合同，头大",
+   "帮老板打了两份报表",
+   "文员的工作琐碎但体面",
+   "办公室里吹空调，比工厂强",
+   "老板说下个月可能要你管招聘",
+   "打字打得手指发麻"
+  ],
+  "sound": "coin",
+  "startHour": 9,
+  "endHour": 17,
+  "punctual": true,
+  "restDays": [
+   "sat",
+   "sun"
+  ]
+ },
+ {
+  "id": "job_security",
+  "name": "保安（日结）",
+  "icon": "🛡️",
+  "kind": "day",
+  "duration": 12,
+  "desc": "看工地/小区门岗 12 小时，站着熬一天",
+  "requirements": {
+   "attr": {
+    "health": 45,
+    "stamina": 50
+   }
+  },
+  "effects": {
+   "money": 75,
+   "stamina": -85,
+   "stress": 10,
+   "log": "站了一天岗，赚了 75 元"
+  },
+  "verdicts": [
+   "十二个小时站下来腿都直了",
+   "夜里巡了三次楼",
+   "和换班的师傅聊了几句",
+   "保安亭的椅子终于坐到了",
+   "明天还是这个岗，认了",
+   "赚的是辛苦钱"
+  ],
+  "sound": "cashier",
+  "heavy": true,
+  "weight": 8,
+  "quota": 2,
+  "startHour": 20,
+  "endHour": 8,
+  "punctual": true,
+  "restDays": [
+   "sat",
+   "sun"
+  ]
+ },
+ {
+  "id": "job_sales",
+  "name": "促销员（日结）",
+  "icon": "📢",
+  "kind": "day",
+  "duration": 8,
+  "desc": "商场门口发传单卖货，底薪+提成",
+  "requirements": {
+   "attr": {
+    "health": 40,
+    "stamina": 40,
+    "charm": 30
+   }
+  },
+  "effects": {
+   "money": 40,
+   "stamina": -55,
+   "stress": 8,
+   "log": "发了一天传单，底薪 40 + 提成 {money} 元"
+  },
+  "verdicts": [
+   "喊了一天嗓子哑了",
+   "卖出两单，提成还不错",
+   "大多数路人摆摆手",
+   "商场保安来赶了两次",
+   "笑脸迎人，累并坚持",
+   "今天业绩垫底"
+  ],
+  "sound": "cashier",
+  "weight": 7,
+  "quota": 2,
+  "moneyRange": {
+   "min": 60,
+   "max": 110
+  },
+  "startHour": 10,
+  "endHour": 18,
+  "punctual": true
+ },
+ {
+  "id": "job_ride_hailing",
+  "name": "网约车司机（日结）",
+  "icon": "🚖",
+  "kind": "day",
+  "duration": 10,
+  "desc": "跑网约车 10 小时，收入看运气（需汽车+驾驶本）",
+  "requirements": {
+   "attr": {
+    "health": 45,
+    "stamina": 50
+   },
+   "flag": "item_car",
+   "skill": {
+    "driving": 1
+   }
+  },
+  "effects": {
+   "money": 90,
+   "stamina": -65,
+   "stress": 12,
+   "log": "跑了十小时网约车，赚了 {money} 元"
+  },
+  "verdicts": [
+   "接单没停过，流水还行",
+   "遇到一个赶飞机的大单",
+   "堵车堵了一个小时",
+   "乘客给了五星好评",
+   "油钱一扣没剩多少",
+   "今天运气不错"
+  ],
+  "sound": "cashier",
+  "weight": 5,
+  "quota": 1,
+  "moneyRange": {
+   "min": 90,
+   "max": 140
+  },
+  "punctual": false,
+  "restDays": []
+ },
+ {
+  "id": "job_taxi",
+  "name": "出租车司机（日结）",
+  "icon": "🚕",
+  "kind": "day",
+  "duration": 10,
+  "desc": "开出租 10 小时，时好时坏（需汽车+驾驶本）",
+  "requirements": {
+   "attr": {
+    "health": 50,
+    "stamina": 55
+   },
+   "flag": "item_car",
+   "skill": {
+    "driving": 1
+   }
+  },
+  "effects": {
+   "money": 100,
+   "stamina": -70,
+   "stress": 10,
+   "log": "跑了一整天出租，赚了 {money} 元"
+  },
+  "verdicts": [
+   "早高峰拉了一串短途",
+   "机场线来了一单大的",
+   "堵车费油费时间",
+   "和乘客聊了一路",
+   "交班前最后一单不错",
+   "出租车司机的一天就这样"
+  ],
+  "sound": "cashier",
+  "weight": 4,
+  "quota": 1,
+  "moneyRange": {
+   "min": 100,
+   "max": 150
+  },
+  "punctual": false,
+  "restDays": []
+ },
+ {
+  "id": "job_waiter_west",
+  "name": "西餐厅服务员（固定）",
+  "icon": "🍽️",
+  "kind": "fixed",
+  "locationId": "western_restaurant",
+  "duration": 10,
+  "desc": "西餐厅端盘子，服务技能门槛",
+  "requirements": {
+   "attr": {
+    "health": 40,
+    "stamina": 45
+   },
+   "skill": {
+    "service": 2
+   }
+  },
+  "effects": {
+   "money": 65,
+   "stamina": -50,
+   "stress": 8,
+   "skills": {
+    "service": 1
+   },
+   "log": "在西餐厅服务了一天，赚了 65 元"
+  },
+  "verdicts": [
+   "西餐厅的客人讲究，要小心翼翼",
+   "开了几瓶红酒，练了开瓶",
+   "小费制度下收入看运气",
+   "牛排上错了桌，赔了笑脸",
+   "刀叉摆放终于不出错了",
+   "一晚上下来脚底板生疼"
+  ],
+  "sound": "cashier",
+  "startHour": 11,
+  "endHour": 21,
+  "punctual": true
+ },
+ {
+  "id": "job_waiter_fast",
+  "name": "快餐厅服务员（固定）",
+  "icon": "🍔",
+  "kind": "fixed",
+  "locationId": "fast_food",
+  "duration": 8,
+  "desc": "快餐厅点餐收银，上手快",
+  "requirements": {
+   "attr": {
+    "health": 40,
+    "stamina": 45
+   },
+   "skill": {
+    "service": 1
+   }
+  },
+  "effects": {
+   "money": 60,
+   "stamina": -50,
+   "stress": 10,
+   "skills": {
+    "service": 1
+   },
+   "log": "在快餐厅服务了一天，赚了 60 元"
+  },
+  "verdicts": [
+   "点餐高峰期手忙脚乱",
+   "薯条机一直没停过",
+   "小孩把可乐打翻了，收拾半天",
+   "收银机对上了账",
+   "今天的人比昨天多",
+   "累但能攒下钱"
+  ],
+  "sound": "cashier",
+  "startHour": 10,
+  "endHour": 18,
+  "punctual": true
+ }
+]

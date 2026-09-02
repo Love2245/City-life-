@@ -1,0 +1,10 @@
+node_modules/
+.vite-cache/
+dist/
+dist-portable/
+.env
+.env.*
+!.env.example
+*.log
+target/
+*.local

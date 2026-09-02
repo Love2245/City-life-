@@ -1,0 +1,82 @@
+[
+  {
+    "id": "downtown",
+    "name": "市区",
+    "icon": "🏙️",
+    "desc": "繁华都市的核心区域，工作机会与生活配套齐全",
+    "gradient": "linear-gradient(135deg, #1a2440, #2b3a67)"
+  },
+  {
+    "id": "suburb",
+    "name": "郊区",
+    "icon": "🏡",
+    "desc": "城市边缘与乡村地带，农场、牧场、宗教场所汇聚",
+    "gradient": "linear-gradient(135deg, #1e2a4a, #3a4a7a)"
+  },
+  {
+    "id": "suburban_edge",
+    "name": "城市边缘",
+    "icon": "🏞️",
+    "desc": "游乐场、环湖公园与宗教场所所在地",
+    "gradient": "linear-gradient(135deg, #2d5f5e, #4a968e)",
+    "parent": "suburb"
+  },
+  {
+    "id": "rural",
+    "name": "农村地带",
+    "icon": "🌾",
+    "desc": "农场、牧场、果园散布其间，可低价采购农产，打工赚日薪",
+    "gradient": "linear-gradient(135deg, #4a6b2d, #7aa34a)",
+    "parent": "suburb"
+  },
+  {
+    "id": "heavy_industry",
+    "name": "重工业区",
+    "icon": "🏗️",
+    "desc": "钢铁厂、玻璃厂、铝厂聚集地——本版暂未开放",
+    "gradient": "linear-gradient(135deg, #4a3c3c, #6b4a4a)",
+    "locked": true,
+    "parent": "suburb"
+  },
+  {
+    "id": "downtown_center",
+    "name": "市中心",
+    "icon": "🏛️",
+    "desc": "写字楼、医院与公园林立的行政文化区",
+    "gradient": "linear-gradient(135deg, #2d5f9e, #4a9edb)",
+    "parent": "downtown"
+  },
+  {
+    "id": "downtown_mall",
+    "name": "商场",
+    "icon": "🏬",
+    "desc": "餐饮娱乐一站式，吃喝玩乐应有尽有",
+    "gradient": "linear-gradient(135deg, #3d5c7a, #5c8eb0)",
+    "parent": "downtown"
+  },
+  {
+    "id": "downtown_industrial",
+    "name": "工业园区",
+    "icon": "🏭",
+    "desc": "工厂与物流聚集地，工作机会多但环境较艰苦",
+    "gradient": "linear-gradient(135deg, #5c3d5e, #8a5c8e)",
+    "parent": "downtown"
+  },
+  {
+    "id": "downtown_residential",
+    "name": "住宅区",
+    "icon": "🏘️",
+    "desc": "你住的地方，生活气息浓厚，配套齐全",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "parent": "downtown"
+  },
+  {
+    "id": "downtown_station",
+    "name": "火车站",
+    "icon": "🚉",
+    "desc": "高铁与巴士枢纽，前往其他城市的出发地",
+    "gradient": "linear-gradient(135deg, #2c3e72, #4a5488)",
+    "locked": true,
+    "parent": "downtown"
+  }
+]

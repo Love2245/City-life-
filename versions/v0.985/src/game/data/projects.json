@@ -1,0 +1,91 @@
+[
+  {
+    "id": "indie_game",
+    "name": "独立游戏开发",
+    "icon": "🎮",
+    "desc": "利用业余时间开发一款像素风独立游戏，上线后可能一夜爆红",
+    "skill": { "programming": 3 },
+    "flag": "item_laptop",
+    "progressPerAction": 8,
+    "maxProgress": 100,
+    "effects": {
+      "stamina": -15,
+      "stress": 4,
+      "intelligence": 1,
+      "log": "敲了一晚上代码，独立游戏开发进度推进了"
+    },
+    "reward": {
+      "money": 5000,
+      "fame": 20,
+      "mood": 15,
+      "log": "独立游戏正式上线！Steam 好评如潮，你赚到了第一桶金"
+    },
+    "verdicts": [
+      "又修了一个 bug，离发布近了一步",
+      "今天灵感爆发，写了几百行代码",
+      "像素画好难，但越画越有感觉",
+      "测试版找朋友试玩，反馈不错",
+      "熬夜赶工，黑眼圈又重了",
+      "想着万一火了，是不是就能辞职了"
+    ]
+  },
+  {
+    "id": "mobile_app",
+    "name": "开发手机 App",
+    "icon": "📱",
+    "desc": "做一个工具类 App，上架应用商店赚广告费",
+    "skill": { "programming": 5 },
+    "flag": "item_laptop",
+    "progressPerAction": 7,
+    "maxProgress": 100,
+    "effects": {
+      "stamina": -15,
+      "stress": 4,
+      "intelligence": 1,
+      "log": "写了一个新功能，App 开发进度推进了"
+    },
+    "reward": {
+      "money": 8000,
+      "fame": 25,
+      "mood": 18,
+      "log": "App 上架应用商店！下载量破十万，广告费源源不断"
+    },
+    "verdicts": [
+      "调了一天 UI，终于像样了",
+      "加了广告 SDK，测试广告刷了不少",
+      "后台数据看着涨，信心越来越足",
+      "有用户留言说好用，值了",
+      "迭代了一版，崩溃率降下来了",
+      "想着如果下载量过万，就辞了正式工"
+    ]
+  },
+  {
+    "id": "street_stall",
+    "name": "摆摊创业",
+    "icon": "🍢",
+    "desc": "晚上在街边摆个小吃摊，生意好了能比打工强",
+    "skill": { "cooking": 2 },
+    "progressPerAction": 8,
+    "maxProgress": 100,
+    "effects": {
+      "stamina": -12,
+      "money": -30,
+      "stress": 3,
+      "log": "收摊算账，摊位创业进度推进了"
+    },
+    "reward": {
+      "money": 4000,
+      "fame": 12,
+      "mood": 12,
+      "log": "小吃摊口碑做起来了！回头客越来越多，月入开始过万"
+    },
+    "verdicts": [
+      "今天客流不错，卖得七七八八",
+      "隔壁摊位生意太好，羡慕",
+      "试了几个新配方，客人都说好吃",
+      "城管来了，赶紧收摊跑路",
+      "老顾客带新顾客，摊位渐渐有了名",
+      "算下来一天能赚不少，比打工自由"
+    ]
+  }
+]
