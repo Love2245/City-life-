@@ -1,0 +1,2399 @@
+{
+  "version": 1,
+  "events": [
+    {
+      "id": "ev_street_lottery",
+      "title": "街边的彩票站",
+      "icon": "🎫",
+      "text": "路过彩票站，老板热情招呼你刮一张（10 元），说不定今天转运？",
+      "weight": 10,
+      "conditions": {
+        "locationId": "street",
+        "period": [
+          "morning",
+          "afternoon",
+          "evening"
+        ],
+        "minMoney": 10
+      },
+      "choices": [
+        {
+          "label": "刮一张（-10 元）",
+          "effects": {
+            "money": -10,
+            "mood": 5,
+            "stress": -3
+          }
+        },
+        {
+          "label": "不买，走人",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "cooldown": 3,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_street_orphan_kitten",
+      "title": "纸箱里的小猫",
+      "icon": "🐱",
+      "text": "街角传来微弱的叫声——纸箱里有只脏兮兮的小猫。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "street"
+      },
+      "choices": [
+        {
+          "label": "买根火腿肠喂它（-3 元）",
+          "effects": {
+            "money": -3,
+            "mood": 8,
+            "flags": {
+              "ev_kitten_fed": true
+            }
+          }
+        },
+        {
+          "label": "带回家收养",
+          "requires": {
+            "notFlag": "cat_adopted_orange"
+          },
+          "adoptCat": "orange",
+          "effects": {
+            "mood": 10,
+            "log": "你小心翼翼地把小猫抱回了家，它成了你的伙伴"
+          },
+          "outcome": "小猫在你怀里打了个哈欠，认下了这个家。"
+        },
+        {
+          "label": "拍张照发朋友圈",
+          "effects": {
+            "mood": 3,
+            "fame": 1
+          }
+        },
+        {
+          "label": "当作没看见",
+          "effects": {
+            "mood": -3
+          }
+        }
+      ],
+      "cooldown": 5,
+      "sound": "success"
+    },
+    {
+      "id": "ev_park_coach",
+      "title": "公园晨练大爷",
+      "icon": "🏃",
+      "text": "一位大爷看你跑得气喘吁吁，说小伙子姿势不对，要教你两招。",
+      "weight": 7,
+      "conditions": {
+        "locationId": "park",
+        "period": [
+          "morning",
+          "afternoon"
+        ]
+      },
+      "choices": [
+        {
+          "label": "虚心求教",
+          "effects": {
+            "fitness": 2,
+            "mood": 3
+          }
+        },
+        {
+          "label": "不好意思，赶时间",
+          "effects": {}
+        }
+      ],
+      "sound": "exercise"
+    },
+    {
+      "id": "ev_library_student",
+      "title": "求助的学妹",
+      "icon": "🎓",
+      "text": "图书馆里一个女生在写论文，愁眉苦脸地看向你：同学，能帮我看下这段代码吗？",
+      "weight": 6,
+      "conditions": {
+        "locationId": "library",
+        "attr": {
+          "intelligence": 30
+        }
+      },
+      "choices": [
+        {
+          "label": "热心帮忙（智力达标）",
+          "requires": {
+            "attr": {
+              "intelligence": 45
+            }
+          },
+          "addContact": "library_coder",
+          "effects": {
+            "charm": 2,
+            "mood": 5,
+            "fame": 1
+          }
+        },
+        {
+          "label": "爱莫能助",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "sound": "study"
+    },
+    {
+      "id": "ev_park_calligraphy",
+      "title": "公园地书大爷",
+      "icon": "🖌️",
+      "text": "公园里一位大爷拿大毛笔在地上写书法，笔走龙蛇。他抬头看你：年轻人，识货不？要不要切磋两笔？",
+      "weight": 6,
+      "conditions": {
+        "locationId": "park",
+        "attr": {
+          "intelligence": 30
+        }
+      },
+      "choices": [
+        {
+          "label": "讨教两笔（智力达标）",
+          "addContact": "park_calligraphy_grandpa",
+          "effects": {
+            "charm": 2,
+            "mood": 4,
+            "fame": 1
+          }
+        },
+        {
+          "label": "围观一会就走",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "cooldown": 10,
+      "sound": "study"
+    },
+    {
+      "id": "ev_cafe_clerk",
+      "title": "咖啡厅的店员",
+      "icon": "☕",
+      "text": "咖啡厅店员看你独自坐着，端来一杯温水：常来啊？咱店缺人手，你人挺精神的，想来随时说。",
+      "weight": 6,
+      "conditions": {
+        "locationId": "cafe",
+        "attr": {
+          "charm": 40
+        }
+      },
+      "choices": [
+        {
+          "label": "加个微信（魅力达标）",
+          "requires": {
+            "attr": {
+              "charm": 40
+            }
+          },
+          "addContact": "cafe_clerk",
+          "effects": {
+            "mood": 3,
+            "charm": 1
+          }
+        },
+        {
+          "label": "寒暄两句离开",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "cooldown": 14,
+      "sound": "success"
+    },
+    {
+      "id": "ev_convenience_clerk",
+      "title": "便利店店长",
+      "icon": "🏪",
+      "text": "便利店店长理货时跟你聊了几句，说店里正缺人：小伙子挺踏实，想来上班跟我说一声。",
+      "weight": 6,
+      "conditions": {
+        "locationId": "convenience_store",
+        "attr": {
+          "charm": 40
+        }
+      },
+      "choices": [
+        {
+          "label": "留个联系方式（魅力达标）",
+          "requires": {
+            "attr": {
+              "charm": 40
+            }
+          },
+          "addContact": "convenience_clerk",
+          "effects": {
+            "mood": 3,
+            "charm": 1
+          }
+        },
+        {
+          "label": "客气寒暄离开",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "cooldown": 14,
+      "sound": "success"
+    },
+    {
+      "id": "ev_cafe_tycoon",
+      "title": "邻座的创业大叔",
+      "icon": "💼",
+      "text": "咖啡厅邻座的大叔听完你的近况，说你口才不错，要不要去他公司试试销售？",
+      "weight": 6,
+      "conditions": {
+        "locationId": "cafe",
+        "period": [
+          "morning",
+          "afternoon"
+        ]
+      },
+      "choices": [
+        {
+          "label": "留个联系方式",
+          "requires": {
+            "attr": {
+              "charm": 40
+            }
+          },
+          "effects": {
+            "flags": {
+              "ev_sales_contact": true
+            },
+            "mood": 5,
+            "charm": 1
+          }
+        },
+        {
+          "label": "礼貌婉拒",
+          "effects": {
+            "mood": 2
+          }
+        }
+      ],
+      "cooldown": 7,
+      "sound": "success"
+    },
+    {
+      "id": "ev_convenience_extra",
+      "title": "多找的零钱",
+      "icon": "🪙",
+      "text": "便利店店员找零多给了你 5 块钱。",
+      "weight": 9,
+      "conditions": {
+        "locationId": "convenience_store",
+        "minMoney": 0
+      },
+      "choices": [
+        {
+          "label": "还回去",
+          "effects": {
+            "mood": 5,
+            "charm": 1
+          }
+        },
+        {
+          "label": "默默收下",
+          "effects": {
+            "money": 5,
+            "mood": -2
+          }
+        }
+      ],
+      "cooldown": 4,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_street_rain",
+      "title": "突如其来的雨",
+      "icon": "🌧️",
+      "text": "天空说变就变，豆大的雨点砸了下来。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "street",
+        "period": [
+          "afternoon",
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "买把伞（-15 元）",
+          "effects": {
+            "money": -15,
+            "mood": 3,
+            "flags": {
+              "ev_umbrella": true
+            }
+          }
+        },
+        {
+          "label": "找个屋檐躲雨",
+          "effects": {
+            "stamina": -3,
+            "stress": -2
+          }
+        },
+        {
+          "label": "淋雨跑回去",
+          "effects": {
+            "health": -3,
+            "hygiene": -5,
+            "stamina": -5
+          }
+        }
+      ],
+      "sound": "rain"
+    },
+    {
+      "id": "ev_park_chess",
+      "title": "象棋摊的赌局",
+      "icon": "♟️",
+      "text": "公园象棋摊的大爷朝你招手：小兄弟，下一盘？押 5 块，赢了拿 20。",
+      "weight": 7,
+      "conditions": {
+        "locationId": "park",
+        "period": [
+          "afternoon",
+          "evening"
+        ],
+        "attr": {
+          "intelligence": 35
+        },
+        "minMoney": 5
+      },
+      "choices": [
+        {
+          "label": "下！押 5 块",
+          "addContact": "park_chess_grandpa",
+          "effects": {
+            "mood": 2,
+            "log": "和公园大爷下了一把象棋"
+          },
+          "gamble": {
+            "cost": 5,
+            "win": 20,
+            "lose": 0,
+            "winChance": 0.45
+          }
+        },
+        {
+          "label": "不赌，看看就好",
+          "effects": {
+            "mood": 2
+          }
+        }
+      ],
+      "cooldown": 5,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_home_noise",
+      "title": "深夜的邻居",
+      "icon": "🔊",
+      "text": "隔壁房间的电视声吵得人睡不着。",
+      "weight": 6,
+      "conditions": {
+        "locationId": "home",
+        "period": [
+          "night",
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "敲门理论",
+          "effects": {
+            "stress": 5,
+            "mood": 5,
+            "charm": -1
+          }
+        },
+        {
+          "label": "戴上耳机忍了",
+          "effects": {
+            "mood": -4
+          }
+        },
+        {
+          "label": "贴张纸条提醒",
+          "requires": {
+            "attr": {
+              "intelligence": 35
+            }
+          },
+          "effects": {
+            "stress": -3,
+            "mood": 2
+          }
+        }
+      ],
+      "cooldown": 4,
+      "sound": "error"
+    },
+    {
+      "id": "ev_labor_foreman",
+      "title": "工头的额外单",
+      "icon": "📦",
+      "text": "工头拍拍你的肩膀：今晚还有一单急活，加 30 块，干不干？（+3 小时）",
+      "weight": 7,
+      "conditions": {
+        "locationId": "labor_market",
+        "attr": {
+          "stamina": 40
+        },
+        "hourRange": {
+          "start": 8,
+          "end": 17
+        }
+      },
+      "choices": [
+        {
+          "label": "接！（+30 元 -15 体力 +3h）",
+          "effects": {
+            "money": 30,
+            "stamina": -15,
+            "stress": 5,
+            "flags": {
+              "ev_overtime": true
+            }
+          }
+        },
+        {
+          "label": "今天太累了，算了",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "cooldown": 3,
+      "sound": "cashier"
+    },
+    {
+      "id": "ev_street_talent",
+      "title": "街头艺人的吉他",
+      "icon": "🎸",
+      "text": "街头艺人弹着吉他，看你在旁边站了很久：要不要来一首？",
+      "weight": 6,
+      "conditions": {
+        "locationId": "street",
+        "period": [
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "上去献丑一首",
+          "effects": {
+            "mood": 8,
+            "fame": 1,
+            "charm": 1
+          }
+        },
+        {
+          "label": "打赏 5 块",
+          "effects": {
+            "money": -5,
+            "mood": 3
+          }
+        },
+        {
+          "label": "默默走开",
+          "effects": {}
+        }
+      ],
+      "cooldown": 6,
+      "sound": "read"
+    },
+    {
+      "id": "ev_cafe_lucky_cup",
+      "title": "再来一杯",
+      "icon": "☕",
+      "text": "咖啡师说你运气好，杯子底下印着「再来一杯」！",
+      "weight": 5,
+      "conditions": {
+        "locationId": "cafe"
+      },
+      "choices": [
+        {
+          "label": "兑换免费咖啡",
+          "effects": {
+            "mood": 8,
+            "stamina": 5,
+            "flags": {
+              "ev_free_coffee": true
+            }
+          }
+        },
+        {
+          "label": "把券送给旁边的人",
+          "effects": {
+            "charm": 2,
+            "mood": 4
+          }
+        }
+      ],
+      "cooldown": 8,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_street_found_money",
+      "title": "地上的二十块",
+      "icon": "💵",
+      "text": "街边的下水道旁躺着一张皱巴巴的二十块，周围没人。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "street"
+      },
+      "choices": [
+        {
+          "label": "捡起来（+20 元）",
+          "effects": {
+            "money": 20,
+            "mood": 3
+          }
+        },
+        {
+          "label": "放回原地",
+          "effects": {
+            "mood": 4,
+            "charm": 1
+          }
+        }
+      ],
+      "cooldown": 4,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_convenience_free_coffee",
+      "title": "店家请客",
+      "icon": "☕",
+      "text": "便利店店员说店庆搞活动，请你喝一杯免费豆浆。",
+      "weight": 7,
+      "conditions": {
+        "locationId": "convenience_store"
+      },
+      "choices": [
+        {
+          "label": "谢谢老板（+饱腹）",
+          "effects": {
+            "satiety": 15,
+            "mood": 4
+          }
+        },
+        {
+          "label": "婉拒，赶时间",
+          "effects": {}
+        }
+      ],
+      "cooldown": 5,
+      "sound": "eat"
+    },
+    {
+      "id": "ev_lottery_scratch",
+      "title": "手痒的彩票",
+      "icon": "🎫",
+      "text": "彩票站老板说新到的刮刮乐头奖 500 块，刮一张试试？",
+      "weight": 6,
+      "conditions": {
+        "locationId": "street",
+        "period": [
+          "morning",
+          "afternoon",
+          "evening"
+        ],
+        "minMoney": 20
+      },
+      "choices": [
+        {
+          "label": "刮一张（押 20 元）",
+          "gamble": {
+            "cost": 20,
+            "win": 80,
+            "lose": 0,
+            "winChance": 0.25
+          },
+          "effects": {
+            "mood": 2
+          }
+        },
+        {
+          "label": "算了，钱要省着花",
+          "effects": {}
+        }
+      ],
+      "cooldown": 7,
+      "sound": "coin"
+    },
+    {
+      "id": "ev_street_pickpocket",
+      "title": "小偷的问候",
+      "icon": "🦹",
+      "text": "一个人撞了你一下，你下意识摸口袋——钱包不见了！",
+      "weight": 5,
+      "tone": "negative",
+      "conditions": {
+        "locationId": "street",
+        "minMoney": 30,
+        "difficulty": {
+          "min": 2
+        }
+      },
+      "choices": [
+        {
+          "label": "追上去！（体质达标）",
+          "requires": {
+            "attr": {
+              "fitness": 40
+            }
+          },
+          "effects": {
+            "mood": 6,
+            "stress": -5
+          }
+        },
+        {
+          "label": "认栽，报警备案",
+          "gamble": {
+            "cost": 0,
+            "win": 50,
+            "lose": -50,
+            "winChance": 0.3
+          },
+          "effects": {
+            "mood": -5
+          }
+        }
+      ],
+      "cooldown": 6,
+      "sound": "error"
+    },
+    {
+      "id": "ev_gym_coach",
+      "title": "健身房的教练指点",
+      "icon": "💪",
+      "text": "教练看你动作不标准，主动过来教你几招。",
+      "weight": 6,
+      "cooldown": 5,
+      "conditions": {
+        "locationId": "gym"
+      },
+      "choices": [
+        {
+          "label": "虚心请教",
+          "effects": {
+            "fitness": 1,
+            "mood": 3,
+            "log": "教练指点了几招，收获不少"
+          }
+        },
+        {
+          "label": "自己练练就行",
+          "effects": {
+            "fitness": 1,
+            "log": "自己琢磨了几个动作"
+          }
+        }
+      ],
+      "sound": "study"
+    },
+    {
+      "id": "ev_fastfood_sick",
+      "title": "吃坏肚子了",
+      "icon": "🤢",
+      "text": "刚吃完的汉堡好像不太对劲，肚子隐隐作痛。",
+      "weight": 5,
+      "tone": "negative",
+      "cooldown": 7,
+      "conditions": {
+        "locationId": "fast_food",
+        "difficulty": {
+          "min": 2
+        }
+      },
+      "choices": [
+        {
+          "label": "赶紧去买药",
+          "requires": {
+            "money": 30
+          },
+          "effects": {
+            "money": -30,
+            "log": "买药吃下了，希望没事"
+          }
+        },
+        {
+          "label": "扛一扛就好",
+          "effects": {
+            "log": "肚子疼得厉害，但忍忍就过去了",
+            "statuses": [
+              {
+                "id": "sick",
+                "severity": 1
+              }
+            ]
+          }
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_street_umbrella",
+      "title": "雨后的旧伞",
+      "icon": "☂️",
+      "text": "上次下雨时别人落在路边的伞，还挺新的。",
+      "weight": 6,
+      "cooldown": 3,
+      "conditions": {
+        "locationId": "street",
+        "flag": "ev_umbrella"
+      },
+      "choices": [
+        {
+          "label": "捡走用",
+          "effects": {
+            "mood": 2,
+            "log": "白捡了一把伞，赚了"
+          }
+        },
+        {
+          "label": "放在原地",
+          "effects": {
+            "mood": 1,
+            "charm": 1,
+            "log": "留给需要的人吧"
+          }
+        }
+      ],
+      "sound": "walk"
+    },
+    {
+      "id": "ev_hospital_checkup",
+      "title": "免费体检",
+      "icon": "🩺",
+      "text": "医院在做公益体检活动，免费的，你要不要查查？",
+      "weight": 4,
+      "conditions": {
+        "locationId": "hospital"
+      },
+      "choices": [
+        {
+          "label": "体验一下",
+          "effects": {
+            "health": 5,
+            "mood": 2,
+            "log": "免费体检报告：各项指标基本正常"
+          }
+        },
+        {
+          "label": "太麻烦",
+          "effects": {}
+        }
+      ],
+      "once": true,
+      "sound": "study"
+    },
+    {
+      "id": "ev_cafe_regular",
+      "title": "熟客介绍兼职",
+      "icon": "☕",
+      "text": "经常来的熟客说手头有个兼职活，问你有没有兴趣。",
+      "weight": 5,
+      "cooldown": 7,
+      "conditions": {
+        "locationId": "cafe",
+        "skill": {
+          "service": 2
+        }
+      },
+      "choices": [
+        {
+          "label": "问清楚",
+          "effects": {
+            "flags": {
+              "ev_cafe_lead": true
+            },
+            "mood": 4,
+            "charm": 1,
+            "log": "熟客留了联系方式，说有需要再找你"
+          }
+        },
+        {
+          "label": "婉拒",
+          "effects": {
+            "mood": -1
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_factory_bonus",
+      "title": "厂里临时加班",
+      "icon": "💼",
+      "text": "车间主任说今天货催得紧，加班两小时多给 40 块。",
+      "weight": 6,
+      "cooldown": 4,
+      "conditions": {
+        "locationId": "electronics_factory",
+        "period": [
+          "morning",
+          "afternoon"
+        ]
+      },
+      "choices": [
+        {
+          "label": "加班赚钱",
+          "effects": {
+            "money": 40,
+            "stamina": -15,
+            "stress": 5,
+            "log": "加班两小时，累但钱包鼓了"
+          }
+        },
+        {
+          "label": "准时下班",
+          "effects": {
+            "mood": 2,
+            "log": "钱是赚不完的，下班！"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_summer_heatstroke",
+      "title": "热浪来袭",
+      "icon": "🥵",
+      "text": "正午的太阳要把柏油路晒化了，热气蒸得人头晕目眩。",
+      "weight": 9,
+      "tone": "negative",
+      "conditions": {
+        "locationId": "street",
+        "weather": [
+          "heatwave"
+        ]
+      },
+      "choices": [
+        {
+          "label": "找阴凉处休息",
+          "effects": {
+            "stamina": -5,
+            "mood": -2,
+            "log": "在树荫下缓了半天，热浪真不是闹着玩的"
+          }
+        },
+        {
+          "label": "买瓶冰水（-5 元）",
+          "effects": {
+            "money": -5,
+            "stamina": 5,
+            "mood": 3,
+            "log": "一瓶冰水下肚，活过来了"
+          }
+        },
+        {
+          "label": "硬撑着赶路",
+          "effects": {
+            "health": -5,
+            "stamina": -12,
+            "log": "硬撑着往前走，太阳晒得头皮发麻"
+          }
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_rain_bus",
+      "title": "雨天公交抛锚",
+      "icon": "🚌",
+      "text": "大雨滂沱，你等的公交车坏在半路，站台上挤满了人。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "bus_station",
+        "weather": [
+          "rain"
+        ]
+      },
+      "choices": [
+        {
+          "label": "淋雨走过去",
+          "effects": {
+            "stamina": -8,
+            "hygiene": -10,
+            "log": "只能冒雨走过去，浑身湿透"
+          }
+        },
+        {
+          "label": "打车（-30 元）",
+          "effects": {
+            "money": -30,
+            "stamina": -2,
+            "log": "狠心打了辆车，肉疼但不用淋雨"
+          }
+        },
+        {
+          "label": "回站台继续等",
+          "effects": {
+            "stress": 3,
+            "log": "在站台干等，希望下一班别坏"
+          }
+        }
+      ],
+      "sound": "rain"
+    },
+    {
+      "id": "ev_winter_slip",
+      "title": "雪天路滑",
+      "icon": "❄️",
+      "text": "积雪被踩成了冰面，你脚下一滑——整个人摔了出去。",
+      "weight": 8,
+      "tone": "negative",
+      "conditions": {
+        "locationId": "street",
+        "weather": [
+          "snow"
+        ],
+        "difficulty": {
+          "min": 2
+        }
+      },
+      "choices": [
+        {
+          "label": "爬起来拍拍雪",
+          "effects": {
+            "health": -4,
+            "mood": -3,
+            "log": "摔得不轻，好在没伤到骨头"
+          }
+        },
+        {
+          "label": "小心挪到药店买药（-20 元）",
+          "effects": {
+            "money": -20,
+            "health": 2,
+            "log": "买了点跌打药，回去擦一擦"
+          }
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_autumn_leaves",
+      "title": "落叶堆里的意外之财",
+      "icon": "🍂",
+      "text": "秋风扫过，落叶堆里露出一张皱巴巴的钞票。",
+      "weight": 6,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "season": [
+          "autumn"
+        ]
+      },
+      "choices": [
+        {
+          "label": "捡起来收好",
+          "effects": {
+            "money": 50,
+            "mood": 4,
+            "log": "运气不错，白捡 50 块"
+          }
+        },
+        {
+          "label": "四处看看还有没有",
+          "effects": {
+            "money": 20,
+            "mood": 2,
+            "log": "又翻出 20 块，今天的运气真好"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_spring_festival",
+      "title": "春节拜年",
+      "icon": "🧧",
+      "text": "大年初一，街上张灯结彩，迎面走来认识的街坊，笑呵呵地递来红包。",
+      "weight": 20,
+      "tone": "positive",
+      "once": true,
+      "conditions": {
+        "holiday": [
+          "spring_festival"
+        ]
+      },
+      "choices": [
+        {
+          "label": "笑着收下红包",
+          "effects": {
+            "money": 100,
+            "mood": 8,
+            "log": "新年第一个红包，讨个好彩头"
+          }
+        },
+        {
+          "label": "回赠一句祝福",
+          "effects": {
+            "mood": 10,
+            "fame": 2,
+            "log": "互道恭喜发财，年味十足"
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_national_day",
+      "title": "国庆假期兼职",
+      "icon": "🇨🇳",
+      "text": "国庆长假，商场缺人手，招临时兼职，时薪翻倍。",
+      "weight": 15,
+      "tone": "positive",
+      "conditions": {
+        "holiday": [
+          "national_day"
+        ]
+      },
+      "choices": [
+        {
+          "label": "去兼职赚一笔",
+          "effects": {
+            "money": 120,
+            "stamina": -15,
+            "log": "国庆兼职两天，赚了一笔外快"
+          }
+        },
+        {
+          "label": "给自己放个假",
+          "effects": {
+            "mood": 8,
+            "stress": -5,
+            "log": "难得假期，好好休息"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_market_fair_deal",
+      "title": "集市七五折特卖",
+      "icon": "🏷️",
+      "text": "集市深处的摊主冲你吆喝：最后一件好货清仓甩卖，全场七五折，过了这村没这店！",
+      "weight": 3,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "market_fair"
+      },
+      "choices": [
+        {
+          "label": "凑近看看是什么好货",
+          "effects": {
+            "mood": 2
+          }
+        },
+        {
+          "label": "捂紧钱包，只看不买",
+          "effects": {
+            "stress": 1,
+            "log": "忍住了集市的冲动消费，钱包保住了"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_lost_wallet",
+      "title": "人行道上的钱包",
+      "icon": "👛",
+      "text": "路过街角时，你脚边躺着一个鼓鼓的钱包，四下无人，只有监控探头闪着红点。",
+      "weight": 8,
+      "tone": "neutral",
+      "conditions": {
+        "region": [
+          "downtown",
+          "suburb"
+        ]
+      },
+      "choices": [
+        {
+          "label": "原地等失主 / 交给派出所",
+          "effects": {
+            "stress": -2,
+            "mood": 5,
+            "log": "把钱包交给了民警，走出派出所时脚步都轻快了"
+          }
+        },
+        {
+          "label": "先收起来再说",
+          "effects": {
+            "money": 260,
+            "stress": 4,
+            "mood": -3,
+            "log": "揣着捡来的 260 元，一整天都有点心神不宁"
+          }
+        },
+        {
+          "label": "假装没看见",
+          "effects": {
+            "mood": -1,
+            "log": "多一事不如少一事，你绕开了那个钱包"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_street_guitarist",
+      "title": "地下通道的吉他声",
+      "icon": "🎸",
+      "text": "地下通道里，一个抱着旧吉他的年轻人正唱着民谣，琴箱里稀稀拉拉躺着几枚硬币。他唱得真的不错。",
+      "weight": 9,
+      "tone": "positive",
+      "conditions": {
+        "region": [
+          "downtown"
+        ]
+      },
+      "choices": [
+        {
+          "label": "扫码打赏 10 元",
+          "effects": {
+            "money": -10,
+            "mood": 6,
+            "stress": -3,
+            "log": "他冲你点了点头，把副歌飙高了半个调"
+          }
+        },
+        {
+          "label": "点一首歌",
+          "effects": {
+            "money": -5,
+            "mood": 8,
+            "stress": -4,
+            "log": "点了一首老歌，整条通道的人都跟着哼了起来"
+          }
+        },
+        {
+          "label": "驻足听完，悄悄离开",
+          "effects": {
+            "mood": 3,
+            "stress": -2,
+            "log": "免费听了一场live，值了"
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_square_dance",
+      "title": "广场舞缺个领舞",
+      "icon": "💃",
+      "text": "公园广场上，领舞的阿姨今天请假，音响前的队伍乱成了一锅粥。领队大妈一眼相中了你：小伙子/小姑娘，来一个！",
+      "weight": 9,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "period": [
+          "morning",
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "硬着头皮上",
+          "effects": {
+            "mood": 8,
+            "stress": -5,
+            "fame": 1,
+            "stamina": -5,
+            "log": "你领跳了一段最炫民族风，大妈们掌声雷动，还有人要给你介绍对象"
+          }
+        },
+        {
+          "label": "礼貌拒绝",
+          "effects": {
+            "mood": 2,
+            "log": "大妈遗憾地摆摆手：年轻人放不开呀"
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_stray_cat",
+      "title": "蹭腿的流浪猫",
+      "icon": "🐈",
+      "text": "一只橘猫从花坛里钻出来，毫不客气地蹭你的裤腿，喉咙里发出拖拉机般的呼噜声。它看起来饿坏了。",
+      "weight": 10,
+      "tone": "positive",
+      "conditions": {
+        "locationIn": [
+          "park",
+          "street",
+          "home"
+        ]
+      },
+      "choices": [
+        {
+          "label": "去便利店买根火腿肠（-3 元）",
+          "effects": {
+            "money": -3,
+            "mood": 7,
+            "stress": -4,
+            "log": "橘猫风卷残云地吃完，冲你眨了眨眼，仿佛在说下次还来"
+          }
+        },
+        {
+          "label": "带回家收养",
+          "requires": {
+            "notFlag": "cat_adopted_orange"
+          },
+          "adoptCat": "orange",
+          "effects": {
+            "mood": 10,
+            "stress": -5,
+            "log": "你蹲下来，橘猫蹭了蹭你的手，乖乖跟你回了家"
+          },
+          "outcome": "橘猫从此赖上了你，成了你家的常驻住户。"
+        },
+        {
+          "label": "撸两把就撤",
+          "effects": {
+            "mood": 5,
+            "stress": -3,
+            "log": "撸猫五分钟，快乐一整天"
+          }
+        },
+        {
+          "label": "忍痛离开",
+          "effects": {
+            "mood": -2,
+            "log": "你狠心走开，背后的猫叫声渐远"
+          }
+        }
+      ],
+      "sound": "eat"
+    },
+    {
+      "id": "ev_fortune_teller",
+      "title": "公园算命摊",
+      "icon": "🔮",
+      "text": "梧桐树下的算命先生拦住你：这位面相奇特，我免费送你一句。信不信由你。",
+      "weight": 7,
+      "tone": "neutral",
+      "conditions": {
+        "locationId": "park"
+      },
+      "choices": [
+        {
+          "label": "听听他怎么说（-20 元香火钱）",
+          "effects": {
+            "money": -20,
+            "mood": 5,
+            "stress": -3,
+            "log": "大师说你天庭饱满近期能遇贵人，听着挺舒坦"
+          }
+        },
+        {
+          "label": "笑着摆手走开",
+          "effects": {
+            "mood": 1,
+            "log": "命是自己的，不听忽悠"
+          }
+        }
+      ],
+      "sound": "read"
+    },
+    {
+      "id": "ev_old_bookstall",
+      "title": "旧书摊的意外",
+      "icon": "📚",
+      "text": "街边的旧书摊五块钱一本随便挑。你翻开一本旧词典，里面竟然夹着一张泛黄的粮票和几行钢笔字。",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "locationIn": [
+          "street",
+          "market_fair",
+          "park"
+        ]
+      },
+      "choices": [
+        {
+          "label": "买下这本词典（-5 元）",
+          "effects": {
+            "money": -5,
+            "mood": 6,
+            "intelligence": 1,
+            "log": "词典和粮票都归了你，前主人的批注很有意思"
+          }
+        },
+        {
+          "label": "拍张照发到市民论坛",
+          "effects": {
+            "mood": 4,
+            "fame": 1,
+            "log": "帖子「旧书里的时光」在论坛小火了一把"
+          }
+        }
+      ],
+      "sound": "read"
+    },
+    {
+      "id": "ev_marathon_detour",
+      "title": "马拉松封路",
+      "icon": "🏃",
+      "text": "城市马拉松开跑，主干道全线封闭，警车开道，人群沸腾。你要去的地方得绕好大一圈。",
+      "weight": 6,
+      "tone": "neutral",
+      "conditions": {
+        "period": [
+          "morning"
+        ]
+      },
+      "choices": [
+        {
+          "label": "绕路走小街（多花些时间）",
+          "effects": {
+            "stamina": -6,
+            "stress": 2,
+            "log": "七拐八绕总算到了，多走了一身汗"
+          }
+        },
+        {
+          "label": "留下给选手加油",
+          "effects": {
+            "mood": 6,
+            "stress": -3,
+            "fame": 1,
+            "log": "你嗓子都喊哑了，还有选手击掌回应你"
+          }
+        }
+      ],
+      "sound": "walk"
+    },
+    {
+      "id": "ev_midnight_store",
+      "title": "深夜便利店的陌生人",
+      "icon": "🌙",
+      "text": "凌晨的便利店，只剩你和另一个客人格外安静。他盯着关东煮发呆，忽然开口：你说，人这辈子图个啥？",
+      "weight": 7,
+      "tone": "neutral",
+      "conditions": {
+        "locationIn": [
+          "convenience_store",
+          "street"
+        ],
+        "period": [
+          "night",
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "坐下来聊了会儿",
+          "effects": {
+            "mood": 5,
+            "stress": -4,
+            "log": "陌生人聊完买了单，说了句「谢了，兄弟」消失在夜色里"
+          }
+        },
+        {
+          "label": "递给他一串关东煮（-8 元）",
+          "effects": {
+            "money": -8,
+            "mood": 7,
+            "stress": -5,
+            "log": "他愣了几秒，眼眶有点红：「今天是我生日」"
+          }
+        },
+        {
+          "label": "戴上耳机装没听见",
+          "effects": {
+            "mood": -1,
+            "log": "深夜的emo就留给深夜吧"
+          }
+        }
+      ],
+      "sound": "phone"
+    },
+    {
+      "id": "ev_weekend_market",
+      "title": "周末集市",
+      "icon": "🎪",
+      "text": "周末的街道格外热闹，临时集市支起了棚子，人来人往。",
+      "weight": 12,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "street",
+        "weekend": true
+      },
+      "choices": [
+        {
+          "label": "逛逛淘点便宜货（-20 元）",
+          "effects": {
+            "money": -20,
+            "mood": 6,
+            "log": "在集市淘了件小玩意，心情不错"
+          }
+        },
+        {
+          "label": "吃碗热气腾腾的牛杂（-12 元）",
+          "effects": {
+            "money": -12,
+            "satiety": 25,
+            "mood": 4,
+            "log": "集市牛杂真香，一碗下肚暖乎乎的"
+          }
+        },
+        {
+          "label": "只看不买",
+          "effects": {
+            "mood": 3,
+            "log": "逛了一圈，感受了下周末的烟火气"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_weekend_park_show",
+      "title": "公园广场演出",
+      "icon": "🎤",
+      "text": "公园广场搭起了临时舞台，社区乐队在唱老歌，围了不少人。",
+      "weight": 10,
+      "conditions": {
+        "locationId": "park",
+        "weekend": true,
+        "period": [
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "跟着唱两句",
+          "effects": {
+            "mood": 6,
+            "stress": -5,
+            "log": "跟着人群大合唱，憋了一周的疲惫都散了"
+          }
+        },
+        {
+          "label": "安静听歌",
+          "effects": {
+            "mood": 4,
+            "stress": -3,
+            "log": "坐在长椅上听完一场演出"
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_weekend_sale",
+      "title": "商场周末大促",
+      "icon": "🛍️",
+      "text": "商场周末大促，门口贴满了打折海报。",
+      "weight": 9,
+      "conditions": {
+        "region": [
+          "downtown_mall"
+        ],
+        "weekend": true
+      },
+      "choices": [
+        {
+          "label": "入手心仪已久的商品（-40 元）",
+          "effects": {
+            "money": -40,
+            "mood": 7,
+            "log": "趁着大促拿下了心仪的东西"
+          }
+        },
+        {
+          "label": "只逛不买",
+          "effects": {
+            "mood": 2,
+            "log": "试了一圈没买，等下次打折"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_weekend_odd_job",
+      "title": "周末临时工",
+      "icon": "💪",
+      "text": "有商家在门口贴出周末临时工招聘，一小时一结，干不干？",
+      "weight": 11,
+      "conditions": {
+        "weekend": true,
+        "minMoney": 1
+      },
+      "choices": [
+        {
+          "label": "干！赚点外快（-15 体力）",
+          "effects": {
+            "money": 60,
+            "stamina": -15,
+            "stress": 3,
+            "log": "周末打了一天的零工，赚了 60 块"
+          }
+        },
+        {
+          "label": "难得休息，算了",
+          "effects": {
+            "mood": 3,
+            "stress": -2,
+            "log": "拒绝了临时工，给自己放个假"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_weekend_market_lucky",
+      "title": "集市套圈",
+      "icon": "⭕",
+      "text": "集市套圈摊的老板吆喝：十块钱五个圈，套中就归你！",
+      "weight": 8,
+      "conditions": {
+        "locationId": "street",
+        "weekend": true,
+        "minMoney": 10
+      },
+      "choices": [
+        {
+          "label": "试试手气（-10 元）",
+          "effects": {
+            "mood": 1,
+            "log": "扔了五个圈，一个没中"
+          },
+          "gamble": {
+            "cost": 10,
+            "win": 30,
+            "lose": 0,
+            "winChance": 0.25
+          }
+        },
+        {
+          "label": "看看热闹就好",
+          "effects": {
+            "mood": 2,
+            "log": "围观别人套圈，比自己玩有意思"
+          }
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_weekend_blind_date",
+      "title": "周末相亲角",
+      "icon": "💐",
+      "text": "公园周末相亲角挤满了人，有位阿姨拉住你问东问西。",
+      "weight": 7,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "weekend": true,
+        "attr": {
+          "charm": 20
+        }
+      },
+      "choices": [
+        {
+          "label": "留下联系方式",
+          "effects": {
+            "mood": 4,
+            "fame": 1,
+            "log": "留了联系方式，阿姨夸你条件不错"
+          }
+        },
+        {
+          "label": "婉拒后溜走",
+          "effects": {
+            "mood": 1,
+            "log": "笑着拒绝了阿姨，快步离开"
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_rural_dog",
+      "title": "村口的大黄狗",
+      "icon": "🐕",
+      "text": "刚进村口，一条大黄狗横在路中间冲你叫唤，主人在院里喊了两嗓子也不管用。",
+      "weight": 10,
+      "tone": "negative",
+      "conditions": {
+        "region": [
+          "rural"
+        ]
+      },
+      "choices": [
+        {
+          "label": "站住别动，等它自己走开",
+          "effects": {
+            "stress": 4,
+            "log": "僵持了两分钟，大黄狗嗅了嗅你就跑开了"
+          },
+          "outcome": "你一动不动，狗嗅了两下觉得没意思，摇着尾巴走了。虚惊一场，后背却出了一层汗。"
+        },
+        {
+          "label": "绕远路进村（+0.5 小时）",
+          "effects": {
+            "hours": 0.5,
+            "stamina": -3,
+            "log": "绕了半小时田埂进村，鞋上全是泥"
+          },
+          "outcome": "你顺着田埂绕了一大圈，鞋底糊满了泥。狗是躲开了，太阳也偏了半格。"
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_rural_harvest_gift",
+      "title": "乡亲塞来的土产",
+      "icon": "🥬",
+      "text": "路过一户人家，大婶非要往你手里塞一把刚拔的青菜：\"城里买这个可贵了！\"",
+      "weight": 9,
+      "tone": "positive",
+      "conditions": {
+        "region": [
+          "rural"
+        ]
+      },
+      "choices": [
+        {
+          "label": "道谢收下",
+          "effects": {
+            "mood": 6,
+            "stress": -4,
+            "satiety": 4,
+            "log": "收下了大婶给的一把青菜，心里暖乎乎的"
+          },
+          "outcome": "菜叶上还挂着水珠。你抱着这把青菜走了一路，忽然觉得这地方没那么陌生了。"
+        },
+        {
+          "label": "推辞不过，回赠 5 元",
+          "effects": {
+            "money": -5,
+            "mood": 4,
+            "fame": 1,
+            "satiety": 4,
+            "log": "硬塞了 5 块钱过去，大婶直夸你懂事"
+          },
+          "outcome": "大婶推来推去还是收下了，转头又往你兜里塞了两个鸡蛋。这买卖你好像不亏。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_rural_tractor_lift",
+      "title": "搭个拖拉机",
+      "icon": "🚜",
+      "text": "一辆突突作响的拖拉机停在你旁边，开车的大叔探出头：\"上不上？捎你一段！\"",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "region": [
+          "rural"
+        ]
+      },
+      "choices": [
+        {
+          "label": "跳上去",
+          "effects": {
+            "mood": 5,
+            "stamina": 4,
+            "stress": -3,
+            "log": "坐着拖拉机颠了一路，风把烦心事都吹散了"
+          },
+          "outcome": "车斗颠得屁股疼，风却吹得人清醒。大叔一路上跟你聊庄稼、聊儿子，下车时非要你以后常来。"
+        },
+        {
+          "label": "谢过，自己走",
+          "effects": {
+            "stamina": -4,
+            "log": "摆手谢过大叔，自己顺着土路走"
+          },
+          "outcome": "拖拉机突突地开远了。你踩着车辙印慢慢走，倒也落得清静，就是腿有点酸。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_farm_wasp",
+      "title": "菜地里的马蜂",
+      "icon": "🐝",
+      "text": "翻地的时候一脚踩塌了土坎，几只马蜂嗡地飞了出来。",
+      "weight": 8,
+      "tone": "negative",
+      "conditions": {
+        "locationIn": [
+          "farm",
+          "orchard"
+        ]
+      },
+      "choices": [
+        {
+          "label": "抱头就跑",
+          "effects": {
+            "health": -4,
+            "stamina": -6,
+            "stress": 6,
+            "log": "跑出去十几米，胳膊上还是被蜇了一下"
+          },
+          "outcome": "胳膊上鼓起个红包，火辣辣地疼。王大伯拿了点土办法给你抹上，说过两天就消。"
+        },
+        {
+          "label": "慢慢后退，别挥手",
+          "effects": {
+            "stress": 3,
+            "log": "屏住呼吸退了出来，马蜂没追上"
+          },
+          "outcome": "你一步步退到安全距离，马蜂绕了两圈又钻回土里。老农在旁边点点头：\"这娃有点见识。\""
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_pasture_calf",
+      "title": "刚出生的小牛",
+      "icon": "🐮",
+      "text": "牛棚角落里躺着一头昨夜刚出生的小牛，正歪歪扭扭地想站起来。",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "pasture"
+      },
+      "choices": [
+        {
+          "label": "扶它一把",
+          "effects": {
+            "mood": 7,
+            "stress": -5,
+            "log": "扶着小牛站了起来，它冲你晃了晃尾巴"
+          },
+          "outcome": "小牛终于四条腿撑住了地，湿漉漉的眼睛盯着你看。李婶笑着说这算是你俩有缘。"
+        },
+        {
+          "label": "在旁边看着",
+          "effects": {
+            "mood": 3,
+            "stress": -2,
+            "log": "看着小牛自己挣扎着站了起来"
+          },
+          "outcome": "它摔了三回，第四回站住了。你忽然觉得，摔了再站起来这件事，其实谁都会。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_orchard_taste",
+      "title": "树上的第一口",
+      "icon": "🍑",
+      "text": "张伯摘了个熟透的果子在衣角上蹭了蹭递给你：\"尝尝，自家树上的。\"",
+      "weight": 9,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "orchard"
+      },
+      "choices": [
+        {
+          "label": "咬一大口",
+          "effects": {
+            "satiety": 10,
+            "mood": 5,
+            "stress": -3,
+            "log": "咬了一大口，汁水顺着下巴流"
+          },
+          "outcome": "甜得发腻，汁水糊了一手。张伯在旁边乐：\"城里超市那些放冷库的，哪有这个味儿。\""
+        },
+        {
+          "label": "揣兜里留着",
+          "effects": {
+            "mood": 3,
+            "log": "把果子揣进兜里，留着晚点吃"
+          },
+          "outcome": "果子在兜里晃了一路，回去时已经压出个印。你还是舍不得扔，洗洗吃了。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_temple_old_monk",
+      "title": "石阶上的老僧",
+      "icon": "🧘",
+      "text": "扫地的时候，一位老僧在石阶上坐了很久，忽然开口问你：\"施主近来，睡得着吗？\"",
+      "weight": 9,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "temple"
+      },
+      "choices": [
+        {
+          "label": "老实说睡不着",
+          "effects": {
+            "stress": -12,
+            "mood": 6,
+            "log": "跟老僧说了半天心里话，压着的石头轻了些"
+          },
+          "outcome": "你说了很多，老僧一句没劝，只是听着。临走时他说：\"话说出来，就不全压在自己身上了。\""
+        },
+        {
+          "label": "笑笑说挺好",
+          "effects": {
+            "stress": -3,
+            "log": "客套了两句，继续扫地"
+          },
+          "outcome": "老僧点点头没再问。你扫着扫着，忽然有点后悔刚才没说实话。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_temple_lamp",
+      "title": "供灯",
+      "icon": "🪔",
+      "text": "大殿一侧摆着一排供灯，功德箱旁写着：随喜，10 元一盏。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "temple"
+      },
+      "choices": [
+        {
+          "label": "点一盏（-10 元）",
+          "requires": {
+            "money": 10
+          },
+          "effects": {
+            "money": -10,
+            "stress": -8,
+            "mood": 5,
+            "log": "点了一盏灯，看着火苗晃了很久"
+          },
+          "outcome": "小小的火苗在殿里晃。你没许什么大愿，只求日子稳当些——这大概也算一种许愿。"
+        },
+        {
+          "label": "只是合十",
+          "effects": {
+            "stress": -3,
+            "log": "在灯前合十片刻"
+          },
+          "outcome": "你没掏钱，只是站着看了一会儿。心里安静下来，这一趟就不算白来。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_church_choir",
+      "title": "唱诗班排练",
+      "icon": "🎶",
+      "text": "偏厅传来唱诗班排练的声音，指挥朝你招了招手：\"要不要一起？\"",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "church"
+      },
+      "choices": [
+        {
+          "label": "加入合唱",
+          "effects": {
+            "mood": 8,
+            "stress": -8,
+            "stamina": -3,
+            "fame": 1,
+            "log": "跟着唱诗班唱了两首，声音在穹顶下荡开"
+          },
+          "outcome": "你五音不全，但没人在意。声音撞在穹顶上又落下来，你唱着唱着眼眶有点发热。"
+        },
+        {
+          "label": "坐在后排听",
+          "effects": {
+            "mood": 4,
+            "stress": -5,
+            "log": "在后排静静听完了整首"
+          },
+          "outcome": "你缩在最后一排听完了整场。散场时指挥朝你点点头：\"下次别光坐着。\""
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_church_donation_box",
+      "title": "门口的捐款箱",
+      "icon": "🕊️",
+      "text": "出门时看见捐款箱旁贴着告示：为山区孩子募集过冬衣物。",
+      "weight": 8,
+      "conditions": {
+        "locationId": "church"
+      },
+      "choices": [
+        {
+          "label": "捐 20 元",
+          "requires": {
+            "money": 20
+          },
+          "effects": {
+            "money": -20,
+            "mood": 7,
+            "stress": -4,
+            "fame": 2,
+            "log": "往捐款箱里放了 20 块"
+          },
+          "outcome": "钱塞进去的一瞬间你还心疼了半秒。但走出门的时候，脚步意外地轻快。"
+        },
+        {
+          "label": "自己也不宽裕，下次吧",
+          "effects": {
+            "mood": -2,
+            "log": "在捐款箱前站了两秒，还是走开了"
+          },
+          "outcome": "你摸了摸兜，又把手抽了回来。谁不是在硬撑呢——这么想着，心里还是有点不是滋味。"
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_adopt_mint_cat",
+      "title": "花圃里的薄荷猫",
+      "icon": "🐱",
+      "text": "公园花圃里蹲着一只通体淡绿的小猫，浑身散发着薄荷的清香。它歪着头看你，像是在等什么。",
+      "weight": 5,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "period": [
+          "morning",
+          "afternoon"
+        ]
+      },
+      "choices": [
+        {
+          "label": "用猫粮哄它回家",
+          "requires": {
+            "notFlag": "stray_adopted"
+          },
+          "adoptCat": "mint",
+          "effects": {
+            "money": -10,
+            "mood": 10,
+            "log": "薄荷猫嗅了嗅猫粮，优雅地跟你回了家"
+          },
+          "outcome": "薄荷猫进了门，绕着屋子转了一圈，最后在你枕边卧下。满屋子都是淡淡的薄荷香。"
+        },
+        {
+          "label": "撸两把就撤",
+          "effects": {
+            "mood": 6,
+            "stress": -4,
+            "log": "薄荷猫的毛软得像云，撸完心情大好"
+          },
+          "outcome": "薄荷猫眯着眼任你撸，你走的时候它也没挽留，继续蹲在花圃里。"
+        },
+        {
+          "label": "当作没看见",
+          "effects": {
+            "mood": -2,
+            "log": "你绕开了花圃"
+          }
+        }
+      ],
+      "cooldown": 10,
+      "sound": "success"
+    },
+    {
+      "id": "ev_edge_last_bus",
+      "title": "末班车",
+      "icon": "🚌",
+      "text": "站牌上写着末班车 21:30，你抬头看了看天，太阳已经贴着山头了。",
+      "weight": 10,
+      "tone": "negative",
+      "conditions": {
+        "region": [
+          "suburban_edge",
+          "rural"
+        ],
+        "hourRange": {
+          "start": 18,
+          "end": 22
+        }
+      },
+      "choices": [
+        {
+          "label": "赶紧往站台跑",
+          "effects": {
+            "stamina": -8,
+            "stress": 5,
+            "log": "一路小跑赶上了末班车"
+          },
+          "outcome": "车门在你身后合上。你扶着栏杆喘了半天，司机从后视镜里瞟了你一眼，什么也没说。"
+        },
+        {
+          "label": "不急，慢慢走",
+          "effects": {
+            "hours": 1,
+            "stress": 8,
+            "mood": -4,
+            "log": "错过了末班车，只能沿着公路多走一个小时"
+          },
+          "outcome": "车尾灯在拐弯处消失了。天彻底黑下来，路灯隔得老远才有一盏，你只能顺着白线往前挪。"
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_industry_shift_whistle",
+      "title": "换班的汽笛",
+      "icon": "🏭",
+      "text": "厂区汽笛长鸣，成群的工人推着自行车从大门涌出来，每个人脸上都是同一种疲惫。",
+      "weight": 9,
+      "conditions": {
+        "region": [
+          "heavy_industry"
+        ]
+      },
+      "choices": [
+        {
+          "label": "站着看一会儿",
+          "effects": {
+            "mood": -3,
+            "stress": 3,
+            "log": "看着下班的人流，说不上什么滋味"
+          },
+          "outcome": "你在人流里站了很久。他们和你一样，都在为下个月的房租奔命。这个认知既让人安慰，又让人发慌。"
+        },
+        {
+          "label": "跟着人流一起走",
+          "effects": {
+            "mood": 2,
+            "stress": -2,
+            "log": "混在下班的人群里往外走"
+          },
+          "outcome": "有人递给你一根烟，你摆手谢了。走出厂门那一刻，你居然有种下班的错觉。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_industry_dust",
+      "title": "扬尘",
+      "icon": "😷",
+      "text": "重卡碾过厂区土路，扬起的灰扑了你一脸，嗓子里立刻发干。",
+      "weight": 9,
+      "tone": "negative",
+      "conditions": {
+        "region": [
+          "heavy_industry"
+        ]
+      },
+      "choices": [
+        {
+          "label": "买瓶水冲冲（-3 元）",
+          "requires": {
+            "money": 3
+          },
+          "effects": {
+            "money": -3,
+            "satiety": 2,
+            "stress": -2,
+            "log": "买了瓶水漱口，嗓子舒服多了"
+          },
+          "outcome": "灌了两口水，喉咙里那股铁锈味总算下去了。剩下半瓶你浇在了手上洗灰。"
+        },
+        {
+          "label": "忍忍就过去了",
+          "effects": {
+            "health": -3,
+            "stress": 4,
+            "log": "咳了一路，嗓子又干又痒"
+          },
+          "outcome": "你咳了一路，晚上躺下还觉得嗓子眼里有沙。这地方的工资，好像也是有代价的。"
+        }
+      ],
+      "sound": "error"
+    },
+    {
+      "id": "ev_intro_cafe_girl",
+      "title": "咖啡馆的常客",
+      "icon": "☕",
+      "text": "你在咖啡馆靠窗坐下，邻座常来的姑娘打量了你几眼，主动搭话：你是新来的吧？来这儿几回，都看你一个人坐着。",
+      "weight": 8,
+      "once": true,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "cafe",
+        "period": [
+          "morning",
+          "afternoon",
+          "evening"
+        ]
+      },
+      "choices": [
+        {
+          "label": "自我介绍，交个朋友",
+          "effects": {
+            "mood": 4,
+            "stress": -2
+          },
+          "addNpc": "npc_lin_xiaoyu",
+          "outcome": "你们聊得挺投机，算是认识了。"
+        },
+        {
+          "label": "点头示意，各喝各的",
+          "effects": {
+            "mood": 1
+          }
+        }
+      ],
+      "sound": "phone"
+    },
+    {
+      "id": "ev_intro_park_oldman",
+      "title": "公园的晨练大爷",
+      "icon": "🌄",
+      "text": "公园里一位精神矍铄的大爷看你天天来跑步，招手喊你：小伙子，陪我走两圈，跟你说点社会上的事。",
+      "weight": 8,
+      "once": true,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "period": [
+          "morning"
+        ]
+      },
+      "choices": [
+        {
+          "label": "陪大爷走两圈",
+          "effects": {
+            "mood": 4,
+            "intelligence": 1,
+            "stress": -2
+          },
+          "addNpc": "npc_wang_lei",
+          "outcome": "大爷姓王，退休干部，聊完还留了你联系方式。"
+        },
+        {
+          "label": "婉拒，自己练",
+          "effects": {
+            "stamina": 2
+          }
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_cat_street_adventure",
+      "title": "猫咪的街头冒险",
+      "icon": "🐈",
+      "text": "你带着猫咪走在街上，它突然竖起耳朵，死死盯着路边的草丛，尾巴兴奋地左右甩。",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "locationIn": [
+          "street",
+          "park"
+        ],
+        "hasActivePet": true
+      },
+      "choices": [
+        {
+          "label": "放它去探索",
+          "catEffect": {
+            "mood": 5
+          },
+          "effects": {
+            "mood": 2,
+            "stress": -3,
+            "log": "猫咪钻进草丛扑腾了一阵，心满意足地跑回来"
+          },
+          "outcome": "它叼着一片树叶凯旋，神气得像打了胜仗。"
+        },
+        {
+          "label": "陪它一起看",
+          "catEffect": {
+            "mood": 3
+          },
+          "effects": {
+            "mood": 3,
+            "log": "你蹲下来和它一起盯着草丛，什么也没发生，但猫咪很满足"
+          },
+          "outcome": "一人一猫蹲在路边看了半天，路人都投来好奇的目光。"
+        },
+        {
+          "label": "拉住它继续赶路",
+          "catEffect": {
+            "mood": -2
+          },
+          "effects": {
+            "mood": 1,
+            "log": "你把猫咪抱起来继续走，它在你怀里不满地喵了一声"
+          },
+          "outcome": "猫咪在你怀里扭来扭去，最后还是安静下来。"
+        }
+      ],
+      "cooldown": 4,
+      "sound": "success"
+    },
+    {
+      "id": "ev_cat_praise",
+      "title": "路人夸你的猫",
+      "icon": "😍",
+      "text": "一位路人看到你怀里的猫咪，眼睛一亮：「哇，好可爱的猫！能摸一下吗？」",
+      "weight": 8,
+      "tone": "positive",
+      "conditions": {
+        "locationIn": [
+          "street",
+          "park",
+          "cafe",
+          "market"
+        ],
+        "hasActivePet": true
+      },
+      "choices": [
+        {
+          "label": "大方让它被摸",
+          "catEffect": {
+            "mood": 6
+          },
+          "effects": {
+            "fame": 1,
+            "mood": 3,
+            "log": "路人撸得心满意足，你的猫咪也舒服地眯起眼"
+          },
+          "outcome": "路人离开前还回头看了好几眼，你的猫咪成了这条街的小明星。"
+        },
+        {
+          "label": "炫耀它的战绩",
+          "catEffect": {
+            "mood": 2
+          },
+          "effects": {
+            "fame": 2,
+            "mood": 2,
+            "log": "你滔滔不绝讲起猫咪的英勇事迹，路人听得一愣一愣"
+          },
+          "outcome": "路人半信半疑地点头，你的猫咪一脸「没错都是我干的」的表情。"
+        },
+        {
+          "label": "婉拒并离开",
+          "catEffect": {
+            "mood": -1
+          },
+          "effects": {
+            "mood": 1,
+            "log": "你礼貌拒绝了，抱着猫咪离开"
+          },
+          "outcome": "路人有些遗憾地目送你离开。"
+        }
+      ],
+      "cooldown": 4,
+      "sound": "success"
+    },
+    {
+      "id": "ev_cat_hungry",
+      "title": "猫咪饿了",
+      "icon": "🍽️",
+      "text": "走了一半，猫咪开始扒拉你的裤腿，可怜巴巴地仰头看你，喉咙里发出委屈的呜咽。",
+      "weight": 7,
+      "conditions": {
+        "locationIn": [
+          "street",
+          "park",
+          "market",
+          "convenience_store"
+        ],
+        "hasActivePet": true
+      },
+      "choices": [
+        {
+          "label": "喂它点吃的",
+          "catEffect": {
+            "satiety": 20
+          },
+          "effects": {
+            "satiety": -5,
+            "mood": 2,
+            "log": "你分了些吃的给猫咪，它狼吞虎咽地吃完"
+          },
+          "outcome": "猫咪吃饱了，精神抖擞地走在你前面带路。"
+        },
+        {
+          "label": "忍到回家再说",
+          "catEffect": {
+            "satiety": -5,
+            "mood": -5
+          },
+          "effects": {
+            "mood": -2,
+            "log": "你狠下心没喂，猫咪一路蔫蔫的"
+          },
+          "outcome": "猫咪回到家直奔猫粮碗，看你的眼神带着控诉。"
+        }
+      ],
+      "cooldown": 5,
+      "sound": "eat"
+    },
+    {
+      "id": "ev_cat_treasure",
+      "title": "猫咪发现宝藏",
+      "icon": "💎",
+      "text": "猫咪在花坛边刨来刨去，突然叼出一个亮晶晶的东西，邀功似的放到你脚边。",
+      "weight": 6,
+      "tone": "positive",
+      "conditions": {
+        "locationId": "park",
+        "hasActivePet": true
+      },
+      "choices": [
+        {
+          "label": "看看是什么",
+          "catEffect": {
+            "mood": 5
+          },
+          "effects": {
+            "money": 10,
+            "mood": 3,
+            "log": "是一枚旧硬币，虽然不值钱，但猫咪的运气不错"
+          },
+          "outcome": "你把硬币收进口袋，猫咪得意地翘着尾巴。"
+        },
+        {
+          "label": "让猫咪自己留着",
+          "catEffect": {
+            "mood": 10
+          },
+          "effects": {
+            "mood": 2,
+            "log": "你把「宝藏」还给猫咪，它宝贝似的叼着"
+          },
+          "outcome": "猫咪把硬币叼回草丛藏好，又跑回来蹭你的腿。"
+        }
+      ],
+      "cooldown": 6,
+      "sound": "coin"
+    }
+  ]
+}

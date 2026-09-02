@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>都市生活</title>
+    <style>
+      /* v1.21-beta5：竖屏移动设备显示"请横屏"提示；横屏后自动隐藏。
+         方向判断使用最可靠的 matchMedia("(orientation: portrait)")，并多重延迟兜底重算，
+         避免部分机型旋转后 innerWidth/innerHeight 未及时刷新导致遮罩卡死。 */
+      html.need-rotate body {
+        overflow: hidden;
+      }
+      #rotate-hint {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        text-align: center;
+        padding: 24px;
+        color: #eef2ff;
+        background:
+          radial-gradient(120% 120% at 50% 0%, #1b2440 0%, #0b1020 55%, #070b16 100%);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+      html.need-rotate #rotate-hint {
+        display: flex;
+      }
+      #rotate-hint .ico {
+        font-size: 64px;
+        animation: rot-tip 1.8s ease-in-out infinite;
+      }
+      @keyframes rot-tip {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(90deg); }
+      }
+      #rotate-hint .t1 {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+      #rotate-hint .t2 {
+        font-size: 13px;
+        opacity: 0.72;
+        max-width: 280px;
+        line-height: 1.5;
+      }
+      #rotate-hint .enter-anyway {
+        margin-top: 4px;
+        padding: 10px 20px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #eef2ff;
+        font-size: 13px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #rotate-hint .enter-anyway:active {
+        background: rgba(255, 255, 255, 0.16);
+      }
+    </style>
+    <script>
+      /* v1.21-beta5-hotfix：触摸设备竖屏时提示横置；横屏自动隐藏。
+         以 matchMedia("(orientation: portrait)") 为权威信号，并加 resize / orientationchange
+         监听 + 旋转后 250ms/600ms 延迟重算兜底。
+         点击「仍要进入」先尝试 screen.orientation.lock('landscape')；若成功则横屏游玩。
+         若锁定失败（iOS Safari 等不支持锁定），则启用 data-force-portrait，由 CSS 切换为
+         竖屏单栏布局，避免三栏硬塞。 */
+      (function () {
+        var forceEnter = false;
+        function isTouch() {
+          return (
+            window.matchMedia("(pointer: coarse)").matches ||
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+          );
+        }
+        function sync() {
+          var portrait = window.matchMedia("(orientation: portrait)").matches;
+          var show = isTouch() && portrait && !forceEnter;
+          document.documentElement.classList.toggle("need-rotate", show);
+        }
+        function recheckSoon() {
+          sync();
+          setTimeout(sync, 250);
+          setTimeout(sync, 600);
+        }
+        sync();
+        window.addEventListener("resize", recheckSoon);
+        window.addEventListener("orientationchange", recheckSoon);
+        if (window.matchMedia) {
+          var mq = window.matchMedia("(orientation: portrait)");
+          var onChange = function () { recheckSoon(); };
+          if (mq.addEventListener) mq.addEventListener("change", onChange);
+          else if (mq.addListener) mq.addListener(onChange);
+        }
+        window.addEventListener("DOMContentLoaded", function () {
+          var btn = document.getElementById("enter-anyway");
+          if (btn) {
+            btn.addEventListener("click", function () {
+              forceEnter = true;
+              var root = document.documentElement;
+              function hideHint() { root.classList.remove("need-rotate"); }
+              function usePortraitFallback() {
+                // 锁定失败：启用竖屏单栏自适应布局
+                root.setAttribute("data-force-portrait", "true");
+                hideHint();
+              }
+              if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock("landscape").then(function () {
+                  // 锁定成功，正常横屏游玩
+                  root.removeAttribute("data-force-portrait");
+                  hideHint();
+                }).catch(function () {
+                  usePortraitFallback();
+                });
+              } else {
+                usePortraitFallback();
+              }
+            });
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="rotate-hint">
+      <div class="ico">🔄</div>
+      <div class="t1">请将手机横置</div>
+      <div class="t2">《都市生活》手游为横版体验，请旋转手机至横屏以获得最佳画面</div>
+      <button id="enter-anyway" class="enter-anyway" type="button">仍要以当前方向进入 ›</button>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

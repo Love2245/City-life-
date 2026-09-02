@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "cats": [
+    {
+      "id": "orange",
+      "name": "橘猫",
+      "icon": "🐱",
+      "rarity": "common",
+      "element": "normal",
+      "desc": "均衡型，新手第一只猫。贪吃但忠诚，性格温吞。开局就陪在你身边。",
+      "base": { "hp": 80, "atk": 12, "def": 10, "spd": 10 },
+      "growth": { "hp": 5, "atk": 1.2, "def": 1.0, "spd": 1.0 },
+      "skills": ["hiss", "scratch", "fish_smash", "food_rage"],
+      "acquireNote": "开局就跟着你的初始伙伴"
+    },
+    {
+      "id": "mint",
+      "name": "薄荷猫",
+      "icon": "🐱",
+      "rarity": "rare",
+      "element": "nature",
+      "desc": "自然系，治疗型。浑身薄荷清香，靠近能让人心神安宁。在公园花圃偶遇。",
+      "base": { "hp": 85, "atk": 10, "def": 11, "spd": 11 },
+      "growth": { "hp": 5, "atk": 1.0, "def": 1.1, "spd": 1.1 },
+      "skills": ["scratch", "leaf_blade", "mint_fragrance", "nature_blessing"],
+      "acquireNote": "公园花圃里的稀客，用猫粮能把它哄回家"
+    },
+    {
+      "id": "golden",
+      "name": "黄金猫",
+      "icon": "🐱",
+      "rarity": "legend",
+      "element": "cosmic",
+      "desc": "宇宙系，顶级属性。浑身金光闪闪，据说见过它的人都发了财。宠物用品店有售。",
+      "base": { "hp": 100, "atk": 18, "def": 15, "spd": 16 },
+      "growth": { "hp": 6, "atk": 1.8, "def": 1.5, "spd": 1.6 },
+      "skills": ["golden_ray", "wealth_blessing", "supernova"],
+      "acquireNote": "宠物用品店明码标价领养，或攒下巨额存款后上门",
+      "acquireGoal": { "money": 50000 }
+    },
+    {
+      "id": "roundhead",
+      "name": "圆头猫咪",
+      "icon": "🐱",
+      "rarity": "boss",
+      "element": "cosmic",
+      "desc": "传说中整座城市的耄耋之王，头圆得像个皮球，从未有猫在它爪下撑过三回合。",
+      "base": { "hp": 120, "atk": 20, "def": 18, "spd": 18 },
+      "growth": { "hp": 7, "atk": 2.0, "def": 1.8, "spd": 1.8 },
+      "skills": ["round_roll", "king_roar", "absolute_dominance", "defend_stance"],
+      "acquireNote": "最终对决的对手，不可收养"
+    }
+  ]
+}

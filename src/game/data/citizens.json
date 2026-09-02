@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "citizens": [
+    {
+      "id": "citizen_01",
+      "name": "阿强",
+      "avatar": "🧑",
+      "tag": "上班族",
+      "netName": "深夜干饭王",
+      "netAvatar": "🍜"
+    },
+    {
+      "id": "citizen_02",
+      "name": "小雨",
+      "avatar": "👩",
+      "tag": "学生",
+      "netName": "奶茶不加糖",
+      "netAvatar": "🧋"
+    },
+    {
+      "id": "citizen_03",
+      "name": "老周",
+      "avatar": "👨",
+      "tag": "退休教师",
+      "netName": "茶馆常客",
+      "netAvatar": "🍵"
+    },
+    {
+      "id": "citizen_04",
+      "name": "琳达",
+      "avatar": "👧",
+      "tag": "自由职业",
+      "netName": "citywalker",
+      "netAvatar": "🌆"
+    },
+    {
+      "id": "citizen_05",
+      "name": "大壮",
+      "avatar": "🧔",
+      "tag": "快递员",
+      "netName": "健身猛男阿壮",
+      "netAvatar": "💪"
+    },
+    {
+      "id": "citizen_06",
+      "name": "婷婷",
+      "avatar": "👱",
+      "tag": "咖啡师",
+      "netName": "追剧小能手",
+      "netAvatar": "📺"
+    },
+    {
+      "id": "citizen_07",
+      "name": "老王",
+      "avatar": "👴",
+      "tag": "个体户",
+      "netName": "钓鱼佬不空军",
+      "netAvatar": "🎣"
+    },
+    {
+      "id": "citizen_08",
+      "name": "安娜",
+      "avatar": "🧕",
+      "tag": "护士",
+      "netName": "旅游博主安娜",
+      "netAvatar": "🧳"
+    },
+    {
+      "id": "citizen_09",
+      "name": "小杰",
+      "avatar": "👦",
+      "tag": "程序员",
+      "netName": "峡谷第一射手",
+      "netAvatar": "🎮"
+    },
+    {
+      "id": "citizen_10",
+      "name": "美玲",
+      "avatar": "👩",
+      "tag": "设计师",
+      "netName": "美妆日记",
+      "netAvatar": "💄"
+    }
+  ]
+}

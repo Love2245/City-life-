@@ -1,0 +1,31 @@
+{
+  "products": [
+    {
+      "id": "deposit",
+      "name": "定期存款",
+      "icon": "🏦",
+      "desc": "月息 0.13%（年化约 1.55%，按 2024 标准死期利率），稳赚不赔、随时支取",
+      "expectedRate": 0.0013,
+      "volatility": 0,
+      "minAmount": 100
+    },
+    {
+      "id": "fund",
+      "name": "货币基金",
+      "icon": "📈",
+      "desc": "月均收益 1%，波动小，几乎不亏",
+      "expectedRate": 0.01,
+      "volatility": 0.02,
+      "minAmount": 500
+    },
+    {
+      "id": "stock",
+      "name": "股票",
+      "icon": "📉",
+      "desc": "月均收益 2%，大起大落，可能暴富也可能腰斩",
+      "expectedRate": 0.02,
+      "volatility": 0.12,
+      "minAmount": 1000
+    }
+  ]
+}

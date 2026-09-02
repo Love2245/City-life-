@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "dimensions": [
+    {
+      "id": "family",
+      "name": "家庭背景",
+      "icon": "🏡",
+      "desc": "你出生在一个怎样的家庭？（TODO: 由用户填充完整选项与效果）",
+      "options": [
+        {
+          "id": "family_placeholder_a",
+          "name": "占位选项 A",
+          "icon": "🌱",
+          "desc": "示例选项 — 替换为真实经历内容",
+          "tags": ["+💰 200"],
+          "cost": 5,
+          "effects": {
+            "money": 200,
+            "flags": { "bg_family_placeholder": true },
+            "log": "（占位）家庭背景 A"
+          }
+        },
+        {
+          "id": "family_placeholder_b",
+          "name": "占位选项 B",
+          "icon": "🌿",
+          "desc": "示例选项 — 替换为真实经历内容",
+          "tags": ["体质 +3"],
+          "cost": 5,
+          "effects": {
+            "fitness": 3,
+            "flags": { "bg_family_placeholder": true },
+            "log": "（占位）家庭背景 B"
+          }
+        }
+      ]
+    }
+  ]
+}

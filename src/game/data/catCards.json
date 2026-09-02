@@ -1,0 +1,295 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "scratch",
+      "name": "抓挠",
+      "icon": "🐾",
+      "type": "attack",
+      "element": "normal",
+      "cost": 1,
+      "desc": "对敌人造成 12 点伤害。",
+      "effect": { "power": 12 }
+    },
+    {
+      "id": "pounce",
+      "name": "猛扑",
+      "icon": "🐈",
+      "type": "attack",
+      "element": "normal",
+      "cost": 2,
+      "desc": "对敌人造成 18 点伤害。",
+      "effect": { "power": 18 }
+    },
+    {
+      "id": "heavy_strike",
+      "name": "全力重击",
+      "icon": "💥",
+      "type": "attack",
+      "element": "normal",
+      "cost": 2,
+      "desc": "对敌人造成 21 点伤害。",
+      "effect": { "power": 21 }
+    },
+    {
+      "id": "flurry",
+      "name": "影闪连击",
+      "icon": "💨",
+      "type": "attack",
+      "element": "normal",
+      "cost": 2,
+      "desc": "连续攻击 2 次，每次造成 9 点伤害。",
+      "effect": { "power": 9, "hits": 2 }
+    },
+    {
+      "id": "guard",
+      "name": "缩身防守",
+      "icon": "🛡️",
+      "type": "defend",
+      "element": "normal",
+      "cost": 1,
+      "desc": "获得 7 点格挡。",
+      "effect": { "block": 7 }
+    },
+    {
+      "id": "fortify",
+      "name": "蜷缩蓄力",
+      "icon": "🧱",
+      "type": "defend",
+      "element": "normal",
+      "cost": 2,
+      "desc": "获得 13 点格挡，力量 +1。",
+      "effect": { "block": 13, "strength": 1 }
+    },
+    {
+      "id": "meow",
+      "name": "喵喵叫",
+      "icon": "🗨️",
+      "type": "skill",
+      "element": "normal",
+      "cost": 1,
+      "desc": "抽 2 张牌。",
+      "effect": { "draw": 2 }
+    },
+    {
+      "id": "catnap",
+      "name": "打个盹",
+      "icon": "😴",
+      "type": "skill",
+      "element": "normal",
+      "cost": 1,
+      "desc": "回复 6 点 HP，抽 1 张牌。",
+      "effect": { "heal": 6, "draw": 1 }
+    },
+    {
+      "id": "cleanfur",
+      "name": "舔毛梳理",
+      "icon": "✨",
+      "type": "skill",
+      "element": "normal",
+      "cost": 0,
+      "desc": "获得 4 点格挡，抽 1 张牌。",
+      "effect": { "block": 4, "draw": 1 }
+    },
+    {
+      "id": "battle_yell",
+      "name": "战吼壮胆",
+      "icon": "📢",
+      "type": "skill",
+      "element": "normal",
+      "cost": 1,
+      "desc": "力量 +2。",
+      "effect": { "strength": 2 }
+    },
+    {
+      "id": "refresh",
+      "name": "梳理净化",
+      "icon": "🧼",
+      "type": "skill",
+      "element": "normal",
+      "cost": 1,
+      "desc": "清除自身的中毒、灼伤、麻痹、睡眠。",
+      "effect": { "cure": true }
+    },
+    {
+      "id": "atk_nature",
+      "name": "叶刃斩",
+      "icon": "🍃",
+      "type": "attack",
+      "element": "nature",
+      "cost": 2,
+      "desc": "造成 18 点自然系伤害，克制科技系。",
+      "effect": { "power": 18 }
+    },
+    {
+      "id": "atk_tech",
+      "name": "激光扫射",
+      "icon": "🔫",
+      "type": "attack",
+      "element": "tech",
+      "cost": 2,
+      "desc": "造成 18 点科技系伤害，克制神秘系。",
+      "effect": { "power": 18 }
+    },
+    {
+      "id": "atk_mystic",
+      "name": "碎镜飞刺",
+      "icon": "💠",
+      "type": "attack",
+      "element": "mystic",
+      "cost": 2,
+      "desc": "造成 19 点神秘系伤害，克制宇宙系。",
+      "effect": { "power": 19 }
+    },
+    {
+      "id": "atk_cosmic",
+      "name": "星光爆裂",
+      "icon": "✨",
+      "type": "attack",
+      "element": "cosmic",
+      "cost": 2,
+      "desc": "造成 19 点宇宙系伤害，克制自然系。",
+      "effect": { "power": 19 }
+    },
+    {
+      "id": "heal_small",
+      "name": "小憩回气",
+      "icon": "💤",
+      "type": "skill",
+      "element": "normal",
+      "cost": 1,
+      "desc": "回复 10% 最大 HP。",
+      "effect": { "healPct": 0.1 }
+    },
+    {
+      "id": "heal_medium",
+      "name": "能量补给",
+      "icon": "🥣",
+      "type": "skill",
+      "element": "normal",
+      "cost": 2,
+      "desc": "回复 20% 最大 HP。",
+      "effect": { "healPct": 0.2 }
+    },
+    {
+      "id": "venom_bite",
+      "name": "毒牙撕咬",
+      "icon": "☠️",
+      "type": "skill",
+      "element": "mystic",
+      "cost": 1,
+      "desc": "造成 6 点伤害，必定使对手中毒。",
+      "effect": { "power": 6, "status": "poison", "statusChance": 1 }
+    },
+    {
+      "id": "web_trap",
+      "name": "蛛网束缚",
+      "icon": "🕸️",
+      "type": "skill",
+      "element": "mystic",
+      "cost": 1,
+      "desc": "75% 概率使对手陷入麻痹。",
+      "effect": { "status": "paralysis", "statusChance": 0.75 }
+    },
+    {
+      "id": "ember_touch",
+      "name": "灼烧爪击",
+      "icon": "🔥",
+      "type": "skill",
+      "element": "mystic",
+      "cost": 1,
+      "desc": "造成 4 点伤害，80% 概率使对手灼伤。",
+      "effect": { "power": 4, "status": "burn", "statusChance": 0.8 }
+    },
+    {
+      "id": "drowsy_spores",
+      "name": "催眠孢子",
+      "icon": "💤",
+      "type": "skill",
+      "element": "mystic",
+      "cost": 1,
+      "desc": "70% 概率使对手陷入睡眠。",
+      "effect": { "status": "sleep", "statusChance": 0.7 }
+    },
+    {
+      "id": "orange_exclusive",
+      "name": "太阳暴击",
+      "icon": "☀️",
+      "type": "attack",
+      "element": "normal",
+      "cost": 3,
+      "desc": "造成 26 点伤害。",
+      "effect": { "power": 26 }
+    },
+    {
+      "id": "cow_exclusive",
+      "name": "铁壁冲撞",
+      "icon": "🐄",
+      "type": "attack",
+      "element": "normal",
+      "cost": 2,
+      "desc": "造成 15 点伤害，获得 9 点格挡。",
+      "effect": { "power": 15, "block": 9 }
+    },
+    {
+      "id": "black_exclusive",
+      "name": "暗影突袭",
+      "icon": "🌙",
+      "type": "attack",
+      "element": "normal",
+      "cost": 2,
+      "desc": "造成 13 点伤害，无视格挡。",
+      "effect": { "power": 13, "pierce": true }
+    },
+    {
+      "id": "mint_exclusive",
+      "name": "自然恩泽",
+      "icon": "🌸",
+      "type": "skill",
+      "element": "nature",
+      "cost": 2,
+      "desc": "回复 30% 最大 HP，获得 8 点格挡。",
+      "effect": { "healPct": 0.3, "block": 8 }
+    },
+    {
+      "id": "glass_exclusive",
+      "name": "碎镜千刃",
+      "icon": "💠",
+      "type": "attack",
+      "element": "mystic",
+      "cost": 2,
+      "desc": "连续攻击 2 次，每次造成 13 点伤害。",
+      "effect": { "power": 13, "hits": 2 }
+    },
+    {
+      "id": "android_exclusive",
+      "name": "系统过载",
+      "icon": "⚙️",
+      "type": "attack",
+      "element": "tech",
+      "cost": 3,
+      "desc": "造成 22 点伤害，50% 概率使对手麻痹。",
+      "effect": { "power": 22, "status": "paralysis", "statusChance": 0.5 }
+    },
+    {
+      "id": "spider_exclusive",
+      "name": "蛛丝风暴",
+      "icon": "🕷️",
+      "type": "attack",
+      "element": "mystic",
+      "cost": 2,
+      "desc": "连续攻击 3 次，每次造成 8 点伤害，30% 概率使对手麻痹。",
+      "effect": { "power": 8, "hits": 3, "status": "paralysis", "statusChance": 0.3 }
+    },
+    {
+      "id": "golden_exclusive",
+      "name": "超新星爆发",
+      "icon": "🌟",
+      "type": "attack",
+      "element": "cosmic",
+      "cost": 3,
+      "desc": "造成 28 点伤害。",
+      "effect": { "power": 28 }
+    }
+  ]
+}

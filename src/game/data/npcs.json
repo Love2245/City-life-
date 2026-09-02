@@ -1,0 +1,563 @@
+[
+  {
+    "id": "npc_lin_xiaoyu",
+    "name": "林小雨",
+    "nick": "咖啡馆的姑娘",
+    "icon": "👩‍🎨",
+    "romanceable": true,
+    "meetLocation": "cafe",
+    "meetChance": 0.25,
+    "meetVisitCount": 3,
+    "metText": "在咖啡馆坐了几回，靠窗的姑娘冲你点了点头——你们算是认识了。",
+    "meetConditions": {
+      "minCharm": 15,
+      "hourRange": [
+        9,
+        21
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "salad",
+      "sandwich"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "咖啡馆常客，学设计的，喜欢安静和轻食。",
+    "netName": "拿铁不加糖",
+    "netAvatar": "🎨",
+    "talk": {
+      "acquaintance": {
+        "text": "林小雨端着杯子看你：『又来啦？坐窗边那个老位置？』",
+        "options": [
+          {
+            "label": "对啊，这儿安静",
+            "affinity": 3,
+            "log": "你们聊了聊咖啡馆的常客。"
+          },
+          {
+            "label": "随便坐坐",
+            "affinity": 1,
+            "log": "你冲她笑了笑。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "林小雨：『我老板缺个临时美工，要不要我帮你问问？』",
+        "options": [
+          {
+            "label": "太好了，帮我留意",
+            "affinity": 4,
+            "help": {
+              "log": "林小雨记下了你的联系方式，说有活第一时间找你。",
+              "reward": {
+                "mood": 3
+              }
+            }
+          },
+          {
+            "label": "不用了，我自己来",
+            "affinity": -2,
+            "log": "你婉拒了她的好意。"
+          }
+        ]
+      },
+      "close_friend": {
+        "text": "林小雨：『有个社区墙绘的活儿，工期一周，报酬不错，你接不接？』",
+        "options": [
+          {
+            "label": "接！什么时候开始",
+            "affinity": 5,
+            "commission": {
+              "title": "社区墙绘兼职",
+              "desc": "帮林小雨的朋友完成一面社区墙绘，约 5 天。",
+              "days": 5,
+              "reward": {
+                "money": 220,
+                "charm": 3
+              },
+              "rewardText": "+220 元 +3 魅力"
+            }
+          },
+          {
+            "label": "最近太忙了",
+            "affinity": -1,
+            "log": "你表示这阵子抽不出空。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_zhao_gang",
+    "name": "赵刚",
+    "nick": "劳务市场的老哥",
+    "icon": "👷",
+    "romanceable": false,
+    "meetLocation": "labor_market",
+    "meetChance": 0.3,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ]
+    },
+    "initialAffinity": 10,
+    "likes": [
+      "meat",
+      "noodles",
+      "drink"
+    ],
+    "dislikes": [
+      "salad"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "borrow",
+      "close_friend": "referral_job_loading"
+    },
+    "desc": "劳务市场的老工头，路子野，讲义气。",
+    "meetVisitCount": 2,
+    "metText": "总在劳务市场碰见这个老哥，一来二去就熟了，他拍着你肩膀说：以后有活想着你。",
+    "netName": "老炮儿刚子",
+    "netAvatar": "🍺",
+    "talk": {
+      "acquaintance": {
+        "text": "赵刚拍你肩膀：『哟，又来觅活儿啦？』",
+        "options": [
+          {
+            "label": "刚哥帮忙留意着",
+            "affinity": 3,
+            "log": "赵刚说有日结的活儿第一个喊你。"
+          },
+          {
+            "label": "随便转转",
+            "affinity": 1,
+            "log": "你在劳务市场溜达了一圈。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "赵刚：『仓库那边缺个搬货的，今儿就能上，去不去？』",
+        "options": [
+          {
+            "label": "去！带我一个",
+            "affinity": 4,
+            "help": {
+              "log": "赵刚把你推荐给了仓库主管，当场结了半天工钱。",
+              "reward": {
+                "money": 80,
+                "stamina": -10
+              }
+            }
+          },
+          {
+            "label": "今天歇歇",
+            "affinity": -1,
+            "log": "你今天想歇着，赵刚咧嘴一笑。"
+          }
+        ]
+      },
+      "close_friend": {
+        "text": "赵刚：『城东有个装修队长期缺人，活儿糙但钱实在，干不干？』",
+        "options": [
+          {
+            "label": "干！多长工期",
+            "affinity": 5,
+            "commission": {
+              "title": "装修队长期帮工",
+              "desc": "跟着赵刚的装修队干一阵子，约 6 天。",
+              "days": 6,
+              "reward": {
+                "money": 360,
+                "fitness": 2
+              },
+              "rewardText": "+360 元 +2 体力上限"
+            }
+          },
+          {
+            "label": "我再想想",
+            "affinity": -1,
+            "log": "你说考虑考虑，赵刚点点头。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_chen_jie",
+    "name": "陈姐",
+    "nick": "快餐店大姐",
+    "icon": "👩‍🍳",
+    "romanceable": false,
+    "meetLocation": "fast_food",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        20
+      ]
+    },
+    "initialAffinity": 15,
+    "likes": [
+      "vegetable",
+      "farm_egg",
+      "drink"
+    ],
+    "dislikes": [
+      "luxury_bag"
+    ],
+    "contactAt": 30,
+    "perks": {
+      "friend": "free_meal",
+      "close_friend": "referral_job_waiter_fast"
+    },
+    "desc": "快餐店掌勺大姐，心善，爱给人塞吃的。",
+    "meetVisitCount": 3,
+    "metText": "在快餐店吃了两回，大姐说你跟别人不一样，非拉你坐下聊了会儿。",
+    "netName": "掌勺陈姐",
+    "netAvatar": "🍳",
+    "talk": {
+      "acquaintance": {
+        "text": "陈姐：『又来啦？今天想吃点啥？』",
+        "options": [
+          {
+            "label": "陈姐推荐个菜",
+            "affinity": 3,
+            "help": {
+              "log": "陈姐给你加了份招牌红烧肉，不要钱。",
+              "reward": {
+                "satiety": 20,
+                "money": 0
+              }
+            }
+          },
+          {
+            "label": "老三样就行",
+            "affinity": 1,
+            "log": "你照旧点了对胃口的。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "陈姐：『后厨缺个帮切菜的，笨点没事，来搭把手？』",
+        "options": [
+          {
+            "label": "成，我帮你切",
+            "affinity": 4,
+            "help": {
+              "log": "你帮陈姐备了半天菜，她塞给你一份盒饭和工钱。",
+              "reward": {
+                "satiety": 15,
+                "money": 30
+              }
+            }
+          },
+          {
+            "label": "我手笨算了",
+            "affinity": -1,
+            "log": "你摆摆手，陈姐笑了笑。"
+          }
+        ]
+      },
+      "close_friend": {
+        "text": "陈姐：『店里想推外卖，你脑子活，帮我想想菜单呗？』",
+        "options": [
+          {
+            "label": "包在我身上",
+            "affinity": 5,
+            "commission": {
+              "title": "帮快餐店排外卖菜单",
+              "desc": "帮陈姐设计一周外卖套餐，约 4 天。",
+              "days": 4,
+              "reward": {
+                "money": 160,
+                "charm": 2
+              },
+              "rewardText": "+160 元 +2 魅力"
+            }
+          },
+          {
+            "label": "这我不在行",
+            "affinity": -1,
+            "log": "你直说不太懂餐饮，陈姐理解。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_wang_lei",
+    "name": "王磊",
+    "nick": "公园晨练大爷",
+    "icon": "👴",
+    "romanceable": false,
+    "meetLocation": "park",
+    "meetChance": 0.2,
+    "meetConditions": {
+      "minCharm": 10,
+      "hourRange": [
+        6,
+        12
+      ]
+    },
+    "initialAffinity": 8,
+    "likes": [
+      "plant",
+      "certificate"
+    ],
+    "dislikes": [
+      "meat"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "close_friend": "referral_job_office_assistant"
+    },
+    "desc": "公园晨练的退休干部，爱提携年轻人。",
+    "introducedBy": "npc_chen_jie",
+    "introduceAt": 40,
+    "metText": "陈姐说你人实在，非要把她认识的退休干部老王介绍给你——公园晨练的大爷，看着挺精神。"
+  },
+  {
+    "id": "npc_li_na",
+    "name": "？？？",
+    "nick": "工位旁的姐姐",
+    "icon": "👩‍💻",
+    "romanceable": false,
+    "type": "colleague",
+    "meetLocation": "electronics_factory",
+    "meetChance": 0.35,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        18
+      ],
+      "requireEmployed": true
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "bento"
+    ],
+    "dislikes": [],
+    "contactAt": 25,
+    "perks": {
+      "friend": "borrow"
+    },
+    "desc": "电子厂流水线旁边的同事，上班时经常互相搭把手。"
+  },
+  {
+    "id": "npc_netbar_boss",
+    "name": "网咖老板",
+    "nick": "网吧老板",
+    "icon": "🎮",
+    "romanceable": false,
+    "meetLocation": "internet_cafe",
+    "meetChance": 0.35,
+    "meetVisitCount": 3,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        24
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "drink",
+      "noodles"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "referral_job_security"
+    },
+    "desc": "网吧老板，面冷心热，常给熟客打折。",
+    "metText": "老板看你来了好几回，熟了之后说：小伙子，常来就给你个会员价。",
+    "netName": "深夜在线",
+    "netAvatar": "🕹️",
+    "talk": {
+      "acquaintance": {
+        "text": "网吧老板抬头：『卡密还是老位置？』",
+        "options": [
+          {
+            "label": "对，老位置",
+            "affinity": 3,
+            "log": "老板给你留了靠窗的机子。"
+          },
+          {
+            "label": "随便找台",
+            "affinity": 1,
+            "log": "你随便开了台机器。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "网吧老板：『常来也不容易，我这有张闲置的会员卡，先借你刷着。』",
+        "options": [
+          {
+            "label": "谢了老板！",
+            "affinity": 4,
+            "help": {
+              "log": "网吧老板送你一张免费上网券，今儿网费免了。",
+              "reward": {
+                "mood": 4
+              }
+            }
+          },
+          {
+            "label": "不用这么客气",
+            "affinity": -1,
+            "log": "你推辞了，老板也没勉强。"
+          }
+        ]
+      },
+      "close_friend": {
+        "text": "网吧老板：『店里的机器老卡，你会弄电脑，帮我重装几台呗？』",
+        "options": [
+          {
+            "label": "没问题，交给我",
+            "affinity": 5,
+            "commission": {
+              "title": "给网吧重装系统",
+              "desc": "帮网吧老板重装并优化几台机器，约 3 天。",
+              "days": 3,
+              "reward": {
+                "money": 200,
+                "intelligence": 2
+              },
+              "rewardText": "+200 元 +2 智力"
+            }
+          },
+          {
+            "label": "我不太会装系统",
+            "affinity": -1,
+            "log": "你老实说不太擅长，老板笑笑说没事。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_librarian",
+    "name": "图书馆大姐",
+    "nick": "图书管理员",
+    "icon": "📚",
+    "romanceable": false,
+    "meetLocation": "library",
+    "meetChance": 0.3,
+    "meetVisitCount": 3,
+    "meetConditions": {
+      "hourRange": [
+        9,
+        18
+      ]
+    },
+    "initialAffinity": 8,
+    "likes": [
+      "certificate",
+      "plant"
+    ],
+    "contactAt": 25,
+    "perks": {
+      "close_friend": "referral_job_office_assistant"
+    },
+    "desc": "图书馆管理员，安静温柔，爱推荐书。",
+    "metText": "大姐帮你找了本编程入门，说：多看看书，比在网吧打游戏强。",
+    "netName": "书页之间",
+    "netAvatar": "📚",
+    "talk": {
+      "acquaintance": {
+        "text": "图书馆大姐：『又来借书啦？这次想看什么？』",
+        "options": [
+          {
+            "label": "想看点实用的",
+            "affinity": 3,
+            "log": "大姐给你荐了本技能书。"
+          },
+          {
+            "label": "随便翻翻",
+            "affinity": 1,
+            "log": "你在书架间慢慢踱步。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "图书馆大姐：『馆里要整理一批旧书，缺个帮手，来不？』",
+        "options": [
+          {
+            "label": "我来帮忙",
+            "affinity": 4,
+            "help": {
+              "log": "你帮大姐归整了半天书架，她送你一张借书卡。",
+              "reward": {
+                "intelligence": 1,
+                "mood": 2
+              }
+            }
+          },
+          {
+            "label": "今天先不啦",
+            "affinity": -1,
+            "log": "你今天想自己看书，大姐理解。"
+          }
+        ]
+      },
+      "close_friend": {
+        "text": "图书馆大姐：『社区要办读书会，你文笔好，帮写几篇推文行不？』",
+        "options": [
+          {
+            "label": "乐意之至",
+            "affinity": 5,
+            "commission": {
+              "title": "社区读书会推文",
+              "desc": "帮图书馆大姐写几篇读书会推文，约 4 天。",
+              "days": 4,
+              "reward": {
+                "money": 140,
+                "charm": 2
+              },
+              "rewardText": "+140 元 +2 魅力"
+            }
+          },
+          {
+            "label": "我写不太好",
+            "affinity": -1,
+            "log": "你谦称笔头不行，大姐说下次也行。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_pharmacist",
+    "name": "药房大哥",
+    "nick": "药房老哥",
+    "icon": "💊",
+    "romanceable": false,
+    "meetLocation": "clinic",
+    "meetChance": 0.35,
+    "meetVisitCount": 2,
+    "meetConditions": {
+      "hourRange": [
+        8,
+        22
+      ]
+    },
+    "initialAffinity": 5,
+    "likes": [
+      "fruit",
+      "farm_egg"
+    ],
+    "contactAt": 20,
+    "perks": {
+      "friend": "referral_job_convenience_clerk"
+    },
+    "desc": "社区药房老板，懂点医，爱唠叨养生。",
+    "metText": "老哥看你买药，多送了你一包板蓝根：年轻人，多注意身体。"
+  }
+]

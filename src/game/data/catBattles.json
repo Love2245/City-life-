@@ -1,0 +1,950 @@
+{
+  "version": 1,
+  "opponents": [
+    {
+      "id": "wild_stray",
+      "name": "流浪猫",
+      "icon": "🐈",
+      "desc": "街角的流浪猫，见人就哈气，凶得很。",
+      "element": "normal",
+      "level": 2,
+      "attrs": {
+        "hp": 85,
+        "atk": 10,
+        "def": 8,
+        "spd": 8
+      },
+      "skills": [
+        "hiss",
+        "scratch"
+      ],
+      "reward": {
+        "exp": 12,
+        "money": 15,
+        "fame": 1
+      },
+      "minLevel": 1
+    },
+    {
+      "id": "wild_alley",
+      "name": "巷口野猫",
+      "icon": "🐈‍⬛",
+      "desc": "盘踞在巷口的野猫头子，一身腱子肉。",
+      "element": "normal",
+      "level": 4,
+      "attrs": {
+        "hp": 110,
+        "atk": 14,
+        "def": 11,
+        "spd": 10
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe"
+      ],
+      "reward": {
+        "exp": 16,
+        "money": 22,
+        "fame": 1
+      },
+      "minLevel": 1
+    },
+    {
+      "id": "wild_rival",
+      "name": "挑衅的猫",
+      "icon": "😼",
+      "desc": "一只趾高气扬的猫，主动拦路挑衅，非要和你家猫比划比划。",
+      "element": "normal",
+      "level": 6,
+      "attrs": {
+        "hp": 136,
+        "atk": 18,
+        "def": 13,
+        "spd": 12
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe",
+        "tail_whip"
+      ],
+      "reward": {
+        "exp": 20,
+        "money": 30,
+        "fame": 2
+      },
+      "minLevel": 1
+    },
+    {
+      "id": "owner_granny",
+      "name": "遛猫奶奶的猫",
+      "icon": "👵",
+      "desc": "奶奶养了十年的老猫，见多识广，还会用爪子扒拉人。",
+      "element": "nature",
+      "level": 6,
+      "attrs": {
+        "hp": 144,
+        "atk": 17,
+        "def": 14,
+        "spd": 11
+      },
+      "skills": [
+        "scratch",
+        "leaf_blade",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 24,
+        "money": 40,
+        "fame": 3
+      },
+      "minLevel": 2
+    },
+    {
+      "id": "owner_kid",
+      "name": "猫主人小孩的猫",
+      "icon": "🧒",
+      "desc": "小孩的宝贝猫，被宠得无法无天，出手又快又狠。",
+      "element": "normal",
+      "level": 8,
+      "attrs": {
+        "hp": 162,
+        "atk": 21,
+        "def": 16,
+        "spd": 13
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe",
+        "shadow_dash"
+      ],
+      "reward": {
+        "exp": 28,
+        "money": 50,
+        "fame": 3
+      },
+      "minLevel": 3
+    },
+    {
+      "id": "owner_chef",
+      "name": "餐馆老板的猫",
+      "icon": "👨‍🍳",
+      "desc": "后厨养大的猫，天天闻油烟，练就一身横练功夫。",
+      "element": "tech",
+      "level": 10,
+      "attrs": {
+        "hp": 187,
+        "atk": 25,
+        "def": 18,
+        "spd": 15
+      },
+      "skills": [
+        "claw_swipe",
+        "iron_body",
+        "headbutt"
+      ],
+      "reward": {
+        "exp": 32,
+        "money": 60,
+        "fame": 4
+      },
+      "minLevel": 4
+    },
+    {
+      "id": "owner_gamer",
+      "name": "电竞宅的猫",
+      "icon": "🎮",
+      "desc": "天天看主人打游戏的猫，学会了预判走位，出手极快。",
+      "element": "tech",
+      "level": 12,
+      "attrs": {
+        "hp": 212,
+        "atk": 29,
+        "def": 20,
+        "spd": 18
+      },
+      "skills": [
+        "laser_beam",
+        "shadow_dash",
+        "firmware_update"
+      ],
+      "reward": {
+        "exp": 36,
+        "money": 70,
+        "fame": 4
+      },
+      "minLevel": 5
+    },
+    {
+      "id": "owner_mystic",
+      "name": "占卜师的猫",
+      "icon": "🔮",
+      "desc": "占卜师的黑猫，据说能看见别人看不见的东西，出手神出鬼没。",
+      "element": "mystic",
+      "level": 15,
+      "attrs": {
+        "hp": 246,
+        "atk": 34,
+        "def": 24,
+        "spd": 21
+      },
+      "skills": [
+        "mirage",
+        "venom_bite",
+        "glass_shard"
+      ],
+      "reward": {
+        "exp": 42,
+        "money": 90,
+        "fame": 5
+      },
+      "minLevel": 6
+    },
+    {
+      "id": "wild_legend",
+      "name": "传说中的野猫",
+      "icon": "🐯",
+      "desc": "只在深夜出没的野猫传说，据说它曾单挑赢过三条街的猫。",
+      "element": "cosmic",
+      "level": 18,
+      "attrs": {
+        "hp": 280,
+        "atk": 39,
+        "def": 28,
+        "spd": 24
+      },
+      "skills": [
+        "golden_ray",
+        "claw_swipe",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 50,
+        "money": 120,
+        "fame": 6
+      },
+      "minLevel": 8
+    },
+    {
+      "id": "t1_rookie",
+      "name": "新手猫主人",
+      "icon": "🐈",
+      "desc": "刚入坑的猫主人，自家猫还没训练明白就敢来参赛。",
+      "element": "normal",
+      "level": 5,
+      "attrs": {
+        "hp": 128,
+        "atk": 17,
+        "def": 13,
+        "spd": 11
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe"
+      ],
+      "reward": {
+        "exp": 18,
+        "money": 30,
+        "fame": 2
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "t1_breeder",
+      "name": "猫舍主理人",
+      "icon": "🏡",
+      "desc": "经营猫舍的主理人，她的猫从小吃好喝好，体质出众。",
+      "element": "nature",
+      "level": 6,
+      "attrs": {
+        "hp": 144,
+        "atk": 18,
+        "def": 14,
+        "spd": 12
+      },
+      "skills": [
+        "scratch",
+        "leaf_blade",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 20,
+        "money": 40,
+        "fame": 3
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "t1_ace",
+      "name": "初级冠军猫",
+      "icon": "🏅",
+      "desc": "上一届初级赛事的冠军猫，爪法凌厉。",
+      "element": "normal",
+      "level": 7,
+      "attrs": {
+        "hp": 162,
+        "atk": 21,
+        "def": 16,
+        "spd": 13
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe",
+        "shadow_dash"
+      ],
+      "reward": {
+        "exp": 22,
+        "money": 50,
+        "fame": 3
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "opp_piglet",
+      "name": "小猪猫",
+      "icon": "🐷",
+      "desc": "其实是一头被主人伪装成小猫的小猪，生命值显著更高，攻速平平。",
+      "element": "normal",
+      "level": 5,
+      "attrs": {
+        "hp": 204,
+        "atk": 14,
+        "def": 16,
+        "spd": 8
+      },
+      "skills": [
+        "hiss",
+        "tail_whip",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 20,
+        "money": 35,
+        "fame": 2
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "opp_rage",
+      "name": "狂化小猫",
+      "icon": "😾",
+      "desc": "狂化后攻击力大幅提升的电表倒转小猫，但身板脆。",
+      "element": "normal",
+      "level": 6,
+      "attrs": {
+        "hp": 102,
+        "atk": 27,
+        "def": 7,
+        "spd": 14
+      },
+      "skills": [
+        "scratch",
+        "night_ambush",
+        "food_rage"
+      ],
+      "reward": {
+        "exp": 22,
+        "money": 40,
+        "fame": 2
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "opp_burger",
+      "name": "汉堡猫咪",
+      "icon": "🍔",
+      "desc": "每回合偷吃汉堡回复自身血量，不快点解决会越打越肉。",
+      "element": "normal",
+      "level": 5,
+      "attrs": {
+        "hp": 136,
+        "atk": 17,
+        "def": 12,
+        "spd": 10
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe",
+        "fish_smash"
+      ],
+      "reward": {
+        "exp": 22,
+        "money": 40,
+        "fame": 2
+      },
+      "tier": "normal",
+      "mechanic": {
+        "regen": {
+          "amount": 6
+        }
+      }
+    },
+    {
+      "id": "opp_lightning",
+      "name": "闪电猫咪",
+      "icon": "⚡",
+      "desc": "速度极快的闪电猫，有概率闪避你的攻击。",
+      "element": "normal",
+      "level": 6,
+      "attrs": {
+        "hp": 122,
+        "atk": 17,
+        "def": 11,
+        "spd": 22
+      },
+      "skills": [
+        "scratch",
+        "shadow_dash",
+        "night_ambush"
+      ],
+      "reward": {
+        "exp": 22,
+        "money": 42,
+        "fame": 2
+      },
+      "tier": "normal",
+      "mechanic": {
+        "dodge": 0.2
+      }
+    },
+    {
+      "id": "opp_fatty",
+      "name": "胖猫咪",
+      "icon": "🐱",
+      "desc": "血量和攻击略高于普通猫的肉墩子，没有花哨招数，就是硬。",
+      "element": "normal",
+      "level": 6,
+      "attrs": {
+        "hp": 187,
+        "atk": 21,
+        "def": 16,
+        "spd": 9
+      },
+      "skills": [
+        "hiss",
+        "headbutt",
+        "claw_swipe"
+      ],
+      "reward": {
+        "exp": 24,
+        "money": 45,
+        "fame": 3
+      },
+      "tier": "normal"
+    },
+    {
+      "id": "opp_web",
+      "name": "蛛网猫",
+      "icon": "🕸️",
+      "desc": "每 3 回合吐丝缠绕你的猫，被缠住的那回合无法出牌。",
+      "element": "mystic",
+      "level": 7,
+      "attrs": {
+        "hp": 153,
+        "atk": 18,
+        "def": 13,
+        "spd": 12
+      },
+      "skills": [
+        "web_trap",
+        "venom_bite",
+        "eight_legs"
+      ],
+      "reward": {
+        "exp": 26,
+        "money": 50,
+        "fame": 3
+      },
+      "tier": "normal",
+      "mechanic": {
+        "bindEvery": 3
+      }
+    },
+    {
+      "id": "t2_tech",
+      "name": "科技宅的猫",
+      "icon": "🤖",
+      "desc": "科技宅给猫装了芯片，出手自带电子音效。",
+      "element": "tech",
+      "level": 10,
+      "attrs": {
+        "hp": 187,
+        "atk": 25,
+        "def": 18,
+        "spd": 15
+      },
+      "skills": [
+        "laser_beam",
+        "claw_swipe",
+        "firmware_update"
+      ],
+      "reward": {
+        "exp": 30,
+        "money": 80,
+        "fame": 5
+      },
+      "tier": "intermediate"
+    },
+    {
+      "id": "t2_mystic",
+      "name": "占卜师的猫",
+      "icon": "🔮",
+      "desc": "占卜师的猫，据说能预判你的下一步动作。",
+      "element": "mystic",
+      "level": 11,
+      "attrs": {
+        "hp": 196,
+        "atk": 26,
+        "def": 19,
+        "spd": 16
+      },
+      "skills": [
+        "mirage",
+        "venom_bite",
+        "web_trap"
+      ],
+      "reward": {
+        "exp": 32,
+        "money": 90,
+        "fame": 5
+      },
+      "tier": "intermediate"
+    },
+    {
+      "id": "t2_champ",
+      "name": "中级冠军猫",
+      "icon": "🏅",
+      "desc": "中级赛事的卫冕冠军，攻防兼备，经验老道。",
+      "element": "nature",
+      "level": 13,
+      "attrs": {
+        "hp": 221,
+        "atk": 30,
+        "def": 22,
+        "spd": 18
+      },
+      "skills": [
+        "leaf_blade",
+        "mint_fragrance",
+        "claw_swipe"
+      ],
+      "reward": {
+        "exp": 38,
+        "money": 120,
+        "fame": 7
+      },
+      "tier": "intermediate"
+    },
+    {
+      "id": "opp_scab",
+      "name": "癞皮猫",
+      "icon": "🧟",
+      "desc": "移动毒源，远程攻击带中毒，中毒会每回合持续扣血。",
+      "element": "mystic",
+      "level": 10,
+      "attrs": {
+        "hp": 178,
+        "atk": 23,
+        "def": 17,
+        "spd": 13
+      },
+      "skills": [
+        "venom_bite",
+        "claw_swipe",
+        "web_trap"
+      ],
+      "reward": {
+        "exp": 34,
+        "money": 100,
+        "fame": 5
+      },
+      "tier": "intermediate"
+    },
+    {
+      "id": "opp_skeleton",
+      "name": "骷髅猫",
+      "icon": "🦴",
+      "desc": "亡灵之躯：首次被击败会进入尸体状态，5 回合内没补刀就会复活。",
+      "element": "mystic",
+      "level": 11,
+      "attrs": {
+        "hp": 187,
+        "atk": 25,
+        "def": 20,
+        "spd": 11
+      },
+      "skills": [
+        "claw_swipe",
+        "iron_body",
+        "headbutt"
+      ],
+      "reward": {
+        "exp": 36,
+        "money": 110,
+        "fame": 6
+      },
+      "tier": "intermediate",
+      "mechanic": {
+        "corpseRounds": 5
+      }
+    },
+    {
+      "id": "opp_ghost",
+      "name": "幽灵猫咪",
+      "icon": "👻",
+      "desc": "无法被攻击的幽灵，5 回合后自然消失，你熬过去就算赢。",
+      "element": "mystic",
+      "level": 12,
+      "attrs": {
+        "hp": 170,
+        "atk": 6,
+        "def": 24,
+        "spd": 10
+      },
+      "skills": [
+        "mirage",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 38,
+        "money": 120,
+        "fame": 6
+      },
+      "tier": "intermediate",
+      "mechanic": {
+        "ghostRounds": 5
+      }
+    },
+    {
+      "id": "opp_snowman",
+      "name": "雪人猫咪",
+      "icon": "⛄",
+      "desc": "每回合主攻击之外还附带固定雪球伤害，攻击 buff 会放大雪球。",
+      "element": "nature",
+      "level": 11,
+      "attrs": {
+        "hp": 196,
+        "atk": 26,
+        "def": 18,
+        "spd": 13
+      },
+      "skills": [
+        "claw_swipe",
+        "tail_whip",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 36,
+        "money": 110,
+        "fame": 6
+      },
+      "tier": "intermediate",
+      "mechanic": {
+        "snowball": 3
+      }
+    },
+    {
+      "id": "opp_marshmallow",
+      "name": "棉花糖猫咪",
+      "icon": "🍬",
+      "desc": "福利局！它不攻击，还会把你的血量回满，随后自动认输。",
+      "element": "nature",
+      "level": 10,
+      "attrs": {
+        "hp": 153,
+        "atk": 6,
+        "def": 18,
+        "spd": 8
+      },
+      "skills": [
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 30,
+        "money": 80,
+        "fame": 4
+      },
+      "tier": "intermediate",
+      "mechanic": {
+        "marshmallow": true
+      }
+    },
+    {
+      "id": "t3_legend",
+      "name": "传说中的野猫",
+      "icon": "🐯",
+      "desc": "深夜出没的野猫传说，爪下败过无数对手。",
+      "element": "cosmic",
+      "level": 16,
+      "attrs": {
+        "hp": 195,
+        "atk": 31,
+        "def": 24,
+        "spd": 21
+      },
+      "skills": [
+        "golden_ray",
+        "claw_swipe",
+        "defend_stance"
+      ],
+      "reward": {
+        "exp": 45,
+        "money": 150,
+        "fame": 8
+      },
+      "tier": "boss"
+    },
+    {
+      "id": "t3_elite",
+      "name": "精英猫主人",
+      "icon": "🎩",
+      "desc": "西装革履的精英猫主人，他的猫受过专业训练。",
+      "element": "tech",
+      "level": 18,
+      "attrs": {
+        "hp": 214,
+        "atk": 34,
+        "def": 28,
+        "spd": 24
+      },
+      "skills": [
+        "laser_beam",
+        "system_crash",
+        "firmware_update"
+      ],
+      "reward": {
+        "exp": 50,
+        "money": 200,
+        "fame": 10
+      },
+      "tier": "boss"
+    },
+    {
+      "id": "t3_king",
+      "name": "高级冠军猫",
+      "icon": "👑",
+      "desc": "高级赛事的王者，距离圆头猫咪只差一步之遥。",
+      "element": "mystic",
+      "level": 20,
+      "attrs": {
+        "hp": 234,
+        "atk": 38,
+        "def": 30,
+        "spd": 26
+      },
+      "skills": [
+        "glass_shard",
+        "eight_legs",
+        "venom_bite"
+      ],
+      "reward": {
+        "exp": 55,
+        "money": 250,
+        "fame": 12
+      },
+      "tier": "boss"
+    },
+    {
+      "id": "opp_necro",
+      "name": "亡灵法师猫",
+      "icon": "🧙‍♀️",
+      "desc": "携幼崽出战：幼崽会替你挡伤害，血量越高压制越狠，先清幼崽。",
+      "element": "mystic",
+      "level": 17,
+      "attrs": {
+        "hp": 208,
+        "atk": 30,
+        "def": 23,
+        "spd": 17
+      },
+      "skills": [
+        "venom_bite",
+        "glass_shard",
+        "system_crash"
+      ],
+      "reward": {
+        "exp": 52,
+        "money": 210,
+        "fame": 10
+      },
+      "tier": "boss",
+      "mechanic": {
+        "summonMinions": 3
+      }
+    },
+    {
+      "id": "opp_killer",
+      "name": "杀手皇后猫咪",
+      "icon": "💣",
+      "desc": "数值不高，但开局给你装 10 回合倒计时炸弹，拖久了就会爆炸判负。",
+      "element": "tech",
+      "level": 19,
+      "attrs": {
+        "hp": 202,
+        "atk": 32,
+        "def": 25,
+        "spd": 22
+      },
+      "skills": [
+        "scratch",
+        "claw_swipe",
+        "shadow_dash"
+      ],
+      "reward": {
+        "exp": 55,
+        "money": 220,
+        "fame": 11
+      },
+      "tier": "boss",
+      "mechanic": {
+        "bombTurns": 10
+      }
+    },
+    {
+      "id": "opp_machine",
+      "name": "机器猫咪",
+      "icon": "🤖",
+      "desc": "死亡时会自爆造成固定伤害，收尾前记得把自己的血量抬上去。",
+      "element": "tech",
+      "level": 20,
+      "attrs": {
+        "hp": 240,
+        "atk": 37,
+        "def": 32,
+        "spd": 20
+      },
+      "skills": [
+        "laser_beam",
+        "system_crash",
+        "iron_body"
+      ],
+      "reward": {
+        "exp": 58,
+        "money": 240,
+        "fame": 12
+      },
+      "tier": "boss",
+      "mechanic": {
+        "selfDestruct": 15
+      }
+    }
+  ],
+  "tournaments": [
+    {
+      "id": "tournament_primary",
+      "name": "入门杯",
+      "icon": "🥉",
+      "desc": "新手猫主人的入门赛事，20 元门票，检验你家猫咪的基本功。",
+      "fee": 20,
+      "minLevel": 3,
+      "pools": {
+        "normal": 2,
+        "intermediate": 1
+      },
+      "prize": {
+        "champion": 10,
+        "second": 2,
+        "third": 1
+      },
+      "reward": {
+        "exp": 60,
+        "fame": 8,
+        "itemId": "cat_food_good"
+      }
+    },
+    {
+      "id": "tournament_mid",
+      "name": "进阶杯",
+      "icon": "🥈",
+      "desc": "城市猫友圈的正式赛事，50 元门票，对手都训练有素。",
+      "fee": 50,
+      "minLevel": 8,
+      "pools": {
+        "normal": 1,
+        "intermediate": 1,
+        "boss": 1
+      },
+      "prize": {
+        "champion": 10,
+        "second": 2,
+        "third": 1
+      },
+      "reward": {
+        "exp": 100,
+        "fame": 15,
+        "itemId": "cat_toy_good"
+      }
+    },
+    {
+      "id": "tournament_advanced",
+      "name": "大师杯",
+      "icon": "🥇",
+      "desc": "全城瞩目的巅峰赛事，100 元门票，冠军将受邀参加终极耄耋对决。",
+      "fee": 100,
+      "minLevel": 14,
+      "pools": {
+        "intermediate": 2,
+        "boss": 1
+      },
+      "prize": {
+        "champion": 10,
+        "second": 2,
+        "third": 1
+      },
+      "reward": {
+        "exp": 150,
+        "fame": 25,
+        "itemId": "cat_food_lux"
+      }
+    },
+    {
+      "id": "ultimate",
+      "name": "终极耄耋对决",
+      "icon": "👑",
+      "desc": "大师杯冠军专属的终极挑战：精英车轮战，最后迎战耄耋之王「圆头猫咪」。",
+      "fee": 0,
+      "minLevel": 16,
+      "pools": {
+        "boss": 2
+      },
+      "prize": {
+        "champion": 0,
+        "second": 0,
+        "third": 0
+      },
+      "reward": {
+        "exp": 200,
+        "fame": 40,
+        "itemId": "cat_food_lux"
+      },
+      "ultimate": true
+    }
+  ],
+  "boss": {
+    "id": "roundhead",
+    "name": "圆头猫咪",
+    "icon": "🐱",
+    "desc": "传说中整座城市的耄耋之王，头圆得像个皮球，从未有猫在它爪下撑过三回合。",
+    "element": "cosmic",
+    "level": 25,
+    "attrs": {
+      "hp": 390,
+      "atk": 53,
+      "def": 44,
+      "spd": 33
+    },
+    "skills": [
+      "round_roll",
+      "king_roar",
+      "absolute_dominance",
+      "web_trap",
+      "defend_stance"
+    ],
+    "reward": {
+      "exp": 120,
+      "money": 500,
+      "fame": 30,
+      "itemId": "cat_food_lux"
+    },
+    "minLevel": 12
+  }
+}

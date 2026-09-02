@@ -1,0 +1,332 @@
+/* ============================================================
+   都市生活 v1.21-beta · UI 皮肤主题包
+   ============================================================
+
+   设计参考（Pixso 内置色板插件收录的大厂设计系统 + 社区规范）：
+   - Material Design 3 / Arco Design / Element  →  强调色与中性灰阶体系
+   - Pixso 暗黑模式规范                          →  忌纯黑，深灰打底（#121212 级）；
+                                                    文字分层（标题 / 正文 / 辅助）
+   - WCAG 2.1 AA                                →  正文对比度 ≥ 4.5:1（tests/themes.test.ts 强制校验）
+   - 莫兰迪（Morandi）低饱和色谱                  →  灰调中间色系
+
+   ------------------------------------------------------------
+   架构要点（改前必读）
+   ------------------------------------------------------------
+   1. 本文件用 `data-skin` 轴，**不占用 `data-theme`**。
+      `data-theme` 已被昼夜循环占用（App.svelte 按 gameState.time.hour 写入 day/dusk/night）。
+      两轴正交：皮肤决定「配色身份」，昼夜决定「氛围」。
+
+   2. 选择器特异度：
+        [data-theme="day"]                     → (0,1,0)
+        :root[data-skin="x"]                   → (0,2,0)  ← 压过昼夜
+        :root[data-skin="x"][data-theme="day"] → (0,3,0)  ← 压过皮肤基色
+      因此皮肤会接管表面色（这是**故意的**：表面恒定才不会白底白字），
+      而每套皮肤再单独给三个时段的 --grad-sky / --bg-scrim，保留昼夜呼吸感。
+
+   3. 默认皮肤 `default`（都市夜色）**不在本文件出现**：
+      它就是 app.css 的 :root 基色，零覆盖 ⇒ 零回归风险。
+
+   4. HUD 令牌必须**成对**改：`.hud-scope` 把场景层锁成固定的「底/字」组合，
+      浅底皮肤必须同时给深色 --hud-text 且把 --hud-text-shadow 置 none，
+      否则会重演 v0.91/v0.92 的「白底白字 / 深影糊字」缺陷。
+   ============================================================ */
+
+/* ============================================================
+   皮肤 2 · 霓虹赛博（neon）
+   深灰打底（非纯黑）+ 青/洋红霓虹，锐利小圆角，发光描边
+   ============================================================ */
+:root[data-skin="neon"] {
+  --bg-deep: #0e0e14;
+  --bg-soft: #15151f;
+  --bg-card: #1c1c2b;
+  --bg-card-hover: #262638;
+  --bg-panel: rgba(14, 14, 20, 0.86);
+  --border: #303052;
+
+  --text-main: #e6f7ff;
+  --text-dim: #9aa8c7;
+
+  --accent: #00e5ff;
+  --accent-2: #ff2fd0;
+  --accent-ink: #04121a;
+  --accent-hover: #5df0ff;
+  --danger: #ff3b5c;
+  --warn: #ffb300;
+  --ok: #00e08a;
+
+  /* 锐利科技感：圆角收紧 */
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-pill: 999px;
+
+  /* 霓虹外发光替代柔和投影 */
+  --shadow-card: 0 0 0 1px rgba(0, 229, 255, 0.18), 0 4px 18px rgba(0, 229, 255, 0.1);
+  --shadow-pop: 0 0 40px rgba(0, 229, 255, 0.18), 0 18px 50px rgba(0, 0, 0, 0.72);
+
+  --grad-sky: linear-gradient(160deg, #0a0a12 0%, #171a3a 55%, #2a0f3d 100%);
+  --grad-panel: linear-gradient(180deg, rgba(28, 28, 43, 0.92), rgba(21, 21, 31, 0.96));
+
+  --bg-scrim: rgba(4, 6, 14, 0.6);
+  --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 6px rgba(0, 229, 255, 0.18);
+  --text-shadow-strong: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 229, 255, 0.28);
+
+  --hud-text: #e6f7ff;
+  --hud-text-dim: rgba(214, 236, 255, 0.72);
+  --hud-surface: linear-gradient(180deg, rgba(26, 28, 48, 0.9), rgba(14, 15, 26, 0.96));
+  --hud-surface-solid: rgba(20, 20, 32, 0.92);
+  --hud-border: rgba(0, 229, 255, 0.22);
+  --hud-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 0 6px rgba(0, 229, 255, 0.2);
+
+  --glass-bg: rgba(10, 12, 24, 0.72);
+  --glass-border: rgba(0, 229, 255, 0.2);
+  --scroll-thumb-hover: #00b8cc;
+
+  --period-morning: linear-gradient(135deg, #ff2fd0, #ffb300);
+  --period-afternoon: linear-gradient(135deg, #00e5ff, #5df0ff);
+  --period-evening: linear-gradient(135deg, #a02fff, #ff2fd0);
+  --period-night: linear-gradient(135deg, #12123a, #0a0a12);
+}
+:root[data-skin="neon"][data-theme="day"] {
+  --grad-sky: linear-gradient(160deg, #101430 0%, #1b2a5c 55%, #123049 100%);
+  --bg-scrim: rgba(4, 8, 20, 0.5);
+}
+:root[data-skin="neon"][data-theme="dusk"] {
+  --grad-sky: linear-gradient(160deg, #1a0b2e 0%, #3d1046 55%, #12123a 100%);
+  --bg-scrim: rgba(10, 4, 20, 0.58);
+}
+
+/* ============================================================
+   皮肤 3 · 极简白瓷（porcelain）
+   Material 3 / Arco 亮色体系：纯白卡面、克莱因蓝强调、大圆角、轻投影
+   ============================================================ */
+:root[data-skin="porcelain"] {
+  --bg-deep: #f5f7fa;
+  --bg-soft: #fafbfd;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f2f5fa;
+  --bg-panel: rgba(255, 255, 255, 0.9);
+  --border: #e3e8f0;
+
+  --text-main: #1b2330;
+  --text-dim: #5f6b7d;
+
+  --accent: #2560e6;
+  --accent-2: #00a6a6;
+  --accent-ink: #ffffff;
+  --accent-hover: #1a4fc4;
+  --danger: #d92d34;
+  --warn: #b76a00;
+  --ok: #12813f;
+
+  /* 通透舒展：圆角放大 */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 2px 8px rgba(16, 32, 64, 0.07), 0 8px 24px rgba(16, 32, 64, 0.06);
+  --shadow-pop: 0 20px 60px rgba(16, 32, 64, 0.16);
+
+  --grad-sky: linear-gradient(160deg, #eaf1fb 0%, #f5f8fc 55%, #ffffff 100%);
+  --grad-panel: linear-gradient(180deg, #ffffff, #f7f9fc);
+
+  /* 浅底：遮罩改为浅色，文字投影取消（深字不需要暗影） */
+  --bg-scrim: rgba(246, 249, 253, 0.62);
+  --text-shadow: none;
+  --text-shadow-strong: none;
+
+  /* HUD 成对翻转：浅底 + 深字 + 无投影 */
+  --hud-text: #1b2330;
+  --hud-text-dim: rgba(27, 35, 48, 0.68);
+  --hud-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 249, 252, 0.97));
+  --hud-surface-solid: rgba(255, 255, 255, 0.95);
+  --hud-border: rgba(20, 32, 54, 0.12);
+  --hud-text-shadow: none;
+
+  --glass-bg: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(20, 32, 54, 0.1);
+  --scroll-thumb-hover: #b9c4d6;
+
+  --period-morning: linear-gradient(135deg, #ff9a56, #ffc773);
+  --period-afternoon: linear-gradient(135deg, #2560e6, #6ba8ff);
+  --period-evening: linear-gradient(135deg, #7b5cd6, #f0879e);
+  --period-night: linear-gradient(135deg, #3a4a6b, #263349);
+}
+:root[data-skin="porcelain"][data-theme="dusk"] {
+  --grad-sky: linear-gradient(160deg, #ffe8d6 0%, #ffd9d1 55%, #eae2f5 100%);
+  --bg-scrim: rgba(255, 248, 242, 0.62);
+}
+:root[data-skin="porcelain"][data-theme="night"] {
+  --grad-sky: linear-gradient(160deg, #dfe6f2 0%, #e8edf7 55%, #f2f5fb 100%);
+  --bg-scrim: rgba(238, 243, 250, 0.66);
+}
+
+/* ============================================================
+   皮肤 4 · 莫兰迪雾（morandi）
+   低饱和灰调中间色 + 鼠尾草绿，柔和圆角，编辑级质感
+   ============================================================ */
+:root[data-skin="morandi"] {
+  --bg-deep: #dcdad2;
+  --bg-soft: #e6e3dc;
+  --bg-card: #f0eee8;
+  --bg-card-hover: #e7e4db;
+  --bg-panel: rgba(220, 218, 210, 0.88);
+  --border: #c6c2b6;
+
+  --text-main: #33362f;
+  --text-dim: #5c6055;
+
+  --accent: #7d9885;
+  --accent-2: #9a8c7a;
+  --accent-ink: #1f2620;
+  --accent-hover: #8fa896;
+  --danger: #a8514a;
+  --warn: #9a7434;
+  --ok: #5c7d64;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 2px 10px rgba(80, 74, 60, 0.1), 0 8px 22px rgba(80, 74, 60, 0.07);
+  --shadow-pop: 0 18px 50px rgba(80, 74, 60, 0.22);
+
+  --grad-sky: linear-gradient(160deg, #c9c6bd 0%, #ddd9d0 55%, #eae7df 100%);
+  --grad-panel: linear-gradient(180deg, rgba(240, 238, 232, 0.95), rgba(230, 227, 220, 0.97));
+
+  --bg-scrim: rgba(226, 222, 213, 0.6);
+  --text-shadow: none;
+  --text-shadow-strong: none;
+
+  --hud-text: #2f322b;
+  --hud-text-dim: rgba(47, 50, 43, 0.66);
+  --hud-surface: linear-gradient(180deg, rgba(240, 238, 232, 0.93), rgba(228, 225, 217, 0.96));
+  --hud-surface-solid: rgba(238, 236, 229, 0.95);
+  --hud-border: rgba(70, 66, 54, 0.16);
+  --hud-text-shadow: none;
+
+  --glass-bg: rgba(240, 238, 232, 0.8);
+  --glass-border: rgba(70, 66, 54, 0.14);
+  --scroll-thumb-hover: #a8a496;
+
+  --period-morning: linear-gradient(135deg, #d4a373, #e8c39e);
+  --period-afternoon: linear-gradient(135deg, #8fa896, #b3c4b8);
+  --period-evening: linear-gradient(135deg, #9a8c7a, #c4a598);
+  --period-night: linear-gradient(135deg, #5c6055, #43463d);
+}
+:root[data-skin="morandi"][data-theme="day"] {
+  --grad-sky: linear-gradient(160deg, #cfd4c9 0%, #e2e4da 55%, #eeefe7 100%);
+  --bg-scrim: rgba(230, 232, 222, 0.58);
+}
+:root[data-skin="morandi"][data-theme="dusk"] {
+  --grad-sky: linear-gradient(160deg, #d9c3b0 0%, #cdb3a8 55%, #b8adb0 100%);
+  --bg-scrim: rgba(228, 216, 206, 0.6);
+}
+
+/* ============================================================
+   皮肤 5 · 暖阳纸墨（paper）
+   米黄纸感 + 棕墨文字 + 赭橙强调，复古印刷风
+   ============================================================ */
+:root[data-skin="paper"] {
+  --bg-deep: #f4ead6;
+  --bg-soft: #fbf4e6;
+  --bg-card: #fffaf0;
+  --bg-card-hover: #f8efdd;
+  --bg-panel: rgba(244, 234, 214, 0.9);
+  --border: #ddc9a8;
+
+  --text-main: #3a2c1c;
+  --text-dim: #7a6448;
+
+  --accent: #c2591a;
+  --accent-2: #8c6a3f;
+  --accent-ink: #fff8ec;
+  --accent-hover: #a84a13;
+  --danger: #a83228;
+  --warn: #9c6a12;
+  --ok: #4f7a3d;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 2px 10px rgba(120, 90, 50, 0.12), 0 8px 22px rgba(120, 90, 50, 0.08);
+  --shadow-pop: 0 18px 50px rgba(90, 66, 34, 0.28);
+
+  --grad-sky: linear-gradient(160deg, #f0dcb8 0%, #f8ecd6 55%, #fdf6e8 100%);
+  --grad-panel: linear-gradient(180deg, rgba(255, 250, 240, 0.95), rgba(249, 241, 226, 0.97));
+
+  --bg-scrim: rgba(244, 234, 214, 0.6);
+  --text-shadow: none;
+  --text-shadow-strong: none;
+
+  --hud-text: #3a2c1c;
+  --hud-text-dim: rgba(58, 44, 28, 0.66);
+  --hud-surface: linear-gradient(180deg, rgba(255, 250, 240, 0.94), rgba(247, 238, 222, 0.97));
+  --hud-surface-solid: rgba(253, 247, 235, 0.95);
+  --hud-border: rgba(120, 90, 50, 0.2);
+  --hud-text-shadow: none;
+
+  --glass-bg: rgba(255, 250, 240, 0.8);
+  --glass-border: rgba(120, 90, 50, 0.18);
+  --scroll-thumb-hover: #c9ad82;
+
+  --period-morning: linear-gradient(135deg, #e8973a, #f5c877);
+  --period-afternoon: linear-gradient(135deg, #c2591a, #e8a05a);
+  --period-evening: linear-gradient(135deg, #a8503c, #d98b6a);
+  --period-night: linear-gradient(135deg, #6b5336, #473722);
+}
+:root[data-skin="paper"][data-theme="day"] {
+  --grad-sky: linear-gradient(160deg, #f7e6c4 0%, #fbf0da 55%, #fffaf0 100%);
+  --bg-scrim: rgba(250, 240, 222, 0.58);
+}
+:root[data-skin="paper"][data-theme="dusk"] {
+  --grad-sky: linear-gradient(160deg, #edbf8c 0%, #e0a37c 55%, #c98f76 100%);
+  --bg-scrim: rgba(245, 228, 206, 0.6);
+}
+
+/* ============================================================
+   跨皮肤微调：浅底皮肤的通用兜底
+   ------------------------------------------------------------
+   app.css 里若干装饰用的 rgba(255,255,255,·) 是按深底设计的
+   （白色微光在浅底上等于「消失」），浅底皮肤统一改成黑色微光。
+   ============================================================ */
+:root[data-skin="porcelain"] .stat-bar .track,
+:root[data-skin="morandi"] .stat-bar .track,
+:root[data-skin="paper"] .stat-bar .track {
+  background: rgba(0, 0, 0, 0.09);
+}
+:root[data-skin="porcelain"] .tag,
+:root[data-skin="morandi"] .tag,
+:root[data-skin="paper"] .tag {
+  background: rgba(0, 0, 0, 0.06);
+}
+:root[data-skin="porcelain"] .switch,
+:root[data-skin="morandi"] .switch,
+:root[data-skin="paper"] .switch,
+:root[data-skin="porcelain"] .seg-btn,
+:root[data-skin="morandi"] .seg-btn,
+:root[data-skin="paper"] .seg-btn {
+  border-color: rgba(0, 0, 0, 0.16);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* 浅底皮肤：整屏危险描边减弱（浅底上过重的红色晕会刺眼） */
+:root[data-skin="porcelain"] .danger-vignette,
+:root[data-skin="morandi"] .danger-vignette,
+:root[data-skin="paper"] .danger-vignette {
+  box-shadow: inset 0 0 110px 20px rgba(200, 30, 30, 0.28);
+}
+
+/* 霓虹皮肤：卡片 hover 加一层青色内描边，强化科技感 */
+:root[data-skin="neon"] .card:hover {
+  box-shadow: var(--shadow-card), inset 0 0 0 1px rgba(0, 229, 255, 0.28);
+}
+
+/* 皮肤切换过渡：避免生硬跳色 */
+html {
+  transition: background 0.45s ease;
+}

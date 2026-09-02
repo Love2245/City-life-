@@ -1,0 +1,312 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "id": "hiss",
+      "name": "哈气",
+      "icon": "😾",
+      "kind": "attack",
+      "element": "normal",
+      "power": 20,
+      "hitRate": 1,
+      "rageCost": 0,
+      "desc": "鼓起腮帮子哈气，威慑对手。基础攻击，无消耗。"
+    },
+    {
+      "id": "scratch",
+      "name": "抓挠",
+      "icon": "🐾",
+      "kind": "attack",
+      "element": "normal",
+      "power": 30,
+      "hitRate": 0.95,
+      "rageCost": 0,
+      "desc": "亮出爪子一顿乱抓。稳定的普通攻击。"
+    },
+    {
+      "id": "tail_whip",
+      "name": "甩尾",
+      "icon": "🐈",
+      "kind": "attack",
+      "element": "normal",
+      "power": 25,
+      "hitRate": 1,
+      "rageCost": 0,
+      "desc": "尾巴一甩抽向对手。轻快的基础攻击。"
+    },
+    {
+      "id": "claw_swipe",
+      "name": "利爪猛击",
+      "icon": "🗡️",
+      "kind": "attack",
+      "element": "normal",
+      "power": 45,
+      "hitRate": 0.9,
+      "rageCost": 20,
+      "desc": "蓄力一爪，威力不俗的普通系攻击。"
+    },
+    {
+      "id": "defend_stance",
+      "name": "蜷缩",
+      "icon": "🛡️",
+      "kind": "defense",
+      "element": "normal",
+      "hitRate": 1,
+      "rageCost": 0,
+      "desc": "缩成一团，本回合大幅减伤并积累怒气。"
+    },
+    {
+      "id": "fish_smash",
+      "name": "鱼干猛击",
+      "icon": "🐟",
+      "kind": "attack",
+      "element": "normal",
+      "power": 55,
+      "hitRate": 0.9,
+      "rageCost": 25,
+      "desc": "叼着珍藏的鱼干砸向对手，越饿越狠。"
+    },
+    {
+      "id": "food_rage",
+      "name": "贪吃暴走",
+      "icon": "🍖",
+      "kind": "attack",
+      "element": "normal",
+      "power": 70,
+      "hitRate": 0.85,
+      "rageCost": 50,
+      "desc": "想起被抢走的罐头，怒气值拉满的暴走攻击。"
+    },
+    {
+      "id": "iron_body",
+      "name": "铁壁",
+      "icon": "🧱",
+      "kind": "defense",
+      "element": "normal",
+      "hitRate": 1,
+      "rageCost": 0,
+      "desc": "皮糙肉厚地硬扛，本回合减伤 70% 并积累怒气。"
+    },
+    {
+      "id": "headbutt",
+      "name": "头槌",
+      "icon": "💥",
+      "kind": "attack",
+      "element": "normal",
+      "power": 50,
+      "hitRate": 0.9,
+      "rageCost": 20,
+      "desc": "用结实的脑门狠狠顶过去。"
+    },
+    {
+      "id": "night_ambush",
+      "name": "夜袭",
+      "icon": "🌙",
+      "kind": "attack",
+      "element": "normal",
+      "power": 55,
+      "hitRate": 0.95,
+      "rageCost": 25,
+      "desc": "借夜色悄悄绕到背后偷袭，几乎必中。"
+    },
+    {
+      "id": "shadow_dash",
+      "name": "影闪连击",
+      "icon": "💨",
+      "kind": "attack",
+      "element": "normal",
+      "power": 35,
+      "hitRate": 0.9,
+      "rageCost": 30,
+      "desc": "化作残影连续扑击两次。"
+    },
+    {
+      "id": "mint_fragrance",
+      "name": "薄荷清香",
+      "icon": "🌿",
+      "kind": "heal",
+      "element": "nature",
+      "hitRate": 1,
+      "rageCost": 30,
+      "desc": "散发薄荷清香，恢复自身 35% 最大 HP，并解除中毒与灼伤。",
+      "effect": { "healPct": 0.35 }
+    },
+    {
+      "id": "leaf_blade",
+      "name": "叶刃",
+      "icon": "🍃",
+      "kind": "attack",
+      "element": "nature",
+      "power": 50,
+      "hitRate": 0.9,
+      "rageCost": 25,
+      "desc": "甩出锋利的叶片，自然系攻击，克制科技系。"
+    },
+    {
+      "id": "nature_blessing",
+      "name": "自然祝福",
+      "icon": "🌸",
+      "kind": "heal",
+      "element": "nature",
+      "hitRate": 1,
+      "rageCost": 20,
+      "desc": "沐浴自然之力，恢复自身 25% 最大 HP。",
+      "effect": { "healPct": 0.25 }
+    },
+    {
+      "id": "glass_shard",
+      "name": "碎玻璃",
+      "icon": "💠",
+      "kind": "attack",
+      "element": "mystic",
+      "power": 60,
+      "hitRate": 0.85,
+      "rageCost": 30,
+      "desc": "崩碎半透明的身体，射出锋利碎片。高威力神秘系攻击。"
+    },
+    {
+      "id": "mirage",
+      "name": "幻影连击",
+      "icon": "👻",
+      "kind": "attack",
+      "element": "mystic",
+      "power": 35,
+      "hitRate": 0.9,
+      "rageCost": 30,
+      "desc": "幻化出多个残影连续攻击两次。"
+    },
+    {
+      "id": "laser_beam",
+      "name": "激光射线",
+      "icon": "🔫",
+      "kind": "attack",
+      "element": "tech",
+      "power": 55,
+      "hitRate": 0.9,
+      "rageCost": 25,
+      "desc": "从眼中射出激光，科技系攻击，克制神秘系。"
+    },
+    {
+      "id": "firmware_update",
+      "name": "固件更新",
+      "icon": "⚙️",
+      "kind": "heal",
+      "element": "tech",
+      "hitRate": 1,
+      "rageCost": 25,
+      "desc": "自动更新固件，恢复自身 30% 最大 HP。",
+      "effect": { "healPct": 0.3 }
+    },
+    {
+      "id": "system_crash",
+      "name": "系统崩溃",
+      "icon": "💾",
+      "kind": "attack",
+      "element": "tech",
+      "power": 75,
+      "hitRate": 0.85,
+      "rageCost": 55,
+      "desc": "强制对手系统崩溃，威力巨大的科技系攻击。"
+    },
+    {
+      "id": "web_trap",
+      "name": "蛛网缠绕",
+      "icon": "🕸️",
+      "kind": "status",
+      "element": "mystic",
+      "hitRate": 0.85,
+      "rageCost": 25,
+      "desc": "吐出蛛网缠住对手，使其陷入麻痹。",
+      "effect": { "status": "paralysis", "statusChance": 1 }
+    },
+    {
+      "id": "venom_bite",
+      "name": "毒牙",
+      "icon": "☠️",
+      "kind": "status",
+      "element": "mystic",
+      "power": 20,
+      "hitRate": 0.9,
+      "rageCost": 20,
+      "desc": "咬一口注入毒素，造成伤害并使对手中毒。",
+      "effect": { "status": "poison", "statusChance": 1 }
+    },
+    {
+      "id": "eight_legs",
+      "name": "八足连击",
+      "icon": "🕷️",
+      "kind": "attack",
+      "element": "mystic",
+      "power": 30,
+      "hitRate": 0.9,
+      "rageCost": 40,
+      "desc": "八条腿轮番上阵，连续攻击三次。"
+    },
+    {
+      "id": "golden_ray",
+      "name": "金光闪耀",
+      "icon": "✨",
+      "kind": "attack",
+      "element": "cosmic",
+      "power": 65,
+      "hitRate": 0.9,
+      "rageCost": 30,
+      "desc": "浑身金光迸射，宇宙系攻击，克制自然系。"
+    },
+    {
+      "id": "wealth_blessing",
+      "name": "财气护体",
+      "icon": "💰",
+      "kind": "heal",
+      "element": "cosmic",
+      "hitRate": 1,
+      "rageCost": 30,
+      "desc": "财运加持，恢复自身 40% 最大 HP。",
+      "effect": { "healPct": 0.4 }
+    },
+    {
+      "id": "supernova",
+      "name": "超新星爆发",
+      "icon": "🌟",
+      "kind": "attack",
+      "element": "cosmic",
+      "power": 90,
+      "hitRate": 0.85,
+      "rageCost": 60,
+      "desc": "引爆体内的宇宙能量，毁天灭地的终极攻击。"
+    },
+    {
+      "id": "round_roll",
+      "name": "圆头滚击",
+      "icon": "⚪",
+      "kind": "attack",
+      "element": "cosmic",
+      "power": 60,
+      "hitRate": 0.9,
+      "rageCost": 20,
+      "desc": "把圆滚滚的脑袋当保龄球滚向对手。"
+    },
+    {
+      "id": "king_roar",
+      "name": "王者咆哮",
+      "icon": "👑",
+      "kind": "attack",
+      "element": "cosmic",
+      "power": 80,
+      "hitRate": 0.9,
+      "rageCost": 40,
+      "desc": "一声咆哮震慑全场，耄耋之王的威严。"
+    },
+    {
+      "id": "absolute_dominance",
+      "name": "绝对统治",
+      "icon": "🌌",
+      "kind": "attack",
+      "element": "cosmic",
+      "power": 100,
+      "hitRate": 0.9,
+      "rageCost": 60,
+      "desc": "圆头猫咪的终极绝招，从未有猫能接下这一击。"
+    }
+  ]
+}

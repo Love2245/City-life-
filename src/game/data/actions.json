@@ -1,0 +1,4440 @@
+[
+  {
+    "id": "shower_home",
+    "locationId": "home",
+    "name": "洗澡",
+    "icon": "🚿",
+    "desc": "热水澡冲走一天的疲惫和灰尘",
+    "requiresFacility": "shower",
+    "effects": {
+      "hygiene": 40,
+      "stamina": 5,
+      "mood": 3,
+      "money": -2,
+      "log": "洗了个热水澡，干净多了"
+    },
+    "duration": 1,
+    "verdicts": [
+      "热水冲走一身疲惫，舒服",
+      "洗完之后整个人都清爽了",
+      "这水温，刚刚好",
+      "水压有点小，但也洗得干净",
+      "冲完澡感觉又能再战一天",
+      "热水澡是廉价但真实的快乐",
+      "把汗味和烦恼一起冲掉了"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "eat_noodles_home",
+    "locationId": "home",
+    "name": "吃泡面",
+    "icon": "🍜",
+    "desc": "老坛酸菜，打工人的续命神器（3 元，+26 饱腹 −2 健康，无需灶台）",
+    "effects": {
+      "satiety": 26,
+      "mood": -3,
+      "health": -2,
+      "money": -3,
+      "log": "煮了碗泡面，将就一顿",
+      "cureStatuses": [
+        "hungry"
+      ]
+    },
+    "duration": 1,
+    "verdicts": [
+      "老坛酸菜就是家的味道",
+      "将就的一顿，但胃是暖的",
+      "泡面配剧，简单快乐",
+      "加了个蛋，算是豪华版",
+      "汤都喝完了，满足",
+      "今天换了个口味，红烧牛肉的",
+      "三分钟泡面，五分钟吃完，效率"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "buy_lunch_convenience",
+    "locationId": "convenience_store",
+    "name": "买盒饭",
+    "icon": "🍱",
+    "desc": "便利店鸡腿饭，13 元一份，实惠管饱（+34 饱腹，可堂食或打包）",
+    "effects": {
+      "money": -13,
+      "log": "买了份盒饭"
+    },
+    "duration": 0.5,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "微波炉转了两分钟，香味飘出来",
+      "盒饭的分量刚刚好，谈不上惊喜"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "bento"
+  },
+  {
+    "id": "buy_drink_convenience",
+    "locationId": "convenience_store",
+    "name": "买饮料",
+    "icon": "🥤",
+    "desc": "冰镇快乐水，3 元提神（+10 体力，几乎不顶饱）",
+    "effects": {
+      "money": -3,
+      "log": "买了瓶饮料"
+    },
+    "duration": 0.5,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "冰镇的，握在手里很舒服",
+      "喝完随手把瓶子扔进了回收箱"
+    ],
+    "sound": "coin",
+    "handler": "buy_food",
+    "itemId": "drink"
+  },
+  {
+    "id": "buy_sandwich_convenience",
+    "locationId": "convenience_store",
+    "name": "买三明治",
+    "icon": "🥪",
+    "duration": 0.5,
+    "desc": "三明治，8 元，开袋即食（+22 饱腹，可堂食或打包）",
+    "effects": {
+      "money": -8,
+      "log": "买了个三明治"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "切成三角的形状，吃着不腻",
+      "面包边有点干，但夹心还行"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "sandwich"
+  },
+  {
+    "id": "buy_salad_convenience",
+    "locationId": "convenience_store",
+    "name": "买沙拉",
+    "icon": "🥗",
+    "duration": 0.5,
+    "desc": "轻食沙拉，11 元，健康之选（+18 饱腹 +6 健康，可堂食或打包）",
+    "effects": {
+      "money": -11,
+      "log": "买了份沙拉"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "酱汁单独一小包，可以自己控制量",
+      "菜叶还挺脆，没蔫"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "salad"
+  },
+  {
+    "id": "buy_noodles_convenience",
+    "locationId": "convenience_store",
+    "name": "买泡面",
+    "icon": "🍜",
+    "duration": 0.5,
+    "desc": "桶装泡面，5 元。最便宜的一顿，但吃多了伤身（+26 饱腹 −2 健康）",
+    "effects": {
+      "money": -5,
+      "log": "买了桶泡面"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "泡面香气在小店里散开",
+      "撕开料包的那一刻最治愈"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "noodles"
+  },
+  {
+    "id": "study_library",
+    "locationId": "library",
+    "name": "图书馆自习",
+    "icon": "📖",
+    "desc": "安静看书，智力 +，穷人最划算的投资",
+    "requirements": {
+      "attr": {
+        "stamina": 10
+      }
+    },
+    "effects": {
+      "intelligence": 3,
+      "stamina": -15,
+      "stress": -5,
+      "log": "在图书馆泡了一下午，学到了不少"
+    },
+    "duration": 2,
+    "verdicts": [
+      "静下心看了会书，收获不小",
+      "知识就是力量，古人诚不欺我",
+      "图书馆的氛围就是不一样",
+      "啃完一章，脑子清明了许多",
+      "看着窗外认真学习的陌生人，自己也静下来了",
+      "又离目标近了一点",
+      "这儿的空调比出租屋舒服，多待了会儿"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "convenience_blind_box",
+    "locationId": "convenience_store",
+    "name": "便利店盲盒",
+    "icon": "🎁",
+    "desc": "晚上 10 点后限定：10 元一个神秘盲盒，随机开出两个食物或食材",
+    "duration": 0.5,
+    "handler": "blind_box",
+    "requirements": {
+      "hourRange": {
+        "start": 22,
+        "end": 6
+      }
+    },
+    "effects": {
+      "money": -10
+    },
+    "verdicts": [
+      "拆开盒子，收获满满",
+      "盲盒的快乐，就是未知的惊喜",
+      "店员说这盒手气不错",
+      "十块钱买到两份吃的，值了",
+      "今晚的夜宵有着落了",
+      "盲盒拆开的一瞬间最刺激"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "read_novel_library",
+    "locationId": "library",
+    "name": "看闲书",
+    "icon": "📕",
+    "desc": "小说漫画随便看，放松心情",
+    "effects": {
+      "mood": 10,
+      "stamina": -3,
+      "log": "看了会闲书，心情好多了"
+    },
+    "duration": 1,
+    "verdicts": [
+      "这小说真上头，停不下来",
+      "看闲书的时间过得真快",
+      "精神食粮也管饱",
+      "主角逆袭的剧情，看得很解气",
+      "看到精彩处差点笑出声",
+      "漫画更新追完了，心情舒畅",
+      "书里的世界比现实温柔"
+    ],
+    "sound": "read"
+  },
+  {
+    "id": "walk_park",
+    "locationId": "park",
+    "name": "公园散步",
+    "icon": "🚶",
+    "desc": "慢悠悠走一圈，放空自己",
+    "effects": {
+      "mood": 8,
+      "stress": -8,
+      "stamina": -5,
+      "log": "在公园散了会步"
+    },
+    "duration": 1,
+    "verdicts": [
+      "吹着晚风散步，心情舒畅",
+      "公园的空气比出租屋新鲜多了",
+      "慢悠悠走一圈，压力散了大半",
+      "看大爷下棋，看了好一会儿",
+      "遛弯的人还挺多，烟火气十足",
+      "走一走，腿脚也松快了",
+      "夕阳下的公园，挺好看的"
+    ],
+    "sound": "walk",
+    "eventChance": 0.4
+  },
+  {
+    "id": "exercise_park",
+    "locationId": "park",
+    "name": "锻炼身体",
+    "icon": "🏃",
+    "desc": "跑几圈，练练体质",
+    "requirements": {
+      "attr": {
+        "stamina": 25
+      },
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ]
+    },
+    "effects": {
+      "fitness": 4,
+      "stamina": -20,
+      "stress": -5,
+      "log": "在公园跑了会步，出了一身汗"
+    },
+    "duration": 1,
+    "verdicts": [
+      "出了一身汗，痛快！",
+      "跑完步腿有点软，但很爽",
+      "锻炼完感觉身体被唤醒了",
+      "单杠拉了几个，手酸但值",
+      "跑步的时候脑子特别清醒",
+      "坚持锻炼，身体是革命的本钱",
+      "今天多跑了半圈，进步！"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "park_chess",
+    "locationId": "park",
+    "name": "下象棋",
+    "icon": "♟️",
+    "desc": "和象棋大爷摆开棋盘杀几盘，赢了还有彩头",
+    "effects": {
+      "mood": 2,
+      "intelligence": 1,
+      "stamina": -5,
+      "log": "和象棋大爷下了几盘棋"
+    },
+    "duration": 1,
+    "verdicts": [
+      "大爷的棋路很稳，不好对付",
+      "围观的人比下棋的还多",
+      "输赢不重要，棋盘上见真章",
+      "大爷说你这棋有灵气",
+      "一盘棋下得酣畅淋漓",
+      "棋逢对手，杀得难解难分"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "park_taichi",
+    "locationId": "park",
+    "name": "打太极",
+    "icon": "🧘",
+    "desc": "跟晨练的大爷大妈学几招太极，修身养性",
+    "effects": {
+      "mood": 5,
+      "stress": -6,
+      "fitness": 2,
+      "stamina": -8,
+      "log": "跟着打了一套太极，心静了不少"
+    },
+    "duration": 1,
+    "verdicts": [
+      "招式慢悠悠的，但出了一身细汗",
+      "领队大妈夸你学得快",
+      "太极讲究以柔克刚，道理还挺深",
+      "打完一套，心里那点烦闷散了大半",
+      "旁边大爷说年轻人肯学太极的不多了",
+      "收势的那一刻，整个世界都安静了"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "park_square_dance",
+    "locationId": "park",
+    "name": "跳广场舞",
+    "icon": "💃",
+    "desc": "加入广场舞大军，跟着音乐扭起来，放得开才快乐",
+    "effects": {
+      "mood": 7,
+      "charm": 1,
+      "stamina": -10,
+      "stress": -4,
+      "log": "混进广场舞队伍跳了一晚上，心情大好"
+    },
+    "duration": 1,
+    "verdicts": [
+      "刚开始放不开，后来越跳越嗨",
+      "大妈们热情地教你动作",
+      "音乐一响，烦恼全忘",
+      "跳完满头汗，但特别痛快",
+      "围观的大爷给你竖了个大拇指",
+      "跳完才发现自己也会被音乐带动"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "drink_cafe",
+    "locationId": "cafe",
+    "name": "喝咖啡",
+    "icon": "☕",
+    "desc": "拿铁一杯 25 元，喝的是氛围",
+    "effects": {
+      "mood": 8,
+      "stamina": 8,
+      "money": -25,
+      "log": "在咖啡厅喝了杯拿铁"
+    },
+    "duration": 0.5,
+    "verdicts": [
+      "这拿铁拉花不错，值 25 块",
+      "咖啡的香气让人放松",
+      "坐一下午，蹭了个氛围",
+      "苦涩回甘，像极了生活",
+      "看着白领们办公，自己像局外人",
+      "美式太苦，还是拿铁好",
+      "换个环境，思路都开阔了"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "wander_street",
+    "locationId": "street",
+    "name": "街头闲逛",
+    "icon": "👀",
+    "desc": "随便走走，看看这座城市的烟火气",
+    "effects": {
+      "mood": 3,
+      "stamina": -5,
+      "log": "在街头闲逛，感受城市的脉搏"
+    },
+    "duration": 1,
+    "verdicts": [
+      "街头的烟火气，让人心安",
+      "漫无目的地走走，也不错",
+      "城市的每个角落都有故事",
+      "看小贩吆喝，看行人匆匆",
+      "晚霞下的街道，镀了层金",
+      "走到哪算哪，自由的感觉",
+      "这条街每天都不一样"
+    ],
+    "sound": "walk",
+    "eventChance": 0.35
+  },
+  {
+    "id": "sign_lease",
+    "locationId": "housing_agency",
+    "name": "签约普通出租屋",
+    "icon": "📝",
+    "desc": "住宅区老小区，月租 1000，押一付一（住房中介）",
+    "handler": "sign_lease",
+    "requirements": {},
+    "effects": {},
+    "duration": 1,
+    "verdicts": [
+      "签完字的那一刻，心里踏实了",
+      "终于有个像样的家了",
+      "从此告别流浪的夜晚",
+      "房租虽贵，但值得",
+      "把钥匙攥在手心，感觉不一样了",
+      "房东挺和气，希望别老涨价",
+      "这是我在这座城市的第一份安定"
+    ],
+    "sound": "success",
+    "housingId": "old_apartment"
+  },
+  {
+    "id": "book_sports",
+    "locationId": "library",
+    "name": "运动指南",
+    "icon": "🏃",
+    "desc": "从热身到拉伸，把锻炼练进日常（提升体质，耗时较长）",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_sports",
+    "group": "read",
+    "effects": {
+      "fitness": 4,
+      "stamina": -8,
+      "stress": -3
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_health",
+    "locationId": "library",
+    "name": "健康指南",
+    "icon": "💪",
+    "desc": "作息、饮食、小病不硬扛（提升健康，耗时较长）",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_health",
+    "group": "read",
+    "effects": {
+      "health": 4,
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_cooking",
+    "locationId": "library",
+    "name": "烹饪食谱",
+    "icon": "🍳",
+    "desc": "从家常小炒到拿手硬菜，解锁更多菜肴（提升厨艺）",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_cooking",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "cooking": 1
+      },
+      "satiety": 5,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_philosophy",
+    "locationId": "library",
+    "name": "哲学总集",
+    "icon": "📜",
+    "desc": "想不明白的事，书里或许早有答案（提升智力，耗时较长）",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_philosophy",
+    "group": "read",
+    "effects": {
+      "intelligence": 4,
+      "stress": -4,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_charm",
+    "locationId": "library",
+    "name": "精致人生",
+    "icon": "💄",
+    "desc": "仪表、谈吐、分寸感，都市生存的软实力（提升魅力，耗时较长）",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_charm",
+    "group": "read",
+    "effects": {
+      "charm": 4,
+      "mood": 3,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_programming",
+    "locationId": "library",
+    "name": "编程入门",
+    "icon": "💻",
+    "desc": "从 Hello World 到第一个作品，代码改变命运（提升编程）",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_programming",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "programming": 1
+      },
+      "intelligence": 1,
+      "stamina": -10
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_design",
+    "locationId": "library",
+    "name": "设计美学书",
+    "icon": "🎨",
+    "desc": "配色、排版、留白，审美也是生产力（提升设计）",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_design",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "design": 1
+      },
+      "charm": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_operation",
+    "locationId": "library",
+    "name": "运营操作",
+    "icon": "📊",
+    "desc": "流量、转化、复购，把生意做明白（提升运营）",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_operation",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "operation": 1
+      },
+      "intelligence": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "book_stall_tips",
+    "locationId": "library",
+    "name": "摆摊小技巧",
+    "icon": "🍢",
+    "desc": "选址、吆喝、定价，摊主老手的心得（每读一次摆摊收入 +10%，封顶 5 级）",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_stall_tips",
+    "group": "read",
+    "effects": {
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "cook_practice_home",
+    "locationId": "home",
+    "name": "做饭练手",
+    "icon": "🍳",
+    "desc": "自己开火练厨艺，不用食材（花 5 元买边角料，需灶台。只练手，不管饱）",
+    "effects": {
+      "skills": {
+        "cooking": 1
+      },
+      "satiety": 12,
+      "mood": 2,
+      "money": -5,
+      "log": "自己下厨做了一顿，厨艺见长"
+    },
+    "duration": 1,
+    "verdicts": [
+      "炒了个西红柿炒蛋，卖相还行",
+      "盐放多了，但自己做的都好吃",
+      "学会了颠勺，有点大厨范儿",
+      "煮了锅粥，配咸菜，简单满足",
+      "照着菜谱做，居然没翻车",
+      "厨艺就是熟能生巧"
+    ],
+    "sound": "eat",
+    "group": "cook",
+    "requirements": {
+      "flag": "cook_utensil"
+    }
+  },
+  {
+    "id": "cook_dish_veg",
+    "locationId": "home",
+    "name": "炒时蔬",
+    "icon": "🥬",
+    "duration": 1,
+    "desc": "用背包里的蔬菜炒一盘，热乎着吃（需灶台 + 蔬菜 ×1）",
+    "handler": "cook_item",
+    "recipeId": "dish_veg",
+    "effects": {
+      "log": "炒了盘时蔬"
+    },
+    "verdicts": [
+      "油下锅那一声，特别治愈",
+      "自己做的，吃着踏实",
+      "厨房飘出的香味让人心安",
+      "比外卖干净，也比外卖便宜",
+      "锅碗刷完，一天算是收尾了",
+      "油下锅的滋啦声，让人踏实",
+      "菜炒得有点老，但能吃"
+    ],
+    "sound": "eat",
+    "group": "cook",
+    "requirements": {
+      "flag": "cook_utensil"
+    }
+  },
+  {
+    "id": "cook_dish_salad",
+    "locationId": "home",
+    "name": "拌沙拉",
+    "icon": "🥗",
+    "duration": 0.5,
+    "desc": "蔬菜洗切拌一拌，比便利店便宜（需灶台 + 蔬菜 ×1）",
+    "handler": "cook_item",
+    "recipeId": "dish_salad",
+    "effects": {
+      "log": "拌了份沙拉"
+    },
+    "verdicts": [
+      "油下锅那一声，特别治愈",
+      "自己做的，吃着踏实",
+      "厨房飘出的香味让人心安",
+      "比外卖干净，也比外卖便宜",
+      "锅碗刷完，一天算是收尾了",
+      "洗菜切菜，十分钟搞定",
+      "比便利店那份新鲜，也便宜"
+    ],
+    "sound": "eat",
+    "group": "cook",
+    "requirements": {
+      "flag": "cook_utensil"
+    }
+  },
+  {
+    "id": "cook_dish_meat",
+    "locationId": "home",
+    "name": "炖红烧肉",
+    "icon": "🥩",
+    "duration": 1.5,
+    "desc": "小火慢炖一锅肉，幸福感拉满（需灶台 + 肉类 ×1，厨艺 1 级）",
+    "handler": "cook_item",
+    "recipeId": "dish_meat",
+    "effects": {
+      "log": "炖了锅红烧肉"
+    },
+    "verdicts": [
+      "油下锅那一声，特别治愈",
+      "自己做的，吃着踏实",
+      "厨房飘出的香味让人心安",
+      "比外卖干净，也比外卖便宜",
+      "锅碗刷完，一天算是收尾了",
+      "小火慢炖，整个屋子都是香味",
+      "收汁的时候差点糊锅，惊险"
+    ],
+    "sound": "eat",
+    "group": "cook",
+    "requirements": {
+      "flag": "cook_utensil"
+    }
+  },
+  {
+    "id": "cook_full_meal",
+    "locationId": "home",
+    "name": "做两菜一汤",
+    "icon": "🍲",
+    "duration": 2,
+    "desc": "正经做一顿家常饭（需灶台 + 蔬菜 ×1 + 肉类 ×1，厨艺 2 级）",
+    "handler": "cook_item",
+    "recipeId": "dish_full_meal",
+    "effects": {
+      "log": "做了两菜一汤"
+    },
+    "verdicts": [
+      "油下锅那一声，特别治愈",
+      "自己做的，吃着踏实",
+      "厨房飘出的香味让人心安",
+      "比外卖干净，也比外卖便宜",
+      "锅碗刷完，一天算是收尾了",
+      "摆了满满一桌，虽然只有一个人吃",
+      "洗碗的时候有点后悔做这么多"
+    ],
+    "sound": "eat",
+    "group": "cook",
+    "requirements": {
+      "flag": "cook_utensil"
+    }
+  },
+  {
+    "id": "street_perform",
+    "locationId": "street",
+    "name": "街头卖艺",
+    "icon": "🎤",
+    "desc": "街头唱几首歌，赚点打赏攒名气（需魅力 25）",
+    "requirements": {
+      "attr": {
+        "charm": 25
+      },
+      "noStatus": [
+        "sick"
+      ]
+    },
+    "effects": {
+      "fame": 2,
+      "money": 20,
+      "mood": 5,
+      "stress": -5,
+      "stamina": -12,
+      "log": "在街头唱了几首歌，收获了掌声和打赏"
+    },
+    "duration": 2,
+    "verdicts": [
+      "唱完一首，有人往琴盒里放了 10 块",
+      "围观的群众越来越多了",
+      "有个大爷夸你唱得有味道",
+      "被城管提醒了两次，挪了个地方",
+      "嗓子有点哑，但心里是热的",
+      "攒了点小名气，好像有人认识你了"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "use_laptop_home",
+    "locationId": "home",
+    "name": "使用笔记本",
+    "icon": "💻",
+    "desc": "打开笔记本全屏桌面：设置、社交、外卖、网购、直播、论坛与编程设计工作台（需拥有笔记本）",
+    "handler": "use_laptop",
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "屏幕亮起的瞬间，世界安静了下来。",
+      "指尖在键盘上敲出属于自己的节奏。",
+      "窗外的喧嚣被挡在玻璃之外，只剩你与这台机器。",
+      "登录、打开、进入——另一个身份在此苏醒。",
+      "合上又打开，无数个夜晚都是这样开始的。",
+      "电量满格，灵感也跟着满格。"
+    ],
+    "sound": "computer"
+  },
+  {
+    "id": "stall_street_night",
+    "locationId": "street",
+    "name": "摆摊创业",
+    "icon": "🍢",
+    "desc": "晚上在街边支个摊卖小吃（需厨艺 2 级，或拥有摆摊小车）（服务顾客按人头计钱，多劳多得）",
+    "handler": "work_project",
+    "projectId": "street_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      }
+    },
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "今天客流不错，卖得七七八八",
+      "隔壁摊位生意太好，羡慕",
+      "试了几个新配方，客人都说好吃",
+      "城管来了，赶紧收摊跑路",
+      "老顾客带新顾客，摊位渐渐有了名",
+      "算下来一天能赚不少，比打工自由"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_fruit_market",
+    "locationId": "market",
+    "name": "买水果",
+    "icon": "🍎",
+    "duration": 0.5,
+    "desc": "当季新鲜水果，5 元。解馋补维生素，但当饭吃可撑不住（+8 饱腹）",
+    "effects": {
+      "money": -5,
+      "log": "在水果摊挑了几个当季水果"
+    },
+    "verdicts": [
+      "挑了几个熟得刚好的",
+      "老板还多送了一个",
+      "洗干净就能吃，方便",
+      "这价格在超市可买不着",
+      "老板抓了一把，说'多给你一个'",
+      "挑了半天，选中最沉的那几个"
+    ],
+    "sound": "eat",
+    "handler": "buy_fresh",
+    "itemId": "fruit",
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    }
+  },
+  {
+    "id": "buy_vegetable_market",
+    "locationId": "market",
+    "name": "买蔬菜",
+    "icon": "🥬",
+    "duration": 0.5,
+    "desc": "新鲜时蔬，4 元一把。生的不能直接吃，带回住处下厨最划算（一把能炒出 +36 饱腹）",
+    "effects": {
+      "money": -4,
+      "log": "买了一把新鲜蔬菜，装进袋子带走"
+    },
+    "verdicts": [
+      "付了钱，东西收进背包",
+      "价格还行，买了",
+      "摊位老板很热情",
+      "挑挑拣拣，选了新鲜的",
+      "拎着袋子回去，路上想着怎么做",
+      "这钱花得值"
+    ],
+    "sound": "coin",
+    "handler": "buy_ingredient",
+    "itemId": "vegetable",
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    }
+  },
+  {
+    "id": "buy_meat_market",
+    "locationId": "market",
+    "name": "买肉",
+    "icon": "🥩",
+    "duration": 0.5,
+    "desc": "猪肉/鸡肉，15 元。生的不能直接吃，炖一锅能顶一整天（+52 饱腹）",
+    "effects": {
+      "money": -15,
+      "log": "称了点肉，老板顺手切好了"
+    },
+    "verdicts": [
+      "付了钱，东西收进背包",
+      "价格还行，买了",
+      "摊位老板很热情",
+      "挑挑拣拣，选了新鲜的",
+      "拎着袋子回去，路上想着怎么做",
+      "这钱花得值"
+    ],
+    "sound": "coin",
+    "handler": "buy_ingredient",
+    "itemId": "meat",
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    }
+  },
+  {
+    "id": "exercise_gym",
+    "locationId": "gym",
+    "name": "健身房锻炼",
+    "icon": "🏋️",
+    "duration": 2,
+    "desc": "器械区练 2 小时，比公园专业多了（需有效期内的健身月卡）",
+    "requirements": {
+      "attr": {
+        "stamina": 30,
+        "health": 40
+      },
+      "membership": "gym",
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ]
+    },
+    "effects": {
+      "fitness": 5,
+      "stamina": -25,
+      "health": 2,
+      "stress": -5,
+      "log": "在健身房练了两小时"
+    },
+    "verdicts": [
+      "练到力竭，痛快",
+      "器械比公园的全面多了",
+      "镜子里的自己，感觉变了点",
+      "被教练纠正了姿势，学到了",
+      "撸铁一小时，虚脱但爽",
+      "汗流浃背，值！"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "gym_membership",
+    "locationId": "gym",
+    "name": "办健身月卡",
+    "icon": "💳",
+    "duration": 0.5,
+    "desc": "300 元办卡，30 天有效期，卡片会放进背包；到期后锻炼重新锁定",
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "mood": 3,
+      "log": "在前台办了张健身月卡"
+    },
+    "verdicts": [
+      "300 块心疼，但健康是投资",
+      "办完卡感觉已经瘦了三斤",
+      "前台把卡递过来，塑料还是热的",
+      "交了钱就得练，不然亏大了",
+      "月卡在手，这个月得多来几趟",
+      "'这个月一定坚持'——你对自己说"
+    ],
+    "sound": "coin",
+    "handler": "buy_membership",
+    "membershipId": "gym"
+  },
+  {
+    "id": "internet_play",
+    "locationId": "internet_cafe",
+    "name": "上网打游戏",
+    "icon": "🎮",
+    "duration": 3,
+    "desc": "开黑三小时，暂时忘掉烦恼（8 元/小时）",
+    "effects": {
+      "mood": 12,
+      "stress": -10,
+      "stamina": -10,
+      "money": -24,
+      "log": "在网吧打了三小时游戏"
+    },
+    "verdicts": [
+      "五杀！这把值了",
+      "队友太菜，气得肝疼",
+      "赢了，今晚心情不错",
+      "通宵党的世界我不懂，但挺解压",
+      "网速不错，体验好",
+      "打完有点空虚，但爽"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "internet_night_job",
+    "locationId": "internet_cafe",
+    "name": "网吧兼职网管",
+    "icon": "🖥️",
+    "duration": 8,
+    "desc": "帮忙看店、维护机器、盯监控，随时都能上班",
+    "requirements": {
+      "noStatus": [
+        "sick",
+        "muscle_strain"
+      ]
+    },
+    "effects": {
+      "money": 110,
+      "stamina": -40,
+      "stress": 6,
+      "skills": {
+        "operation": 1
+      },
+      "log": "在网吧当了一天网管，赚了 110 元"
+    },
+    "verdicts": [
+      "帮客人重启了两台死机，轻松搞定",
+      "网管的工作比想象中清闲，钱到账了",
+      "有人问路，你顺手指了条近道",
+      "维护完机器，还能蹭会儿网",
+      "店长说你这人手挺稳，下回还找你",
+      "网吧的泡面味飘了一整天，习惯了"
+    ],
+    "sound": "cashier"
+  },
+  {
+    "id": "see_doctor_hospital",
+    "locationId": "hospital",
+    "name": "人民医院看诊",
+    "icon": "🩺",
+    "duration": 2,
+    "desc": "挂号看医生，感冒发烧都能治（60 元）",
+    "requirements": {
+      "money": 60
+    },
+    "effects": {
+      "money": -60,
+      "health": 25,
+      "mood": 3,
+      "log": "看了医生，开了点药，感觉好多了",
+      "cureStatuses": [
+        "sick"
+      ]
+    },
+    "verdicts": [
+      "医生开了两盒药，叮嘱多喝水",
+      "排队一小时，看诊五分钟，但心里踏实了",
+      "拍了片子没事，虚惊一场",
+      "大夫说就是累的，让注意休息",
+      "挂号费肉疼，但病不能拖",
+      "看完医生，感觉病好了一半"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "treat_depression_hospital",
+    "locationId": "hospital",
+    "name": "心理门诊",
+    "icon": "🫂",
+    "duration": 2,
+    "desc": "看心理医生 + 开药，走出抑郁（200 元）",
+    "requirements": {
+      "money": 200
+    },
+    "effects": {
+      "money": -200,
+      "log": "在心理门诊做了疏导，也开了药"
+    },
+    "handler": "treat_depression",
+    "verdicts": [
+      "医生听你说了一小时，没打断",
+      "'这不是你的错'——这句话让你鼻子一酸",
+      "开了药，也约了下次复诊",
+      "走出诊室时，天好像亮了一点",
+      "原来把话说出来，真的会轻一些",
+      "诊室里很安静，只有钟表在走"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_medicine_clinic",
+    "locationId": "clinic",
+    "name": "买药",
+    "icon": "💊",
+    "duration": 1,
+    "desc": "在小诊所买点常用药（20 元，放入背包）",
+    "requirements": {
+      "money": 20
+    },
+    "effects": {
+      "money": -20,
+      "log": "在小诊所买了点药，放进了背包"
+    },
+    "verdicts": [
+      "买了两盒感冒药备用",
+      "小诊所的药比大医院便宜不少",
+      "老板娘还送了个创可贴",
+      "药到用时方恨少，先备着",
+      "大夫说按说明吃就行",
+      "拎着药袋走出诊所，安心了些"
+    ],
+    "sound": "coin",
+    "handler": "buy_item",
+    "itemId": "medicine"
+  },
+  {
+    "id": "buy_e_bike_labor",
+    "locationId": "labor_market",
+    "name": "买二手电动车",
+    "icon": "🛵",
+    "duration": 1,
+    "desc": "800 元，外卖收入从 90 涨到 140",
+    "requirements": {
+      "money": 800
+    },
+    "effects": {
+      "money": -800,
+      "flags": {
+        "item_e_bike": true
+      },
+      "log": "买了一辆二手电动车，送外卖快多了"
+    },
+    "verdicts": [
+      "老板拍胸脯说电池耐用",
+      "骑上去试了试，比走路快多了",
+      "800 块投资，很快回本",
+      "这车有点旧，但能跑就行",
+      "过户手续一下午，值了",
+      "以后送外卖能多赚点了"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "treat_hospital",
+    "locationId": "hospital",
+    "name": "大病治疗",
+    "icon": "💉",
+    "desc": "住院部治疗，大病一次治（100 元，健康低于 40 可用）",
+    "duration": 3,
+    "requirements": {
+      "money": 100,
+      "attrMax": {
+        "health": 40
+      }
+    },
+    "effects": {
+      "money": -100,
+      "health": 40,
+      "mood": -3,
+      "log": "做了个大治疗，花了 100 元，健康恢复了不少"
+    },
+    "verdicts": [
+      "打了两瓶点滴，护士很温柔",
+      "医生说再拖就麻烦了，还好来得及时",
+      "治疗完浑身乏力，但心里踏实",
+      "医保没报销，肉疼",
+      "躺了一天，感觉身体被重新组装",
+      "病去如抽丝，慢慢来吧"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_medicine_hospital",
+    "locationId": "hospital",
+    "name": "医院买药",
+    "icon": "💊",
+    "desc": "在医院药房买药，比小诊所贵但效果一样（30 元，放入背包）",
+    "duration": 1,
+    "requirements": {
+      "money": 30
+    },
+    "handler": "buy_item",
+    "itemId": "medicine",
+    "effects": {
+      "money": -30,
+      "log": "在医院药房买了药，放进了背包"
+    },
+    "verdicts": [
+      "药房的药一板一板，明码标价",
+      "医院的药比外面贵，但放心",
+      "划价取药，流程熟练",
+      "买了两天的量",
+      "药盒上写着用法用量",
+      "拎着药走出药房"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "hospitalize",
+    "locationId": "hospital",
+    "name": "办理住院",
+    "icon": "🛏️",
+    "desc": "办理住院手续，每晚 60 元，恢复快（健康过低时推荐）",
+    "duration": 1,
+    "requirements": {
+      "money": 60
+    },
+    "handler": "hospitalize",
+    "effects": {
+      "money": -60,
+      "log": "办了住院手续，住进了病房"
+    },
+    "verdicts": [
+      "护士带你去病房，床位靠窗",
+      "交了押金，住院手续办好了",
+      "病房里有电视，但信号不好",
+      "同病房的大爷很健谈",
+      "换上病号服，正式开始住院",
+      "住院部晚上很安静"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "eat_steak_western",
+    "locationId": "western_restaurant",
+    "name": "吃牛排",
+    "icon": "🥩",
+    "desc": "西餐厅的招牌牛排，犒劳一下自己（80 元，+58 饱腹 +10 心情）",
+    "duration": 2,
+    "requirements": {
+      "money": 80
+    },
+    "effects": {
+      "money": -80,
+      "satiety": 58,
+      "mood": 10,
+      "stress": -5,
+      "log": "吃了顿正经牛排，幸福感拉满"
+    },
+    "verdicts": [
+      "七分熟刚刚好，肉汁饱满",
+      "服务员给倒了两杯水，很周到",
+      "西餐厅的氛围确实不一样",
+      "结账时心在滴血，但值得",
+      "隔壁桌在庆祝生日，羡慕",
+      "刀叉用得磕磕绊绊，但吃得很香"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "eat_burger_fastfood",
+    "locationId": "fast_food",
+    "name": "吃汉堡",
+    "icon": "🍔",
+    "desc": "快餐店的汉堡套餐，快且管饱（22 元，+34 饱腹）",
+    "duration": 1,
+    "requirements": {
+      "money": 22
+    },
+    "effects": {
+      "money": -22,
+      "satiety": 34,
+      "mood": 3,
+      "log": "汉堡加可乐，快餐快乐餐"
+    },
+    "verdicts": [
+      "薯条有点软，但管饱",
+      "可乐加冰，快乐加倍",
+      "快餐就是快，十分钟搞定",
+      "吃完了还有点儿饿",
+      "这家店的酱给得足",
+      "汉堡王和麦当劳之争，无所谓了"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "sign_lease_apartment",
+    "locationId": "housing_agency",
+    "name": "签约出租公寓",
+    "icon": "🏢",
+    "desc": "市中心精装公寓，月租 2000，押一付一",
+    "duration": 2,
+    "handler": "sign_lease",
+    "housingId": "rental_apartment",
+    "requirements": {},
+    "effects": {},
+    "verdicts": [
+      "看了样板间，采光不错",
+      "签合同的时候手有点抖",
+      "中介费交得肉疼",
+      "电梯公寓，档次不一样",
+      "终于住上像样的地方了",
+      "房东很好说话"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_old_unit",
+    "locationId": "housing_agency",
+    "name": "买断老破小",
+    "icon": "🏚️",
+    "desc": "一次性 30000 元买断住宅区老小区，从此免租",
+    "duration": 3,
+    "handler": "buy_property",
+    "housingId": "own_old_unit",
+    "requirements": {
+      "money": 30000
+    },
+    "effects": {
+      "money": -30000
+    },
+    "verdicts": [
+      "交了全款，房本到手",
+      "房子虽旧，但终于有自己的家了",
+      "过户手续办完，心里踏实了",
+      "从此不用再看房东脸色",
+      "钥匙握在手里，沉甸甸的",
+      "老破小也是家"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_apartment",
+    "locationId": "housing_agency",
+    "name": "买断精装公寓",
+    "icon": "🏢",
+    "desc": "一次性 80000 元买断市中心精装公寓，电梯直达",
+    "duration": 3,
+    "handler": "buy_property",
+    "housingId": "own_apartment",
+    "requirements": {
+      "money": 80000
+    },
+    "effects": {
+      "money": -80000
+    },
+    "verdicts": [
+      "电梯公寓，一梯两户，安静",
+      "终于住进像样的地方了",
+      "房产证红彤彤的，值了",
+      "物业费不便宜，但值",
+      "阳台视野开阔，心情都好了",
+      "这就是奋斗的意义"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_villa",
+    "locationId": "housing_agency",
+    "name": "买断城市住宅",
+    "icon": "🏡",
+    "desc": "一次性 200000 元买断独门独院住宅，安身立命",
+    "duration": 4,
+    "handler": "buy_property",
+    "housingId": "own_villa",
+    "requirements": {
+      "money": 200000
+    },
+    "effects": {
+      "money": -200000
+    },
+    "verdicts": [
+      "独门独院，再也不用和邻居抢卫生间",
+      "院子里的树是自家的",
+      "这辈子的奋斗目标达成了一半",
+      "请朋友来暖房，倍儿有面子",
+      "站在自家院子里，风吹过来都是甜的",
+      "城市虽大，终于有了一盏属于自己的灯"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "shower_quick",
+    "locationId": "bathhouse",
+    "name": "快速淋浴",
+    "icon": "🚿",
+    "desc": "30 元冲个澡，一小时进出，只求干净",
+    "duration": 1,
+    "requirements": {
+      "money": 30
+    },
+    "effects": {
+      "money": -30,
+      "hygiene": 45,
+      "mood": 2,
+      "log": "在洗浴中心冲了个澡，清爽了"
+    },
+    "verdicts": [
+      "水压比出租屋强多了",
+      "十分钟解决战斗",
+      "擦干头发就走人",
+      "便宜实惠，干净就行",
+      "没敢多待，怕忍不住加钱",
+      "隔壁池子的水声挺让人心痒"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "bath_massage",
+    "locationId": "bathhouse",
+    "name": "搓背按摩",
+    "icon": "💆",
+    "desc": "120 元三小时，搓背加肩颈按摩，出来浑身轻松",
+    "duration": 3,
+    "requirements": {
+      "money": 120
+    },
+    "effects": {
+      "money": -120,
+      "hygiene": 80,
+      "stamina": 15,
+      "mood": 12,
+      "stress": -8,
+      "log": "搓了背又做了按摩，浑身骨头都松了"
+    },
+    "verdicts": [
+      "师傅手劲大，搓下来一层泥",
+      "肩颈的硬块被按开了",
+      "躺着睡着了，被叫醒时天都暗了",
+      "一百二花得不冤",
+      "按完感觉年轻了五岁",
+      "热毛巾盖脸的一刻，什么都值了"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "bath_center",
+    "locationId": "bathhouse",
+    "name": "泡澡一条龙",
+    "icon": "🫧",
+    "desc": "300 元泡一整天，蒸桑拿搓背，出来干净度饱食体力全回满",
+    "duration": 24,
+    "handler": "wash_center",
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "money": -300
+    },
+    "verdicts": [
+      "泡了整整一天，皮都泡皱了",
+      "搓背师傅的手劲够大",
+      "桑拿房里睡了一觉",
+      "出来的时候感觉换了个身体",
+      "荷包空了一半，但值",
+      "下次有钱还来"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "stay_hotel",
+    "locationId": "hotel",
+    "name": "开房住宿（豪华间）",
+    "icon": "🏨",
+    "desc": "在酒店按天开豪华间（150 元/晚），今晚睡个好觉",
+    "duration": 1,
+    "handler": "stay_hotel",
+    "requirements": {
+      "money": 150
+    },
+    "effects": {},
+    "verdicts": [
+      "前台小姐姐服务很周到",
+      "大床房真软",
+      "窗外就是市中心夜景",
+      "房卡到手，今晚有着落了",
+      "酒店就是比青旅舒服",
+      "肉疼，但偶尔要对自己好点"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "rest_ward",
+    "locationId": "hospital",
+    "name": "病房休息",
+    "icon": "🛏️",
+    "desc": "在病房睡一觉（仅住院期间可用）",
+    "duration": 8,
+    "handler": "sleep_modal",
+    "requirements": {
+      "flag": "hospitalized"
+    },
+    "effects": {},
+    "verdicts": [
+      "病房的灯太亮，睡得浅",
+      "护士查房两次",
+      "隔壁床呼噜震天响",
+      "睡了一觉精神多了",
+      "医院的味道有点冲",
+      "睡不着的时候听输液滴答声"
+    ],
+    "sound": "sleep"
+  },
+  {
+    "id": "discharge",
+    "locationId": "hospital",
+    "name": "办理出院",
+    "icon": "🏥",
+    "desc": "病情好转，办理出院手续",
+    "duration": 1,
+    "handler": "discharge",
+    "requirements": {
+      "flag": "hospitalized"
+    },
+    "effects": {},
+    "verdicts": [
+      "结了住院费，护士嘱咐按时吃药",
+      "出院手续比入院快",
+      "走出医院大门，空气都新鲜了",
+      "以后要爱惜身体",
+      "医保卡余额少了一截",
+      "拜拜了病房"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "rent_car_shop",
+    "locationId": "car_rental",
+    "name": "租用汽车",
+    "icon": "🚗",
+    "desc": "押金 3000 元，跑网约车/出租车；退租或买断时押金退还（需驾驶本）",
+    "duration": 2,
+    "handler": "rent_vehicle",
+    "vehicleType": "car",
+    "requirements": {
+      "money": 3000,
+      "flag": "item_driving_license"
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "车况不错，里程数有点多",
+      "押金交出去，车钥匙拿到手",
+      "签了租赁合同",
+      "加满油就能接单了",
+      "这车将是你的生财工具",
+      "小心开，别剐蹭"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "rent_e_bike_shop",
+    "locationId": "car_rental",
+    "name": "租用电动车",
+    "icon": "🛵",
+    "desc": "押金 600 元，外卖效率翻倍；退租或买断时押金退还",
+    "duration": 1,
+    "handler": "rent_vehicle",
+    "vehicleType": "e_bike",
+    "requirements": {
+      "money": 600
+    },
+    "effects": {
+      "money": -600
+    },
+    "verdicts": [
+      "交了押金，电动车骑走",
+      "押金随时能退，放心骑",
+      "电动车就是外卖员的命根子",
+      "试骑了一圈，刹车有点软",
+      "押金不算贵，能赚更多",
+      "先跑起来再说"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "rent_tricycle_shop",
+    "locationId": "car_rental",
+    "name": "租用三轮车",
+    "icon": "🛺",
+    "desc": "押金 1200 元，快递配送神器；退租或买断时押金退还",
+    "duration": 1,
+    "handler": "rent_vehicle",
+    "vehicleType": "tricycle",
+    "requirements": {
+      "money": 1200
+    },
+    "effects": {
+      "money": -1200
+    },
+    "verdicts": [
+      "三轮车斗够大，能装不少件",
+      "方向盘有点重，但稳",
+      "送快递靠它了",
+      "押金交了，车钥匙到手",
+      "退租随时退押金，划算",
+      "开工！"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_bicycle_shop",
+    "locationId": "car_rental",
+    "name": "买断自行车",
+    "icon": "🚲",
+    "desc": "一次性 300 元买断自行车，通勤省力，永久自有",
+    "duration": 1,
+    "handler": "buy_vehicle",
+    "vehicleType": "bicycle",
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "money": -300
+    },
+    "verdicts": [
+      "付款过户，自行车就是自己的了",
+      "通勤省了一大截力气",
+      "虽然不贵，但很实用",
+      "以后想骑就骑，不用还",
+      "这买卖，值",
+      "骑着新车兜了一圈，风都是甜的"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "return_e_bike_shop",
+    "locationId": "car_rental",
+    "name": "退还电动车",
+    "icon": "🛵",
+    "desc": "把租用的电动车还回去，押金 600 元退还",
+    "duration": 1,
+    "handler": "return_vehicle",
+    "vehicleType": "e_bike",
+    "requirements": {
+      "flag": "item_e_bike"
+    },
+    "effects": {},
+    "verdicts": [
+      "车还了，押金到手",
+      "钥匙交回，账两清",
+      "下次想跑单再来租",
+      "押金到账，钱包又鼓了一点",
+      "租赁行老板客客气气地办了退租",
+      "电动车物归原主，一身轻"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "return_tricycle_shop",
+    "locationId": "car_rental",
+    "name": "退还三轮车",
+    "icon": "🛺",
+    "desc": "把租用的三轮车还回去，押金 1200 元退还",
+    "duration": 1,
+    "handler": "return_vehicle",
+    "vehicleType": "tricycle",
+    "requirements": {
+      "flag": "item_tricycle"
+    },
+    "effects": {},
+    "verdicts": [
+      "车还了，押金到手",
+      "钥匙交回，账两清",
+      "下次拉货再来租",
+      "押金到账，钱包又鼓了一点",
+      "租赁行老板客客气气地办了退租",
+      "三轮车物归原主，一身轻"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "return_car_shop",
+    "locationId": "car_rental",
+    "name": "退还汽车",
+    "icon": "🚗",
+    "desc": "把租用的汽车还回去，押金 3000 元退还",
+    "duration": 1,
+    "handler": "return_vehicle",
+    "vehicleType": "car",
+    "requirements": {
+      "flag": "item_car"
+    },
+    "effects": {},
+    "verdicts": [
+      "车还了，押金到手",
+      "钥匙交回，账两清",
+      "跑单的日子结束了，下次再来",
+      "押金到账，钱包又鼓了一点",
+      "租赁行老板客客气气地办了退租",
+      "汽车物归原主，一身轻"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_e_bike",
+    "locationId": "car_rental",
+    "name": "买断电动车",
+    "icon": "🛵",
+    "desc": "一次性 3000 元买断电动车，永久自有，送外卖不再续租",
+    "duration": 2,
+    "handler": "buy_vehicle",
+    "vehicleType": "e_bike",
+    "requirements": {
+      "money": 3000
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "付款过户，车就是自己的了",
+      "比月租划算多了，一劳永逸",
+      "新车电瓶跑得远",
+      "以后想什么时候送就什么时候送",
+      "钥匙自己留着，再也不用还",
+      "这买卖，值"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_tricycle",
+    "locationId": "car_rental",
+    "name": "买断三轮车",
+    "icon": "🛺",
+    "desc": "一次性 8000 元买断三轮车，拉货摆摊自由安排",
+    "duration": 2,
+    "handler": "buy_vehicle",
+    "vehicleType": "tricycle",
+    "requirements": {
+      "money": 8000
+    },
+    "effects": {
+      "money": -8000
+    },
+    "verdicts": [
+      "车斗够大，拉货方便",
+      "从此摆摊不用租车",
+      "三轮车虽土，但养家糊口",
+      "油门一拧，就是自己的生意",
+      "车况比租的好多了",
+      "又添一件家当"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_car",
+    "locationId": "car_rental",
+    "name": "买断汽车",
+    "icon": "🚗",
+    "desc": "一次性 50000 元买断汽车，跑网约车/出租车无月租压力（需驾驶本）",
+    "duration": 3,
+    "handler": "buy_vehicle",
+    "vehicleType": "car",
+    "requirements": {
+      "money": 50000,
+      "flag": "item_driving_license"
+    },
+    "effects": {
+      "money": -50000
+    },
+    "verdicts": [
+      "付款提车，车钥匙沉甸甸的",
+      "全款买下，从此接单不再分租",
+      "自己的车，想跑多晚跑多晚",
+      "省下的月租很快回本",
+      "洗得干干净净，像新车一样",
+      "男人就该有一辆自己的车"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "sleep_home",
+    "locationId": "home",
+    "name": "睡觉",
+    "icon": "😴",
+    "desc": "睡个好觉，恢复体力（可自由选择时长）",
+    "duration": 8,
+    "handler": "sleep_modal",
+    "effects": {},
+    "verdicts": [
+      "困意来袭，钻进被窝",
+      "今天早点睡",
+      "把闹钟关了，睡到自然醒",
+      "盖好被子，晚安",
+      "睡前刷了会手机，该睡了",
+      "闭上眼睛，世界安静了"
+    ],
+    "sound": "sleep"
+  },
+  {
+    "id": "sign_driving_course",
+    "locationId": "driving_school",
+    "name": "报名学车",
+    "icon": "📝",
+    "desc": "交 1500 元报名费，开始学车（需有耐心和钱）",
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500,
+      "flags": {
+        "item_driving_course": true
+      },
+      "log": "在驾校报了名，正式成为驾考大军的一员"
+    },
+    "duration": 1,
+    "verdicts": [
+      "教练说三个月包过，你信了",
+      "报名表填完，钱包瘪了一大截",
+      "科目一题库已经下载好了",
+      "从此周末的懒觉要献给驾校了",
+      "交了钱，心里踏实又不踏实",
+      "学车是个无底洞，但驾照是刚需"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "driving_exam",
+    "locationId": "driving_school",
+    "name": "驾照考试",
+    "icon": "🚦",
+    "desc": "科目一到科目四连考，智力达标 + 已报名才能过",
+    "requirements": {
+      "money": 500,
+      "flag": "item_driving_course",
+      "attr": {
+        "intelligence": 40
+      }
+    },
+    "effects": {
+      "money": -500,
+      "flags": {
+        "item_driving_license": true
+      },
+      "cureFlags": [
+        "item_driving_course"
+      ],
+      "log": "全部科目一次通过，拿到驾照了！"
+    },
+    "duration": 2,
+    "verdicts": [
+      "倒车入库一次过，教练都鼓掌了",
+      "科目四 98 分，稳如老狗",
+      "拿到驾照那一刻，感觉人生都完整了",
+      "以后可以开网约车、当驾校助教了",
+      "路考时腿都在抖，但过了",
+      "考官夸你车感不错，心情大好"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "resign_job",
+    "locationId": "labor_company",
+    "name": "办理离职",
+    "icon": "✍️",
+    "desc": "辞职当前工作（首次辞职免费）",
+    "duration": 1,
+    "handler": "resign",
+    "effects": {},
+    "verdicts": [
+      "签完字，感觉轻飘飘的",
+      "离职手续办完，新生活开始",
+      "人事姐姐说'想好了？'你点了点头",
+      "交还工牌那一刻，有点不舍",
+      "辞职信写得潇洒，工资条对得仔细",
+      "HR 姐姐祝你前程似锦，心里有点暖"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_luxury_coat",
+    "locationId": "luxury_store",
+    "name": "买羊绒大衣",
+    "icon": "🧥",
+    "desc": "3000 元，纯羊绒大衣，穿出去倍儿有面子",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "luxury_coat",
+    "requirements": {
+      "money": 3000
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "手感软糯，剪裁利落",
+      "导购小姐直夸有品味",
+      "穿上的那一刻，气质就不一样了",
+      "刷卡时手有点抖，但值了",
+      "这件大衣配得上你",
+      "买完心里美滋滋"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_luxury_watch",
+    "locationId": "luxury_store",
+    "name": "买名表",
+    "icon": "⌚",
+    "desc": "10000 元，瑞士名表，男人/女人的顶级配饰",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "luxury_watch",
+    "requirements": {
+      "money": 10000
+    },
+    "effects": {
+      "money": -10000
+    },
+    "verdicts": [
+      "表盘泛着冷光，质感一流",
+      "戴上它，走路都带风",
+      "柜姐说这表保值，你信了",
+      "昂贵的玩具，男人也要疼自己",
+      "抬手看时间的频率明显高了",
+      "这块表是努力的勋章"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_luxury_bag",
+    "locationId": "luxury_store",
+    "name": "买名牌包",
+    "icon": "👜",
+    "desc": "15000 元，限量款名牌包，身份与品位的象征",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "luxury_bag",
+    "requirements": {
+      "money": 15000
+    },
+    "effects": {
+      "money": -15000
+    },
+    "verdicts": [
+      "限量款，只有最后一个",
+      "皮质细腻，五金锃亮",
+      "背上它，走路都自信了",
+      "包包是女人的底气",
+      "柜姐笑得很甜，刷卡很痛",
+      "努力赚钱，就是为了偶尔奢侈一把"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_shirt",
+    "locationId": "luxury_store",
+    "name": "买衬衫",
+    "icon": "👔",
+    "desc": "800 元，干净得体的衬衫，装备后魅力 +2",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "shirt",
+    "requirements": {
+      "money": 800
+    },
+    "effects": {
+      "money": -800
+    },
+    "verdicts": [
+      "版型挺括，颜色也衬肤色",
+      "导购说这颜色显精神",
+      "试穿一下，人靠衣装",
+      "买完直接换上，走路都抬头了",
+      "比地摊货贵，但值",
+      "正式场合就穿它了"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_suit",
+    "locationId": "luxury_store",
+    "name": "买西装",
+    "icon": "🤵",
+    "desc": "5000 元，笔挺西装，装备后魅力 +5，重要场合战袍",
+    "duration": 2,
+    "handler": "buy_item",
+    "itemId": "suit",
+    "requirements": {
+      "money": 5000
+    },
+    "effects": {
+      "money": -5000
+    },
+    "verdicts": [
+      "量身定制的版型，精神极了",
+      "穿上西装，气势都不一样了",
+      "人靠衣装马靠鞍",
+      "这身行头，谈业务都有底气",
+      "袖口的做工很考究",
+      "贵是贵，但重要场合需要它"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_lamp",
+    "locationId": "furniture_store",
+    "name": "买暖光灯",
+    "icon": "💡",
+    "desc": "600 元，暖黄色台灯，摆放后心情 +2",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "lamp",
+    "requirements": {
+      "money": 600
+    },
+    "effects": {
+      "money": -600
+    },
+    "verdicts": [
+      "灯光暖暖的，屋子都温馨了",
+      "晚上读书不伤眼了",
+      "躺床上看光晕，很治愈",
+      "十平米的出租屋也有家的感觉",
+      "开关一按，世界都温柔了",
+      "这盏灯值这个价"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_sofa",
+    "locationId": "furniture_store",
+    "name": "买布艺沙发",
+    "icon": "🛋️",
+    "desc": "3000 元，松软布艺沙发，摆放后心情 +4",
+    "duration": 2,
+    "handler": "buy_item",
+    "itemId": "sofa",
+    "requirements": {
+      "money": 3000
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "往上一躺，一天的疲惫都散了",
+      "送货师傅搬上楼，累得够呛",
+      "窝在沙发里刷手机，太爽了",
+      "朋友来了有地方坐",
+      "这沙发比床还让人留恋",
+      "出租屋终于有了客厅的感觉"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_stall_cart",
+    "locationId": "furniture_store",
+    "name": "买摆摊小车",
+    "icon": "🛒",
+    "desc": "500 元，一辆折叠摆摊小车，买下就能去街边/周末集市摆摊（无需厨艺门槛）",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "stall_cart",
+    "requirements": {
+      "money": 500
+    },
+    "effects": {
+      "money": -500
+    },
+    "verdicts": [
+      "小车折叠起来不占地方，值了",
+      "推着走了两步，轮子很顺",
+      "以后摆摊不用再蹲地上支桌板了",
+      "摊子一摆，就是自己的小生意",
+      "老板说这车皮实，用几年没问题",
+      "买完感觉离当老板近了一步"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_plant",
+    "locationId": "furniture_store",
+    "name": "买绿植盆栽",
+    "icon": "🪴",
+    "desc": "1200 元，生机勃勃的绿植，摆放后心情 +3",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "plant",
+    "requirements": {
+      "money": 1200
+    },
+    "effects": {
+      "money": -1200
+    },
+    "verdicts": [
+      "给屋子添了点绿色，心情都好了",
+      "老板说这盆好养活",
+      "每天浇水，看着它发芽",
+      "出租屋终于有了生气",
+      "绿植是城市人的乡愁",
+      "拍照发朋友圈，都夸有生活气息"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_kitchen_set",
+    "locationId": "furniture_store",
+    "name": "买厨具套装",
+    "icon": "🍳",
+    "desc": "2000 元，锅碗瓢盆一应俱全，解锁在家煎牛排",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "kitchen_set",
+    "requirements": {
+      "money": 2000
+    },
+    "effects": {
+      "money": -2000
+    },
+    "verdicts": [
+      "不锈钢锅很亮，锅铲趁手",
+      "以后可以认真做饭了",
+      "厨房装备齐全，就差手艺",
+      "这套厨具让做饭有仪式感",
+      "掂了掂锅，还挺有分量",
+      "请客吃饭的底气有了"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_gym_equipment",
+    "locationId": "furniture_store",
+    "name": "买家用健身器材",
+    "icon": "🏋️",
+    "desc": "1500 元，哑铃+瑜伽垫，解锁在家锻炼",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "gym_equipment",
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500
+    },
+    "verdicts": [
+      "哑铃入手，开始练臂力",
+      "省下了健身房的年卡钱",
+      "垫子一铺，客厅就是健身房",
+      "先立个小目标：每天 20 个俯卧撑",
+      "装备到位了，就差自律",
+      "在家练，不用看别人脸色"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cook_steak_home",
+    "locationId": "home",
+    "name": "煎牛排",
+    "icon": "🥩",
+    "duration": 1.5,
+    "desc": "用厨具套装煎块牛排，需灶台 + 肉类 ×1 + 厨艺 2（厨具限定菜谱）",
+    "requirements": {
+      "flag": "cook_utensil"
+    },
+    "handler": "cook_item",
+    "recipeId": "dish_steak",
+    "effects": {
+      "log": "煎了块牛排"
+    },
+    "verdicts": [
+      "火候刚刚好，外焦里嫩",
+      "撒上黑椒，仪式感满分",
+      "在家吃出了西餐厅的感觉",
+      "新厨具就是好用",
+      "配了杯水，假装是红酒",
+      "煎牛排的滋滋声，太治愈了"
+    ],
+    "sound": "eat",
+    "group": "cook"
+  },
+  {
+    "id": "exercise_home_equip",
+    "locationId": "home",
+    "name": "在家锻炼",
+    "icon": "🏋️",
+    "desc": "用家用健身器材练一组，体质 +4（需体力 20，消耗体力 25）",
+    "duration": 1,
+    "requirements": {
+      "flag": "item_gym_equipment",
+      "attr": {
+        "stamina": 20
+      }
+    },
+    "effects": {
+      "fitness": 4,
+      "stamina": -25,
+      "mood": 3,
+      "stress": -5,
+      "log": "在家练了一组，汗流浃背但痛快"
+    },
+    "verdicts": [
+      "哑铃举到手臂发酸",
+      "瑜伽垫上拉伸，浑身舒坦",
+      "在家锻炼，省了来回的路程",
+      "出汗的感觉真好",
+      "明天继续，说到做到",
+      "练完冲个澡，神清气爽"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "market_browse",
+    "locationId": "market_fair",
+    "name": "逛集市",
+    "icon": "🎪",
+    "desc": "在周末集市里逛逛，感受烟火气",
+    "effects": {
+      "mood": 4,
+      "stress": -3,
+      "log": "逛了一圈集市，心情舒畅"
+    },
+    "duration": 1,
+    "verdicts": [
+      "淘到一只手工小挂件，摊主说独一无二",
+      "跟卖糖葫芦的大叔聊了半天",
+      "集市上有人现场作画，围观了好久",
+      "买了一袋刚出炉的板栗，边走边吃",
+      "遇到同城的摊主，约好了下次还来",
+      "集市快收摊了，老板们都在打折甩卖"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "market_help_stand",
+    "locationId": "market_fair",
+    "name": "帮摊主看摊",
+    "icon": "🛒",
+    "desc": "帮小吃摊主招呼客人，赚点零花钱",
+    "requirements": {
+      "attr": {
+        "stamina": 40
+      }
+    },
+    "effects": {
+      "money": 30,
+      "stamina": -12,
+      "mood": 2,
+      "stress": 3,
+      "log": "帮摊主忙了一下午，赚了 30 块"
+    },
+    "duration": 2,
+    "verdicts": [
+      "摊主夸你能干，多塞了 5 块辛苦费",
+      "客人都愿意找你下单，手脚麻利",
+      "忙得脚不沾地，但心里充实",
+      "收钱找零没出过岔子",
+      "收摊时摊主请你喝了碗酸梅汤",
+      "临收摊时摊主又多给了 10 块，说下次还来"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "stall_market_fair",
+    "locationId": "market_fair",
+    "name": "周末集市摆摊",
+    "icon": "🎪",
+    "desc": "在周末集市支个摊卖小吃（需厨艺 2 级，或拥有摆摊小车）（服务顾客按人头计钱，多劳多得）",
+    "handler": "work_project",
+    "projectId": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      }
+    },
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "集市人流量就是大，卖得飞快",
+      "隔壁摊主都来打听你的配方",
+      "游客拍照发朋友圈，免费宣传",
+      "收摊时数钱，比街边多不少",
+      "老顾客专程来集市找你",
+      "和集市管理处混熟了，摊位费都省了点"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "farm_buy_vegetable",
+    "name": "采购蔬菜（3 元/份）",
+    "icon": "🥬",
+    "desc": "农场直采新鲜蔬菜，比菜市场便宜。（+12 饱腹，背包中食用）",
+    "locationId": "farm",
+    "handler": "buy_item",
+    "itemId": "farm_vegetable",
+    "duration": 0.5,
+    "effects": {
+      "money": -3,
+      "mood": 2,
+      "log": "在农场买了一份新鲜蔬菜"
+    },
+    "verdicts": [
+      "刚摘的蔬菜还带着露水，新鲜得能掐出水",
+      "农场大妈挑了颗最水灵的塞给你",
+      "比菜市场便宜两块钱，划算",
+      "一篮子绿油油的，看着就健康",
+      "称完分量还给你多抓了一把葱",
+      "临走又塞了根黄瓜，说解解渴"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "farm_buy_egg",
+    "name": "买土鸡蛋（2 元/打）",
+    "icon": "🥚",
+    "desc": "散养土鸡蛋，一打 12 枚。（+8 饱腹，背包中食用）",
+    "locationId": "farm",
+    "handler": "buy_item",
+    "itemId": "farm_egg",
+    "duration": 0.5,
+    "effects": {
+      "money": -2,
+      "mood": 1,
+      "log": "在农场买了一打土鸡蛋"
+    },
+    "verdicts": [
+      "蛋黄颜色比超市深，一看就正宗",
+      "老奶奶说这是今早刚捡的",
+      "一打才两块，比城里便宜太多",
+      "蛋壳上还沾着点稻草，原生态",
+      "带回去做茶叶蛋，香一整天",
+      "农场阿姨多塞了两个，说给孩子补补"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "pasture_buy_milk",
+    "name": "买鲜牛奶（4 元/L）",
+    "icon": "🥛",
+    "desc": "清晨现挤鲜奶。（+10 饱腹 +2 健康，背包中食用）",
+    "locationId": "pasture",
+    "handler": "buy_item",
+    "itemId": "farm_milk",
+    "duration": 0.5,
+    "effects": {
+      "money": -4,
+      "mood": 1,
+      "log": "在牧场买了一升鲜牛奶"
+    },
+    "verdicts": [
+      "还带着牛体温，新鲜得冒泡",
+      "牧场主说没加一滴水",
+      "煮开以后奶皮厚厚一层",
+      "比超市保质期短的那种香浓",
+      "孩子肯定爱喝",
+      "顺手多打了一瓶，说尝个鲜"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "orchard_buy_fruit",
+    "name": "买时令水果（3 元/份）",
+    "icon": "🍎",
+    "desc": "果园刚摘水果，新鲜实惠。（+8 饱腹 +2 心情，背包中食用）",
+    "locationId": "orchard",
+    "handler": "buy_item",
+    "itemId": "farm_fruit",
+    "duration": 0.5,
+    "effects": {
+      "money": -3,
+      "mood": 2,
+      "log": "在果园买了一份时令水果"
+    },
+    "verdicts": [
+      "枝头现摘，咬一口汁水四溢",
+      "果园大爷挑了最大最红的那个",
+      "三块钱一大袋，划算得很",
+      "阳光晒过的果香，城里买不到",
+      "带回去给同事分了，都说甜",
+      "顺手又抓了把落在地上的，说酿酒好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "amusement_icecream",
+    "name": "冰淇淋店",
+    "icon": "🍦",
+    "desc": "8 元来一份圣代：当场吃（饱腹 +25 心情 +4）或打包带走，凉丝丝的甜最解压",
+    "locationId": "amusement_park",
+    "duration": 0.5,
+    "handler": "buy_food",
+    "itemId": "icecream_sundae",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在游乐场冰淇淋店买了一份圣代"
+    },
+    "verdicts": [
+      "挖一勺雪白的冰淇淋，凉丝丝的甜",
+      "把樱桃轻轻搁在最顶上，完美收工",
+      "店里飘着甜甜的奶香",
+      "彩针撒下去的一瞬间心情都亮了",
+      "老板说你手挺稳，是个干这行的料",
+      "自己吃的圣代，格外好吃"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "amusement_cinema",
+    "name": "电影院",
+    "icon": "🎬",
+    "desc": "15 元一场：爆米花、大银幕、黑暗中偷走两小时（直接结算，+8 心情 -5 压力）",
+    "locationId": "amusement_park",
+    "duration": 2,
+    "requirements": {
+      "money": 15
+    },
+    "effects": {
+      "money": -15,
+      "mood": 8,
+      "stress": -5,
+      "log": "在游乐场电影院看了一场电影"
+    },
+    "verdicts": [
+      "片尾字幕升起，灯光亮起，世界又回来了",
+      "爆米花太香，一桶见底才发觉",
+      "剧情意外地好看，值回票价",
+      "黑暗中把眼泪悄悄擦掉",
+      "散场后走出影院，脚步都轻了",
+      "和邻座陌生人一起笑出声",
+      "大银幕上的世界，让人短暂忘了现实"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "amusement_bowling",
+    "name": "保龄球馆",
+    "icon": "🎳",
+    "desc": "12 元一局：随便打两杆出出汗，心情不错（直接结算）",
+    "locationId": "amusement_park",
+    "duration": 0.5,
+    "requirements": {
+      "money": 12
+    },
+    "effects": {
+      "money": -12,
+      "mood": 2,
+      "log": "在游乐场保龄球馆打了一局"
+    },
+    "verdicts": [
+      "球瓶哗啦一声全倒，帅！",
+      "最后一球来个漂亮的全中",
+      "球馆里哐当声此起彼伏",
+      "捡了个沟，引得旁边小朋友大笑",
+      "和球友击了个掌",
+      "计分屏上数字蹭蹭往上跳",
+      "出手的一瞬间，全场都安静了"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "amusement_dart",
+    "name": "飞镖气球",
+    "icon": "🎯",
+    "desc": "10 元 10 支镖：扎爆几个气球解解压，别碰摊主的爱心气球（直接结算）",
+    "locationId": "amusement_park",
+    "duration": 0.5,
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "mood": 2,
+      "log": "在游乐场飞镖摊扎爆了好几个气球"
+    },
+    "verdicts": [
+      "嘭！又炸了一个，老板脸都绿了",
+      "飞镖正中靶心，围观的人鼓起掌来",
+      "气球墙越来越稀，战利品越来越厚",
+      "手一抖扎到墙上，尴尬一笑",
+      "老板说：小兄弟，要不咱收摊了",
+      "连中三发，自己都觉得自己是个神射手",
+      "奖品墙上挂满了毛绒玩具"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "amusement_ringtoss",
+    "name": "套圈",
+    "icon": "⭕",
+    "desc": "5 元 10 个圈：丢着玩个乐子，开心就好（直接结算）",
+    "locationId": "amusement_park",
+    "duration": 0.5,
+    "requirements": {
+      "money": 5
+    },
+    "effects": {
+      "money": -5,
+      "mood": 2,
+      "log": "在游乐场套圈摊玩了会儿"
+    },
+    "verdicts": [
+      "圈在空中画了道弧线，稳稳套中",
+      "老板把最远的奖品往中间挪了挪",
+      "旁边大爷说：年轻人手要稳",
+      "套中那一刻，全摊子的人都看过来",
+      "差一点点，圈从奖品边沿弹开了",
+      "奖品堆里什么都有，看得人眼花",
+      "十个圈丢出去，收获满满"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "amusement_tournament",
+    "name": "喵喵对决赛赛场",
+    "icon": "🏆",
+    "desc": "城市边缘游乐场里的喵喵对决赛场：周日 14:00 开赛，连赢 3 场夺冠赢奖金（先在城市论坛报名，凭门票参赛）",
+    "locationId": "amusement_park",
+    "duration": 0,
+    "handler": "tournament_arena",
+    "requirements": {
+      "hasActivePet": true,
+      "weekday": [
+        "sat",
+        "sun"
+      ]
+    },
+    "effects": {},
+    "verdicts": [
+      "聚光灯亮起，全场猫咪都屏住了呼吸",
+      "赛场边坐满了来看热闹的市民和猫",
+      "裁判猫举起了小旗，示意双方就位",
+      "观众席传来此起彼伏的喵喵助威声",
+      "灰尘扬起，这场对决一触即发",
+      "奖杯在阳光下闪闪发光，等着它的主人",
+      "加油声、欢呼声，比游乐场的音乐还响"
+    ],
+    "sound": "battle_intent"
+  },
+  {
+    "id": "lake_walk",
+    "name": "环湖散步",
+    "icon": "🚶",
+    "desc": "吹着湖风走一圈，比街心公园舒服多了（免费，+5 心情）",
+    "locationId": "lake_park",
+    "duration": 1.5,
+    "eventChance": 0.4,
+    "effects": {
+      "mood": 5,
+      "fitness": 1,
+      "stress": -3,
+      "log": "环湖走了一圈，心旷神怡"
+    },
+    "verdicts": [
+      "水面波光粼粼，风一吹全是清凉",
+      "遛狗的大爷跟你聊了会儿天气",
+      "偶遇一对拍婚纱照的情侣，沾了喜气",
+      "走了快一小时，腿有点酸但心里轻",
+      "湖心亭里有人拉二胡，悠扬得很",
+      "结束时夕阳正好落进湖里，舍不得走"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "lake_run",
+    "name": "环湖跑步",
+    "icon": "🏃",
+    "desc": "沿湖岸慢跑，比公园跑步带劲（免费，+3 体质 +2 心情）",
+    "locationId": "lake_park",
+    "duration": 1,
+    "requirements": {
+      "attr": {
+        "stamina": 30
+      }
+    },
+    "effects": {
+      "stamina": -25,
+      "fitness": 3,
+      "mood": 2,
+      "stress": -2,
+      "log": "沿湖跑了一圈，酣畅淋漓"
+    },
+    "verdicts": [
+      "湖景一路相伴，跑起来不枯燥",
+      "跑到一半追上一只撒欢的狗",
+      "呼吸节奏稳住后，进入了状态",
+      "终点处有大爷鼓掌叫好",
+      "汗出透了，整个人轻了三斤",
+      "回来称了下，配速比上次快了"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_atk_lake",
+    "locationId": "lake_park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练攻击",
+    "icon": "🥊",
+    "duration": 1,
+    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "atk",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "湖风习习，猫咪训练得格外起劲",
+      "猫咪对着湖面挥爪，气势十足",
+      "湖边空地宽敞，训练效果不错",
+      "猫咪训练得很卖力，尾巴都绷直了",
+      "湖边的空气清新，猫咪状态很好",
+      "训练间隙，猫咪盯着湖里的鱼出神"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_def_lake",
+    "locationId": "lake_park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练防御",
+    "icon": "🛡️",
+    "duration": 1,
+    "desc": "花 20 元训练防御（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "def",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "湖风习习，猫咪训练得格外起劲",
+      "猫咪对着湖面挥爪，气势十足",
+      "湖边空地宽敞，训练效果不错",
+      "猫咪训练得很卖力，尾巴都绷直了",
+      "湖边的空气清新，猫咪状态很好",
+      "训练间隙，猫咪盯着湖里的鱼出神"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_spd_lake",
+    "locationId": "lake_park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练速度",
+    "icon": "💨",
+    "duration": 1,
+    "desc": "花 20 元训练速度（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "spd",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "湖风习习，猫咪训练得格外起劲",
+      "猫咪对着湖面挥爪，气势十足",
+      "湖边空地宽敞，训练效果不错",
+      "猫咪训练得很卖力，尾巴都绷直了",
+      "湖边的空气清新，猫咪状态很好",
+      "训练间隙，猫咪盯着湖里的鱼出神"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_hp_lake",
+    "locationId": "lake_park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练体质",
+    "icon": "❤️",
+    "duration": 1,
+    "desc": "花 20 元训练体质（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "hp",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "湖风习习，猫咪训练得格外起劲",
+      "猫咪对着湖面挥爪，气势十足",
+      "湖边空地宽敞，训练效果不错",
+      "猫咪训练得很卖力，尾巴都绷直了",
+      "湖边的空气清新，猫咪状态很好",
+      "训练间隙，猫咪盯着湖里的鱼出神"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_free_train_lake",
+    "name": "猫咪自由锻炼",
+    "icon": "🏃",
+    "desc": "带猫咪在湖边撒欢跑跑：50% 随机提升一个属性，50% 遭遇野生猫咪（可决斗或逃跑，失败无惩罚）。每日限 3 次",
+    "locationId": "lake_park",
+    "group": "cat_train",
+    "duration": 0.5,
+    "handler": "cat_free_train",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "effects": {
+      "log": "带猫咪在湖边自由锻炼"
+    },
+    "verdicts": [
+      "猫咪在湖边的草地上撒欢奔跑，尾巴翘得老高",
+      "猫咪追着湖风里飘的落叶跳来跳去，开心坏了",
+      "湖边有几只野猫，猫咪和它们打了个照面",
+      "猫咪绕着湖边的树桩跑圈，越跑越精神",
+      "一阵湖风吹过，猫咪眯着眼很享受",
+      "远处传来水鸟的叫声，它竖起了耳朵"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "church_mass",
+    "name": "参加弥撒",
+    "icon": "✝️",
+    "desc": "每周六 15:00–18:00 的弥撒。参加多次后解锁洗礼（洗礼后寺庙无法进入）",
+    "locationId": "church",
+    "duration": 3,
+    "requirements": {
+      "weekday": [
+        "sat"
+      ],
+      "hourRange": {
+        "start": 15,
+        "end": 18
+      }
+    },
+    "effects": {
+      "mood": 4,
+      "fame": 1,
+      "stress": -2,
+      "log": "参加了教堂弥撒"
+    },
+    "verdicts": [
+      "管风琴声响起，心一下子静了",
+      "唱诗班的童声清亮，直击心底",
+      "神父的祷词让紧绷的肩膀松了下来",
+      "点了支蜡烛，许了个愿",
+      "弥撒后的宁静比任何休息都熨帖",
+      "和教友们一道起身，归属感油然而生"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "temple_volunteer",
+    "name": "寺庙义工",
+    "icon": "🙏",
+    "desc": "帮寺里扫落叶、劈柴火，劳动换一天免费食宿。（连续参加后解锁佛法会→三宝，完成后教堂无法进入）",
+    "locationId": "temple",
+    "duration": 4,
+    "requirements": {
+      "attr": {
+        "stamina": 30,
+        "health": 25
+      }
+    },
+    "effects": {
+      "stamina": -35,
+      "mood": 3,
+      "health": 1,
+      "stress": -3,
+      "log": "在寺庙做了一天义工，师父给安排了禅房住下"
+    },
+    "verdicts": [
+      "扫完满院落叶，师父递来一碗热茶",
+      "劈柴火手上磨出茧，但心里踏实",
+      "香客递来水果，说随喜随喜",
+      "午斋的素面意外的香",
+      "禅房里睡得比哪都安稳",
+      "师父说，劳作即是修行"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "church_confession",
+    "name": "告解",
+    "icon": "🕊️",
+    "desc": "向神父倾诉心里的负担，每日一次。告解完，心里轻快许多",
+    "locationId": "church",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "confession_day"
+    },
+    "effects": {
+      "stress": -4,
+      "mood": 2,
+      "log": "在告解室里卸下了心里的石头"
+    },
+    "verdicts": [
+      "隔着格栅，把憋了许久的话说了出来",
+      "神父一句「孩子，主已听见」，眼眶就热了",
+      "告解完，脚步都轻了几分",
+      "窗外天光透进来，心里亮堂了些",
+      "说到一半哽住了，神父只是安静地等",
+      "走出告解室，胸口那块石头小了一圈",
+      "承认了那件一直不敢承认的事，反倒松了口气"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "temple_vegetarian",
+    "name": "用素斋",
+    "icon": "🥗",
+    "desc": "义工换来的素斋，一碗清粥小菜，胃里暖了心也静了（需先做过义工）",
+    "locationId": "temple",
+    "duration": 1,
+    "requirements": {
+      "flagAtLeast": {
+        "flag": "temple_volunteered",
+        "value": 1
+      }
+    },
+    "effects": {
+      "satiety": 30,
+      "mood": 3,
+      "log": "在寺里用了一顿素斋"
+    },
+    "verdicts": [
+      "清粥小菜，竟比大鱼大肉熨帖",
+      "师父添了半勺饭，说不够再盛",
+      "斋堂里只闻碗筷声，心也跟着静了",
+      "一碗热汤下肚，浑身都暖了",
+      "斋饭讲究食不言，一顿饭吃出了仪式感",
+      "豆腐炖得入味，才知道素菜也能这么香",
+      "临走前照规矩把碗筷洗净归位，心里妥帖"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "temple_lodging",
+    "name": "禅房过夜",
+    "icon": "🛏️",
+    "desc": "在寺里禅房歇一晚，清静无梦（需先做过义工；仅无固定住处时可选）",
+    "locationId": "temple",
+    "duration": 1,
+    "handler": "stay_hotel",
+    "housingId": "temple",
+    "requirements": {
+      "flagAtLeast": {
+        "flag": "temple_volunteered",
+        "value": 1
+      }
+    },
+    "effects": {
+      "mood": 2,
+      "stress": -2,
+      "log": "在禅房里睡了一夜"
+    },
+    "verdicts": [
+      "禅房朴素，却比哪儿都安稳",
+      "晨钟响起时，竟舍不得起身",
+      "木鱼声里，一夜无梦",
+      "推开房门，满院晨光",
+      "山里夜凉，被褥晒过太阳的味道",
+      "半夜醒来听见风穿过檐铃，又睡了过去",
+      "没有手机信号的一晚，睡得出奇沉"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "church_worship",
+    "name": "祈祷礼拜",
+    "icon": "🙏",
+    "desc": "在教堂静心祈祷，每日一次，压力稍缓",
+    "locationId": "church",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "worship_church_day"
+    },
+    "effects": {
+      "stress": -3,
+      "mood": 1,
+      "log": "在教堂默默祈祷了一会儿"
+    },
+    "verdicts": [
+      "点燃一支蜡烛，看着火苗出神",
+      "唱诗班的余音绕梁，心静了",
+      "在长椅上坐了许久，肩头松了",
+      "在心里轻轻说了声谢谢",
+      "彩窗把阳光切成碎块，落了一身",
+      "为家里人默念了几句，说不清信不信，但心安了",
+      "空荡的礼拜堂里，只听得见自己的呼吸"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "temple_worship",
+    "name": "上香祈福",
+    "icon": "🕯️",
+    "desc": "在佛前上香祈福，每日一次，心绪平复",
+    "locationId": "temple",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "worship_temple_day"
+    },
+    "effects": {
+      "stress": -3,
+      "mood": 1,
+      "log": "在佛前上了一炷香"
+    },
+    "verdicts": [
+      "三炷清香，烟袅袅升起",
+      "跪拜时，杂念竟淡了",
+      "功德箱前合十，许了个愿",
+      "钟声里，心里安稳了些",
+      "求了支签，签文含糊，倒也不必较真",
+      "殿外古树参天，站着仰头看了很久",
+      "香灰落在手背上，微微一烫，人清醒了"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_laptop_mid",
+    "locationId": "electronics_store",
+    "name": "买办公笔记本",
+    "icon": "💻",
+    "desc": "1500 元，主流办公本，开发效率明显提升",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "laptop_mid",
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_laptop_pro",
+    "locationId": "electronics_store",
+    "name": "买高端电竞本",
+    "icon": "💻",
+    "desc": "5000 元，顶配电竞本，开发效率拉满",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "laptop_pro",
+    "requirements": {
+      "money": 5000
+    },
+    "effects": {
+      "money": -5000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_phone_rice",
+    "locationId": "electronics_store",
+    "name": "买大米手机",
+    "icon": "📱",
+    "desc": "800 元，简约耐用的国产机（换手机主题）",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "phone_rice",
+    "requirements": {
+      "money": 800
+    },
+    "effects": {
+      "money": -800
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_phone_flower",
+    "locationId": "electronics_store",
+    "name": "买花朵手机",
+    "icon": "📱",
+    "desc": "2000 元，粉彩时尚机（换手机主题）",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "phone_flower",
+    "requirements": {
+      "money": 2000
+    },
+    "effects": {
+      "money": -2000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_phone_fruit",
+    "locationId": "electronics_store",
+    "name": "买水果手机",
+    "icon": "📱",
+    "desc": "5000 元，深色科技旗舰机（换手机主题）",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "phone_fruit",
+    "requirements": {
+      "money": 5000
+    },
+    "effects": {
+      "money": -5000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_camera",
+    "locationId": "electronics_store",
+    "name": "买摄像机",
+    "icon": "📹",
+    "desc": "1200 元，能拍能录的摄像机（剧情道具）",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "camera",
+    "requirements": {
+      "money": 1200
+    },
+    "effects": {
+      "money": -1200
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_laptop",
+    "locationId": "electronics_store",
+    "name": "买老旧笔记本",
+    "icon": "💻",
+    "desc": "500 元，二手老笔记本，跑代码有点卡",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "laptop",
+    "requirements": {
+      "money": 500
+    },
+    "effects": {
+      "money": -500
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_cook_set_mid",
+    "locationId": "furniture_store",
+    "name": "买专业厨具",
+    "icon": "🍳",
+    "desc": "1000 元，做饭更快",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "cook_set_mid",
+    "requirements": {
+      "money": 1000
+    },
+    "effects": {
+      "money": -1000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_cook_set_high",
+    "locationId": "furniture_store",
+    "name": "买豪华厨具",
+    "icon": "🍳",
+    "desc": "3000 元，做饭又快又好",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "cook_set_high",
+    "requirements": {
+      "money": 3000
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_gym_mid",
+    "locationId": "furniture_store",
+    "name": "买杠铃套装",
+    "icon": "🏋️",
+    "desc": "1000 元，锻炼效果更好",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "gym_mid",
+    "requirements": {
+      "money": 1000
+    },
+    "effects": {
+      "money": -1000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_gym_high",
+    "locationId": "furniture_store",
+    "name": "买健身套装",
+    "icon": "🏋️",
+    "desc": "3000 元，全套健身器材",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "gym_high",
+    "requirements": {
+      "money": 3000
+    },
+    "effects": {
+      "money": -3000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_bed_basic",
+    "locationId": "furniture_store",
+    "name": "买纺织床品",
+    "icon": "🛏️",
+    "desc": "400 元，休息恢复小幅提升",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "bed_basic",
+    "requirements": {
+      "money": 400
+    },
+    "effects": {
+      "money": -400
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_bed_standard",
+    "locationId": "furniture_store",
+    "name": "买真丝床品",
+    "icon": "🛏️",
+    "desc": "1500 元，休息恢复更好",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "bed_standard",
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_bed_premium",
+    "locationId": "furniture_store",
+    "name": "买梦幻床品",
+    "icon": "🛏️",
+    "desc": "4000 元，一觉满血",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "bed_premium",
+    "requirements": {
+      "money": 4000
+    },
+    "effects": {
+      "money": -4000
+    },
+    "verdicts": [
+      "物有所值",
+      "刷卡买单，心里踏实",
+      "新装备到手",
+      "挑了半天，就它了",
+      "买完感觉浑身有劲",
+      "钱包一紧，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "train_study_course",
+    "locationId": "training_school",
+    "name": "上培训课",
+    "icon": "📚",
+    "desc": "免费听一堂职业技能课，智力 +1（每天限 1 次，连续 3 天或累计 5 次领结业证书）",
+    "duration": 2,
+    "handler": "train_study",
+    "effects": {
+      "intelligence": 1,
+      "log": "在培训学校认真听了一堂课"
+    },
+    "verdicts": [
+      "老师讲得不错，记了半本笔记",
+      "实操环节最有意思",
+      "同学都是想学点本事的人",
+      "下课还追着老师问了一会儿",
+      "免费课也这么实在，值了",
+      "又掌握了一个知识点"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "meet_cafe",
+    "locationId": "cafe",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识店里的常客（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_park",
+    "locationId": "park",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识公园里遛弯的人（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_labor",
+    "locationId": "labor_market",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识劳务市场等活的人（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_fastfood",
+    "locationId": "fast_food",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识快餐店里的人（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_factory",
+    "locationId": "electronics_factory",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识厂里的同事（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_internet",
+    "locationId": "internet_cafe",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识网吧的常客（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_library",
+    "locationId": "library",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识图书馆里读书的人（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "meet_clinic",
+    "locationId": "clinic",
+    "name": "搭话认识新朋友",
+    "icon": "👋",
+    "desc": "主动上前搭话，结识诊所里候诊的人（每日限 2 次）",
+    "duration": 0.5,
+    "handler": "meet_someone",
+    "effects": {},
+    "sound": "phone",
+    "verdicts": [
+      "对方挺健谈，聊了一会儿互相留了联系方式",
+      "搭话很顺利，气氛轻松愉快",
+      "虽然一开始有点尴尬，但慢慢聊开了",
+      "对方正好也闲着，聊得投机",
+      "你主动打了招呼，对方友好地回应了",
+      "几句话下来，感觉又认识了一个新朋友"
+    ]
+  },
+  {
+    "id": "hotel_breakfast",
+    "locationId": "hotel",
+    "name": "自助早餐",
+    "icon": "🍳",
+    "desc": "酒店自助早餐：粥粉面蛋管饱（20 元）",
+    "duration": 0.5,
+    "requirements": {
+      "money": 20
+    },
+    "effects": {
+      "satiety": 45,
+      "mood": 4,
+      "money": -20
+    },
+    "verdicts": [
+      "自助早餐很丰盛，吃得很满足",
+      "煎蛋配粥，元气满满的一天",
+      "在酒店餐厅坐了一会儿，人不多很安静",
+      "早餐管饱，感觉今天状态不错",
+      "豆浆油条配小菜，比外面实惠多了",
+      "吃饱喝足，精力充沛地开始新的一天"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "hotel_frontdesk",
+    "locationId": "hotel",
+    "name": "酒店前台",
+    "icon": "🛎️",
+    "desc": "向前台咨询房型与自助早餐（特惠间 40 元/晚 · 豪华间 150 元/晚）",
+    "duration": 0.5,
+    "handler": "hotel_frontdesk",
+    "effects": {},
+    "sound": "cashier",
+    "verdicts": [
+      "前台小哥耐心介绍了房型和早餐时间",
+      "看了房型图，特惠间性价比不错",
+      "前台推荐了朝南的豪华间，视野很好",
+      "咨询完房型，顺便问了下周边美食",
+      "前台帮你办了会员，说下次入住有折扣",
+      "聊了几句，前台态度很好，体验不错"
+    ]
+  },
+  {
+    "id": "buy_egg_market",
+    "locationId": "market",
+    "name": "买鸡蛋",
+    "icon": "🥚",
+    "duration": 0.5,
+    "desc": "成筐的鸡蛋，比农场贵一些（5 元/打）。(+8 饱腹，背包中食用)",
+    "effects": {
+      "money": -5,
+      "log": "在菜市场买了一打鸡蛋"
+    },
+    "verdicts": [
+      "摊主说这是今早刚送来的",
+      "个头比农场小点，胜在方便",
+      "买回去煎个蛋，一天都精神",
+      "菜市场的蛋中规中矩，应急够用",
+      "比农场贵两块，胜在不用跑远路",
+      "老板娘帮你挑了没破的"
+    ],
+    "sound": "coin",
+    "handler": "buy_ingredient",
+    "itemId": "farm_egg",
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    }
+  },
+  {
+    "id": "buy_milk_market",
+    "locationId": "market",
+    "name": "买牛奶",
+    "icon": "🥛",
+    "duration": 0.5,
+    "desc": "包装鲜奶，比牧场贵一些（6 元/L）。(+10 饱腹 +2 健康，背包中食用)",
+    "effects": {
+      "money": -6,
+      "log": "在菜市场买了一升牛奶"
+    },
+    "verdicts": [
+      "保质期比牧场奶短，胜在随时能买",
+      "冷藏柜里拿的，凉丝丝",
+      "城市里喝的就是这份方便",
+      "比牧场贵两块钱，但不用跑郊区",
+      "超市同款这里更便宜",
+      "店员说这批次是今早到的"
+    ],
+    "sound": "coin",
+    "handler": "buy_ingredient",
+    "itemId": "farm_milk",
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    }
+  },
+  {
+    "id": "farm_buy_meat",
+    "locationId": "farm",
+    "name": "买农家肉（10 元/份）",
+    "icon": "🥩",
+    "duration": 0.5,
+    "desc": "农家自养猪肉，比菜市场便宜。（+52 饱腹，需烹饪）",
+    "effects": {
+      "money": -10,
+      "log": "在农户家割了块肉"
+    },
+    "verdicts": [
+      "现杀的，还带着热气",
+      "比菜市场便宜五块，赚到了",
+      "农户说自家喂的，没饲料",
+      "切好装袋，晚上炖一锅",
+      "这肉看着就紧实，是好肉",
+      "顺带送你两根葱"
+    ],
+    "sound": "coin",
+    "handler": "buy_ingredient",
+    "itemId": "meat"
+  },
+  {
+    "id": "cat_feed",
+    "locationId": "home",
+    "name": "喂猫咪",
+    "icon": "🥫",
+    "duration": 0.5,
+    "desc": "给猫咪喂猫粮，恢复饱食度（消耗背包里的猫粮）",
+    "handler": "cat_care",
+    "catAction": "feed",
+    "group": "cat",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "cat_clean",
+    "locationId": "home",
+    "name": "给猫咪洗澡",
+    "icon": "🛁",
+    "duration": 1,
+    "desc": "花 15 元给猫咪洗个澡，恢复干净度",
+    "handler": "cat_care",
+    "catAction": "clean",
+    "group": "cat",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "cat_play",
+    "locationId": "home",
+    "name": "陪猫咪玩",
+    "icon": "🧶",
+    "duration": 0.5,
+    "desc": "陪猫咪玩耍，恢复心情（消耗少量饱食）",
+    "handler": "cat_care",
+    "catAction": "play",
+    "group": "cat",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "cat_train_atk",
+    "locationId": "park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练攻击",
+    "icon": "🥊",
+    "duration": 1,
+    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "atk",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_def",
+    "locationId": "park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练防御",
+    "icon": "🛡️",
+    "duration": 1,
+    "desc": "花 20 元训练防御（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "def",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_spd",
+    "locationId": "park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练速度",
+    "icon": "💨",
+    "duration": 1,
+    "desc": "花 20 元训练速度（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "spd",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_train_hp",
+    "locationId": "park",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "name": "训练体质",
+    "icon": "❤️",
+    "duration": 1,
+    "desc": "花 20 元训练体质（每日限 3 次，重复递减）",
+    "handler": "cat_care",
+    "catAction": "train",
+    "trainType": "hp",
+    "group": "cat_train",
+    "effects": {
+      "log": "照顾猫咪"
+    },
+    "verdicts": [
+      "猫咪很满意",
+      "照顾猫咪的时光总是很治愈",
+      "猫咪蹭了蹭你的手",
+      "猫咪的心情肉眼可见地变好了",
+      "你和猫咪都度过了愉快的一段时光",
+      "猫咪用尾巴轻轻扫过你的手"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_buy_cat_food_basic",
+    "locationId": "pet_store",
+    "name": "买普通猫粮",
+    "icon": "🥫",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：普通猫粮（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_food_basic",
+    "group": "pet_food",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_food_good",
+    "locationId": "pet_store",
+    "name": "买优质猫粮",
+    "icon": "🍣",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：优质猫粮（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_food_good",
+    "group": "pet_food",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_food_lux",
+    "locationId": "pet_store",
+    "name": "买豪华猫粮",
+    "icon": "🍱",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：豪华猫粮（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_food_lux",
+    "group": "pet_food",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_toy_basic",
+    "locationId": "pet_store",
+    "name": "买毛线球",
+    "icon": "🧶",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：毛线球（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_toy_basic",
+    "group": "pet_toy",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_toy_good",
+    "locationId": "pet_store",
+    "name": "买逗猫棒",
+    "icon": "🪶",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：逗猫棒（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_toy_good",
+    "group": "pet_toy",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_toy_lux",
+    "locationId": "pet_store",
+    "name": "买智能玩具",
+    "icon": "🤖",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：智能玩具（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_toy_lux",
+    "group": "pet_toy",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_bed_basic",
+    "locationId": "pet_store",
+    "name": "买纸箱猫窝",
+    "icon": "📦",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：纸箱猫窝（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_bed_basic",
+    "group": "pet_bed",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_bed_good",
+    "locationId": "pet_store",
+    "name": "买软垫猫窝",
+    "icon": "🛏️",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：软垫猫窝（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_bed_good",
+    "group": "pet_bed",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_bed_lux",
+    "locationId": "pet_store",
+    "name": "买豪华猫别墅",
+    "icon": "🏰",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：豪华猫别墅（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_bed_lux",
+    "group": "pet_bed",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_train_basic",
+    "locationId": "pet_store",
+    "name": "买训练垫",
+    "icon": "🎯",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：训练垫（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_train_basic",
+    "group": "pet_train",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_train_good",
+    "locationId": "pet_store",
+    "name": "买训练器",
+    "icon": "🏋️",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：训练器（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_train_good",
+    "group": "pet_train",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_train_lux",
+    "locationId": "pet_store",
+    "name": "买训练舱",
+    "icon": "🚀",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：训练舱（入背包，开销计入周记）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_train_lux",
+    "group": "pet_train",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "pet_adopt",
+    "locationId": "pet_store",
+    "name": "领养猫咪",
+    "icon": "🐾",
+    "duration": 0.5,
+    "desc": "看看店里待领养的猫咪，按稀有度明码标价",
+    "handler": "pet_adopt",
+    "group": "pet_adopt",
+    "effects": {
+      "log": "逛了逛宠物用品店的领养区"
+    },
+    "verdicts": [
+      "货架上猫咪们冲你喵喵叫",
+      "笼舍里的小家伙扒着玻璃看热闹",
+      "店员说这批猫咪都打过了疫苗",
+      "店内飘着淡淡的猫粮香",
+      "一只小猫伸出爪子碰了碰你的手",
+      "你看了一圈，心里有了中意的毛孩子"
+    ],
+    "sound": "game"
+  },
+  {
+    "id": "cat_treat_injury",
+    "locationId": "pet_hospital",
+    "name": "治疗猫咪伤势",
+    "icon": "💊",
+    "duration": 1,
+    "desc": "给携带的猫咪治疗伤势：按伤势收费，重伤需多次治疗（费用随伤势浮动）",
+    "handler": "treat_injury",
+    "group": "hos_treat",
+    "effects": {
+      "log": "带猫咪去了宠物医院"
+    },
+    "verdicts": [
+      "医生仔细检查了猫咪的伤口",
+      "护士小姐温柔地安抚着猫咪",
+      "医院里飘着淡淡的消毒水味",
+      "墙上的告示写着：定期体检更健康",
+      "另一只受伤的狗狗在角落养神",
+      "缴费窗口排着几个着急的铲屎官"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_restore_hp",
+    "locationId": "pet_hospital",
+    "name": "恢复猫咪生命",
+    "icon": "❤️‍🩹",
+    "duration": 1,
+    "desc": "给猫咪做生命恢复治疗，补满当前生命值（按缺失量收费；生命归零倒地的猫咪必须来此治疗）",
+    "handler": "cat_restore_hp",
+    "group": "hos_treat",
+    "effects": {
+      "log": "带猫咪去了宠物医院"
+    },
+    "verdicts": [
+      "医生仔细检查了猫咪的伤口",
+      "护士小姐温柔地安抚着猫咪",
+      "医院里飘着淡淡的消毒水味",
+      "墙上的告示写着：定期体检更健康",
+      "另一只受伤的狗狗在角落养神",
+      "缴费窗口排着几个着急的铲屎官"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_special_train",
+    "locationId": "pet_hospital",
+    "name": "猫咪特殊训练",
+    "icon": "💪",
+    "duration": 1,
+    "desc": "付费任选一张卡强化：攻击卡加伤害、防御卡加格挡、治疗卡加治疗（每周限 3 次，按次数定价 200/400/600 元）",
+    "handler": "cat_special_train",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "group": "hos_train",
+    "effects": {
+      "log": "给猫咪做了特殊训练"
+    },
+    "verdicts": [
+      "训练师给猫咪制定了专属训练计划",
+      "猫咪在跑步机上奋力争扎",
+      "墙上贴着历届对决冠军的照片",
+      "医生叮嘱：训练虽好，也不要贪多",
+      "另一只猫在旁边观摩，偷偷跟着练",
+      "训练室里有几只沙袋，全被挠花了"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_focus_train",
+    "locationId": "pet_hospital",
+    "name": "猫咪专注性训练",
+    "icon": "🎯",
+    "duration": 1,
+    "desc": "在医生指导下永久删除一张卡，精简卡组让出牌更专注（每周限 3 次，按次数定价 200/400/600 元）",
+    "handler": "cat_focus_train",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "group": "hos_train",
+    "effects": {
+      "log": "给猫咪做了专注性训练"
+    },
+    "verdicts": [
+      "医生帮助猫咪集中注意力",
+      "猫咪盯着逗猫棒一动不动",
+      "删除多余的动作，出招更果断",
+      "专注力测评仪发出滴滴声",
+      "护士说：少即是多，出招要精简",
+      "训练结束后猫咪显得格外利落"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "cat_buy_cat_potion",
+    "locationId": "pet_hospital",
+    "name": "买猫用药水",
+    "icon": "🧪",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：猫用药水（即时治疗一个等级伤势，入背包）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_potion",
+    "group": "hos_special",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_hp_potion",
+    "locationId": "pet_hospital",
+    "name": "买生命药剂",
+    "icon": "💊",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：生命药剂（喂服后恢复 50% 最大生命值，入背包）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_hp_potion",
+    "group": "hos_special",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_purifier",
+    "locationId": "pet_hospital",
+    "name": "买净化剂",
+    "icon": "✨",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：净化剂（战斗中清除异常状态，入背包）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_purifier",
+    "group": "hos_special",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_cat_revive",
+    "locationId": "pet_hospital",
+    "name": "买复活石",
+    "icon": "💎",
+    "duration": 0.5,
+    "desc": "购买猫咪用品：复活石（战斗中被击倒自动复活一次，入背包）",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_revive",
+    "group": "hos_special",
+    "effects": {
+      "log": "购买了猫咪用品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "猫咪用品到手",
+      "钱包又瘪了一点，但值得",
+      "购物清单又划掉一项",
+      "猫咪的装备越来越齐全了",
+      "店员热情地帮你打包好"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_free_train",
+    "name": "猫咪自由锻炼",
+    "icon": "🏃",
+    "desc": "带猫咪在公园撒欢跑跑：50% 随机提升一个属性，50% 遭遇野生猫咪（可决斗或逃跑，失败无惩罚）。每日限 3 次",
+    "locationId": "park",
+    "group": "cat_train",
+    "duration": 0.5,
+    "handler": "cat_free_train",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "effects": {
+      "log": "带猫咪在公园自由锻炼"
+    },
+    "verdicts": [
+      "猫咪在草地上撒欢奔跑，尾巴翘得老高",
+      "猫咪追着落叶跳来跳去，开心坏了",
+      "公园里的猫咪们相互打了个照面",
+      "猫咪绕着树桩跑圈，越跑越精神",
+      "一阵风吹过，猫咪眯着眼很享受",
+      "远处传来别的猫的叫声，它竖起了耳朵"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "amusement_fun_match",
+    "name": "喵喵娱乐赛",
+    "icon": "🥊",
+    "desc": "无需门票、立即开战：大概率普通对手、小概率中级对手，输了没惩罚，赢了随机提升一个猫咪属性。每日限 3 场",
+    "locationId": "amusement_park",
+    "duration": 0.5,
+    "handler": "fun_match",
+    "requirements": {
+      "hasActivePet": true
+    },
+    "effects": {
+      "log": "参加了游乐场的喵喵娱乐赛"
+    },
+    "verdicts": [
+      "聚光灯亮起，全场猫咪都屏住了呼吸",
+      "赛场边围了一圈来看热闹的市民和猫",
+      "娱乐赛没有门票门槛，图的就是一个乐子",
+      "裁判猫举起小旗，示意双方就位",
+      "围观群众掏出手机拍下这场对决",
+      "锣鼓一响，两只猫在台子上你来我往"
+    ],
+    "sound": "battle_intent"
+  },
+  {
+    "id": "cat_buy_acc_ac_bell",
+    "locationId": "pet_store",
+    "name": "买幸运铃铛",
+    "icon": "🔔",
+    "duration": 0.5,
+    "desc": "购买饰品：幸运铃铛（普通，800元）——叮铃作响的小铃铛，对决开场带着一点底气。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_bell",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_collar",
+    "locationId": "pet_store",
+    "name": "买勇气项圈",
+    "icon": "📿",
+    "duration": 0.5,
+    "desc": "购买饰品：勇气项圈（普通，900元）——普通项圈，戴上的猫咪莫名胆大。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_collar",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_charm",
+    "locationId": "pet_store",
+    "name": "买平安符",
+    "icon": "🧿",
+    "duration": 0.5,
+    "desc": "购买饰品：平安符（精良，2800元）——绣着平安二字的小护符，能挡下不少伤害。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_charm",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_band",
+    "locationId": "pet_store",
+    "name": "买力量手环",
+    "icon": "💪",
+    "duration": 0.5,
+    "desc": "购买饰品：力量手环（精良，3200元）——轻便训练手环，出场自带一股狠劲。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_band",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_scarf",
+    "locationId": "pet_store",
+    "name": "买清凉围脖",
+    "icon": "🧣",
+    "duration": 0.5,
+    "desc": "购买饰品：清凉围脖（精良，3500元）——冰丝围脖，让猫咪气血更足。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_scarf",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_medal",
+    "locationId": "pet_store",
+    "name": "买冠军奖牌",
+    "icon": "🏅",
+    "duration": 0.5,
+    "desc": "购买饰品：冠军奖牌（稀有，12000元）——对决赛冠军的荣耀，攻守兼备。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_medal",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_crystal",
+    "locationId": "pet_store",
+    "name": "买治愈水晶",
+    "icon": "💎",
+    "duration": 0.5,
+    "desc": "购买饰品：治愈水晶（稀有，15000元）——蕴藏治愈之力的水晶，提升体质。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_crystal",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "cat_buy_acc_ac_crown",
+    "locationId": "pet_store",
+    "name": "买王者之冠",
+    "icon": "👑",
+    "duration": 0.5,
+    "desc": "购买饰品：王者之冠（史诗，50000元）——耄耋之王的冠冕，开场便是满状态压制。",
+    "handler": "buy_accessory",
+    "accessoryId": "ac_crown",
+    "group": "pet_acc",
+    "effects": {
+      "log": "购买了饰品"
+    },
+    "verdicts": [
+      "买好了，装进背包",
+      "饰品到手，猫咪又能美美打扮了",
+      "店员热情地帮你打包好",
+      "这件饰品的光泽真不错",
+      "猫咪似乎也喜欢这个新装备",
+      "钱袋又轻了一些，但值得"
+    ],
+    "sound": "coin"
+  }
+]

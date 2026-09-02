@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "cat_food_basic",
+      "name": "普通猫粮",
+      "icon": "🥫",
+      "cat": "food",
+      "tier": "basic",
+      "price": 10,
+      "desc": "基础饱食恢复，维持猫咪饱食度，少量恢复生命",
+      "satiety": 25,
+      "hp": 8
+    },
+    {
+      "id": "cat_food_good",
+      "name": "优质猫粮",
+      "icon": "🍣",
+      "cat": "food",
+      "tier": "good",
+      "price": 30,
+      "desc": "恢复饱食与心情，恢复一定生命",
+      "satiety": 35,
+      "mood": 5,
+      "hp": 15
+    },
+    {
+      "id": "cat_food_lux",
+      "name": "豪华猫粮",
+      "icon": "🍱",
+      "cat": "food",
+      "tier": "lux",
+      "price": 80,
+      "desc": "恢复饱食与心情，恢复较多生命，训练效率 +20%",
+      "satiety": 45,
+      "mood": 10,
+      "hp": 25,
+      "trainBoost": 0.2
+    },
+    {
+      "id": "cat_toy_basic",
+      "name": "毛线球",
+      "icon": "🧶",
+      "cat": "toy",
+      "tier": "basic",
+      "price": 8,
+      "desc": "猫咪玩得开心，心情小幅提升",
+      "mood": 10
+    },
+    {
+      "id": "cat_toy_good",
+      "name": "逗猫棒",
+      "icon": "🪶",
+      "cat": "toy",
+      "tier": "good",
+      "price": 25,
+      "desc": "心情提升更多，训练效率 +10%",
+      "mood": 15,
+      "trainBoost": 0.1
+    },
+    {
+      "id": "cat_toy_lux",
+      "name": "智能玩具",
+      "icon": "🤖",
+      "cat": "toy",
+      "tier": "lux",
+      "price": 70,
+      "desc": "心情大幅提升，训练效率 +20%",
+      "mood": 20,
+      "trainBoost": 0.2
+    },
+    {
+      "id": "cat_bed_basic",
+      "name": "纸箱猫窝",
+      "icon": "📦",
+      "cat": "bed",
+      "tier": "basic",
+      "price": 15,
+      "desc": "猫咪有了自己的小窝，心情 +3",
+      "mood": 3
+    },
+    {
+      "id": "cat_bed_good",
+      "name": "软垫猫窝",
+      "icon": "🛏️",
+      "cat": "bed",
+      "tier": "good",
+      "price": 45,
+      "desc": "柔软舒适，心情 +6",
+      "mood": 6
+    },
+    {
+      "id": "cat_bed_lux",
+      "name": "豪华猫别墅",
+      "icon": "🏰",
+      "cat": "bed",
+      "tier": "lux",
+      "price": 120,
+      "desc": "猫咪的豪宅，心情 +10，战斗 DEF +3",
+      "mood": 10,
+      "defBonus": 3
+    },
+    {
+      "id": "cat_train_basic",
+      "name": "训练垫",
+      "icon": "🎯",
+      "cat": "train",
+      "tier": "basic",
+      "price": 12,
+      "desc": "基础训练用品"
+    },
+    {
+      "id": "cat_train_good",
+      "name": "训练器",
+      "icon": "🏋️",
+      "cat": "train",
+      "tier": "good",
+      "price": 40,
+      "desc": "训练效率 +15%",
+      "trainBoost": 0.15
+    },
+    {
+      "id": "cat_train_lux",
+      "name": "训练舱",
+      "icon": "🚀",
+      "cat": "train",
+      "tier": "lux",
+      "price": 100,
+      "desc": "训练效率 +30%",
+      "trainBoost": 0.3
+    },
+    {
+      "id": "cat_potion",
+      "name": "猫用药水",
+      "icon": "🧪",
+      "cat": "special",
+      "tier": "good",
+      "price": 40,
+      "desc": "宠物医院特供：涂抹后即时治疗一个等级的伤势（轻伤一次痊愈）",
+      "special": "heal_injury"
+    },
+    {
+      "id": "cat_hp_potion",
+      "name": "生命药剂",
+      "icon": "💊",
+      "cat": "special",
+      "tier": "good",
+      "price": 50,
+      "desc": "宠物医院特供：喂服后恢复 50% 最大生命值（倒地猫咪也能拉起来）",
+      "hp": 0,
+      "special": "heal_hp"
+    },
+    {
+      "id": "cat_purifier",
+      "name": "净化剂",
+      "icon": "✨",
+      "cat": "special",
+      "tier": "good",
+      "price": 25,
+      "desc": "宠物医院特供：战斗中清除自身中毒/麻痹/睡眠/灼伤等异常状态",
+      "special": "purify_status"
+    },
+    {
+      "id": "cat_revive",
+      "name": "复活石",
+      "icon": "💎",
+      "cat": "special",
+      "tier": "lux",
+      "price": 120,
+      "desc": "宠物医院特供：战斗中被击倒时自动复活一次（恢复 30% HP，单场一次）",
+      "special": "revive_stone"
+    }
+  ]
+}

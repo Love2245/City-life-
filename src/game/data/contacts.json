@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "contacts": [
+    {
+      "id": "parent_mother",
+      "name": "妈妈",
+      "avatar": "👩",
+      "relation": "parent",
+      "title": "母亲",
+      "intro": "最牵挂你的人，常发短信叮嘱你照顾好自己。",
+      "canCall": true,
+      "canSms": true,
+      "default": true
+    },
+    {
+      "id": "parent_father",
+      "name": "爸爸",
+      "avatar": "👨",
+      "relation": "parent",
+      "title": "父亲",
+      "intro": "话不多，但总在背后支持你。手头紧了可以找他。",
+      "canCall": true,
+      "canSms": true,
+      "default": true
+    },
+    {
+      "id": "park_chess_grandpa",
+      "name": "棋摊大爷",
+      "avatar": "♟️",
+      "relation": "mentor",
+      "title": "公园象棋大爷",
+      "intro": "街心公园象棋摊的老棋友，赢了你也不恼，常发棋谱教程。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "大爷：后生，有空再来杀一盘！我给你留了本棋谱教程。",
+      "tutorial": {
+        "everyDays": 10,
+        "text": "棋摊大爷发来一份棋谱教程，你琢磨了一晚，棋路开阔了不少。",
+        "effects": { "intelligence": 1, "mood": 2 }
+      }
+    },
+    {
+      "id": "park_calligraphy_grandpa",
+      "name": "书法大爷",
+      "avatar": "🖌️",
+      "relation": "mentor",
+      "title": "公园书法大爷",
+      "intro": "常在公园地书大字，赠过你一幅手稿。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "大爷：这幅手稿送你了，闲来练练字，心也静了。",
+      "onAdd": {
+        "items": ["item_manuscript"],
+        "effects": { "charm": 1, "mood": 3 },
+        "log": "书法大爷赠你一幅手稿"
+      },
+      "tutorial": {
+        "everyDays": 14,
+        "text": "书法大爷发来练字心得，你照着临了几页，字漂亮了些。",
+        "effects": { "charm": 1, "mood": 1 }
+      }
+    },
+    {
+      "id": "library_coder",
+      "name": "程序员小哥",
+      "avatar": "💻",
+      "relation": "friend",
+      "title": "图书馆认识的码农",
+      "intro": "在图书馆帮你改过代码，后来成了能聊技术的朋友。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "哥们：那份代码我顺手优化了，有技术问题随时喊我。",
+      "tutorial": {
+        "everyDays": 12,
+        "text": "程序员小哥发来编程技巧，你跟着敲了一遍，手感好多了。",
+        "effects": { "skills": { "programming": 1 }, "intelligence": 1, "mood": 2 }
+      }
+    },
+    {
+      "id": "cafe_clerk",
+      "name": "咖啡店店员",
+      "avatar": "☕",
+      "relation": "employee",
+      "title": "咖啡厅店员",
+      "intro": "咖啡厅认识的店员，说想换人就内推你，免去技能证书。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "店员：店长说你人不错，想来随时说，我给你内推，证书不用愁。",
+      "onAdd": {
+        "flags": { "referral_job_cafe_staff": true },
+        "effects": { "mood": 2 },
+        "log": "咖啡店店员愿意内推你进店（免技能证书）"
+      }
+    },
+    {
+      "id": "convenience_clerk",
+      "name": "便利店店长",
+      "avatar": "🏪",
+      "relation": "manager",
+      "title": "便利店店长",
+      "intro": "便利店店长，说店里缺人，可以内推你做正式店员，免证书。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "店长：店里正缺人，你来我内推，证书那套就免了。",
+      "onAdd": {
+        "flags": { "referral_job_convenience_clerk": true },
+        "effects": { "mood": 2 },
+        "log": "便利店店长愿意内推你（免技能证书）"
+      }
+    },
+    {
+      "id": "factory_leader",
+      "name": "工厂组长",
+      "avatar": "👷",
+      "relation": "leader",
+      "title": "电子厂组长",
+      "intro": "电子厂流水线上的组长，挺关照你，常教些干活门道。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "组长：好好干，有啥不懂的问我就行，组里罩着你。",
+      "onAdd": {
+        "effects": { "mood": 2 },
+        "log": "电子厂组长把你加进了联系人"
+      },
+      "tutorial": {
+        "everyDays": 9,
+        "text": "组长发来干活小窍门，你照着练，手更快了。",
+        "effects": { "skills": { "operation": 1 }, "mood": 1 }
+      }
+    },
+    {
+      "id": "landlord",
+      "name": "房东",
+      "avatar": "🏠",
+      "relation": "manager",
+      "title": "房东",
+      "intro": "租房后添加的联系人，每月催租。",
+      "canCall": true,
+      "canSms": true,
+      "hello": "房东：小兄弟，钥匙收好，有事微信联系。"
+    }
+  ]
+}

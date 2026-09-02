@@ -1,0 +1,173 @@
+[
+ {
+  "id": "indie_game",
+  "name": "独立游戏开发",
+  "icon": "🎮",
+  "desc": "利用业余时间开发一款像素风独立游戏，上线后获得每周固定版税",
+  "category": "programming",
+  "repeatable": true,
+  "skill": {
+   "programming": 3
+  },
+  "progressPerAction": 8,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -15,
+   "stress": 4,
+   "intelligence": 1,
+   "log": "敲了一晚上代码，独立游戏开发进度推进了"
+  },
+  "reward": {
+   "fame": 10,
+   "mood": 8,
+   "log": "独立游戏正式上线！Steam 好评如潮，从此每周都有固定版税入账"
+  },
+  "verdicts": [
+   "又修了一个 bug，离发布近了一步",
+   "今天灵感爆发，写了几百行代码",
+   "像素画好难，但越画越有感觉",
+   "测试版找朋友试玩，反馈不错",
+   "熬夜赶工，黑眼圈又重了",
+   "想着万一火了，是不是就能辞职了"
+  ]
+ },
+ {
+  "id": "mobile_app",
+  "name": "开发手机 App",
+  "icon": "📱",
+  "desc": "做一个工具类 App，上架应用商店赚每周广告分成",
+  "category": "programming",
+  "repeatable": true,
+  "skill": {
+   "programming": 5
+  },
+  "progressPerAction": 7,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -15,
+   "stress": 4,
+   "intelligence": 1,
+   "log": "写了一个新功能，App 开发进度推进了"
+  },
+  "reward": {
+   "fame": 12,
+   "mood": 8,
+   "log": "App 上架应用商店！下载量稳步上涨，广告分成每周自动到账"
+  },
+  "verdicts": [
+   "调了一天 UI，终于像样了",
+   "加了广告 SDK，测试广告刷了不少",
+   "后台数据看着涨，信心越来越足",
+   "有用户留言说好用，值了",
+   "迭代了一版，崩溃率降下来了",
+   "想着如果下载量过万，就辞了正式工"
+  ]
+ },
+ {
+  "id": "home_design",
+  "name": "居家设计",
+  "icon": "🛋️",
+  "desc": "接居家设计的单子，按电脑档次推进设计进度，完成后按设计等级拿一次性奖金",
+  "category": "design",
+  "repeatable": true,
+  "skill": {
+   "design": 3
+  },
+  "progressPerAction": 10,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -10,
+   "stress": 3,
+   "intelligence": 1,
+   "log": "画了一晚上设计稿，居家设计进度推进了"
+  },
+  "reward": {
+   "mood": 4,
+   "log": "居家设计交付！客户很满意，一次性设计费到账"
+  },
+  "verdicts": [
+   "改了三版配色，客户终于点头了",
+   "这单户型图挺有意思，灵感来得快",
+   "用电脑渲染效果图，比手绘快多了",
+   "客户夸你审美在线，问能不能长期合作",
+   "又交付一单，口碑慢慢攒起来了",
+   "设计费虽然不算多，但比打工自由"
+  ]
+ },
+ {
+  "id": "street_stall",
+  "name": "摆摊创业",
+  "icon": "🍢",
+  "desc": "晚上在街边摆个小吃摊，生意好了能比打工强",
+  "category": "business",
+  "repeatable": true,
+  "perActionIncome": 0,
+  "needs": {
+   "vegetable": 1,
+   "meat": 1
+  },
+  "skill": {
+   "cooking": 2
+  },
+  "progressPerAction": 8,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -8,
+   "money": 0,
+   "stress": 3,
+   "log": "收摊算账：摆摊收入按服务人数计（多劳多得）"
+  },
+  "reward": {
+   "money": 0,
+   "fame": 12,
+   "mood": 12,
+   "log": "小吃摊口碑做起来了！回头客越来越多，月入开始过万"
+  },
+  "verdicts": [
+   "今天客流不错，卖得七七八八",
+   "隔壁摊位生意太好，羡慕",
+   "试了几个新配方，客人都说好吃",
+   "城管来了，赶紧收摊跑路",
+   "老顾客带新顾客，摊位渐渐有了名",
+   "算下来一天能赚不少，比打工自由"
+  ]
+ },
+ {
+  "id": "market_stall",
+  "name": "周末集市摆摊",
+  "icon": "🎪",
+  "desc": "在周末集市支个摊，人流量大，收入比街边摆摊更高",
+  "category": "business",
+  "repeatable": true,
+  "perActionIncome": 0,
+  "needs": {
+   "farm_vegetable": 1,
+   "farm_egg": 1
+  },
+  "skill": {
+   "cooking": 2
+  },
+  "progressPerAction": 8,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -8,
+   "money": 0,
+   "stress": 3,
+   "log": "收摊算账：摆摊收入按服务人数计（多劳多得）"
+  },
+  "reward": {
+   "money": 0,
+   "fame": 15,
+   "mood": 12,
+   "log": "周末集市的口碑做起来了！回头客排起长队，收入比街边翻了一截"
+  },
+  "verdicts": [
+   "集市人流量就是大，卖得飞快",
+   "隔壁摊主都来打听你的配方",
+   "游客拍照发朋友圈，免费宣传",
+   "收摊时数钱，比街边多不少",
+   "老顾客专程来集市找你",
+   "和集市管理处混熟了，摊位费都省了点"
+  ]
+ }
+]

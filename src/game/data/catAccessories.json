@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "accessories": [
+    {
+      "id": "ac_bell",
+      "name": "幸运铃铛",
+      "icon": "🔔",
+      "quality": 0,
+      "price": 800,
+      "desc": "叮铃作响的小铃铛，对决开场带着一点底气。",
+      "effect": { "startBlock": 3 }
+    },
+    {
+      "id": "ac_collar",
+      "name": "勇气项圈",
+      "icon": "📿",
+      "quality": 0,
+      "price": 900,
+      "desc": "普通项圈，戴上的猫咪莫名胆大。",
+      "effect": { "startStrength": 1 }
+    },
+    {
+      "id": "ac_charm",
+      "name": "平安符",
+      "icon": "🧿",
+      "quality": 1,
+      "price": 2800,
+      "desc": "绣着平安二字的小护符，能挡下不少伤害。",
+      "effect": { "startBlock": 6 }
+    },
+    {
+      "id": "ac_band",
+      "name": "力量手环",
+      "icon": "💪",
+      "quality": 1,
+      "price": 3200,
+      "desc": "轻便训练手环，出场自带一股狠劲。",
+      "effect": { "startStrength": 2 }
+    },
+    {
+      "id": "ac_scarf",
+      "name": "清凉围脖",
+      "icon": "🧣",
+      "quality": 1,
+      "price": 3500,
+      "desc": "冰丝围脖，让猫咪气血更足。",
+      "effect": { "maxHpPct": 0.08 }
+    },
+    {
+      "id": "ac_medal",
+      "name": "冠军奖牌",
+      "icon": "🏅",
+      "quality": 2,
+      "price": 12000,
+      "desc": "对决赛冠军的荣耀，攻守兼备。",
+      "effect": { "startStrength": 3, "startBlock": 5 }
+    },
+    {
+      "id": "ac_crystal",
+      "name": "治愈水晶",
+      "icon": "💎",
+      "quality": 2,
+      "price": 15000,
+      "desc": "蕴藏治愈之力的水晶，提升体质。",
+      "effect": { "maxHpPct": 0.15, "startBlock": 3 }
+    },
+    {
+      "id": "ac_crown",
+      "name": "王者之冠",
+      "icon": "👑",
+      "quality": 3,
+      "price": 50000,
+      "desc": "耄耋之王的冠冕，开场便是满状态压制。",
+      "effect": { "startStrength": 4, "startBlock": 8, "maxHpPct": 0.1, "drawBonus": 1 }
+    }
+  ]
+}

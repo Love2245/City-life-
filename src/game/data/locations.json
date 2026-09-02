@@ -1,0 +1,662 @@
+[
+  {
+    "id": "map",
+    "name": "城市地图",
+    "icon": "🗺️",
+    "desc": "这座城市的街道，选择你要去的地方",
+    "gradient": "linear-gradient(135deg, #1a2440, #2b3a67)",
+    "openHours": null
+  },
+  {
+    "id": "home",
+    "name": "住处",
+    "icon": "🏠",
+    "desc": "你今晚睡觉的地方（随住宿选择变化）",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "pos": {
+      "x": 180,
+      "y": 60
+    },
+    "regions": [
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "convenience_store",
+    "name": "便利店",
+    "icon": "🏪",
+    "desc": "24 小时营业，收银员永远缺人",
+    "gradient": "linear-gradient(135deg, #2d5f9e, #4a9edb)",
+    "pos": {
+      "x": 60,
+      "y": 200
+    },
+    "regions": [
+      "downtown_center",
+      "downtown_mall",
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "library",
+    "name": "图书馆",
+    "icon": "📚",
+    "desc": "免费空调 + 免费知识，穷人的天堂（晚 6 点关门）",
+    "gradient": "linear-gradient(135deg, #4a6741, #7a9e5c)",
+    "pos": {
+      "x": 300,
+      "y": 200
+    },
+    "openHours": {
+      "start": 9,
+      "end": 18
+    },
+    "regions": [
+      "downtown_center"
+    ]
+  },
+  {
+    "id": "park",
+    "name": "街心公园",
+    "icon": "🌳",
+    "desc": "大爷大妈的天下，适合发呆和锻炼",
+    "gradient": "linear-gradient(135deg, #3d7a52, #6bbf7a)",
+    "pos": {
+      "x": 60,
+      "y": 340
+    },
+    "openHours": {
+      "start": 6,
+      "end": 22
+    },
+    "regions": [
+      "downtown_center",
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "cafe",
+    "name": "咖啡厅",
+    "icon": "☕",
+    "desc": "一杯咖啡坐一下午，都市白领的避难所（晚 10 点关门）",
+    "gradient": "linear-gradient(135deg, #7a5c3d, #b08a5c)",
+    "pos": {
+      "x": 300,
+      "y": 340
+    },
+    "openHours": {
+      "start": 8,
+      "end": 22
+    },
+    "regions": [
+      "downtown_center",
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "labor_market",
+    "name": "劳务市场",
+    "icon": "🧰",
+    "desc": "日结工的集散地，天不亮就有人蹲活，手慢无（清晨 5 点开门 / 晚 6 点关门）",
+    "gradient": "linear-gradient(135deg, #5c3d5e, #8a5c8e)",
+    "pos": {
+      "x": 60,
+      "y": 480
+    },
+    "openHours": {
+      "start": 5,
+      "end": 18
+    },
+    "regions": [
+      "downtown_industrial"
+    ]
+  },
+  {
+    "id": "housing_agency",
+    "name": "房屋中介",
+    "icon": "🏢",
+    "desc": "攒够了钱，来这里签个像样的住处（晚 6 点关门）",
+    "gradient": "linear-gradient(135deg, #3d5c7a, #5c8eb0)",
+    "pos": {
+      "x": 300,
+      "y": 480
+    },
+    "openHours": {
+      "start": 9,
+      "end": 18
+    },
+    "regions": [
+      "downtown_center"
+    ]
+  },
+  {
+    "id": "street",
+    "name": "街边",
+    "icon": "🛣️",
+    "desc": "车水马龙的城市街头，什么都有可能发生",
+    "gradient": "linear-gradient(135deg, #2c3e72, #4a5488)",
+    "pos": {
+      "x": 180,
+      "y": 340
+    },
+    "openHours": {
+      "start": 5,
+      "end": 24
+    },
+    "regions": [
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "market",
+    "name": "菜市场",
+    "icon": "🥬",
+    "desc": "新鲜果蔬，健康饮食从这里开始",
+    "gradient": "linear-gradient(135deg, #3d6b4f, #6b9e5c)",
+    "pos": {
+      "x": 60,
+      "y": 140
+    },
+    "openHours": {
+      "start": 6,
+      "end": 23
+    },
+    "regions": [
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "gym",
+    "name": "健身房",
+    "icon": "🏋️",
+    "desc": "专业的器械，办卡才能练得更狠",
+    "gradient": "linear-gradient(135deg, #3d4f7a, #6b5c9e)",
+    "pos": {
+      "x": 300,
+      "y": 140
+    },
+    "openHours": {
+      "start": 8,
+      "end": 22
+    },
+    "regions": [
+      "downtown_mall",
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "internet_cafe",
+    "name": "网吧",
+    "icon": "🕹️",
+    "desc": "通宵打游戏的天堂，也是熬夜的深渊",
+    "gradient": "linear-gradient(135deg, #1a2a4a, #3d4a7a)",
+    "pos": {
+      "x": 60,
+      "y": 260
+    },
+    "openHours": null,
+    "regions": [
+      "downtown_center",
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "clinic",
+    "name": "小诊所",
+    "icon": "🩹",
+    "desc": "社区小诊所，可以买常用药",
+    "gradient": "linear-gradient(135deg, #3d7a7a, #6b9e9e)",
+    "pos": {
+      "x": 300,
+      "y": 260
+    },
+    "openHours": {
+      "start": 0,
+      "end": 24
+    },
+    "regions": [
+      "downtown_residential"
+    ]
+  },
+  {
+    "id": "labor_company",
+    "name": "劳务公司",
+    "icon": "🧰",
+    "desc": "介绍零工机会的中介公司，工作种类多（早 7 点开门 / 晚 7 点关门）",
+    "gradient": "linear-gradient(135deg, #4a3a5a, #6a4a6a)",
+    "regions": [
+      "downtown_industrial"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 19
+    }
+  },
+  {
+    "id": "driving_school",
+    "name": "驾校",
+    "icon": "🚘",
+    "desc": "学车考证一条龙，考出驾照还能当助教（早 7 点开门 / 晚 9 点关门）",
+    "gradient": "linear-gradient(135deg, #1e3a2f, #2f5e4a)",
+    "regions": [
+      "downtown_industrial"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 21
+    }
+  },
+  {
+    "id": "electronics_factory",
+    "name": "电子厂",
+    "icon": "🏭",
+    "desc": "流水线上组装电子元件，工作环境艰苦。厂门 6 点就开，早到可以在门口候工（早 6 点 - 晚 10 点）",
+    "gradient": "linear-gradient(135deg, #3d2c4a, #5c3a6e)",
+    "regions": [
+      "downtown_industrial"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "logistics_center",
+    "name": "物流中心",
+    "icon": "📦",
+    "desc": "分拣与配送货物，体力活重但收入稳定。凌晨 5 点就开始卸货（早 5 点 - 晚 11 点）",
+    "gradient": "linear-gradient(135deg, #3a2c4c, #5a4a7e)",
+    "regions": [
+      "downtown_industrial"
+    ],
+    "openHours": {
+      "start": 5,
+      "end": 23
+    }
+  },
+  {
+    "id": "western_restaurant",
+    "name": "西餐厅",
+    "icon": "🍽️",
+    "desc": "高档牛排与意面，偶尔打打牙祭",
+    "gradient": "linear-gradient(135deg, #2a3a5e, #4a6a9e)",
+    "regions": [
+      "downtown_center",
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 11,
+      "end": 22
+    }
+  },
+  {
+    "id": "fast_food",
+    "name": "快餐厅",
+    "icon": "🍔",
+    "desc": "汉堡薯条快餐，价格实惠效率高",
+    "gradient": "linear-gradient(135deg, #5a3a3a, #8a5a4a)",
+    "regions": [
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 0,
+      "end": 24
+    }
+  },
+  {
+    "id": "high_speed_rail",
+    "name": "高铁站",
+    "icon": "🚄",
+    "desc": "通往其他城市的高速铁路枢纽（暂未开放）",
+    "gradient": "linear-gradient(135deg, #1e2c5a, #3a4a8a)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 24
+    },
+    "locked": true
+  },
+  {
+    "id": "bus_station",
+    "name": "巴士站",
+    "icon": "🚌",
+    "desc": "城际巴士发车点（暂未开放）",
+    "gradient": "linear-gradient(135deg, #2a3a6a, #4a5a8a)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 23
+    },
+    "locked": true
+  },
+  {
+    "id": "hospital",
+    "name": "人民医院",
+    "icon": "🏥",
+    "desc": "市级综合医院：看诊、治疗、买药、住院",
+    "gradient": "linear-gradient(135deg, #8a2c3a, #c05a6a)",
+    "regions": [
+      "downtown_center"
+    ]
+  },
+  {
+    "id": "hotel",
+    "name": "大酒店",
+    "icon": "🏨",
+    "desc": "市中心连锁酒店，可按天开房，也能在酒店睡觉",
+    "gradient": "linear-gradient(135deg, #2a3a6e, #4a6a9e)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 0,
+      "end": 24
+    }
+  },
+  {
+    "id": "bathhouse",
+    "name": "洗浴中心",
+    "icon": "🫧",
+    "desc": "搓澡按摩一条龙，30 元冲个澡到 300 元泡一整天，丰俭由人",
+    "gradient": "linear-gradient(135deg, #3a4a7e, #6a8abe)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 0,
+      "end": 24
+    }
+  },
+  {
+    "id": "car_rental",
+    "name": "汽车租赁行",
+    "icon": "🚗",
+    "desc": "租汽车跑网约车/出租车，月租 3000（早 7 点开门 / 晚 9 点关门）",
+    "gradient": "linear-gradient(135deg, #4a3a5e, #6a5a8e)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 21
+    }
+  },
+  {
+    "id": "luxury_store",
+    "name": "名牌店",
+    "icon": "💎",
+    "desc": "奢侈品专柜，买不起也来看看（早 10 点开门 / 晚 10 点关门）",
+    "gradient": "linear-gradient(135deg, #6d4a2e, #a8803e)",
+    "regions": [
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 10,
+      "end": 22
+    }
+  },
+  {
+    "id": "furniture_store",
+    "name": "家居店",
+    "icon": "🛋️",
+    "desc": "家具与生活用品，给住处添点烟火气（早 9 点开门 / 晚 9 点关门）",
+    "gradient": "linear-gradient(135deg, #5a4a2e, #8a6a3e)",
+    "regions": [
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 9,
+      "end": 21
+    }
+  },
+  {
+    "id": "pet_store",
+    "name": "宠物用品店",
+    "icon": "🐈",
+    "desc": "领养猫咪、购买猫粮玩具，一站式宠物服务（早 9 点开门 / 晚 9 点关门）",
+    "gradient": "linear-gradient(135deg, #5c3a6e, #8a5ca0)",
+    "regions": [
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 9,
+      "end": 21
+    }
+  },
+  {
+    "id": "pet_hospital",
+    "name": "宠物医院",
+    "icon": "🏥",
+    "desc": "猫咪受伤了就来这里：按伤势治疗，还出售药水、净化剂、复活石（早 8 点开门 / 晚 8 点关门）",
+    "gradient": "linear-gradient(135deg, #2e6b5a, #4aa087)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 20
+    }
+  },
+  {
+    "id": "market_fair",
+    "name": "周末集市",
+    "icon": "🎪",
+    "desc": "只在周末支起的临时集市，热闹得很（仅周六日开放）",
+    "gradient": "linear-gradient(135deg, #8a5a3a, #c98a4a)",
+    "pos": {
+      "x": 220,
+      "y": 100
+    },
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 20
+    },
+    "weekendOnly": true
+  },
+  {
+    "id": "amusement_park",
+    "name": "游乐场",
+    "icon": "🎢",
+    "desc": "冰淇淋店、电影院、保龄球、飞镖、套圈应有尽有，还有周末开赛的喵喵对决赛场",
+    "gradient": "linear-gradient(135deg, #b05050, #e08060)",
+    "pos": {
+      "x": 120,
+      "y": 80
+    },
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
+      "start": 10,
+      "end": 22
+    }
+  },
+  {
+    "id": "lake_park",
+    "name": "环湖公园",
+    "icon": "🚣",
+    "desc": "湖光山色，可散步跑步划船，比街心公园开阔得多",
+    "gradient": "linear-gradient(135deg, #4a8a6b, #7abfa0)",
+    "pos": {
+      "x": 240,
+      "y": 80
+    },
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "church",
+    "name": "教堂",
+    "icon": "⛪",
+    "desc": "哥特式小教堂，周六下午有弥撒。参加多次后可申请洗礼",
+    "gradient": "linear-gradient(135deg, #5c5c8a, #8a8ac0)",
+    "pos": {
+      "x": 120,
+      "y": 160
+    },
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
+      "start": 9,
+      "end": 18
+    }
+  },
+  {
+    "id": "temple",
+    "name": "寺庙",
+    "icon": "🛕",
+    "desc": "山间古寺，可做义工换取免费食宿。连续参加后解锁佛法会",
+    "gradient": "linear-gradient(135deg, #8a6b3a, #c0a060)",
+    "pos": {
+      "x": 240,
+      "y": 160
+    },
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "farm",
+    "name": "农场",
+    "icon": "🌽",
+    "desc": "肥沃农田，可打工或低价采购新鲜蔬菜鸡蛋",
+    "gradient": "linear-gradient(135deg, #5a8a3a, #8ac060)",
+    "pos": {
+      "x": 120,
+      "y": 80
+    },
+    "regions": [
+      "rural"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 18
+    }
+  },
+  {
+    "id": "pasture",
+    "name": "牧场",
+    "icon": "🐄",
+    "desc": "风吹草低见牛羊，可打工挤奶或低价买鲜奶",
+    "gradient": "linear-gradient(135deg, #6a8a4a, #9ac070)",
+    "pos": {
+      "x": 240,
+      "y": 80
+    },
+    "regions": [
+      "rural"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 18
+    }
+  },
+  {
+    "id": "orchard",
+    "name": "果园",
+    "icon": "🍎",
+    "desc": "满园果树，可采摘打工或低价买时令水果",
+    "gradient": "linear-gradient(135deg, #8a5a4a, #c08060)",
+    "pos": {
+      "x": 180,
+      "y": 150
+    },
+    "regions": [
+      "rural"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 18
+    }
+  },
+  {
+    "id": "steel_factory",
+    "name": "钢铁厂",
+    "icon": "🔥",
+    "desc": "重工业区龙头，本版暂未开放",
+    "gradient": "linear-gradient(135deg, #5a3a2a, #8a6050)",
+    "pos": {
+      "x": 120,
+      "y": 80
+    },
+    "regions": [
+      "heavy_industry"
+    ],
+    "locked": true
+  },
+  {
+    "id": "glass_factory",
+    "name": "玻璃厂",
+    "icon": "🪟",
+    "desc": "浮法玻璃生产线，本版暂未开放",
+    "gradient": "linear-gradient(135deg, #4a6a8a, #7ab0c0)",
+    "pos": {
+      "x": 220,
+      "y": 80
+    },
+    "regions": [
+      "heavy_industry"
+    ],
+    "locked": true
+  },
+  {
+    "id": "aluminum_factory",
+    "name": "铝厂",
+    "icon": "🪨",
+    "desc": "电解铝车间，本版暂未开放",
+    "gradient": "linear-gradient(135deg, #6a6a6a, #a0a0a0)",
+    "pos": {
+      "x": 300,
+      "y": 80
+    },
+    "regions": [
+      "heavy_industry"
+    ],
+    "locked": true
+  },
+  {
+    "id": "electronics_store",
+    "name": "电子城",
+    "icon": "🖥️",
+    "desc": "电脑手机数码一应俱全（早 10 点开门 / 晚 10 点关门）",
+    "gradient": "linear-gradient(135deg, #1f3a5f, #2f5d8a)",
+    "regions": [
+      "downtown_mall"
+    ],
+    "openHours": {
+      "start": 10,
+      "end": 22
+    }
+  },
+  {
+    "id": "training_school",
+    "name": "培训学校",
+    "icon": "🎓",
+    "desc": "免费学技能、拿证书，结业可应聘助教（早 8 点开门 / 晚 8 点关门）",
+    "gradient": "linear-gradient(135deg, #3a2e5f, #5c4a8a)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 20
+    }
+  }
+]
