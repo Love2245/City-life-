@@ -1,140 +1,55 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>都市生活</title>
-    <style>
-      /* v1.21-beta5：竖屏移动设备显示"请横屏"提示；横屏后自动隐藏。
-         方向判断使用最可靠的 matchMedia("(orientation: portrait)")，并多重延迟兜底重算，
-         避免部分机型旋转后 innerWidth/innerHeight 未及时刷新导致遮罩卡死。 */
-      html.need-rotate body {
-        overflow: hidden;
-      }
-      #rotate-hint {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        text-align: center;
-        padding: 24px;
-        color: #eef2ff;
-        background:
-          radial-gradient(120% 120% at 50% 0%, #1b2440 0%, #0b1020 55%, #070b16 100%);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      }
-      html.need-rotate #rotate-hint {
-        display: flex;
-      }
-      #rotate-hint .ico {
-        font-size: 64px;
-        animation: rot-tip 1.8s ease-in-out infinite;
-      }
-      @keyframes rot-tip {
-        0%, 100% { transform: rotate(0deg); }
-        50% { transform: rotate(90deg); }
-      }
-      #rotate-hint .t1 {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 1px;
-      }
-      #rotate-hint .t2 {
-        font-size: 13px;
-        opacity: 0.72;
-        max-width: 280px;
-        line-height: 1.5;
-      }
-      #rotate-hint .enter-anyway {
-        margin-top: 4px;
-        padding: 10px 20px;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        color: #eef2ff;
-        font-size: 13px;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-      #rotate-hint .enter-anyway:active {
-        background: rgba(255, 255, 255, 0.16);
-      }
-    </style>
-    <script>
-      /* v1.21-beta5-hotfix：触摸设备竖屏时提示横置；横屏自动隐藏。
-         以 matchMedia("(orientation: portrait)") 为权威信号，并加 resize / orientationchange
-         监听 + 旋转后 250ms/600ms 延迟重算兜底。
-         点击「仍要进入」先尝试 screen.orientation.lock('landscape')；若成功则横屏游玩。
-         若锁定失败（iOS Safari 等不支持锁定），则启用 data-force-portrait，由 CSS 切换为
-         竖屏单栏布局，避免三栏硬塞。 */
-      (function () {
-        var forceEnter = false;
-        function isTouch() {
-          return (
-            window.matchMedia("(pointer: coarse)").matches ||
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-          );
-        }
-        function sync() {
-          var portrait = window.matchMedia("(orientation: portrait)").matches;
-          var show = isTouch() && portrait && !forceEnter;
-          document.documentElement.classList.toggle("need-rotate", show);
-        }
-        function recheckSoon() {
-          sync();
-          setTimeout(sync, 250);
-          setTimeout(sync, 600);
-        }
-        sync();
-        window.addEventListener("resize", recheckSoon);
-        window.addEventListener("orientationchange", recheckSoon);
-        if (window.matchMedia) {
-          var mq = window.matchMedia("(orientation: portrait)");
-          var onChange = function () { recheckSoon(); };
-          if (mq.addEventListener) mq.addEventListener("change", onChange);
-          else if (mq.addListener) mq.addListener(onChange);
-        }
-        window.addEventListener("DOMContentLoaded", function () {
-          var btn = document.getElementById("enter-anyway");
-          if (btn) {
-            btn.addEventListener("click", function () {
-              forceEnter = true;
-              var root = document.documentElement;
-              function hideHint() { root.classList.remove("need-rotate"); }
-              function usePortraitFallback() {
-                // 锁定失败：启用竖屏单栏自适应布局
-                root.setAttribute("data-force-portrait", "true");
-                hideHint();
-              }
-              if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-                window.screen.orientation.lock("landscape").then(function () {
-                  // 锁定成功，正常横屏游玩
-                  root.removeAttribute("data-force-portrait");
-                  hideHint();
-                }).catch(function () {
-                  usePortraitFallback();
-                });
-              } else {
-                usePortraitFallback();
-              }
-            });
-          }
-        });
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="app"></div>
-    <div id="rotate-hint">
-      <div class="ico">🔄</div>
-      <div class="t1">请将手机横置</div>
-      <div class="t2">《都市生活》手游为横版体验，请旋转手机至横屏以获得最佳画面</div>
-      <button id="enter-anyway" class="enter-anyway" type="button">仍要以当前方向进入 ›</button>
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>《都市生活》隐私政策</title>
+  <style>
+    body{margin:0;background:#f6f7f9;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",Arial,sans-serif;line-height:1.8}
+    main{max-width:860px;margin:40px auto;padding:42px 48px;background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.06)}
+    h1{font-size:30px;margin-top:0}h2{font-size:20px;margin-top:32px}.meta{color:#666;font-size:14px}
+    .note{background:#f5f7fa;border-left:4px solid #999;padding:12px 16px;margin:20px 0}
+    footer{margin-top:40px;color:#777;font-size:13px}
+    @media(max-width:700px){main{margin:0;padding:28px 20px;border-radius:0;box-shadow:none}h1{font-size:25px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>《都市生活》隐私政策</h1>
+  <p class="meta">更新日期：2026年9月20日<br>生效日期：2026年9月20日</p>
+  <p>欢迎使用《都市生活》（以下简称“本游戏”）。我们重视用户的个人信息与隐私保护。本隐私政策用于说明本游戏当前版本在个人信息处理方面的情况。</p>
+  <div class="note">本游戏当前版本以本地运行的单机游戏功能为主，不设置用户账号注册系统，不要求用户提供姓名、手机号、身份证号码、通讯录、精确地理位置等个人信息。</div>
+
+  <h2>一、我们如何收集和使用信息</h2>
+  <p>本游戏当前版本不会主动收集、上传或向开发者服务器传输用户的个人信息。</p>
+  <p>本游戏不会主动读取用户的通讯录、短信、通话记录、相册、摄像头、麦克风、精确地理位置等与游戏基础功能无关的信息。</p>
+
+  <h2>二、本地游戏数据</h2>
+  <p>为实现游戏进度、设置及其他本地游戏功能，本游戏会在用户设备的应用数据目录中保存必要的本地游戏数据。相关数据仅用于游戏存档、读取和维护等本地功能，默认不会由本游戏主动上传至开发者服务器。</p>
+  <p>如用户卸载游戏、删除游戏文件或清理相关本地数据，可能导致相应游戏进度或设置无法恢复。</p>
+
+  <h2>三、设备权限</h2>
+  <p>本游戏当前版本仅为实现本地存档等基础功能而使用必要的本地文件读写能力，不会为了与游戏基础功能无关的目的申请通讯录、相册、摄像头、麦克风、精确定位等敏感权限。</p>
+  <p>如未来版本因新增功能确有必要申请其他权限，我们将根据实际功能说明用途，并在必要时征得用户授权。</p>
+
+  <h2>四、第三方平台与服务</h2>
+  <p>用户可能通过第三方游戏发布、下载或运行平台获取本游戏。第三方平台在提供账号、下载、支付、统计、安全或其他服务时，可能依据其自身隐私政策处理相关信息。此类信息处理行为由相应第三方平台负责，请用户同时查阅该平台的隐私政策。</p>
+  <p>本游戏如在未来版本中接入广告、统计分析、联网服务、第三方 SDK、账号系统或其他可能涉及个人信息处理的功能，我们将根据实际情况更新本隐私政策，并依法履行相应告知或授权程序。</p>
+
+  <h2>五、信息共享、转让与公开披露</h2>
+  <p>由于本游戏当前版本不会主动收集并上传用户个人信息，因此开发者不会主动向其他公司、组织或个人共享、转让或公开披露用户个人信息。法律法规另有规定的除外。</p>
+
+  <h2>六、未成年人保护</h2>
+  <p>我们重视未成年人的个人信息保护。未成年人应在父母或其他监护人的指导和同意下使用本游戏，并合理安排游戏时间。</p>
+
+  <h2>七、本政策的更新</h2>
+  <p>随着游戏功能、服务方式或相关法律法规发生变化，本隐私政策可能进行更新。更新后的隐私政策将通过本页面或其他适当方式进行公布，并标明新的更新日期。</p>
+
+  <h2>八、联系我们</h2>
+  <p>如对本隐私政策或本游戏的隐私保护有任何疑问、意见或建议，可通过本游戏上架平台所提供的开发者联系渠道与我们联系。</p>
+
+  <footer>© 2026 《都市生活》开发者</footer>
+</main>
+</body>
 </html>
