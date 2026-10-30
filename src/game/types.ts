@@ -1,7 +1,13 @@
+import type { StockMarketState } from './stockTypes';
 /**
  * 游戏核心类型定义（纯逻辑层，禁止 import DOM/Svelte/Tauri）
  * 所有类型与 JSON 存档 schema 一一对应。
  */
+import type { DistrictLeisureState } from "./core/districtLeisure";
+import type { DistrictServicesState } from "./core/districtServices";
+import type { FishingState } from "./core/fishing";
+import type { NpcTaskProgress } from "./npcTaskTypes";
+export type { NpcTaskId, NpcTaskProgress, NpcTaskAction, NpcTaskChoice, NpcTaskTopic } from "./npcTaskTypes";
 
 /** 时段制：一天 3 个主时段 + 可选深夜 */
 export type Period = "morning" | "afternoon" | "evening" | "night";
@@ -330,8 +336,11 @@ export type StatusId =
 /** v0.95 天气类型 */
 export type WeatherId = "sunny" | "cloudy" | "rain" | "snow" | "heatwave" | "coldwave";
 
-/** v0.95 装备槽位 */
-export type ItemSlot = "clothes" | "accessory" | "furniture" | "transport" | "tool";
+/** v0.95 / v1.45 装备槽位。服装按帽子、衣服、内搭、裤子独立占槽。 */
+export type ItemSlot = "hat" | "clothes" | "underlayer" | "pants" | "accessory" | "furniture" | "transport" | "tool" | "appliance";
+
+/** v1.46 服装的使用场合；旧数据缺省时按日常/休闲兼容。 */
+export type ClothingOccasion = "interview" | "work" | "date" | "daily" | "casual";
 
 /** 音效 id（Web Audio 合成） */
 export type SoundId =
@@ -376,12 +385,24 @@ export interface Effects {
   cureStatuses?: StatusId[];
 }
 
+/** v1.43 NPC 对话选项效果：复用通用效果，并允许发放既有物品。 */
+export type ConversationEffects = Omit<Effects, "hours"> & {
+  /** 物品 id → 发放数量；第一版对话只允许正数奖励。 */
+  items?: Record<string, number>;
+};
+
 /** 设施类型（住宿/住处可用功能） */
 export type Facility = "rest" | "shower" | "cook";
 
 /** 住宿档位（housing.json 数据） */
 export interface LodgingTier {
   id: string;
+  /** 实际住宿建筑 ID；地图入口、居家功能与出行共用该地址。 */
+  locationId?: string;
+  /** 建筑在所属地图原图上的百分比坐标，供地图标记与定位共用。 */
+  mapAnchor?: { x: number; y: number };
+  /** 可复用的住房背景素材 id；未设置时使用 id。 */
+  visualId?: string;
   name: string;
   icon: string;
   price: number;
@@ -396,8 +417,8 @@ export interface LodgingTier {
     stress?: number;
     hygiene?: number;
   };
-  /** 所处区域：residential=住宅区 / center=市中心 */
-  area: "residential" | "center";
+  /** 所处区域：residential=住宅区 / center=市中心 / industrial=工业区 */
+  area: "residential" | "center" | "industrial";
   /** v0.97 出门后所在二级区域（home 动态归属；hotel/公寓→downtown_center，青旅/民宿/政府住房→downtown_residential） */
   region?: string;
   /** v0.981 仅能通过特定行动获得（如寺庙义工换禅房），不出现在公开住宿选择列表 */
@@ -412,13 +433,22 @@ export interface HousingData {
   /** 按天住宿档位列表 */
   nightly: LodgingTier[];
   /** 月租房源列表 */
-  lease: (LodgingTier & { rentGrowthRate: number })[];
+  lease: (LodgingTier & { rentGrowthRate: number; rentCap?: number })[];
   /** v0.94 可购置产权的房源（一次性付款，购房后免租） */
-  buy: (LodgingTier & { buyPrice: number })[];
+  buy: (LodgingTier & { buyPrice: number; monthlyRent?:number })[];
 }
 
 /** 住房状态（v2 三态共存 + v0.94 产权 own） */
 export type LivingMode = "gov" | "nightly" | "lease" | "own";
+
+export interface OwnedProperty {
+  id:string;
+  housingId:string;
+  acquiredDay:number;
+  /** 已实际出租、尚未结算的日数，自住期间暂停累积。 */
+  rentalDays:number;
+  lastAccountedDay:number;
+}
 
 export interface Housing {
   mode: LivingMode;
@@ -426,14 +456,25 @@ export interface Housing {
   govDaysLeft: number;
   /** 按天住宿：今晚的选择（mode=nightly 有效，未选默认 atm） */
   nightly: { lodgingId: string } | null;
+  /**
+   * 当前借宿登记（保留旧字段名以兼容存档）。住处与居家功能跟随此地址，
+   * 退房或返回常住建筑后清除；保留原租约、产权及政府床位权益。
+   */
+  awayNight?: { lodgingId: string } | null;
   /** 月租（mode=lease 有效，保留原月租+20%涨幅机制） */
   lease: {
     housingId: string;
     rent: number;
     rentGrowthCount: number;
+    /** 下一次租金到期的绝对游戏日；首期已在签约时预付。 */
+    nextRentDay?: number;
   } | null;
   /** 产权房源 id（mode=own 有效） */
   ownedId?: string;
+  /** 每套产权独立记录，相同房型可以拥有多套。ownedId 继续表示当前自住房型。 */
+  properties?:OwnedProperty[];
+  activePropertyId?:string;
+  propertySequence?:number;
 }
 
 /** 行动需求校验条件 */
@@ -447,6 +488,8 @@ export interface ActionRequirements {
   flag?: string;
   /** v1.4 未持有该 flag 时才可进行（如已收养某猫后不再出现收养选项） */
   notFlag?: string;
+  /** 必须同时未持有的 flags；用于多阶段报名/领取操作的防重复保护。 */
+  notFlags?: string[];
   /** 处于该 debuff 状态时行动禁用 */
   noStatus?: StatusId[];
   /** v0.92：需要持有并在有效期内的会籍（如 "gym"），过期自动重新锁定 */
@@ -459,6 +502,8 @@ export interface ActionRequirements {
   flagAtLeast?: { flag: string; value: number };
   /** v0.981 每日一次：值为记录用 flag 名（存当日 gameDay），同一天内不可重复 */
   oncePerDay?: string;
+  /** Daily quota shared by actions that draw from the same service, e.g. both cafe locations. */
+  dailyLimit?: { dayFlag: string; countFlag: string; limit: number };
   /** v1.33 需携带猫咪才可进行（如户外训练 / 家里喂食洗澡） */
   hasActivePet?: boolean;
 }
@@ -475,10 +520,18 @@ export interface ActionDef {
   requirements?: ActionRequirements;
   /** 需要当前住处具备的设施（如洗澡/做饭） */
   requiresFacility?: Facility;
-  /** v0.97 操作分组：home 界面把同类操作聚合为入口（cook=烹饪 / read=读书 / cat=猫咪）；v1.33 增 cat_train=公园训练 / pet=宠物用品店 */
-  group?: "cook" | "dev" | "read" | "cat" | "cat_train" | "pet";
+  /** v0.97 操作分组：home 界面把同类操作聚合为入口（cook=烹饪 / read=读书 / cat=猫咪）；v1.33 增 cat_train=公园训练 / pet=宠物用品店；v1.4 增花鸟市场/小吃街分组 */
+  group?: "cook" | "dev" | "read" | "cat" | "cat_train" | "pet" | "pet_equipment" | "market_pet" | "market_stall" | "market_shop";
   /** 特殊 handler（sign_lease 签约月租 / buy_item 购买入包 / use_item 使用物品 / hospitalize 住院 / discharge 出院 / apply_job 入职 / resign 辞职 / rent_vehicle 租载具 / wash_center 洗浴 / stay_hotel 开房 / sleep_modal 睡觉弹窗 / work_project 创业项目推进） */
   handler?:
+    | "district_fortune"
+    | "district_clinic"
+    | "district_hike"
+    | "district_exhibition"
+    | "district_alcohol"
+    | "district_free_drink"
+    | "district_singer"
+    | "district_placeholder"
     | "sign_lease"
     | "buy_item"
     | "use_item"
@@ -491,6 +544,10 @@ export interface ActionDef {
     | "stay_hotel"
     | "sleep_modal"
     | "work_project"
+    /** v1.45 打开房屋衣柜/商场服装店，UI 处理，不推进时间 */
+    | "open_wardrobe"
+    | "open_home_storage"
+    | "open_clothing_store"
     /** v0.92 便利店/餐饮购买：弹出「堂食 / 打包」选择 */
     | "buy_food"
     /** v0.92 生鲜购买：直接入包（蔬菜/肉类），需带回住处烹饪 */
@@ -521,6 +578,8 @@ export interface ActionDef {
     | "hotel_frontdesk"
     /** v1.3 笔记本：在家「使用笔记本」进入全屏桌面（见 LaptopDesktopView） */
     | "use_laptop"
+    /** v1.43 网吧上机：付费取得本次机位权限并打开笔记本桌面（网吧机 = 办公本档位） */
+    | "netbar_session"
     /** v1.4 P2 猫咪养成：喂食/清洁/玩耍/训练（catAction 分派，目标猫由 opts.catUid 指定） */
     | "cat_care"
     /** v1.39 宠物医院：恢复猫咪生命值（catCare.restoreCatHp） */
@@ -542,9 +601,17 @@ export interface ActionDef {
     /** v1.37 宠物医院「猫咪专注性训练」：付费选卡永久删除（打开医院训练弹窗） */
     | "cat_focus_train"
     /** v1.38 宠物用品店购买饰品（accessoryId → data/catAccessories.json，入 ownedAccessories） */
-    | "buy_accessory";
+    | "buy_accessory"
+    /** v1.4 车站：打开城际车票/检票面板，不直接推进时间 */
+    | "intercity_station"
+    /** v1.4 花鸟市场：轻量小宠物购买/喂食/安抚/体检 */
+    | "small_pet_adopt"
+    | "small_pet_care"
+    | "small_pet_checkup";
   /** buy_item/use_item 对应的物品 id */
   itemId?: string;
+  /** buy_item 一次购买并入包的数量；省略时仍为 1。 */
+  itemQuantity?: number;
   /** v1.4 P2 cat_care 分派：feed/clean/play/train */
   catAction?: CatActionType;
   /** v1.4 P2 训练类型（catAction=train 时生效） */
@@ -553,6 +620,11 @@ export interface ActionDef {
   catItemId?: string;
   /** v1.38 buy_accessory 对应的饰品 id（data/catAccessories.json） */
   accessoryId?: string;
+  /** v1.4 车站行动对应的城际交通方式 */
+  stationMode?: "bus" | "train";
+  /** v1.4 小宠物行动对应的品种或操作 */
+  smallPetKind?: "bird" | "goldfish";
+  smallPetAction?: "adopt" | "feed" | "comfort" | "checkup";
   /** sign_lease 对应的月租档位 id */
   housingId?: string;
   /** rent_vehicle 对应的载具类型 */
@@ -569,6 +641,8 @@ export interface ActionDef {
   verdicts?: string[];
   /** 结算音效 */
   sound?: SoundId;
+  /** v1.4 花鸟市场周末摊位：非周五至周日时从场景面板隐藏 */
+  weekendOnly?: boolean;
   /** 执行该行动后触发随机事件的自定义概率（缺省用全局 0.18；如街头闲逛/公园散步更高） */
   eventChance?: number;
   effects: Effects;
@@ -585,14 +659,22 @@ export interface LocationDef {
   gradient: string;
   /** 小地图坐标 */
   pos?: { x: number; y: number };
+  /** 地图全景底图上的百分比锚点；用于单体建筑入口校准。 */
+  mapAnchor?: { x: number; y: number };
   /** 营业时段（24h 制，end 不含；start>end 支持跨夜；缺省=全天） */
   openHours?: { start: number; end: number };
   /** 归属区域 id 数组（同 id 可跨多区，如便利店属市中心/商场/住宅区） */
   regions?: string[];
   /** 暂未开放：灰显 + 🔒 + 点击 toast */
   locked?: boolean;
+  /** v1.395 路线解锁 flag；满足后 locked 入口自动开放。 */
+  unlockFlag?: string;
+  /** 住宅登记前仍可访问公共接待处。 */
+  publicHousingEntry?: boolean;
   /** v0.97 周末限定地点：仅周六/周日在地图上显示并开放（如临时集市） */
   weekendOnly?: boolean;
+  /** 周六/周日18:00开场，延续至次日06:00；其它时段完全隐藏。 */
+  weekendNightOnly?: boolean;
 }
 
 /** 区域定义（regions.json 数据） */
@@ -605,9 +687,17 @@ export interface Region {
   gradient: string;
   /** 暂未开放（火车站/郊区） */
   locked?: boolean;
+  /** v1.395 路线解锁 flag；满足后 locked 入口自动开放。 */
+  unlockFlag?: string;
+  /** 从这个游戏日期起永久开放；子区域与设施继承。 */
+  openFrom?: { year: number; month: number; day: number };
   /** 父区域 id（一级区域缺省；sub-region 填 downtown） */
   parent?: string;
 }
+
+/** 职业阶梯：同一职业轨道从入门逐步走向管理。 */
+export type CareerTier = "entry" | "skilled" | "professional" | "management";
+export type CareerTrack = "service" | "operation" | "driving" | "writing" | "programming" | "design" | "management" | "general";
 
 /** 岗位定义（jobs.json 数据） */
 export interface JobDef {
@@ -618,7 +708,7 @@ export interface JobDef {
   /** 消耗时长（小时） */
   duration: number;
   /** day=日结（进每日岗位池）；fixed=固定岗位；weekly=周结；monthly=月结（正式工） */
-  kind: "day" | "fixed" | "weekly" | "monthly";
+  kind: "day" | "formal";
   /** fixed 岗位所在地点 */
   locationId?: string;
   requirements?: ActionRequirements;
@@ -651,6 +741,10 @@ export interface JobDef {
    * 缺省 = ["sat"]（普通工作固定周六休）；双休岗写 ["sat","sun"]；自由接单岗（外卖/网约车等）写 [] 不休。
    */
   restDays?: string[];
+  /** v1.395 职业轨道（缺省由 core/career.ts 按岗位效果推导）。 */
+  careerTrack?: CareerTrack;
+  /** v1.395 职业阶梯层级（缺省由岗位类型与要求推导）。 */
+  careerTier?: CareerTier;
 }
 
 /** 任务类型：job=工作任务；story=支线剧情（预留）；main=主线（预留） */
@@ -685,11 +779,13 @@ export interface Quest {
   reward?: string;
   /** 已产生的罚款累计（展示用） */
   fine?: number;
-  /** v1.3b3 NPC 多日委托：完成时结算 rewardEffects 并发日志 */
+  /** @deprecated 旧占位委托，仅供旧档识别；读档和时间推进会无偿清理 */
   commission?: NpcCommission;
+  /** v1.492 实体NPC委托；与旧自动到期领奖委托分开结算。 */
+  npcTask?: NpcTaskProgress;
 }
 
-/** v1.3b3 NPC 多日委托进度（挂在 Quest.commission 上，随任务栏一起展示与归档） */
+/** @deprecated 旧 NPC 占位委托存档结构，不再接取、推进或结算 */
 export interface NpcCommission {
   npcId: string;
   /** 持续总天数 */
@@ -700,12 +796,63 @@ export interface NpcCommission {
   rewardEffects: Effects;
   /** 任务栏奖励展示文案（如 "+200 元 +5 心情"） */
   rewardText: string;
+  /** v1.41 城市连续委托定义 id；缺省表示 1.3b3 旧版委托 */
+  commissionId?: string;
+  /** v1.41 当前步骤下标 */
+  stepIndex?: number;
+  /** v1.41 过期日（绝对日，超过当天即失败） */
+  deadlineDay?: number;
+}
+
+/** v1.41 每日目标的可序列化存档快照。运行时检查器由 quests 按 id 恢复。 */
+export interface DailyGoalSnapshot {
+  id: string;
+  text: string;
+  reward: { mood: number };
+  done: boolean;
+}
+
+/** v1.41 城市连续委托步骤。kind 缺省按 visit 处理。 */
+export interface CityCommissionStep {
+  text: string;
+  locationId: string;
+  kind?: "visit" | "action" | "deliver";
+  actionId?: string;
+  requiredItems?: Record<string, number>;
+}
+
+/** v1.41 城市连续委托定义（数据文件中的单条链）。 */
+export interface CityCommissionDef {
+  id: string;
+  title: string;
+  desc: string;
+  npcId: string;
+  icon: string;
+  days: number;
+  cooldownDays: number;
+  steps: CityCommissionStep[];
+  rewardEffects: Effects;
+  rewardText: string;
+  rewardAffinity: number;
+}
+
+/** v1.41 每周委托轮换运行时状态。 */
+export interface CityCommissionState {
+  weekIndex: number;
+  offeredIds: string[];
+  activeId: string | null;
+  cooldownUntilDay: Record<string, number>;
 }
 
 /** v0.97 短信收件箱条目（通信应用）
  *  v1.3 扩展：增加 contactId/npcId 外键与 dir 方向，支撑会话分组与主角主动发消息。
  */
 export interface SmsMessage {
+  /** Stable conversation identity and absolute game-minute timestamp. */
+  conversationId?: string;
+  sentAt?: number;
+  timestampEstimated?: boolean;
+  replyToId?: string;
   id: string;
   /** 发送人昵称 */
   sender: string;
@@ -758,6 +905,47 @@ export interface ActionResult {
   quality?: number;
 }
 
+/** v1.4 城际绑定车票（一次只保留一张；departureDay 使用 gameDay） */
+export interface IntercityTicket {
+  mode: "bus" | "train";
+  originStationId: string;
+  destinationStationId: string;
+  departureDay: number;
+  departureMinute: number;
+  fare: number;
+  /** 购票时锁定的车程；旧存档仍保留原票据值。 */
+  durationHours: number;
+}
+
+/** v1.42 冰箱运行时状态。容量按格计算，生鲜/调料 1 格，成品 2 格。 */
+export interface FridgeState {
+  tier: "small" | "medium" | "large" | null;
+  items: Record<string, number>;
+}
+
+/** v1.42 自由烹饪运行时状态。菜谱解锁永久写入存档。 */
+export interface CookingState {
+  unlockedRecipeIds: string[];
+  lastRecipeId?: string;
+  lastQuality?: "普通" | "美味" | "完美";
+  /** v1.475 完成但尚未食用或入库的菜，必须随存档保留。 */
+  pendingCook?: { recipeId: string; quality: "普通" | "美味" | "完美" };
+  /** 旧存档的单一品质字段，供尚未分批记录的旧库存兼容读取。 */
+  mealQualities?: Record<string, "普通" | "美味" | "完美">;
+  /** 冰箱成品按品质记录数量；新增存入的成品都精确归入对应批次。 */
+  mealQualityBatches?: Record<string, Array<{ quality: "普通" | "美味" | "完美"; quantity: number }>>;
+}
+
+/** v1.4 轻量小宠物：与猫咪 PetState 完全分离，只保留饥饿和心情 */
+export interface SmallPetState {
+  uid: string;
+  kind: "bird" | "goldfish";
+  name: string;
+  hunger: number;
+  mood: number;
+  acquiredDay: number;
+}
+
 /** 随机事件定义（events.json 数据） */
 export interface EventConditions {
   locationId?: string;
@@ -788,6 +976,8 @@ export interface EventConditions {
   locationIn?: string[];
   /** v1.4 P2 携带猫咪过滤：true=需已设置 activePet 才可触发 */
   hasActivePet?: boolean;
+  /** v1.42 宠物过滤：false=已拥有任意宠物时不再触发（用于流浪猫收养事件） */
+  hasPet?: boolean;
 }
 
 export interface EventChoice {
@@ -813,6 +1003,8 @@ export interface EventChoice {
     mood?: number;
     hygiene?: number;
   };
+  /** v1.45 场景奖励物品：选择结算时一次性加入背包。 */
+  items?: Record<string, number>;
 }
 
 export interface EventDef {
@@ -831,6 +1023,8 @@ export interface EventDef {
   once?: boolean;
   /** v0.94 难度递增：事件基调，用于负面事件权重放大 */
   tone?: "positive" | "negative" | "neutral";
+  /** v1.395 模式专属事件池；未填写表示普通/永恒均可触发。 */
+  mode?: "normal" | "eternal" | "any";
 }
 
 export interface EventData {
@@ -878,11 +1072,21 @@ export interface BackgroundData {
 export interface CareerState {
   jobId: string | null;
   /** 周结/月结（正式工）在职类型；day/fixed 无在职概念 */
-  kind: "weekly" | "monthly" | null;
+  kind: "weekly" | null;
+  firstShiftDay?: number;
+  nextShiftDay?: number;
+  nextPayDay?: number;
+  consecutiveAbsences?: number;
+  periodScheduled?: number;
+  periodAttended?: number;
+  periodBaseWages?: number;
+  periodGameBonus?: number;
   /** 入职日（day 数） */
   hiredDay: number;
   /** 已上班天数（发薪后重置） */
   workedDays: number;
+  /** 本期已实际赚得的基础工资；旧档缺省时按工作天数估算。 */
+  accruedWages?: number;
   /** 上次上班 day（自动离职判定） */
   lastWorkDay: number;
   /** 实习期累计工作日（jobId → 天数，满 3 天自动发证） */
@@ -893,9 +1097,79 @@ export interface CareerState {
   projects: Record<string, number>;
   /** v1.20 编程周入：每完成一部编程作品累加的每周固定版税/奖金（可叠加） */
   passiveIncome?: number;
+  /** v1.395 各职业轨道的累计工作次数；旧存档缺省为空并按工作时补齐。 */
+  experience?: Partial<Record<CareerTrack, number>>;
+  /** v1.42 正式工本期小游戏得分总和（0-1 比例，发薪后清零）。 */
+  miniGameScoreTotal?: number;
+  /** v1.42 正式工本期参与结算的小游戏局数，和 total 配合计算平均表现。 */
+  miniGameScoreCount?: number;
 }
 
 /** 时间状态（v4 小时制） */
+/** 开班时锁定的配送底薪与每单报价参数；金额单位为元。 */
+export interface DeliveryPayTerms {
+  version: 1;
+  base: number;
+  unitRate: number;
+  referenceOrders: number;
+  referenceIncome: number;
+}
+export interface WorkSession {
+  id: string;
+  jobId: string;
+  kind: "day" | "formal";
+  source: "market" | "site" | "formal" | "delivery";
+  offerUid?: string;
+  day: number;
+  startMinute: number;
+  endMinute: number;
+  workedMinutes: number;
+  standardMinutes: number;
+  baseWage: number;
+  /** 配送等按单计酬岗位在开班时锁定的熟练跳过参考工资。 */
+  skipBaseWage?: number;
+  /** New shifts use the revised wage bounds; old quoted shifts keep their settlement. */
+  wageBalanceVersion?: 2;
+  /** 配送班次已完成送达数；上车或取货不计完成。 */
+  completedOrders?: number;
+  /** 小游戏已完成配送的累计收入，乘客车费已按满意度折算；交通罚款单独即时扣除。 */
+  deliveryEarnedFare?: number;
+  /** 新配送班次按低底薪加订单提成结算，缺省字段的旧班次保留原报价。 */
+  deliveryPay?: DeliveryPayTerms;
+  /** 开班时固定的配送挑战秒数；旧班次缺省 90，不影响世界工时、工资或读档后的选择。 */
+  deliveryTimeLimitSec?: 90 | 120;
+  /** 餐饮小游戏加班：班次结算工资乘 1.5，并随存档恢复。 */
+  overtime?: boolean;
+  /** 可序列化的完整小游戏进度，由对应引擎校验版本并恢复。 */
+  minigameProgress?: unknown;
+  effects: Effects;
+  seed: number;
+  canSkip: boolean;
+  status: "playing" | "paused" | "settling";
+}
+
+export interface WageRecord {
+  id: string;
+  jobId: string;
+  day: number;
+  kind: "day" | "formal" | "weekly" | "resign" | "dismissal" | "migration";
+  base: number;
+  gameBonus: number;
+  attendanceBonus: number;
+  total: number;
+  note: string;
+}
+
+export interface WorkState {
+  active?: WorkSession;
+  masteryMinutes: Record<string, number>;
+  /** 按岗位累计的有效完班次数；缺省时保守继承旧档的完整班次工时。 */
+  completedShifts?: Record<string, number>;
+  settledIds: string[];
+  wageRecords: WageRecord[];
+  sequence: number;
+}
+
 export interface TimeState {
   /** 总天数（从 1 开始） */
   day: number;
@@ -913,6 +1187,8 @@ export interface TimeState {
 
 /** 日志条目 */
 export interface LogEntry {
+  /** Monotonic event cursor; optional for historical saves. */
+  sequence?: number;
   day: number;
   period: Period;
   /** 时刻（24h 制，v4 起写入） */
@@ -925,6 +1201,8 @@ export interface LogEntry {
 export interface RngState {
   seed: number;
   calls: number;
+  /** 持久化 PRNG 游标；历史存档缺省时由 seed/calls 初始化。 */
+  state?: number;
 }
 
 /** 全局状态标记（触发过的事件/剧情；number 用于冷却天数等） */
@@ -970,6 +1248,8 @@ export interface ItemDef {
   name: string;
   icon: string;
   desc: string;
+  /** v1.492 背包实物与纸物图像，引用任务素材注册表的无扩展名ID。 */
+  artId?: string;
   /** 兑换点数（缺省 = 顶层 pointCost 2） */
   cost?: number;
   effects?: Effects;
@@ -995,6 +1275,12 @@ export interface ItemDef {
   facilityBonus?: { rest?: number; cook?: number; dev?: number };
   /** v0.95 装备后的持续加成（clamp 后叠加，如穿衣服+魅力、摆家具+心情） */
   bonus?: Partial<Pick<SurvivalAttrs, "mood" | "hygiene" | "health"> & Pick<GrowthStats, "charm" | "fame" | "fitness" | "intelligence">>;
+  /** v1.45 服装店线下价格；非服装物品或场景奖励服装不填写。 */
+  shopPrice?: number;
+  /** v1.45 主角立绘透明层 id；与 slot 一起决定渲染顺序。 */
+  outfitLayer?: string;
+  /** v1.46 服装适合的场合；仅服装条目填写。 */
+  occasion?: ClothingOccasion[];
   /** v0.935：是否在开局「起步装备」中点数兑换（低价值的零食/生鲜不在此列） */
   startOffer?: boolean;
   /** v0.935：开局兑换时实际消耗的点数（缺省用顶层 pointCost）。高价值装备点数更高，增强策略性 */
@@ -1003,6 +1289,12 @@ export interface ItemDef {
   cat?: string;
   /** v1.10 手机外观皮肤：购买对应品质手机后永久改变右侧手机 UI 外观 */
   phoneSkin?: "default" | "rice" | "flower" | "fruit";
+  /** v1.42 冰箱档位物品；安装后不占普通家具槽 */
+  fridgeTier?: "small" | "medium" | "large";
+  /** v1.49: reusable interior finish bought at the furniture store. */
+  homeSurface?: 'wall' | 'floor';
+  /** v1.42 烹饪物品分类，兼容旧食材 id */
+  cookingCategory?: string;
 }
 
 export interface FamilyData {
@@ -1048,6 +1340,8 @@ export interface Investment {
 
 /** v0.94 经济子系统状态 */
 export interface EconomyState {
+  /** 顺顺花证券账户；v35 起新档与迁移均初始化。 */
+  stockMarket?: StockMarketState;
   /** 通胀指数（1.0 = 基准；随天数上升，作用于买价） */
   priceIndex: number;
   /** 投资组合 */
@@ -1187,7 +1481,7 @@ export interface CatDef {
 }
 
 /** v1.4 猫咪用品品类 */
-export type CatItemCat = "food" | "toy" | "bed" | "train" | "special";
+export type CatItemCat = "food" | "toy" | "bed" | "train" | "special" | "device";
 
 /** v1.4 猫咪用品档位 */
 export type CatItemTier = "basic" | "good" | "lux";
@@ -1208,7 +1502,7 @@ export interface CatItemDef {
   id: string;
   name: string;
   icon: string;
-  /** 品类：food 猫粮 / toy 玩具 / bed 猫窝 / train 训练道具 / special 医院特供 */
+  /** 品类：food 猫粮 / toy 玩具 / bed 猫窝 / train 训练道具 / special 医院特供 / device 自动设备 */
   cat: CatItemCat;
   /** 档位：basic 普通 / good 优质 / lux 豪华 */
   tier: CatItemTier;
@@ -1320,6 +1614,10 @@ export interface PetState {
   sick?: boolean;
   /** v1.38 连续低数值天数（≥ 阈值触发生病，恢复后清零） */
   neglectDays?: number;
+  /** v1.47 花鸟市场免费寄养中：冻结日常变化，且不可携带/参战 */
+  fostered?: boolean;
+  /** v1.47 连续生病日数；旧档缺省时从首次检测日开始计数 */
+  consecutiveSickDays?: number;
 }
 
 /* ==================== v1.4 P3 耄耋对决 ==================== */
@@ -1513,6 +1811,8 @@ export interface EnemyIntent {
 
 /** v1.33 P2 战斗状态（随存档持久化，仅战斗进行时非空） */
 export interface CatBattleState {
+  /** 1.498 卡牌规则、结构化战斗事件与单张卡实例。缺省表示待迁移的旧对决。 */
+  duel?: import('./catDuelTypes').DuelCombatState;
   /** 对手 id（catBattles.json） */
   opponentId: string;
   /** 玩家猫咪 uid */
@@ -1574,6 +1874,14 @@ export interface CatBattleState {
 
 /** 游戏主状态（存档快照 = 完整 GameState） */
 export interface GameState {
+  catDuel?: import('./catDuelTypes').CatDuelState;
+  company?: import('./companyTypes').CompanyState | null;
+  developmentHistory?: import('./companyTypes').DevelopmentHistory;
+  financialRisk?: import('./core/financialRisk').FinancialRiskState;
+  work?: WorkState;
+  districtLeisure?: DistrictLeisureState;
+  districtServices?: DistrictServicesState;
+  fishing?: FishingState;
   version: number;
   /** 家庭条件 id（取代原 difficulty） */
   family: string;
@@ -1590,9 +1898,13 @@ export interface GameState {
     name: string;
     attrs: SurvivalAttrs;
     stats: GrowthStats;
+    /** Permanent growth before gear; optional for historical save compatibility. */
+    baseStats?: GrowthStats;
     skills: Skills;
     money: number;
     debt: number;
+    /** 连续仍有逾期债务的日结次数（破产离场的债务分支） */
+    debtStreak?: number;
     /** 压力 0-100 */
     stress: number;
     /** 连续心情低落天数（孤独死判定用） */
@@ -1607,6 +1919,8 @@ export interface GameState {
     criticalHealthStreak: number;
     /** v0.992 命运加成「底子好」：初始体力上限额外 +10×档位（派生进 getMaxStamina，可叠加） */
     staminaCapBonus?: number;
+    /** 月亮山登山积累的独立上限加成，最多20。 */
+    hikingStaminaCapBonus?: number;
   };
   living: Housing;
   /** 人生经历选择：维度 id → 选项 id */
@@ -1621,8 +1935,8 @@ export interface GameState {
   quests: Quest[];
   /** 任务栏最后生成的天数（惰性重置，仿 laborMarket.generatedDay） */
   questsGeneratedDay: number;
-  /** v1.05 每日目标（跨天刷新，随机 2 条；由 quests.generateDailyGoals 生成与结算） */
-  dailyGoals?: Array<{ id: string; text: string; reward: { mood: number }; done: boolean; check: (s: GameState) => boolean }>;
+  /** 旧存档兼容字段；每日目标已停用，读档时丢弃 */
+  dailyGoals?: DailyGoalSnapshot[];
   /** 背包：itemId → 数量（默认 { phone: 1 }） */
   inventory: Record<string, number>;
   /** 载具：type → 到期日（租赁）或产权记录（owned=true 表示已购，不计到期） */
@@ -1672,8 +1986,14 @@ export interface GameState {
   tutorial: TutorialState;
   /** v0.985 待弹窗展示的新解锁塔罗牌 id（UI 消费后清空，不入存档语义但随存档迁移） */
   pendingTarot: number[];
-  /** v0.95 装备槽位：slot → itemId（穿衣服/摆家具的持续加成来源） */
+  /** v0.95 / v1.45 装备槽位：slot → itemId（穿衣服/摆家具的持续加成来源） */
   equipped: Record<string, string>;
+  /** v1.49: bounded furniture position choices, stored separately for each formal residence. */
+  homeLayouts?: Record<string, Record<string, number>>;
+  /** Per-address light switch; absence means automatic evening lighting. */
+  homeLighting?: Record<string, 'auto' | 'on' | 'off'>;
+  /** Purchased wall/floor finishes selected independently for each formal home. */
+  homeDecor?: Record<string, {wall?:string;floor?:string}>;
   /** v0.95 天气状态（跨天重掷） */
   weather: { id: WeatherId; lastRollDay: number };
   /** v0.99 存档时间戳（保存时写入，列表排序用；可选 → 旧档无需迁移） */
@@ -1702,12 +2022,24 @@ export interface GameState {
   ownedAccessories: Record<string, number>;
   /** v1.4 P3 战斗状态（仅战斗进行时非空，结束后清空） */
   catBattle?: CatBattleState;
+  /** v1.4 城际绑定车票；购票后可离站返回，乘车或错过后清除 */
+  intercityTicket?: IntercityTicket;
+  /** v1.42 独立家电槽中的冰箱与库存 */
+  fridge: FridgeState;
+  /** v1.42 自由烹饪解锁与最近一次成品信息 */
+  cooking: CookingState;
+  /** v1.4 花鸟市场轻量小宠物，不复用猫咪 PetState */
+  smallPets: SmallPetState[];
+  /** v1.41 城市连续委托轮换与进行中链状态 */
+  cityCommissions: CityCommissionState;
   /** v1.33 P4 对决赛/耄耋之王赛事状态（报名/赛程/进行中） */
   catTournament?: CatTournamentState;
 }
 
 /** v1.33 P4 赛事报名信息（论坛报名写入） */
 export interface CatTournamentEntry {
+  /** 开赛时冻结单张收藏卡及强化形态；赛事结束后解锁。 */
+  lockedDeck?: { petUid: string; cards: Array<{ uid: string; defId: string }> };
   /** 档位 id（tournament_primary / tournament_mid / tournament_advanced / ultimate） */
   tierId: string;
   /** 报名绝对日（gameDay） */
@@ -1803,6 +2135,10 @@ export interface Post {
   comments: PostComment[];
   /** 主角是否给自己点过赞（toggle） */
   selfLiked: boolean;
+  /** v1.45 朋友圈内容来源：NPC 专属生活记录 / 通用日常动态 */
+  momentSource?: "dedicated" | "common";
+  /** v1.45 文案模板 id，用于专属动态逐条解锁及通用动态去重 */
+  momentTemplateId?: string;
 }
 
 /** v1.3 订单（外卖 / 网购） */

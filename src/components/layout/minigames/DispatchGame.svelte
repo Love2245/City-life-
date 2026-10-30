@@ -1,18 +1,21 @@
 <script lang="ts">
+  import { miniGameRandom } from "../../../lib/minigameRandom";
+  const random = miniGameRandom();
   import { onMount, onDestroy } from "svelte";
   import type { DispatchCfg, DispatchGuestType } from "../../../game/core/minigame";
   import { playSound } from "../../../lib/audio";
+  import { clampAttr } from "../../../game/core/attributes";
 
   /** 派单/资源匹配模板（D）：排队需求方(旅客/学员) + 资源(房间/训练项目)匹配，满意度与连击驱动结算。
    *  适用于酒店前台 / 驾校助教 —— 同一引擎，仅需求方与资源池不同(通过 labels 切换文案)。 */
-  let { cfg, onFinish }: { cfg: DispatchCfg; onFinish: (ratio: number) => void } = $props();
+  let { cfg, onFinish, paused = false }: { cfg: DispatchCfg; onFinish: (ratio: number) => void; paused?: boolean } = $props();
 
-  const guestsTotal = cfg.guestsTotal ?? 12;
-  const spawnMs = cfg.spawnMs ?? 6000;
+  const guestsTotal = $derived(cfg.guestsTotal ?? 12);
+  const spawnMs = $derived(cfg.spawnMs ?? 6000);
   /** v1.3b2：全局限时（秒）。0 = 不限时（旧行为，接完所有需求方才结束） */
-  const timeLimit = cfg.timeLimit ?? 0;
-  const patienceMax = cfg.patienceMax ?? 120;
-  const L = cfg.labels ?? { guest: "旅客", resource: "房间" };
+  const timeLimit = $derived(cfg.timeLimit ?? 0);
+  const patienceMax = $derived(cfg.patienceMax ?? 120);
+  const L = $derived(cfg.labels ?? { guest: "旅客", resource: "房间" });
 
   interface GuestInst {
     id: number;
@@ -49,17 +52,19 @@
   let spawned = $state(0);
   let selectedId = $state<number | null>(null);
   let finished = $state(false);
-  let timeLeft = $state(timeLimit);
+  let timeLeft = $state(0);
   let toast = $state("");
   let toastType = $state<"ok" | "bad" | "warn">("ok");
   let guestSeq = 0;
   let spawnAccum = 0;
   let timer: ReturnType<typeof setInterval> | null = null;
+  let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
   function showToast(msg: string, t: "ok" | "bad" | "warn" = "ok"): void {
     toast = msg;
     toastType = t;
-    setTimeout(() => {
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
       if (toast === msg) toast = "";
     }, 1800);
   }
@@ -80,9 +85,9 @@
   function spawnGuest(): void {
     if (guests.filter((g) => g.state === "waiting").length >= 8) return;
     if (spawned >= guestsTotal) return;
-    const t: DispatchGuestType = cfg.guests[Math.floor(Math.random() * cfg.guests.length)];
-    const people = t.peopleRange[0] + Math.floor(Math.random() * (t.peopleRange[1] - t.peopleRange[0] + 1));
-    const budget = t.budgetRange[0] + Math.floor(Math.random() * (t.budgetRange[1] - t.budgetRange[0] + 1));
+    const t: DispatchGuestType = cfg.guests[Math.floor(random() * cfg.guests.length)];
+    const people = t.peopleRange[0] + Math.floor(random() * (t.peopleRange[1] - t.peopleRange[0] + 1));
+    const budget = t.budgetRange[0] + Math.floor(random() * (t.budgetRange[1] - t.budgetRange[0] + 1));
     guests = [
       ...guests,
       {
@@ -182,8 +187,8 @@
     const earn = rt.price + tip;
     income += earn;
     served++;
-    satisfaction = Math.max(0, Math.min(100, satisfaction + satChange));
-    rooms = rooms.map((r) => (r.id === roomId ? { ...r, occupied: true, remaining: 10 + Math.floor(Math.random() * 8) } : r));
+    satisfaction = clampAttr(satisfaction + satChange);
+    rooms = rooms.map((r) => (r.id === roomId ? { ...r, occupied: true, remaining: 10 + Math.floor(random() * 8) } : r));
     guests = guests.map((g) => (g.id === guest.id ? { ...g, state: "served" } : g));
     selectedId = null;
     playSound("success");
@@ -192,6 +197,8 @@
 
   function tick(): void {
     if (finished) return;
+    // 最小化/暂停期间计时停走：玩家看不见的时候倒计时与耐心不该继续消耗。
+    if (paused) return;
     // v1.3b2 全局倒计时（tick 固定 1 秒一次）
     if (timeLimit > 0) {
       timeLeft--;
@@ -260,6 +267,7 @@
   }
 
   onMount(() => {
+    timeLeft = timeLimit;
     initRooms();
     spawnGuest();
     spawnGuest();
@@ -268,6 +276,7 @@
   });
   onDestroy(() => {
     if (timer) clearInterval(timer);
+    clearTimeout(toastTimer);
   });
 </script>
 
@@ -285,9 +294,13 @@
     </span>
   </div>
 
-  {#if toast}
-    <div class="dg-toast" class:bad={toastType === "bad"} class:warn={toastType === "warn"}>{toast}</div>
-  {/if}
+  <div
+    class="dg-toast"
+    class:bad={toastType === "bad"}
+    class:warn={toastType === "warn"}
+    class:empty={!toast}
+    aria-hidden={!toast}
+  >{toast || " "}</div>
 
   <div class="dg-grid">
     <div class="dg-queue">
@@ -317,7 +330,7 @@
             <div class="dg-pat">
               <div class="dg-pat-fill" style="width:{pct}%;background:{pct > 60 ? 'var(--ok,#7bd88f)' : pct > 30 ? 'var(--accent,#ffd166)' : '#ff8a7a'}"></div>
             </div>
-            <button class="dg-dismiss" onclick={(e) => { e.stopPropagation(); dismissGuest(g.id); }}>请走</button>
+            <button type="button" class="dg-dismiss" onclick={(e) => { e.stopPropagation(); dismissGuest(g.id); }}>请走</button>
           </div>
         {/each}
       </div>
@@ -328,6 +341,7 @@
       <div class="dg-roomgrid">
         {#each rooms as r (r.id)}
           <button
+            type="button"
             class="dg-room"
             class:occupied={r.occupied}
             onclick={() => handleRoom(r.id)}
@@ -339,7 +353,9 @@
             <div class="dg-room-icon">{r.icon}</div>
             <div class="dg-room-name">{r.name}</div>
             <div class="dg-room-foot"><span>{r.beds}位</span><span>¥{r.price}</span></div>
-            {#if r.occupied}<div class="dg-room-time">剩 {r.remaining}s</div>{/if}
+            <div class="dg-room-time" class:empty={!r.occupied} aria-hidden={!r.occupied}>
+              {#if r.occupied}剩 {r.remaining}s{:else}&nbsp;{/if}
+            </div>
           </button>
         {/each}
       </div>
@@ -395,11 +411,13 @@
     font-size: 0.66rem;
     font-weight: 700;
     padding: 5px 8px;
+    min-height: 11px;
     border-radius: 6px;
     background: rgba(123, 216, 143, 0.18);
     color: var(--ok, #7bd88f);
     text-align: center;
   }
+  .dg-toast.empty { visibility: hidden; }
   .dg-toast.warn { background: rgba(255, 209, 102, 0.18); color: var(--accent, #ffd166); }
   .dg-toast.bad { background: rgba(255, 138, 122, 0.18); color: #ff8a7a; }
   .dg-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; }
@@ -453,6 +471,7 @@
   .dg-room-top { display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-dim, #9aa3c7); }
   .dg-room-status { color: var(--ok, #7bd88f); }
   .dg-room.occupied .dg-room-status { color: #ff8a7a; }
+  .dg-room-time.empty { visibility: hidden; }
   .dg-room-icon { font-size: 1.2rem; text-align: center; margin: 2px 0; }
   .dg-room-name { font-size: 0.6rem; text-align: center; font-weight: 700; }
   .dg-room-foot { display: flex; justify-content: space-between; font-size: 0.55rem; color: var(--text-dim, #9aa3c7); margin-top: 2px; }

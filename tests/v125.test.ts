@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { getMaxStamina, fameIncomeMult } from "../src/game/core/stats";
-import { deliveryParttimeBasePay, deliveryParttime } from "../src/game/core/jobs";
+import { completeWork, deliveryParttimeBasePay, deliveryParttime } from "../src/game/core/jobs";
 import { workOnProject, getProject } from "../src/game/core/projects";
 import { addItem, itemCount } from "../src/game/core/items";
 import { generateDailyGoals, tickDailyGoals } from "../src/game/core/quests";
@@ -42,13 +42,13 @@ describe("v1.25 能力成长 → 基础属性加成", () => {
 describe("v1.25 兼职外卖（手机 App）", () => {
   it("按交通工具分档基础收入", () => {
     const s = createInitialState();
-    expect(deliveryParttimeBasePay(s)).toBe(35); // 步行
+    expect(deliveryParttimeBasePay(s)).toBe(15); // 步行
     s.flags["item_bicycle"] = true;
-    expect(deliveryParttimeBasePay(s)).toBe(50);
+    expect(deliveryParttimeBasePay(s)).toBe(19);
     s.flags["item_e_bike"] = true;
-    expect(deliveryParttimeBasePay(s)).toBe(70);
+    expect(deliveryParttimeBasePay(s)).toBe(25);
     s.flags["item_car"] = true;
-    expect(deliveryParttimeBasePay(s)).toBe(90);
+    expect(deliveryParttimeBasePay(s)).toBe(28);
   });
 
   it("未下载外卖 App 时无法接单", () => {
@@ -57,17 +57,25 @@ describe("v1.25 兼职外卖（手机 App）", () => {
     expect(r.ok).toBe(false);
   });
 
-  it("下载后接单：收入 = 档位 × 影响力加成，并标记干过活", () => {
+  it("下载后接单：小游戏完成才到账、计时和标记干过活", () => {
     const s = createInitialState();
     s.flags["app_delivery"] = true;
     s.flags["item_e_bike"] = true;
-    s.player.stats.fame = 60; // ×1.25
+    s.player.stats.fame = 60;
     const before = s.player.money;
+    const startHour = s.time.hour;
     const r = deliveryParttime(s);
     expect(r.ok).toBe(true);
-    expect(r.pay).toBe(Math.round(70 * 1.25));
-    expect(s.player.money - before).toBe(r.pay);
-    expect(s.flags["goal_worked"]).toBe(true);
+    expect(r.pay).toBe(0);
+    expect(r.session).toBeDefined();
+    expect(s.player.money).toBe(before);
+    expect(s.flags["goal_worked"]).toBeFalsy();
+    r.session!.completedOrders = 3;
+    r.session!.deliveryEarnedFare = 48.75;
+    expect(completeWork(s, r.session!.id, 0).ok).toBe(true);
+    expect(s.player.money - before).toBe(48.75);
+    expect(s.flags["goal_worked"]).toBeUndefined();
+    expect(s.time.hour).toBe(startHour + 8);
   });
 });
 
@@ -80,7 +88,7 @@ describe("v1.25 摆摊：按次正收入 + 需食材", () => {
     expect(r.reason).toContain("缺少食材");
   });
 
-  it("备好食材后出摊：消耗食材、推进项目；收入改由摆摊小游戏按服务人头发放（v1.3b2 不再直接发 perActionIncome）", () => {
+  it("备好食材后出摊：消耗食材、推进项目并获得按次基础收入", () => {
     const s = createInitialState();
     s.player.skills.cooking = 3;
     addItem(s, "vegetable", 2);
@@ -91,9 +99,8 @@ describe("v1.25 摆摊：按次正收入 + 需食材", () => {
     expect(r.ok).toBe(true);
     expect(itemCount(s, "vegetable")).toBe(1);
     expect(itemCount(s, "meat")).toBe(1);
-    // v1.3b2：摆摊收入 = 服务人数 × stallPerCustomerPay（多劳多得），由 MiniGameModal 结算；
-    // workOnProject 本身不再发固定 perActionIncome
-    expect(s.player.money - money0).toBe(0);
+    // v1.455：项目按次收入作为基础营收结算；小游戏仍可在此基础上按服务人数追加收入。
+    expect(s.player.money - money0).toBe(Math.round(30 * 1.25));
   });
 
   it("摆摊项目可重复推进（repeatable）", () => {
@@ -102,17 +109,11 @@ describe("v1.25 摆摊：按次正收入 + 需食材", () => {
   });
 });
 
-describe("v1.25 每日目标：联系联系人可主动完成", () => {
-  it("contact_someone 目标绑定 contacted_today 标志", () => {
-    const s = createInitialState();
-    s.player.money = 500;
-    const goals = generateDailyGoals(s);
-    const contact = goals.find((g) => g.id === "contact_someone");
-    if (!contact) return; // 随机抽取不保证出现
-    const rewards: number[] = [];
-    s.flags["contacted_today"] = true;
-    const n = tickDailyGoals(s, (m) => rewards.push(m));
-    expect(n).toBeGreaterThanOrEqual(1);
-    expect(contact.done).toBe(true);
+describe("retired contact daily goal", () => {
+  it("does not generate or pay a contact daily goal", () => {
+    const s = createInitialState();const mood=s.player.attrs.mood,rewards:number[]=[];
+    expect(generateDailyGoals(s)).toEqual([]);s.flags.contacted_today=true;
+    expect(tickDailyGoals(s,m=>rewards.push(m))).toBe(0);expect(rewards).toEqual([]);
+    expect(s.dailyGoals).toBeUndefined();expect(s.flags.contacted_today).toBeUndefined();expect(s.player.attrs.mood).toBe(mood);
   });
 });

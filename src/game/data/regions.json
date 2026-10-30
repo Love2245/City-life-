@@ -1,17 +1,96 @@
 [
   {
     "id": "downtown",
-    "name": "市区",
+    "name": "树堰区",
     "icon": "🏙️",
     "desc": "繁华都市的核心区域，工作机会与生活配套齐全",
     "gradient": "linear-gradient(135deg, #1a2440, #2b3a67)"
   },
   {
     "id": "suburb",
-    "name": "郊区",
+    "name": "紫羊区",
     "icon": "🏡",
     "desc": "城市边缘与乡村地带，农场、牧场、宗教场所汇聚",
     "gradient": "linear-gradient(135deg, #1e2a4a, #3a4a7a)"
+  },
+  {
+    "id": "development",
+    "name": "伯月新区",
+    "icon": "🌇",
+    "desc": "沿着新修的道路向外生长，文化与年轻人的生活在这里交汇",
+    "gradient": "linear-gradient(135deg, #24475b, #64a6a3)"
+  },
+  {
+    "id": "boyue",
+    "name": "泊月区",
+    "icon": "🌃",
+    "desc": "灯火与绿荫相映的活力城区，白天从容，夜晚热闹",
+    "gradient": "linear-gradient(135deg, #36445f, #958cba)"
+  },
+  {
+    "id": "development_culture",
+    "name": "市三馆",
+    "icon": "🏛️",
+    "desc": "广场宽阔而安静，艺术与好奇心在这里相遇",
+    "gradient": "linear-gradient(135deg, #536b80, #b39d82)",
+    "parent": "development"
+  },
+  {
+    "id": "development_university",
+    "name": "大学城",
+    "icon": "🎓",
+    "desc": "书声与笑声交织的年轻街区，总有新的故事等待开始",
+    "gradient": "linear-gradient(135deg, #476b64, #9eae74)",
+    "parent": "development"
+  },
+  {
+    "id": "development_reserve",
+    "name": "自然保护区",
+    "icon": "🌲",
+    "desc": "山风穿过林间，湖水映着天光，城市在这里慢下来",
+    "gradient": "linear-gradient(135deg, #2c635e, #84b6a0)",
+    "parent": "development"
+  },
+  {
+    "id": "development_airport",
+    "name": "机场",
+    "icon": "✈️",
+    "desc": "等待远行者的小型民用通航机场，尚未开放",
+    "gradient": "linear-gradient(135deg, #486882, #9bbacb)",
+    "parent": "boyue",
+    "locked": true
+  },
+  {
+    "id": "boyue_university",
+    "name": "大学城",
+    "icon": "🎓",
+    "desc": "年轻人的梦想在街巷间生长，日常充满朝气与烟火",
+    "gradient": "linear-gradient(135deg, #3c636a, #91aca7)",
+    "parent": "boyue"
+  },
+  {
+    "id": "boyue_mall",
+    "name": "商场",
+    "icon": "🏬",
+    "desc": "明亮的中庭与悠闲的人群，适合给日常添一点新意",
+    "gradient": "linear-gradient(135deg, #705847, #c3a283)",
+    "parent": "boyue"
+  },
+  {
+    "id": "boyue_olympic",
+    "name": "奥林匹克中心",
+    "icon": "🏟️",
+    "desc": "开阔的运动街区，沿着跑道找回身体的节奏",
+    "gradient": "linear-gradient(135deg, #305c73, #83abb5)",
+    "parent": "boyue"
+  },
+  {
+    "id": "boyue_night_market",
+    "name": "泊月夜市",
+    "icon": "🏮",
+    "desc": "暮色落下后灯火渐亮，热气与人声让夜晚有了温度",
+    "gradient": "linear-gradient(135deg, #493c66, #bc748c)",
+    "parent": "boyue"
   },
   {
     "id": "suburban_edge",
@@ -33,18 +112,27 @@
     "id": "heavy_industry",
     "name": "重工业区",
     "icon": "🏗️",
-    "desc": "钢铁厂、玻璃厂、铝厂聚集地——本版暂未开放",
+    "desc": "钢铁厂、玻璃厂、铝厂聚集地，办理工业通行证后开放",
     "gradient": "linear-gradient(135deg, #4a3c3c, #6b4a4a)",
     "locked": true,
+    "unlockFlag": "route_heavy_industry",
     "parent": "suburb"
   },
   {
     "id": "downtown_center",
     "name": "市中心",
     "icon": "🏛️",
-    "desc": "写字楼、医院与公园林立的行政文化区",
+    "desc": "图书馆、医院与湖畔公园环绕的市民文化区，向北通往核心商业区",
     "gradient": "linear-gradient(135deg, #2d5f9e, #4a9edb)",
     "parent": "downtown"
+  },
+  {
+    "id": "downtown_commercial",
+    "name": "核心商业区",
+    "icon": "🏙️",
+    "desc": "月牙广场连接商业街、写字楼、证券交易所与市政大厅，生活服务沿街分布",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "parent": "downtown_center"
   },
   {
     "id": "downtown_mall",
@@ -53,6 +141,14 @@
     "desc": "餐饮娱乐一站式，吃喝玩乐应有尽有",
     "gradient": "linear-gradient(135deg, #3d5c7a, #5c8eb0)",
     "parent": "downtown"
+  },
+  {
+    "id": "mall_interior",
+    "name": "商场内部",
+    "icon": "🏬",
+    "desc": "沿中庭逛街角衣橱、名牌店、家居店与西餐厅；各店按自己的营业时间开放",
+    "gradient": "linear-gradient(135deg, #6b5945, #a68a66)",
+    "parent": "downtown_mall"
   },
   {
     "id": "downtown_industrial",
@@ -72,11 +168,30 @@
   },
   {
     "id": "downtown_station",
-    "name": "火车站",
+    "name": "老城区",
     "icon": "🚉",
-    "desc": "高铁与巴士枢纽，前往其他城市的出发地",
+    "desc": "老城街巷与交通枢纽，集合车站、花鸟市场、小吃街和学校",
     "gradient": "linear-gradient(135deg, #2c3e72, #4a5488)",
-    "locked": true,
     "parent": "downtown"
+  },
+  {
+    "id": "campus_teacher",
+    "name": "师范学院",
+    "icon": "🎓",
+    "parent": "development_university",
+    "desc": "教学楼、图书馆、食堂与运动场沿校园步道分布，学工楼办理校内事务",
+    "gradient": "linear-gradient(135deg,#476b64,#9eae74)",
+    "locked": true,
+    "unlockFlag": "item_student_pass"
+  },
+  {
+    "id": "campus_engineering",
+    "name": "工程学院",
+    "icon": "🎓",
+    "parent": "boyue_university",
+    "desc": "教学楼、图书馆、食堂与运动场沿校园步道分布，学工楼办理校内事务",
+    "gradient": "linear-gradient(135deg,#476b64,#9eae74)",
+    "locked": true,
+    "unlockFlag": "item_student_pass"
   }
 ]

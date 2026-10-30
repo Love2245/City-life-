@@ -34,12 +34,15 @@ export function recordJob(state: GameState): void {
  * 每周日晚上睡觉时调用：把本周累计汇总为 report、置 pending、清零累计。
  * 非周日调用直接返回（不影响累计）。
  */
-export function weeklySettlement(state: GameState): void {
-  if (weekdayOf(state.time) !== 6) return; // 仅周日
+export function weeklySettlement(
+  state: GameState,
+  settlementDate: { year: number; month: number; day: number } = state.time,
+): void {
+  if (weekdayOf(settlementDate) !== 6) return; // 仅周日（允许跨午夜后按入睡锚点结算）
   const w = state.weekly;
   // v1.215 修复：编程周入按「周」去重——同周日多次入睡不再重复发放（原实现每睡一觉发一次，可刷钱）
-  const wk = Math.floor(gameDay(state.time) / 7);
-  if (state.flags["passive_paid_week"] !== wk) {
+  const wk = Math.floor(gameDay(settlementDate) / 7);
+  if ((!state.company || state.company.status==='closed') && state.flags["passive_paid_week"] !== wk) {
     const passive = settlePassiveIncome(state);
     if (passive > 0) recordMoney(state, passive);
     state.flags["passive_paid_week"] = wk;

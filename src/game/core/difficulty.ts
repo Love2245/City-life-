@@ -1,3 +1,5 @@
+import { stockAccountEquity } from './stockMath';
+import { companyOverview } from './companyOverview';
 /**
  * 难度递增系统（v0.94 / R3）。
  * 纯计算层（不依赖 engine，避免 time→engine 环形依赖）。
@@ -33,17 +35,18 @@ export function daysSurvived(state: GameState): number {
   return gameDay(state.time);
 }
 
-/** 净资产 = 现金 + 投资组合市值 */
+/** 净资产 = 现金 + 投资组合市值 − 债务（债务可以让净资产为负，与注释语义一致） */
 export function netWorth(state: GameState): number {
   const inv = state.economy.investments.reduce((s, i) => s + i.value, 0);
-  return state.player.money + inv;
+  return state.player.money + inv + stockAccountEquity(state.economy.stockMarket)/100 - (state.player.debt ?? 0) + (companyOverview(state)?.netAssetsCents ?? 0) / 100;
 }
 
 /** 当前难度等级 0..maxLevel（天数为主，净资产为辅） */
 export function difficultyLevel(state: GameState): number {
   const byDays = Math.floor(daysSurvived(state) / B.daysPerLevel);
   const byWealth = Math.floor(netWorth(state) / B.netWorthTier);
-  return Math.min(B.maxLevel, byDays + byWealth);
+  // 债务可以让净资产为负，但不应把难度等级和 UI 标签一起带到 0 以下。
+  return Math.max(0, Math.min(B.maxLevel, byDays + byWealth));
 }
 
 /** 物价倍率（priceIndex 即倍率，初始 1，随通胀上升） */
@@ -84,8 +87,8 @@ export function priceIndexCap(): number {
   return 1 + B.inflationCap;
 }
 
-/** UI 用：等级中文标签 */
+/** UI 用：等级中文标签（防御性钳制，负等级/越界等级回落首尾档） */
 export function difficultyLabel(level: number): string {
   const names = ["新手", "适应", "扎根", "打拼", "老练", "高压", "都市生存家"];
-  return names[Math.min(level, names.length - 1)];
+  return names[Math.max(0, Math.min(level, names.length - 1))];
 }

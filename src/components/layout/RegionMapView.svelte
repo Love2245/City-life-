@@ -1,161 +1,112 @@
 <script lang="ts">
-  import { showToast, uiState } from "../../stores/uiStore.svelte";
-  import { playSound } from "../../lib/audio";
-  import { childrenOf, getRegion } from "../../game/core/regions";
-  import { regionTravelPlan } from "../../game/core/actions";
+  import { showToast } from "../../stores/uiStore.svelte";
+  import { isMobileLayout } from "../../stores/uiStore.svelte";
+  import { REGIONS, childrenOf, getRegion, isRegionUnlocked } from "../../game/core/regions";
+  import { getLocation, regionTravelPlan, regionAvailabilityAtArrival, isFreeDistrictBorder } from "../../game/core/actions";
   import { planLabel } from "../../game/core/transit";
-  import type { Region } from "../../game/types";
+  import { currentRegion } from "../../game/core/housing";
   import { gameState } from "../../stores/gameStore.svelte";
-  /** 进入该二级区域的预计通行方案文案（同区则空白） */
-  function travelHint(rid: string): string {
-    const plan = regionTravelPlan(gameState, rid);
-    return plan.mode === "same" ? "" : planLabel(plan);
-  }
+  import MapAtlas from "./MapAtlas.svelte";
+  import type { AtlasItem } from "../../lib/mapAtlas";
 
-  /** 区域地图（L2）：子区域网格 */
-  let {
-    parentRegionId = "downtown",
-    onSelect,
-  }: {
+  let { parentRegionId = "downtown", onSelect, onReady, breadcrumbs = [], onCrumb,
+    showBack = false, showHome = false, onBack, onHome }: {
     parentRegionId?: string;
     onSelect: (regionId: string) => void;
+    onReady?: () => void;
+    breadcrumbs?: { id: string; label: string; icon: string }[];
+    onCrumb?: (index: number) => void;
+    showBack?: boolean;
+    showHome?: boolean;
+    onBack?: () => void;
+    onHome?: () => void;
   } = $props();
-
-  const regions = $derived(childrenOf(parentRegionId) as Region[]);
+  const regions = $derived(childrenOf(parentRegionId));
   const parent = $derived(getRegion(parentRegionId));
-  // v1.3b5：玻璃强度扩为 4 档（low=最透 / medium=轻玻璃 / high=平衡 / dark=深蓝近实色）。
-  // 直接给出完整渐变背景，绑定到 style:background；「低」为最透，解决「玻璃不透光」反馈。
-  const GLASS_BG: Record<string, string> = {
-    low: "linear-gradient(145deg, rgba(15,25,48,0.14), rgba(5,10,24,0.06))",
-    medium: "linear-gradient(145deg, rgba(15,25,48,0.20), rgba(5,10,24,0.12))",
-    high: "linear-gradient(145deg, rgba(15,25,48,0.38), rgba(5,10,24,0.30))",
-    dark: "linear-gradient(145deg, rgba(8,12,26,0.82), rgba(3,6,16,0.76))",
-  };
-  const glassBg = $derived(GLASS_BG[uiState.mapGlass] ?? GLASS_BG.low);
+  const districts = $derived(REGIONS.filter(r => !r.parent && r.id !== parentRegionId
+    && !(parentRegionId === "suburb" && r.id === "development")
+    && !(parentRegionId === "development" && r.id === "suburb")
+    && !(parentRegionId === "suburb" && r.id === "boyue")
+    && !(parentRegionId === "boyue" && r.id === "suburb")));
+  const integratedMobileChrome = $derived(isMobileLayout() && breadcrumbs.length > 1 && !!onCrumb);
+  function entryDetail(id: string): string | undefined {
+    if (id === "suburban_edge") return `${getLocation("suburb_bus_station")?.name ?? "紫羊区巴士站"} · ${getLocation("suburb_train_station")?.name ?? "紫羊区火车站"} · 游乐场 · 环湖公园`;
+    if (id === "rural") return "农场 · 牧场 · 果园 · 温室";
+    if (id === "heavy_industry") return "钢铁厂 · 玻璃厂 · 铝厂 · 工人集体宿舍";
+    if (id.startsWith("development_") || id.startsWith("boyue_")) return getRegion(id)?.desc;
+    return undefined;
+  }
+  const markers: AtlasItem[] = $derived([...regions.map(r => {
+    const plan = regionTravelPlan(gameState, r.id);
+    const availability = regionAvailabilityAtArrival(gameState, r.id);
+    const locked = !availability.unlocked;
+    const detail = entryDetail(r.id);
+    const home = currentRegion(gameState) === r.id;
+    return { id: r.id, name: r.name, description: detail ?? r.desc, detail, locked, current: plan.mode === "same",
+      home, badge: home ? "家在这里" : undefined,
+      hint: locked ? availability.reason : home ? "你住在这里 · 查看区域" : plan.mode === "same" ? "当前所在 · 查看地点" : planLabel(plan) };
+  }), ...(!parent?.parent ? districts.map(d => {
+    const plan = regionTravelPlan(gameState, d.id);
+    const locked = !isRegionUnlocked(gameState, d) || !!plan.requiresTicket;
+    const freeBorder = isFreeDistrictBorder(gameState, d.id);
+    const expandedDevelopmentHint = d.id === "development" && parentRegionId !== "boyue"
+      && !locked && !freeBorder && !plan.requiresTicket && plan.mode !== "same";
+    return {
+      id: d.id, name: d.name, locked, shortcut: true, crossRegion: true,
+      hint: freeBorder ? "道路相连 · 免费 · 即刻到达" : plan.requiresTicket ? "需要私人载具 · 或到车站购票" : plan.mode === "same" ? "当前所在 · 查看区域" : expandedDevelopmentHint ? planLabel(plan) + "；树堰—伯月巴士直达 8 元 / 45 分钟" : planLabel(plan),
+      pinHint: expandedDevelopmentHint ? planLabel(plan) : undefined,
+      description: d.desc,
+    };
+  }) : [])]);
 
-  function select(r: Region): void {
-    if (r.locked) {
-      showToast("该区域暂未开放，下次更新推出");
+  function select(id: string): void {
+    if (districts.some(d => d.id === id)) {
+      const plan = regionTravelPlan(gameState, id);
+      if (plan.requiresTicket) {
+        showToast("需要汽车、电动车或三轮车才能自行跨区；也可以先到对应车站购票");
+        return;
+      }
+      onSelect(id);
       return;
     }
-    playSound("walk");
+    const r = regions.find(r => r.id === id);
+    if (!r) return;
+    const availability = regionAvailabilityAtArrival(gameState, r.id);
+    if (!availability.unlocked) {
+      showToast(availability.reason);
+      return;
+    }
     onSelect(r.id);
   }
+
 </script>
 
-<div class="region-grid-view hud-scope" style:background={glassBg}>
-  <div class="head">
-    <div class="title">{parent?.icon ?? "🗺️"} {parent?.name ?? "区域"}</div>
-    <div class="hint dim">{parent?.desc ?? ""} · 当前 {gameState.time.hour}:00</div>
-  </div>
-
-  <div class="grid">
-    {#each regions as r (r.id)}
-      <button
-        class="r-card"
-        class:locked={r.locked}
-        onclick={() => select(r)}
-        disabled={r.locked}
-        style:background={r.gradient}
-      >
-        <span class="gi-emoji" style="font-size:48px;line-height:1">{r.icon}</span>
-        <span class="r-name">{r.name}</span>
-        {#if travelHint(r.id)}<span class="r-travel">{travelHint(r.id)}</span>{/if}
-        {#if r.locked}<span class="r-badge">🔒 暂未开放</span>{/if}
-      </button>
-    {/each}
-  </div>
+<div class="region-grid-view hud-scope scene-atlas">
+  <MapAtlas mapId={parentRegionId} title={parent?.name ?? "区域地图"} subtitle={parent?.desc ?? "选择目的地，继续探索城市"} items={markers} onSelect={select} {onReady}>
+    {#snippet navigation()}
+      {#if integratedMobileChrome}
+        <div class="integrated-topline">
+          <nav class="integrated-breadcrumbs" aria-label="地图路径">
+            {#each breadcrumbs as crumb, index (crumb.id)}
+              <button class="atlas-crumb" class:last={index === breadcrumbs.length - 1} onclick={() => onCrumb?.(index)}>{crumb.label}</button>
+            {/each}
+          </nav>
+          <div class="integrated-title-nav" aria-label="区域导航">
+            {#if showBack && onBack}<button class="atlas-crumb" onclick={onBack}>← 返回</button>{/if}
+            {#if showHome && onHome}<button class="atlas-crumb" onclick={onHome}>{getRegion("downtown")?.name ?? "树堰区"}</button>{/if}
+          </div>
+        </div>
+      {/if}
+    {/snippet}
+  </MapAtlas>
 </div>
 
 <style>
-  .region-grid-view {
-    position: relative;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 24px;
-    gap: 16px;
-    overflow-y: auto;
-    color: #eef1ff;
-    /* 背景由 style:background 内联注入（4 档玻璃，见 glassBg） */
-    backdrop-filter: blur(10px) saturate(1.08);
-    -webkit-backdrop-filter: blur(10px) saturate(1.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    --text-dim: rgba(255, 255, 255, 0.7);
-    /* v1.3b4：进入二级区域时轻量入场，强化「过场」观感 */
-    animation: viewEnter 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-    /* v0.91：地图文字统一加深色描边 */
-    text-shadow: var(--text-shadow, 0 1px 2px rgba(0, 0, 0, 0.45));
-  }
-  @keyframes viewEnter {
-    from { opacity: 0; transform: translateY(10px) scale(0.99); }
-    to { opacity: 1; transform: none; }
-  }
-  .head {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 4px 0;
-  }
-  .title {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-  }
-  .hint {
-    font-size: 12.5px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-  }
-  .r-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    padding: 24px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    background: rgba(10, 18, 36, 0.28);
-    backdrop-filter: blur(12px) saturate(1.1);
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-    text-align: center;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-  .r-card:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
-  }
-  .r-card:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
-  }
-  .r-icon {
-    font-size: 38px;
-    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
-  }
-  .r-name {
-    font-size: 14px;
-    font-weight: 700;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  .r-badge {
-    font-size: 11px;
-    padding: 2px 10px;
-    border-radius: 999px;
-    background: rgba(255, 107, 107, 0.25);
-    color: #ff8a8a;
-    font-weight: 700;
-  }
-  .dim {
-    color: rgba(255, 255, 255, 0.7);
-  }
+  .region-grid-view.scene-atlas { position:relative; flex:1; min-height:0; width:100%; display:flex !important; flex-direction:column; padding:0 !important; gap:0 !important; overflow:hidden; background:transparent; }
+  .scene-atlas .integrated-topline { display:flex; justify-content:flex-end; align-items:center; flex-wrap:wrap; gap:5px; height:auto !important; min-height:44px; }
+  .integrated-breadcrumbs,.integrated-title-nav { display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
+  .atlas-crumb { color:#e7dab5; border:1px solid #d3c39a55; border-radius:4px; background:#18231ee0; min-height:44px; padding:4px 8px; white-space:nowrap; cursor:pointer; font:inherit; font-size:12px; font-weight:750; }
+  .atlas-crumb.last { color:#bdf5dd; border-color:#8bd1b366; }
+  .atlas-crumb:hover { background:#514c39; }
+  .atlas-crumb:focus-visible { outline:2px solid #e5c783; }
 </style>

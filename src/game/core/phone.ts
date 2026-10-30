@@ -10,12 +10,27 @@ import { chance, weightedDraw, randomInt } from "../rng";
 import { gameDay, isWeekend } from "./calendar";
 import { addAffinity } from "./relationships";
 import { npcName } from "./npcs";
+import { hasLaptop as hasPc } from "./projects";
+import { contactIdFromConversationId, conversationIdForMessage, currentSmsTimestamp, nextSmsId } from "./sms";
 
 export interface PhoneResult {
   ok: boolean;
   text: string;
   deltas?: ResultDelta[];
   reason?: string;
+}
+
+function containsNonFiniteNumber(value: unknown): boolean {
+  if (typeof value === "number") return !Number.isFinite(value);
+  if (Array.isArray(value)) return value.some(containsNonFiniteNumber);
+  if (value && typeof value === "object") return Object.values(value).some(containsNonFiniteNumber);
+  return false;
+}
+
+function replyEffectsError(state: GameState, effects: Effects): string | undefined {
+  if (!effects || typeof effects !== "object" || containsNonFiniteNumber(effects)) return "回复内容无效，请稍后再试";
+  if (typeof effects.money === "number" && state.player.money + effects.money < 0) return "余额不足，无法完成这项回复";
+  return undefined;
 }
 
 /** 给家人打电话：按家庭条件分流文案与效果（v1.3：加按天冷却，修复无限刷心情漏洞） */
@@ -49,6 +64,7 @@ export function callFamily(state: GameState): PhoneResult {
       effects = { mood: 3, stress: -2 };
   }
   state.flags["call_family_day"] = today; // v1.3：成功通话记入今日冷却
+  state.flags["socialized_once"] = true; // 新手引导明确允许通过手机联系家人完成社交步骤
   applyEffects(state, { mood: effects.mood, stress: effects.stress }, "📞");
   advanceTime(state, 0.5);
   return { ok: true, text, deltas: collectDeltas({ mood: effects.mood, stress: effects.stress }) };
@@ -105,7 +121,7 @@ export function studyOnline(state: GameState): PhoneResult {
   if (state.player.money < 3) {
     return { ok: false, text: "流量费都交不起了", reason: "需要 3 元流量费" };
   }
-  const hasLaptop = !!state.flags["item_laptop"];
+  const hasLaptop = hasPc(state);
   const gain = hasLaptop ? 4 : 2;
   applyEffects(state, { money: -3, intelligence: gain, stamina: -5, log: `用手机看了${hasLaptop ? "（笔记本同步）" : ""}会儿网课，智力+${gain}` }, "📱");
   advanceTime(state, 1);
@@ -156,8 +172,8 @@ export const FAMILY_MESSAGES: Record<string, FamilyMessageScenario[]> = {
       id: "d_奶奶住院",
       text: "爸：你奶前两天摔了腿，住院要花钱，你方便不……",
       options: [
-        { label: "医药费我出，别耽搁", tone: "warm", effects: { money: -50, mood: 3, stress: -4, log: "替奶奶付了 50 元医药费" }, reply: "爸：唉，辛苦你了。" },
-        { label: "我凑一点寄过去", tone: "neutral", effects: { money: -20, mood: 0, stress: 1, log: "给家里寄了 20 元" }, reply: "爸：行，够买几天药了。" },
+        { label: "我先转 50 元，垫一部分费用", tone: "warm", effects: { money: -50, mood: 3, stress: -4, log: "替奶奶垫了 50 元医药费" }, reply: "爸：收到，我先拿这笔去垫住院费用，后面的账再跟你说。" },
+        { label: "我先转 20 元，尽一点力", tone: "neutral", effects: { money: -20, mood: 0, stress: 1, log: "给家里转了 20 元应急" }, reply: "爸：收到，先垫一部分，后面我再想办法。" },
         { label: "我真拿不出", tone: "cold", effects: { mood: -4, stress: 5, log: "没帮上奶奶的医药费" }, reply: "爸：……你自己顾好自己吧。" },
       ],
     },
@@ -192,11 +208,11 @@ export const FAMILY_MESSAGES: Record<string, FamilyMessageScenario[]> = {
     },
     {
       id: "t_寄特产",
-      text: "爸：老家寄来的笋干给你留了一份，记得收。",
+      text: "爸：老家的笋干我给你留了一份，下次回家时记得拿。",
       options: [
-        { label: "太好了！谢谢爸", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "爸：喜欢就常回来拿。" },
-        { label: "收到，谢了", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：嗯，吃好。" },
-        { label: "又乱花钱", tone: "cold", effects: { mood: -1, stress: 1 }, reply: "爸：你这孩子，爸乐意。" },
+        { label: "太好了，回家时我记得拿", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "爸：好，给你收好了，回来时带上。" },
+        { label: "知道了，谢谢爸", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：嗯，回来路上提前说一声。" },
+        { label: "不用特意给我留", tone: "cold", effects: { mood: -1, stress: 1 }, reply: "爸：那行，家里人吃也一样。" },
       ],
     },
   ],
@@ -212,11 +228,11 @@ export const FAMILY_MESSAGES: Record<string, FamilyMessageScenario[]> = {
     },
     {
       id: "o_寄腊肉",
-      text: "爸：给你寄了点家乡腊肉，记得查收。",
+      text: "爸：家里给你寄的熟食包裹显示已经送到。腊肉记得及时取，天气热的话先冷藏。",
       options: [
-        { label: "哇！谢谢爸，正好馋这口", tone: "warm", effects: { mood: 5, stress: -4, satiety: 8, log: "收到家里寄的腊肉，心情大好" }, reply: "爸：吃好喝好，别省。" },
-        { label: "收到啦", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：嗯，趁鲜吃。" },
-        { label: "又花邮费", tone: "cold", effects: { mood: -1, stress: 1 }, reply: "爸：你这孩子，爸高兴寄。" },
+        { label: "谢谢爸，我先吃一份", tone: "warm", effects: { mood: 5, stress: -4, satiety: 8, log: "取出家里寄来的腊肉吃了一份" }, reply: "爸：喜欢就好，剩下的记得冷藏。" },
+        { label: "收到，我晚点去取", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：行，记得及时取，别放坏了。" },
+        { label: "以后别特意寄了", tone: "cold", effects: { mood: -1, stress: 1 }, reply: "爸：知道了，你自己注意吃饭。" },
       ],
     },
     {
@@ -232,11 +248,11 @@ export const FAMILY_MESSAGES: Record<string, FamilyMessageScenario[]> = {
   wealthy: [
     {
       id: "w_打零花",
-      text: "爸：这个月零花钱打你卡上了，别太拼。",
+      text: "爸：这阵子生活费够不够？家里最近周转得开，有需要就告诉我，别为了证明自己硬扛。",
       options: [
-        { label: "谢谢爸，我会注意身体", tone: "warm", effects: { mood: 6, stress: -4 }, reply: "爸：嗯，身体是本钱。" },
-        { label: "嗯，收到了", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：花完再说。" },
-        { label: "知道了", tone: "cold", effects: { mood: 0, stress: 1 }, reply: "爸：……（淡淡应了声）" },
+        { label: "谢谢爸，暂时够用，我会照顾好自己", tone: "warm", effects: { mood: 6, stress: -4 }, reply: "爸：好，身体是本钱，别把自己逼太紧。" },
+        { label: "目前还行，有需要我再说", tone: "neutral", effects: { mood: 2, stress: 0 }, reply: "爸：行，别等到真周转不开了才开口。" },
+        { label: "知道了，我自己安排", tone: "cold", effects: { mood: 0, stress: 1 }, reply: "爸：好，照顾好自己。" },
       ],
     },
     {
@@ -288,6 +304,14 @@ export function replyFamilyMessage(
 ): PhoneResult {
   const opt = scenario.options[optionIndex];
   if (!opt) return { ok: false, text: "没有这个回复", reason: "无效选项" };
+  // 同一条消息只结算一次，避免重复点击或重复提交重复获得心情/压力效果。
+  const replyKey = `fm_replied_${scenario.id}_${gameDay(state.time)}`;
+  if (state.flags[replyKey]) {
+    return { ok: false, text: "这条消息已经回复过了", reason: "已回复" };
+  }
+  const invalidEffects = replyEffectsError(state, opt.effects);
+  if (invalidEffects) return { ok: false, text: invalidEffects, reason: invalidEffects };
+  state.flags[replyKey] = true;
   applyEffects(state, opt.effects, "💬");
   advanceTime(state, 0.3);
   return { ok: true, text: opt.reply, deltas: collectDeltas(opt.effects) };
@@ -315,6 +339,8 @@ export interface SmsScenario extends FamilyMessageScenario {
   /** 发送人昵称 */
   sender: string;
   senderIcon: string;
+  /** 需要已建立的联系人身份；没有该联系人时不会抽到这条场景消息 */
+  contactId?: string;
   /** 触发条件：rainy=雨雪天 / tired=疲惫 / poor=低收入 / weekend=周末 / any=任意 */
   condition?: "rainy" | "tired" | "poor" | "weekend" | "any";
   /**
@@ -333,7 +359,7 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "妈妈",
     senderIcon: "👩",
     condition: "rainy",
-    text: "妈：我看了天气预报，你那边下雨了。出门记得带伞，淋了雨容易感冒。",
+    text: "我看了天气预报，你那边在下雨。出门带把伞，路滑的时候慢一点。",
     options: [
       { label: "妈放心，我带着伞呢", tone: "warm", effects: { mood: 3, stress: -2 }, reply: "妈：好，那就行。" },
       { label: "知道了", tone: "neutral", effects: { mood: 1 }, reply: "妈：嗯，照顾好自己。" },
@@ -345,7 +371,7 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "奶奶",
     senderIcon: "👵",
     condition: "rainy",
-    text: "奶奶：天冷了，被子够不够厚？钱别都花在外头，多买点暖和的。",
+    text: "奶奶：天冷了，被子够不够厚？钱别都花在外头，给自己添件暖和的。",
     options: [
       { label: "奶奶，我穿得可暖了", tone: "warm", effects: { mood: 4, stress: -2 }, reply: "奶奶：好孩子，奶奶放心。" },
       { label: "还行吧", tone: "neutral", effects: { mood: 1 }, reply: "奶奶：嗯，别冻着。" },
@@ -357,10 +383,10 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "朋友",
     senderIcon: "🧑",
     condition: "tired",
-    text: "朋友：听说你最近干得挺猛啊，累不累？别把自己累垮了，周末出来坐坐？",
+    text: "朋友：听说你最近工作挺忙，累不累？周末要是有空，出来坐坐、透透气？",
     options: [
-      { label: "是有点累，周末见！", tone: "warm", effects: { mood: 5, stress: -4 }, reply: "朋友：好嘞，老地方见！" },
-      { label: "还行，到时候再说", tone: "neutral", effects: { mood: 2, stress: -1 }, reply: "朋友：行，你有空喊我。" },
+      { label: "是有点累，周末我尽量安排", tone: "warm", effects: { mood: 5, stress: -4 }, reply: "朋友：好，临近了再商量时间，不用赶。" },
+      { label: "还行，到时候看安排", tone: "neutral", effects: { mood: 2, stress: -1 }, reply: "朋友：行，你有空再给我消息。" },
       { label: "忙，没空", tone: "cold", effects: { mood: -1, stress: 2 }, reply: "朋友：……那改天吧。" },
     ],
   },
@@ -371,7 +397,7 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     condition: "poor",
     // v1.01：赤贫家庭（剧情模式）爸妈自己都揭不开锅，不会反过来借钱给你
     notFamily: ["destitute"],
-    text: "爸：最近手头紧不紧？不够花就说，爸给你打点，别死扛着。",
+    text: "爸：最近手头紧不紧？不够花就跟我说，能帮的我会帮，别一个人硬扛。",
     options: [
       { label: "爸，真不用，我能扛", tone: "warm", effects: { mood: 3, stress: -2 }, reply: "爸：有骨气，但别硬撑。" },
       { label: "那……借我 200 行吗", tone: "neutral", effects: { money: 200, mood: 2, log: "爸给打了 200 元" }, reply: "爸：这就给你转，省着点花。" },
@@ -385,9 +411,9 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     condition: "weekend",
     // v1.01：赤贫家庭妈妈满脑子是钱和债，温馨周末关怀不贴合
     notFamily: ["destitute"],
-    text: "妈：周末了，自己一个人也要好好吃饭。别总泡面，妈不放心。",
+    text: "妈：周末了，别总拿泡面对付。刚吃过饭没有？忙起来也要记得按时吃。",
     options: [
-      { label: "妈，我今天做了顿好的", tone: "warm", effects: { mood: 4, satiety: 5 }, reply: "妈：那就好，妈放心了。" },
+      { label: "刚吃过一顿热乎的，这会儿不饿", tone: "warm", effects: { mood: 4, satiety: 5 }, reply: "妈：那就好，周末也别把饭点拖得太晚。" },
       { label: "知道了妈", tone: "neutral", effects: { mood: 2 }, reply: "妈：嗯，周末愉快。" },
       { label: "我吃啥不用你操心", tone: "cold", effects: { mood: -2 }, reply: "妈：……（隔了好久才回了个嗯）" },
     ],
@@ -397,10 +423,10 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "老同学",
     senderIcon: "🎓",
     condition: "any",
-    text: "老同学：兄弟，好久不见！听说你来城里发展了？混得咋样？",
+    text: "老同学：好久不见！听说你来城里发展了？最近还适应吗？",
     options: [
-      { label: "刚起步，还在打拼呢", tone: "warm", effects: { mood: 3, fame: 1 }, reply: "老同学：加油，改天请你吃饭！" },
-      { label: "就那样呗", tone: "neutral", effects: { mood: 1 }, reply: "老同学：那有空聚聚。" },
+      { label: "刚起步，还在慢慢适应", tone: "warm", effects: { mood: 3, fame: 1 }, reply: "老同学：加油。有空我们先在线上接着聊，真要聚再定时间。" },
+      { label: "还在适应，之后再聊", tone: "neutral", effects: { mood: 1 }, reply: "老同学：行，忙完再联系。" },
       { label: "跟你没关系", tone: "cold", effects: { mood: -2, stress: 1 }, reply: "老同学：……（没再回复）" },
     ],
   },
@@ -409,25 +435,26 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "房东",
     senderIcon: "🏠",
     condition: "any",
-    text: "房东：小兄弟，这个月房租记得准时交哈，老规矩，微信转我就行。",
+    contactId: "landlord",
+    text: "这月房租截止日快到了，按租约里约定的方式办理就行。账单或转账信息有疑问的话，先找我核实。",
     options: [
-      { label: "好的房东，记着呢", tone: "warm", effects: { mood: 1, stress: -1 }, reply: "房东：靠谱！" },
-      { label: "知道了", tone: "neutral", effects: {}, reply: "房东：嗯，别忘就行。" },
-      { label: "能不能宽限几天？", tone: "cold", effects: { stress: 3, mood: -2 }, reply: "房东：……尽量别拖哈。" },
+      { label: "收到，我会在截止日前按租约处理", tone: "warm", effects: { mood: 1, stress: -1 }, reply: "房东：好，办完留好凭证就行。" },
+      { label: "我记下截止日了", tone: "neutral", effects: {}, reply: "房东：嗯，有问题提前说。" },
+      { label: "我这几天周转不开，想商量延期", tone: "cold", effects: { stress: 3, mood: -2 }, reply: "房东：先把具体情况和时间说清楚，我再看怎么安排。" },
     ],
   },
   {
-    id: "sms_birthday",
+    id: "sms_mom_care",
     sender: "妈妈",
     senderIcon: "👩",
     condition: "any",
-    // v1.01：赤贫家庭妈妈拿不出红包——生日短信改为专属文案（见 sms_destitute_birthday）
+    // 普通家庭的关照短信；赤贫家庭走下方的专属生活压力文案。
     notFamily: ["destitute"],
-    text: "妈：今天想你了，给你发个小小的红包，再忙也别忘了照顾好自己。",
+    text: "妈：这两天还好吗？我想给你转 50 元买饭，手头不紧的话就当应急。要我现在转吗？",
     options: [
-      { label: "谢谢妈！我爱你们", tone: "warm", effects: { money: 50, mood: 8, stress: -3, log: "收到妈妈 50 元生日红包" }, reply: "妈：乖，妈永远爱你！" },
-      { label: "妈你还记得啊", tone: "neutral", effects: { money: 50, mood: 4 }, reply: "妈：自己的孩子，咋能忘。" },
-      { label: "生日而已，不用破费", tone: "cold", effects: { mood: -1 }, reply: "妈：这孩子，妈乐意。" },
+      { label: "好，谢谢妈，转来我拿去吃饭", tone: "warm", effects: { money: 50, mood: 8, stress: -3, log: "收到妈妈转来的 50 元生活费" }, reply: "妈：已经转过去了，按时吃饭，别把自己累着。" },
+      { label: "好，先收下，等宽裕了我再还你", tone: "neutral", effects: { money: 50, mood: 4, log: "收到妈妈转来的 50 元应急款" }, reply: "妈：已经转了，这是给你的生活费，不用还；记得好好吃饭。" },
+      { label: "先不用转，家里自己留着吧", tone: "cold", effects: { mood: -1 }, reply: "妈：好，听你的。有需要再跟妈说。" },
     ],
   },
 
@@ -444,7 +471,7 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     text: "妈：娃啊，家里米缸又见底了，你爹那点工钱都填了牌桌。你那边……能再寄点回来不？",
     options: [
       { label: "这就寄 100", tone: "warm", effects: { money: -100, mood: -2, stress: -3, log: "给家里寄了 100 元买米" }, reply: "妈：好孩子，家里等你信儿。" },
-      { label: "我尽量凑凑", tone: "neutral", effects: { money: -30, mood: -1, stress: 1, log: "给家里寄了 30 元" }, reply: "妈：有难处就说，别硬扛。" },
+      { label: "我先转 30 元，其他的再想办法", tone: "neutral", effects: { money: -30, mood: -1, stress: 1, log: "给家里转了 30 元买米" }, reply: "妈：收到了，先把米买上；你那边也别硬扛。" },
       { label: "我自己也紧巴巴", tone: "cold", effects: { mood: -4, stress: 4, log: "没寄钱，妈叹了口气" }, reply: "妈：……（那头安静了好久）" },
     ],
   },
@@ -483,17 +510,17 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     text: "妈：你爹昨天又去牌桌了，输光了工钱，回来一句话不说。你是长子，劝劝他。",
     options: [
       { label: "打电话骂他一顿", tone: "warm", effects: { mood: -1, stress: 2, log: "你打电话把爹数落了一顿" }, reply: "妈：骂完他心里能好受点，可转头又忘了。" },
-      { label: "劝不动，算了", tone: "neutral", effects: { mood: -2, stress: 2, log: "你劝了几句，爹没吱声" }, reply: "妈：你爹这毛病……苦了你了。" },
+      { label: "我再找机会劝劝他", tone: "neutral", effects: { mood: -2, stress: 2, log: "你又劝了爹几句，他还是没吱声" }, reply: "妈：你尽力就好，他这毛病不是一句两句能改的。" },
       { label: "让他自生自灭", tone: "cold", effects: { mood: -4, stress: 3, log: "你说不管了，电话那头是你妈的叹气声" }, reply: "妈：可他到底是你爹啊……" },
     ],
   },
   {
-    id: "sms_destitute_birthday",
+    id: "sms_destitute_care",
     sender: "妈妈",
     senderIcon: "👩",
     condition: "any",
     family: ["destitute"],
-    text: "妈：今天是你生日，妈记着呢。家里实在拿不出啥，妈给你煮了碗长寿面——你在城里，也记得吃口好的。",
+    text: "妈：今天给你煮了碗面，家里没啥好东西。你在城里也要记得吃饭。",
     options: [
       { label: "妈，面我记在心里了", tone: "warm", effects: { mood: 6, stress: -3 }, reply: "妈：乖，等你回来，妈给你做顿好的。" },
       { label: "嗯，知道了", tone: "neutral", effects: { mood: 2 }, reply: "妈：在外头照顾好自己。" },
@@ -507,11 +534,12 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     id: "sms_leader_overtime",
     sender: "组长",
     senderIcon: "👷",
+    contactId: "factory_leader",
     condition: "tired",
-    text: "组长：今晚线上一批急单，能来的报名，加班费按 1.5 倍算。来不来给个准话。",
+    text: "明天白天有一批急单，班组需要加班。加班费按 1.5 倍结算；有兴趣的话，先来厂里确认班次和工时。",
     options: [
-      { label: "我上！（明早见）", tone: "warm", effects: { mood: -2, stress: 3, money: 0, log: "你报了加班名额（去厂里找组长开工）" }, reply: "组长：好样的！来了直接找我这签到。" },
-      { label: "今晚确实顶不住了", tone: "neutral", effects: { mood: 1 }, reply: "组长：行吧，身体要紧，下次再补上。" },
+      { label: "我有兴趣，明天去确认具体安排", tone: "warm", effects: { mood: -2, stress: 3, money: 0, log: "表达了加班意向，尚未报名（需到厂确认班次）" }, reply: "组长：行，明天先来找我确认工时；完成签到后才算加班。" },
+      { label: "明天我先不排加班，得休息一下", tone: "neutral", effects: { mood: 1 }, reply: "组长：知道了，先把状态缓过来，下次排班再问你。" },
       { label: "别总盯着我", tone: "cold", effects: { mood: -1, stress: 2 }, reply: "组长：……行，就当我没问。" },
     ],
   },
@@ -519,11 +547,12 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     id: "sms_chess_invite",
     sender: "棋摊大爷",
     senderIcon: "♟️",
+    contactId: "park_chess_grandpa",
     condition: "weekend",
-    text: "棋摊大爷：小张约的棋局他放鸽子了，三缺一！你来不来？老规矩，赢我一盘我请你豆浆。",
+    text: "小张今天临时有事没来，棋桌空了个位。周末有空来街心公园下两盘象棋吧，不赌输赢，就当活动活动。",
     options: [
-      { label: "马上到！", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "棋摊大爷：哈哈哈好！先说好，输了可不许悔棋。" },
-      { label: "下午过去看看", tone: "neutral", effects: { mood: 2 }, reply: "棋摊大爷：行，我就在老位置，摆好棋等你。" },
+      { label: "有空过去，先把棋摊位置发我", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "棋摊大爷：就在街心公园东门那排棋桌。出门前再告诉我一声，不用赶。" },
+      { label: "今天还不确定，晚点再答复", tone: "neutral", effects: { mood: 2 }, reply: "棋摊大爷：好，有空再来，棋桌天天都在。" },
       { label: "今天没空", tone: "cold", effects: { mood: -1 }, reply: "棋摊大爷：唉，年轻人的周末就是忙哟。" },
     ],
   },
@@ -531,11 +560,12 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     id: "sms_clerk_newdrink",
     sender: "咖啡店员",
     senderIcon: "☕",
+    contactId: "cafe_clerk",
     condition: "any",
-    text: "咖啡店员：店里上了秋季限定桂花拿铁！会员提前尝鲜价 15，就这周，别忘了来～",
+    text: "店里上了秋季限定桂花拿铁。本周会员可以线上下单，付款 15 元后即时送到你当前住处，想尝尝吗？",
     options: [
-      { label: "下班就去！", tone: "warm", effects: { mood: 4, money: -15, log: "提前尝了秋季限定，桂花香很治愈" }, reply: "咖啡店员：给你留了靠窗的老位置！" },
-      { label: "改天再说吧", tone: "neutral", effects: { mood: 1 }, reply: "咖啡店员：好嘞，下周就不限量了，随到随喝。" },
+      { label: "现在下单一杯（15 元）", tone: "warm", effects: { mood: 4, money: -15, log: "线上下单的桂花拿铁已即时送达，花费 15 元" }, reply: "咖啡店员：订单送到啦，15 元已扣款。趁热喝，桂花香会明显些。" },
+      { label: "把咖啡厅点位发我，我有空去看看", tone: "neutral", effects: { mood: 1 }, reply: "咖啡店员：地图上的咖啡厅点位就是门店，到店后看当天菜单就行。" },
       { label: "戒咖啡了", tone: "cold", effects: { mood: -1 }, reply: "咖啡店员：？？？你上周还一天两杯呢。" },
     ],
   },
@@ -543,20 +573,22 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     id: "sms_coder_gossip",
     sender: "程序员小哥",
     senderIcon: "💻",
+    contactId: "library_coder",
     condition: "any",
-    text: "程序员小哥：哥/姐，看到没，隔壁组那个谁跳槽了，薪资翻倍！咱这行真是撑死胆大的……你说我要不要也动动？",
+    text: "隔壁组有人跳槽后薪资涨了不少。我也在考虑换工作，但手头项目还没收尾；你觉得我该先做什么准备？",
     options: [
-      { label: "有更好的就冲", tone: "warm", effects: { mood: 2 }, reply: "程序员小哥：懂了！简历今晚就挂出去，成了请你吃饭！" },
-      { label: "骑驴找马，稳着来", tone: "neutral", effects: { mood: 1, intelligence: 1, log: "你劝他先骑驴找马，他直呼内行" }, reply: "程序员小哥：有道理，还是你稳。" },
-      { label: "别卷了，睡觉", tone: "cold", effects: { mood: -1 }, reply: "程序员小哥：也是，头发要紧……睡了睡了。" },
+      { label: "先把简历和项目经历整理好，再挑合适岗位", tone: "warm", effects: { mood: 2 }, reply: "程序员小哥：有道理，我先列清楚做过的项目和技术栈，合适的机会再投。" },
+      { label: "先把手头项目收尾，再了解市场行情", tone: "neutral", effects: { mood: 1, intelligence: 1, log: "建议程序员朋友先完成手头项目，再了解岗位与薪资行情" }, reply: "程序员小哥：稳妥，至少先把交接和目标岗位想清楚。" },
+      { label: "我现在没精力替你拿主意", tone: "cold", effects: { mood: -1 }, reply: "程序员小哥：懂，那我先自己列列利弊，不打扰你了。" },
     ],
   },
   {
     id: "sms_landlord_pipe",
     sender: "房东",
     senderIcon: "🏠",
+    contactId: "landlord",
     condition: "any",
-    text: "房东：楼道总闸那块明天上午检修停水，大概两小时。你那边储点水啊，别到时候洗不成澡又找我。",
+    text: "楼道总闸明天上午检修，预计停水两小时。你可以提前留些生活用水；具体恢复时间以师傅现场进度为准。",
     options: [
       { label: "收到，谢谢提醒", tone: "warm", effects: { mood: 1 }, reply: "房东：客气啥，都是应该的。" },
       { label: "知道了", tone: "neutral", effects: {}, reply: "房东：嗯。" },
@@ -568,11 +600,11 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "健身房肌友",
     senderIcon: "💪",
     condition: "any",
-    text: "肌友：明天练腿！我已经连续三周没逃过腿日了，你敢鸽我就是看不起我。老时间，铁馆见！",
+    text: "肌友：明天我打算练腿。你要是也想练，临近了再对一下时间；别为了打卡硬撑，动作做稳比加重量重要。",
     options: [
-      { label: "练！谁鸽谁小狗", tone: "warm", effects: { mood: 4 }, reply: "肌友：冲！明天深蹲架见，谁先到谁占位！" },
-      { label: "明天看状态", tone: "neutral", effects: { mood: 1 }, reply: "肌友：又来这套……行吧。" },
-      { label: "腿日是不可能练的", tone: "cold", effects: { mood: -1 }, reply: "肌友：弱者才逃避腿日（狗头）" },
+      { label: "我有兴趣，明天再和你确认时间", tone: "warm", effects: { mood: 4 }, reply: "肌友：好，等你消息。我先按自己的节奏练，不给你占器械。" },
+      { label: "明天得看工作安排", tone: "neutral", effects: { mood: 1 }, reply: "肌友：行，确定了再说，别赶。" },
+      { label: "这阵子我不打算练腿", tone: "cold", effects: { mood: -1 }, reply: "肌友：收到，那我不催你。改天练上肢再喊你。" },
     ],
   },
   {
@@ -580,10 +612,10 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "论坛网友·钓鱼佬",
     senderIcon: "🎣",
     condition: "weekend",
-    text: "钓鱼佬：兄弟，城郊那个野塘出大鱼了！我明早五点出发，坐标发你了，来不来？空军一整天也算团建。",
+    text: "钓鱼佬：城郊那个野塘最近有人钓到大鱼。我明早五点出发，路线发你了。你有兴趣的话先看看交通和返程安排，再决定来不来。",
     options: [
-      { label: "带上我！", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "钓鱼佬：好兄弟！记得带小马扎，塘边没地儿坐。" },
-      { label: "五点起不来，呜呜", tone: "neutral", effects: { mood: 2 }, reply: "钓鱼佬：哈哈哈那我替你钓，渔获发你馋你。" },
+      { label: "我先看下路线和返程，临出发前再确认", tone: "warm", effects: { mood: 5, stress: -3 }, reply: "钓鱼佬：行，路线和返程班次都在刚才那条里；明早出发前再给我准话。" },
+      { label: "五点太早，这次先不约了", tone: "neutral", effects: { mood: 2 }, reply: "钓鱼佬：理解，改天找个近点的地方再约。" },
       { label: "钓鱼有什么意思", tone: "cold", effects: { mood: -1 }, reply: "钓鱼佬：你不懂，钓的不是鱼，是寂寞。" },
     ],
   },
@@ -592,9 +624,9 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "二姨",
     senderIcon: "🧣",
     condition: "weekend",
-    text: "二姨：刷到你朋友圈了！在城里过得咋样？处对象没有？你表弟今年考了全镇前十，你要多跟人家学学。",
+    text: "二姨：刷到你朋友圈了，在城里还适应吗？最近有对象没有？你表弟考试进了前十，二姨就是随口问问，你别有压力。",
     options: [
-      { label: "二姨好！都挺好的", tone: "warm", effects: { mood: 3 }, reply: "二姨：那就好那就好，过年回来二姨给你炸丸子吃！" },
+      { label: "二姨好，工作生活都在慢慢适应", tone: "warm", effects: { mood: 3 }, reply: "二姨：那就好，有空常跟家里说说近况，别光报喜不报忧。" },
       { label: "还行，忙", tone: "neutral", effects: { mood: 1 }, reply: "二姨：忙好啊，忙说明有出息。" },
       { label: "表弟那么好找他去", tone: "cold", effects: { mood: -2, stress: 2 }, reply: "二姨：你这孩子，翅膀硬了……" },
     ],
@@ -604,12 +636,8 @@ export const SMS_SCENARIOS: SmsScenario[] = [
     sender: "社区卫生站",
     senderIcon: "🏥",
     condition: "any",
-    text: "【社区卫生站】本周末免费体检进社区：血压血糖骨密度全查，还送一盒鸡蛋。带身份证即可，先到先得！",
-    options: [
-      { label: "周末去看看", tone: "warm", effects: { mood: 3, stress: -2, log: "记下了社区体检的时间" }, reply: "（社区通知，无需回复）" },
-      { label: "有空再说", tone: "neutral", effects: {}, reply: "（社区通知，无需回复）" },
-      { label: "退订", tone: "cold", effects: { mood: -1 }, reply: "（对方没有再发来）" },
-    ],
+    text: "【社区卫生服务站】本周六 9:00—12:00 在街道活动室开展基础健康筛查，项目和适用人群以现场公告为准。请带身份证；是否参加可自行安排。",
+    options: [],
   },
 ];
 
@@ -638,6 +666,11 @@ const JUNK_OPTIONS: FamilyReplyOption[] = [
   { label: "退订/差评", tone: "cold", effects: {}, reply: "⚠️ 感谢好评！客服已收到您的反馈" },
 ];
 
+export const MAX_SMS_MESSAGES = 300;
+function appendSms(state: GameState, ...messages: SmsMessage[]): void {
+  state.smsInbox = [...(state.smsInbox ?? []), ...messages].slice(-MAX_SMS_MESSAGES);
+}
+
 /** 每天独立概率（25%）收到垃圾广告短信 */
 export function maybeReceiveJunkSms(state: GameState): void {
   if (state.flags.junk_lastDay === gameDay(state.time)) return;
@@ -646,7 +679,7 @@ export function maybeReceiveJunkSms(state: GameState): void {
   const blocked = (typeof state.flags.junkBlocked === "number" ? state.flags.junkBlocked : 0);
   const tpl = JUNK_SMS_TEMPLATES[randomInt(state.rng, 0, JUNK_SMS_TEMPLATES.length - 1)];
   const msg: SmsMessage = {
-    id: `junk_${junkSender(blocked)}_${gameDay(state.time)}`,
+    id: nextSmsId(state, `junk_${junkSender(blocked)}`),
     sender: junkSender(blocked),
     senderIcon: "📦",
     text: `【限时特惠】${tpl.product}\n仅售 ${tpl.price}！${tpl.desc}，点击下方确认收货地址立即发货 →`,
@@ -654,8 +687,10 @@ export function maybeReceiveJunkSms(state: GameState): void {
     replied: false,
     day: gameDay(state.time),
     dir: "in",
+    conversationId: conversationIdForMessage(state, { sender: junkSender(blocked) }),
+    sentAt: currentSmsTimestamp(state),
   };
-  state.smsInbox = [...state.smsInbox, msg];
+  appendSms(state, msg);
   pushLog(state, "📦", `收到一条疑似垃圾广告短信（来自「${junkSender(blocked)}」）`);
 }
 
@@ -679,6 +714,7 @@ export function smsPool(state: GameState): SmsScenario[] {
   const famOk = (s: SmsScenario): boolean => {
     if (s.family && !s.family.includes(fam)) return false;
     if (s.notFamily && s.notFamily.includes(fam)) return false;
+    if (s.contactId && !state.contacts.some((contact) => contact.id === s.contactId)) return false;
     return true;
   };
   const cond = SMS_SCENARIOS.filter((s) => {
@@ -713,13 +749,11 @@ export function maybeReceiveSms(state: GameState): SmsScenario | null {
   if (state.flags.sms_lastDay === gameDay(state.time)) return null;
   if (!chance(state.rng, 0.35)) return null;
   const pool = smsPool(state);
-  // v0.98：房东短信仅在租房后（contacts 中存在房东）才推送
-  const filtered = pool.filter((s) => s.sender !== "房东" || state.contacts.some((c) => c.id === "landlord"));
-  const pick = weightedDraw(state.rng, filtered.map((s) => ({ item: s, weight: 1 }))) ?? filtered[0];
+  const pick = weightedDraw(state.rng, pool.map((s) => ({ item: s, weight: 1 }))) ?? pool[0];
   if (!pick) return null;
   state.flags.sms_lastDay = gameDay(state.time);
   const msg: SmsMessage = {
-    id: `${pick.id}_${gameDay(state.time)}`,
+    id: nextSmsId(state, pick.id),
     sender: pick.sender,
     senderIcon: pick.senderIcon,
     text: pick.text,
@@ -727,8 +761,11 @@ export function maybeReceiveSms(state: GameState): SmsScenario | null {
     replied: false,
     day: gameDay(state.time),
     dir: "in",
+    contactId: pick.contactId,
+    conversationId: conversationIdForMessage(state, { sender: pick.sender, contactId: pick.contactId }),
+    sentAt: currentSmsTimestamp(state),
   };
-  state.smsInbox = [...state.smsInbox, msg];
+  appendSms(state, msg);
   pushLog(state, "📩", `收到一条来自「${pick.sender}」的短信，打开通信应用查看`);
   return pick;
 }
@@ -737,10 +774,17 @@ export function maybeReceiveSms(state: GameState): SmsScenario | null {
 export function replySms(state: GameState, smsId: string, optionIndex: number): PhoneResult {
   const msg = state.smsInbox.find((m) => m.id === smsId);
   if (!msg) return { ok: false, text: "短信不存在", reason: "无效短信" };
+  if (msg.dir !== "in") return { ok: false, text: "这条消息不能回复", reason: "非收到的消息" };
   if (msg.replied) return { ok: false, text: "这条短信已经回复过了", reason: "已回复" };
+  if (!Number.isInteger(optionIndex) || optionIndex < 0 || optionIndex >= (msg.options?.length ?? 0)) {
+    return { ok: false, text: "没有这个回复", reason: "无效选项" };
+  }
 
   // v0.98 垃圾广告短信特殊处理
   if (msg.id.startsWith("junk_")) {
+    const opt = msg.options[optionIndex];
+    const invalidEffects = opt ? replyEffectsError(state, opt.effects) : undefined;
+    if (invalidEffects) return { ok: false, text: invalidEffects, reason: invalidEffects };
     msg.replied = true;
     if (optionIndex === 0) {
       // 拉黑 — 伪功能，换号
@@ -760,38 +804,52 @@ export function replySms(state: GameState, smsId: string, optionIndex: number): 
 
   const opt = msg.options[optionIndex];
   if (!opt) return { ok: false, text: "没有这个回复", reason: "无效选项" };
+  const invalidEffects = replyEffectsError(state, opt.effects);
+  if (invalidEffects) return { ok: false, text: invalidEffects, reason: invalidEffects };
   msg.replied = true;
   msg.read = true;
   msg.replyText = opt.reply;
   // v1.39 回复后生成「主角发出的消息 + 对方回应」，让对话流更自然（不再只是气泡内注释）
-  const threadKey = msg.contactId ?? state.contacts.find((c) => c.name === msg.sender)?.id;
+  const conversationId = conversationIdForMessage(state, msg);
+  const threadKey = contactIdFromConversationId(conversationId);
+  const timestamp = currentSmsTimestamp(state);
+  const day = gameDay(state.time);
   const outMsg: SmsMessage = {
-    id: `out_${msg.id}`,
+    id: nextSmsId(state, "out"),
     sender: "我",
     senderIcon: "🙂",
     text: opt.label,
     options: [],
     replied: false,
-    day: gameDay(state.time),
+    day,
     dir: "out",
     contactId: threadKey,
     npcId: msg.npcId,
+    conversationId,
+    sentAt: timestamp,
+    replyToId: msg.id,
   };
   const respMsg: SmsMessage = {
-    id: `resp_${msg.id}`,
+    id: nextSmsId(state, "resp"),
     sender: msg.sender,
     senderIcon: msg.senderIcon,
     text: opt.reply,
     options: [],
     replied: true,
     read: true,
-    day: gameDay(state.time),
+    day,
     dir: "in",
     contactId: threadKey,
     npcId: msg.npcId,
+    conversationId,
+    sentAt: timestamp,
+    replyToId: msg.id,
   };
-  state.smsInbox = [...state.smsInbox, outMsg, respMsg];
+  appendSms(state, outMsg, respMsg);
   applyEffects(state, opt.effects, "💬");
+  // L10 修复（v1.43）：与 replyFamilyMessage 统一耗时口径——回一条短信同样占用 0.3 小时，
+  // 不再出现「家人短信耗时、普通联系人短信零耗时」两套标准。
+  advanceTime(state, 0.3);
   return { ok: true, text: opt.reply, deltas: collectDeltas(opt.effects) };
 }
 
@@ -808,7 +866,7 @@ export function unreadSmsCount(state: GameState): number {
 
 /**
  * v0.978 代码触发的短信（联系人欢迎/定期教程/系统推送）。
- * 推入收件箱并提示；缺省一个「好的」中性选项以便回复闭环。
+ * 推入收件箱并提示；未显式传入选项时按只读通知处理，不制造虚构的回复。
  */
 export function sendSms(
   state: GameState,
@@ -816,23 +874,42 @@ export function sendSms(
   senderIcon: string,
   text: string,
   options?: FamilyReplyOption[],
-  opts2?: { dir?: "in" | "out"; contactId?: string; npcId?: string },
+  opts2?: {
+    dir?: "in" | "out";
+    contactId?: string;
+    npcId?: string;
+    conversationId?: string;
+    replyToId?: string;
+    replied?: boolean;
+    read?: boolean;
+    sentAt?: number;
+  },
 ): void {
-  const fallback: FamilyReplyOption[] = [{ label: "好的", tone: "neutral", effects: {}, reply: "👍" }];
-  const opts = options && options.length > 0 ? options : fallback;
+  const opts = options ?? [];
+  const dir = opts2?.dir ?? "in";
+  const identitySource = {
+    conversationId: opts2?.conversationId,
+    contactId: opts2?.contactId,
+    npcId: opts2?.npcId,
+    sender,
+  };
   const msg: SmsMessage = {
-    id: `sys_${sender}_${gameDay(state.time)}_${state.smsInbox.length}`,
+    id: nextSmsId(state, dir === "out" ? "out" : "sys"),
     sender,
     senderIcon,
     text,
     options: opts,
-    replied: false,
-    day: gameDay(state.time),
-    dir: opts2?.dir ?? "in",
+    replied: opts2?.replied ?? false,
+    read: opts2?.read,
+    day: opts2?.sentAt === undefined ? gameDay(state.time) : Math.floor(opts2.sentAt / 1440),
+    dir,
     contactId: opts2?.contactId,
     npcId: opts2?.npcId,
+    conversationId: conversationIdForMessage(state, identitySource),
+    sentAt: opts2?.sentAt ?? currentSmsTimestamp(state),
+    replyToId: opts2?.replyToId,
   };
-  state.smsInbox = [...state.smsInbox, msg];
+  appendSms(state, msg);
   if ((opts2?.dir ?? "in") === "in") {
     pushLog(state, "📩", `收到一条来自「${sender}」的短信，打开通信应用查看`);
   }

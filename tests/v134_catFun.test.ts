@@ -9,6 +9,7 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { adoptCat } from "../src/game/core/cat";
 import { setActivePet } from "../src/game/core/catCare";
+import { setActionLocation } from "./helpers/actionLocation";
 import {
   freeTrainCat,
   startFunMatch,
@@ -234,6 +235,7 @@ describe("v1.34 路边随机决斗移除", () => {
     moveTo(s, "suburban_edge");
     moveTo(s, "amusement_park");
     s.flags["cat_wild_battle_day"] = undefined;
+    setActionLocation(s, "amusement_cinema");
     const r = performAction(s, "amusement_cinema");
     expect(r.ok).toBe(true);
     expect(s.flags["cat_battle_pending"]).toBeUndefined();

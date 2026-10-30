@@ -1,0 +1,310 @@
+{
+  "purpose": "local game scene integration and review",
+  "sourceManifest": "previews/convenience-store/asset-manifest.json",
+  "sourceManifestSHA256": "7ACC9FDEA70E10CE6EC334BAAE1F8F0922B71FAD54B090E3CEC7FA7FDE704DA5",
+  "models": 37,
+  "assets": [
+    {
+      "file": "bento.glb",
+      "bytes": 74488,
+      "sha256": "AACE6893F2F2A403FB4A714197D138F1BB5E64F65648AAA6F7CB6F4EAE36A42C",
+      "source": "previews/convenience-store/assets/bento.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "breakfast-poster.png",
+      "bytes": 2822767,
+      "sha256": "A5ECFD7EDE88AE51D908F4EF8A6836B76C253B14E49B4D0AF3A2108D2E673C10",
+      "source": "previews/convenience-store/assets/breakfast-poster.png",
+      "matchesPreview": true
+    },
+    {
+      "file": "can-light.glb",
+      "bytes": 39304,
+      "sha256": "65929E3D172687300A3D029DB9ACCF3DC6C0C6AB990A24D27573C7B960FF96A3",
+      "source": "previews/convenience-store/assets/can-light.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "can.glb",
+      "bytes": 33860,
+      "sha256": "7176060E41332DCA38B6BD024F3C2BB82D198819B55E5758D2D30A4EEDA2AA22",
+      "source": "previews/convenience-store/assets/can.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "candy.glb",
+      "bytes": 77492,
+      "sha256": "706ABEF5B5BEE6BB23E5805F9301013CE66687184C09AAC393B6CFE046F55B0B",
+      "source": "previews/convenience-store/assets/candy.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "cereal-blue.glb",
+      "bytes": 73236,
+      "sha256": "4D57BE1CA918C29070B0646FB81822E97025302AB77E2993634C59443CE0D0AC",
+      "source": "previews/convenience-store/assets/cereal-blue.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "cereal.glb",
+      "bytes": 83668,
+      "sha256": "E436D44C0499D7CAD74B2A5FB97697DAD53EEB46593A7D77B94D5EE75A327DEB",
+      "source": "previews/convenience-store/assets/cereal.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "chair.glb",
+      "bytes": 494492,
+      "sha256": "C0996CD9E48FEDDF2CFFFCB763606869446130B7E6502D51FB927B18F41DE0A8",
+      "source": "previews/convenience-store/assets/chair.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "chips-green.glb",
+      "bytes": 106816,
+      "sha256": "D5B2DCAF21D076FF2E3A128DF149117333A3E0527FE99AE205CA03A7D69E61E0",
+      "source": "previews/convenience-store/assets/chips-green.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "chips-orange.glb",
+      "bytes": 105000,
+      "sha256": "AD8AB0B0ADBD13313ADE53A74CB0D196513AB13FFDD18C3551D3BD85583FAD0A",
+      "source": "previews/convenience-store/assets/chips-orange.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "chips.glb",
+      "bytes": 104808,
+      "sha256": "052A08DD973D523462AF5B98A5DD6F4888D4F6EDCDE8555EAF7F08E68C7FD7C5",
+      "source": "previews/convenience-store/assets/chips.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "chocolate.glb",
+      "bytes": 100860,
+      "sha256": "D78159A48D310F2C2B3930E0534A39F19EDBDC0D95C70BEDAE029968EE389DD0",
+      "source": "previews/convenience-store/assets/chocolate.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "cold-door.glb",
+      "bytes": 120468,
+      "sha256": "47C40E6C94674F12147ED454482166156B33D1E353E63F95A3FAD7708A56CC36",
+      "source": "previews/convenience-store/assets/cold-door.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "cold-shelf.glb",
+      "bytes": 110668,
+      "sha256": "B7BBDEB38E1371EB098F34BFEFFF0A1FCBE510DEA846C7F2079D99929965A82C",
+      "source": "previews/convenience-store/assets/cold-shelf.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "coldcase.glb",
+      "bytes": 265896,
+      "sha256": "72ADA26CD2D8093C0E0CEA72F7F5870D867E29E9D9538CE2309D85813486E5AA",
+      "source": "previews/convenience-store/assets/coldcase.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "counter.glb",
+      "bytes": 138772,
+      "sha256": "F98E834978CC7B17BFC75EAB69DB6D6434B047F8E6D1C8E73F6DEC551C31D718",
+      "source": "previews/convenience-store/assets/counter.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "delivery-crate.glb",
+      "bytes": 411496,
+      "sha256": "1A9002748253A4913C6256B6B13B896116C172503D37069569F80E2C7E9A9F9D",
+      "source": "previews/convenience-store/assets/delivery-crate.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "detergent.glb",
+      "bytes": 99960,
+      "sha256": "24C1603B470969AF52B2DD26A58EDB212F7E73239528BD5DAD4BBB25FECF5280",
+      "source": "previews/convenience-store/assets/detergent.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "fire-extinguisher.glb",
+      "bytes": 73428,
+      "sha256": "75D75902F8E821139791AEC07E420107F852A9791FEAC0C93C53EF410868CDD5",
+      "source": "previews/convenience-store/assets/fire-extinguisher.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "foodcase.glb",
+      "bytes": 255968,
+      "sha256": "DAAABB9DD8DF5D0923545465C86BB5E99C57C8906C519EFE27C9CE6411BF15E3",
+      "source": "previews/convenience-store/assets/foodcase.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "juice.glb",
+      "bytes": 83884,
+      "sha256": "F148E6FBB792F6AC52B25B5593CEA9E45BC2B3784F58E5B597EEBEEBB95E8296",
+      "source": "previews/convenience-store/assets/juice.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "microwave.glb",
+      "bytes": 134144,
+      "sha256": "D62E55366A4A745C39F8159789C2EEA99C984360C643893F579FA678D62EE216",
+      "source": "previews/convenience-store/assets/microwave.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "noodles-variant-a.glb",
+      "bytes": 128376,
+      "sha256": "081AF15D18929ABF3FF733441C7E2D5A8D26ED4AC9EE7B1E1AEAFAAE8D9C6BBB",
+      "source": "previews/convenience-store/assets/noodles-variant-a.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "noodles-variant-b.glb",
+      "bytes": 113896,
+      "sha256": "91991600469918BC6C38F6A78E757A07ED6A17F0AB66FFBBD3466C3CCDE9D6DF",
+      "source": "previews/convenience-store/assets/noodles-variant-b.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "noodles.glb",
+      "bytes": 122820,
+      "sha256": "CB5CF0F9FD9EDA41E5BB6EB2A07566B062EE9DA81FB8EA04CB46E65E9B9FF830",
+      "source": "previews/convenience-store/assets/noodles.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "onigiri.glb",
+      "bytes": 27708,
+      "sha256": "ED84734135F05D204ADA5C6850F447651C8FD765823EAF801A279214A2B6B46E",
+      "source": "previews/convenience-store/assets/onigiri.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "register.glb",
+      "bytes": 201844,
+      "sha256": "63D9765CC20EDBD496AD02D8B25A3C439F57E814AC24BC798C0B0F8BCD69B8A8",
+      "source": "previews/convenience-store/assets/register.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "sandwich.glb",
+      "bytes": 17028,
+      "sha256": "954DA7F507B2E09B373387A4F65424638A09C91015F09A0D8CD64279C02A92D1",
+      "source": "previews/convenience-store/assets/sandwich.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "shampoo.glb",
+      "bytes": 36264,
+      "sha256": "51EE83F5F0F796E6B4A4B10B98ED68317FED18207B652B8433F8D1599263ED7A",
+      "source": "previews/convenience-store/assets/shampoo.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "shelf.glb",
+      "bytes": 158324,
+      "sha256": "91739E8ADA307B372708EC94E37878D1DB27BD2576FF9BA644432701161365E2",
+      "source": "previews/convenience-store/assets/shelf.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "soda.glb",
+      "bytes": 68704,
+      "sha256": "F1F39B482B9A885C9A8A2BCBC2A0F2DCC7AB5A248F181C3233B44B11A794470D",
+      "source": "previews/convenience-store/assets/soda.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "table.glb",
+      "bytes": 489412,
+      "sha256": "34D2A7467C248A0A484673ABBA727E0B4ADA03FB7BDCECA46990B41EA0E284CE",
+      "source": "previews/convenience-store/assets/table.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "tea-light.glb",
+      "bytes": 83664,
+      "sha256": "FB287779E62ADDD5AF8CE22FBDCE8CDA148785D770F2915C57F761CBF12B0B14",
+      "source": "previews/convenience-store/assets/tea-light.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "tea.glb",
+      "bytes": 95180,
+      "sha256": "FDF8DF635B71467E4082AC2A81EDE4687F633847EE0E04BCAB8BF549020BFC9A",
+      "source": "previews/convenience-store/assets/tea.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "tissue.glb",
+      "bytes": 140980,
+      "sha256": "4DBF8CA6DC6446C3DEC1B6D372668D88976DFEAC1F1076FF440D1E48F2064B8B",
+      "source": "previews/convenience-store/assets/tissue.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "trash.glb",
+      "bytes": 83628,
+      "sha256": "E9FF0C45444EF53F668D9574DC7A1E87B9366D7C3C919F3DC26D094E9ACF0903",
+      "source": "previews/convenience-store/assets/trash.glb",
+      "matchesPreview": true
+    },
+    {
+      "file": "water.glb",
+      "bytes": 92152,
+      "sha256": "5351A816C1DF513844C54B455FF6A5A727C59E84E03A5D4C7AA459B7FA4F40D4",
+      "source": "previews/convenience-store/assets/water.glb",
+      "matchesPreview": true
+    },
+    {
+      "id": "shopper-basket",
+      "file": "shopper-basket.glb",
+      "bytes": 128960,
+      "sha256": "1e6fb2d48937735fc1f71334310b8e7cdac20f034f5ea59063f4ad0582a302e4",
+      "size": [
+        0.38106,
+        0.22564,
+        0.60608
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\03_车站前商业街\\独立物件\\basket_2__25f4f1b310d5.glb",
+      "sourceSceneSHA256": "89b1c76386fb4b18060ec245fd85cc2a31026057060a3543b13f18405a946877",
+      "sourceNodes": [
+        "basket (2)"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 500,
+      "materials": 1,
+      "textures": 1,
+      "venue": "convenience-store",
+      "sourceName": "basket (2)",
+      "sourceFileSHA256": "89b1c76386fb4b18060ec245fd85cc2a31026057060a3543b13f18405a946877"
+    }
+  ],
+  "totalBytes": 7671455
+}

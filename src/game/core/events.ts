@@ -2,7 +2,7 @@
  * 随机事件引擎：条件过滤 + 权重抽签 + 选项结算。
  * 纯逻辑层。剧情事件后续扩展只需补充 events.json（conditions 组合式）。
  */
-import type { GameState, EventDef, EventData, EventConditions, Period } from "../types";
+import type { GameState, EventDef, EventData, EventConditions, Period, EventChoice, Effects } from "../types";
 import { chance, weightedDraw } from "../rng";
 import { applyEffects, collectDeltas, pushLog } from "../engine";
 import type { ResultDelta } from "../types";
@@ -12,30 +12,59 @@ import { periodOfHour } from "./time";
 import { absoluteDay } from "./membership";
 import { difficultyLevel, eventProbability, negativeWeightBoost } from "./difficulty";
 import { hasStatus } from "./statuses";
-import { seasonOf, isWeekend } from "./calendar";
+import { seasonOf, isWeekend, weekdayOf } from "./calendar";
 import { holidayOf } from "./weather";
 import { addContact } from "./contacts";
-import { addItem } from "./items";
+import { recordMoney } from "./weekly"; // v1.43.x：集市特卖扣款计入周记（与 weekly 的依赖环均在函数内访问，ESM 下安全）
+import { addItem, applyItem, getItem } from "./items";
 import { SHOP_CATALOG } from "./shop";
 import { ensureRelationship, addAffinity } from "./relationships";
-import { allNpcs, npcNick, getNpcDef } from "./npcs";
+import { allNpcs, npcNick, getNpcDef, npcAtLocation } from "./npcs";
+import { npcOrdinaryAppearanceUnlocked } from '../data/npcIntroductionProgress';
 import { regionPathOf } from "./regions";
 import { adoptCat } from "./cat";
-import { activePetOf } from "./catCare";
+import { activePetOf, tickCatAutoFeeder } from "./catCare";
 import eventsData from "../data/events.json";
+import { hasLongTermResidence, isResidenceLocation } from "./residence";
 
 export const EVENT_DATA: EventData = eventsData as unknown as EventData;
 export const EVENTS: EventDef[] = EVENT_DATA.events;
 
+/** 未标 tone 的事件按其选项效果补判，覆盖花钱、损失属性和负面风险分支。 */
+export function isNegativeEvent(event: EventDef): boolean {
+  if (event.tone) return event.tone === "negative";
+  return event.choices.some((choice) => {
+    const effect = choice.effects as Effects;
+    const numeric = [effect.money, effect.stamina, effect.health, effect.mood, effect.hygiene,
+      effect.satiety, effect.intelligence, effect.charm, effect.fitness, effect.fame]
+      .some((value) => typeof value === "number" && value < 0);
+    const debtOrStress = (effect.debt ?? 0) > 0 || (effect.stress ?? 0) > 0 || (effect.hours ?? 0) > 0;
+    const skillLoss = Object.values(effect.skills ?? {}).some((value) => typeof value === "number" && value < 0);
+    const gambleLoss = !!choice.gamble && choice.gamble.lose < choice.gamble.cost;
+    return numeric || debtOrStress || skillLoss || gambleLoss;
+  });
+}
+
 /** 检查事件是否满足条件（全部满足才进候选池） */
 export function checkEventConditions(state: GameState, ev: EventDef): boolean {
+  if (ev.mode && ev.mode !== "any" && ev.mode !== state.mode) return false;
   const c = ev.conditions;
+  // 收养猫咪需要有可长期照料它的住所；已有猫咪仍照常触发养成事件。
+  if (ev.choices.some((choice) => !!choice.adoptCat) && !hasLongTermResidence(state)) return false;
+  // v1.43：住处是「安全区」——街头 / 户外类偶发事件不在家触发。
+  // 旧版在家吃饭时也会弹出「捡钱包」「周末零工」，既不合场合，又能反复白拿钱。
+  // 例外：事件显式声明可在家中发生（locationId / locationIn 含 home），或属于节假日事件。
+  if (isResidenceLocation(state)) {
+    const allowsHome = c?.locationId === "home" || (c?.locationIn ?? []).includes("home") || !!c?.holiday;
+    if (!allowsHome) return false;
+  }
   if (!c) return true;
 
-  if (c.locationId && state.locationId !== c.locationId) return false;
+  if (c.locationId && state.locationId !== c.locationId && !(c.locationId === "home" && isResidenceLocation(state))) return false;
 
   // v0.981 多地点过滤：任一命中即可
-  if (c.locationIn && c.locationIn.length > 0 && !c.locationIn.includes(state.locationId ?? "")) return false;
+  if (c.locationIn && c.locationIn.length > 0 && !c.locationIn.includes(state.locationId ?? "")
+    && !(c.locationIn.includes("home") && isResidenceLocation(state))) return false;
 
   // v0.981 区域过滤：按玩家所在二级区的整条区域路径匹配（支持一级区与二级区）
   if (c.region && c.region.length > 0) {
@@ -86,6 +115,8 @@ export function checkEventConditions(state: GameState, ev: EventDef): boolean {
 
   // v1.4 P2 携带猫咪过滤
   if (c.hasActivePet === true && !activePetOf(state)) return false;
+  // v1.42：已拥有任意猫咪后不再出现重复收养类事件；与 activePet 解耦，收起猫咪也算已拥有
+  if (c.hasPet === false && state.pets.some((pet) => !!pet?.catId)) return false;
 
   // 冷却（v0.936：改用绝对日差值，避免跨月 time.day 回绕导致整月不进候选池）
   if (ev.cooldown && ev.cooldown > 0) {
@@ -115,16 +146,28 @@ export function queueEvent(state: GameState, eventId: string): void {
   if (!state.pendingEvents.includes(eventId)) state.pendingEvents.push(eventId);
 }
 
+/** v1.43：两次随机事件之间的最小游戏时间间隔（分钟）。只约束随机抽取，不影响强制剧情事件。 */
+export const RANDOM_EVENT_MIN_GAP_MINUTES = 90;
+
 export function rollEvent(state: GameState, probability = eventProbability(state)): EventDef | null {
   // v0.981 剧情强制事件优先（绕过概率与条件），弹出即消费
   while (state.pendingEvents && state.pendingEvents.length > 0) {
     const id = state.pendingEvents.shift()!;
     const forced = EVENTS.find((e) => e.id === id);
     if (forced) {
+      state.flags["last_random_event_minute"] = absoluteDay(state.time) * 1440 + state.time.hour * 60 + state.time.minute;
       onEventTriggered(state, forced.id); // v0.985 命运之轮：不同事件去重累计
       return forced;
     }
   }
+  // v1.43：随机事件之间至少间隔 90 分钟游戏时间。
+  // 旧版每次行动 / 吃饭 / 看手机都会独立掷点，一天能连出好几个事件，体感是「弹窗刷屏」。
+  const nowMinute = absoluteDay(state.time) * 1440 + state.time.hour * 60 + state.time.minute;
+  const lastMinute = typeof state.flags["last_random_event_minute"] === "number"
+    ? (state.flags["last_random_event_minute"] as number)
+    : Number.NEGATIVE_INFINITY;
+  if (nowMinute - lastMinute < RANDOM_EVENT_MIN_GAP_MINUTES) return null;
+
   if (!chance(state.rng, probability)) return null;
   const pool = EVENTS.filter((e) => checkEventConditions(state, e));
   if (pool.length === 0) return null;
@@ -134,10 +177,13 @@ export function rollEvent(state: GameState, probability = eventProbability(state
   if (hasStatus(state, "unlucky")) boost *= 1.5;
   const weighted = pool.map((e) => ({
     item: e,
-    weight: e.tone === "negative" ? e.weight * boost : e.weight,
+    weight: isNegativeEvent(e) ? e.weight * boost : e.weight,
   }));
   const drawn = weightedDraw(state.rng, weighted);
-  if (drawn) onEventTriggered(state, drawn.id); // v0.985 命运之轮：不同事件去重累计
+  if (drawn) {
+    state.flags["last_random_event_minute"] = nowMinute;
+    onEventTriggered(state, drawn.id); // v0.985 命运之轮：不同事件去重累计
+  }
   return drawn;
 }
 
@@ -151,6 +197,9 @@ export function applyEventChoice(
   if (!ev) return { ok: false, reason: "未知事件" };
   const choice = ev.choices[choiceIdx];
   if (!choice) return { ok: false, reason: "未知选项" };
+  if (choice.adoptCat && !hasLongTermResidence(state)) {
+    return { ok: false, reason: "先有自己的出租屋或产权住房，再把猫咪接回家吧" };
+  }
 
   const check = checkRequirements(state, choice.requires);
   if (!check.ok) return { ok: false, reason: check.reason };
@@ -163,6 +212,7 @@ export function applyEventChoice(
     if (!deal || price <= 0) return { ok: false, reason: "你走近一看，特卖摊已经收了" };
     if (state.player.money < price) return { ok: false, reason: `现金不够（需 ${price} 元），只好放回去了` };
     state.player.money -= price;
+    recordMoney(state, -price); // 周记：集市特卖计入支出
     addItem(state, deal.id, 1);
     pushLog(state, deal.icon, `集市特卖：七五折 ¥${price} 淘到「${deal.name}」`);
     // 消费后清掉 flags，防止重复购买同一单
@@ -188,6 +238,17 @@ export function applyEventChoice(
   }
 
   applyEffects(state, eff, ev.icon);
+  // v1.45：场景奖励服装/物品在效果结算后一次性入包，事件 JSON 不直接承担背包逻辑。
+  if (choice.items) {
+    for (const [itemId, quantity] of Object.entries(choice.items)) {
+      const item = getItem(itemId);
+      const count = Math.floor(Number(quantity));
+      if (!item || !Number.isFinite(count) || count <= 0) continue;
+      addItem(state, itemId, count);
+      applyItem(state, itemId);
+      pushLog(state, item.icon, `获得「${item.name}」×${count}`);
+    }
+  }
   // v0.978：选择触发新增联系人（幂等；内部发欢迎短信 + onAdd 效果）
   if (choice.addContact) addContact(state, choice.addContact);
   // v1.01：选择触发结识 NPC（具体 id 或 "any" = 随机结识当前地点常驻的未认识 NPC）
@@ -214,6 +275,8 @@ export function applyEventChoice(
       if (choice.catEffect.hygiene) pet.care.hygiene = clamp(pet.care.hygiene + choice.catEffect.hygiene);
     }
   }
+  // 事件选项也可能降低猫咪饱食度；在状态变更后立即检查已安装的自动喂食机。
+  for (const msg of tickCatAutoFeeder(state)) pushLog(state, "🤖", msg);
   // 冷却/一次性标记（v0.936：存绝对日，配合冷却比较）
   if (ev.cooldown && ev.cooldown > 0) {
     state.flags[`ev_${ev.id}_last`] = absoluteDay(state.time);
@@ -234,9 +297,10 @@ export function applyEventChoice(
 function meetNpcByEvent(state: GameState, ref: string): string | null {
   let npcId = ref;
   if (ref === "any") {
+    const time = { ...state.time, seed: state.rng.seed, weekday: weekdayOf(state.time), hour: state.time.hour, minute: state.time.minute, regionId: state.region };
     const here = allNpcs().filter(
       (n) =>
-        n.meetLocation === state.locationId &&
+        npcOrdinaryAppearanceUnlocked(state, n.id) && npcAtLocation(n, state.locationId, time) &&
         !state.relationships.some((r) => r.npcId === n.id) &&
         !n.meetConditions?.requireEmployed,
     );
@@ -247,7 +311,7 @@ function meetNpcByEvent(state: GameState, ref: string): string | null {
   }
   if (state.relationships.some((r) => r.npcId === npcId)) return null; // 已认识
   const def = getNpcDef(npcId);
-  if (!def) return null;
+  if (!def || !npcOrdinaryAppearanceUnlocked(state, npcId)) return null;
   ensureRelationship(state, npcId);
   addAffinity(state, npcId, 3, "event");
   return def.metText ?? `机缘之下，你结识了${npcNick(npcId)}`;
@@ -257,6 +321,49 @@ function getAttrValue(state: GameState, key: string): number {
   const attrs = state.player.attrs as unknown as Record<string, number>;
   const stats = state.player.stats as unknown as Record<string, number>;
   return attrs[key] ?? stats[key] ?? 0;
+}
+
+/**
+ * v1.43 修复：事件选项净效果预览（纯函数，便于测试 / UI 风险提示使用）。
+ * 把金钱与主要生存属性（饱食 / 精力 / 心情 / 健康 / 干净）按符号加权求和，
+ * 得到一个「综合分」：
+ *  - 净效果为负 → 该选项大概率坑人（如花钱买罪受、白送钱还掉属性），UI 提示「⚠ 有风险」
+ *  - 净效果为正 → 稳妥（可给玩家一个克制的「＋」暗示，也可不显示以保持探索感）
+ *  - 含运气选项（gamble）时按「期望收益」估算（成本 + 期望输赢），因为结果随机不暴露具体数值
+ * 设计取舍：生存属性权重高于金钱，避免「花 10 元换 5 点心情」这类公平交易被误判为风险。
+ */
+export interface ChoiceNetEffect {
+  /** 净金钱变化（含 gamble 期望值） */
+  money: number;
+  /** 加权后的生存属性净变化 */
+  attrs: number;
+  /** 综合分 = money + attrs */
+  net: number;
+  tone: "positive" | "negative" | "neutral";
+}
+
+/** 参与净效果的主要生存属性（与任务1三项核心数值一致） */
+const NET_ATTR_KEYS = ["satiety", "stamina", "mood", "health", "hygiene"] as const;
+/** 每个生存属性点折合的分值（>1 让小额消费不被误判为风险） */
+const NET_ATTR_WEIGHT = 3;
+
+export function eventChoiceNetEffect(choice: EventChoice): ChoiceNetEffect {
+  const eff = choice.effects ?? {};
+  let money = typeof eff.money === "number" ? eff.money : 0;
+  let attrs = 0;
+  const rec = eff as unknown as Record<string, number | undefined>;
+  for (const k of NET_ATTR_KEYS) {
+    const v = rec[k];
+    if (typeof v === "number") attrs += v * NET_ATTR_WEIGHT;
+  }
+  if (choice.gamble) {
+    const g = choice.gamble;
+    const expected = g.win * g.winChance + g.lose * (1 - g.winChance) - g.cost;
+    money += expected;
+  }
+  const net = Math.round((money + attrs) * 100) / 100;
+  const tone: ChoiceNetEffect["tone"] = net < 0 ? "negative" : net > 0 ? "positive" : "neutral";
+  return { money: Math.round(money * 100) / 100, attrs: Math.round(attrs * 100) / 100, net, tone };
 }
 
 export type { EventConditions, Period };

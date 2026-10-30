@@ -4,8 +4,16 @@ import { equipItem, unequipItem, isEquipped, equipBonus } from "../src/game/core
 import { addItem } from "../src/game/core/items";
 import { performAction, canPerform } from "../src/game/core/actions";
 import { getAction } from "../src/game/core/actions";
+import { canUseCookingWorkbench, cookFreeform, selectKnownRecipeIngredients } from "../src/game/core/cooking";
+import { setActionLocation } from "./helpers/actionLocation";
 
 describe("v0.95 装备系统", () => {
+  it("新档开局默认穿上青色外套", () => {
+    const s = createInitialState();
+    expect(s.inventory).toMatchObject({ white_vest: 1, cyan_jacket: 1, black_pants: 1 });
+    expect(s.equipped).toMatchObject({ clothes: "cyan_jacket", pants: "black_pants" });
+  });
+
   it("装备衬衫：魅力 +2、置 flag", () => {
     const s = createInitialState();
     addItem(s, "shirt");
@@ -42,16 +50,34 @@ describe("v0.95 装备系统", () => {
     expect(equipBonus(s).charm).toBe(5);
   });
 
-  it("卸下撤销加成", () => {
+  it("属性接近上限时穿脱装备只撤销实际加成，不会永久丢属性", () => {
+    const s = createInitialState();
+    s.player.stats.charm = 99;
+    addItem(s, "suit");
+
+    expect(equipItem(s, "suit").ok).toBe(true);
+    expect(s.player.stats.charm).toBe(100);
+    expect(unequipItem(s, "clothes").ok).toBe(true);
+    expect(s.player.stats.charm).toBe(99);
+
+    // 重复穿脱不会累积误差，也仍然遵守属性 0–100 上限。
+    for (let i = 0; i < 5; i += 1) {
+      equipItem(s, "suit");
+      unequipItem(s, "clothes");
+    }
+    expect(s.player.stats.charm).toBe(99);
+  });
+
+  it("家具自动使用，拒绝卸下且不重复增加加成", () => {
     const s = createInitialState();
     addItem(s, "lamp");
     equipItem(s, "lamp");
     const afterEquip = s.player.attrs.mood;
     expect(afterEquip).toBeGreaterThan(70); // 初始 mood 70 + 2
     const r = unequipItem(s, "furniture");
-    expect(r.ok).toBe(true);
-    expect(s.player.attrs.mood).toBe(afterEquip - 2);
-    expect(isEquipped(s, "lamp")).toBe(false);
+    expect(r.ok).toBe(false);
+    expect(s.player.attrs.mood).toBe(afterEquip);
+    expect(isEquipped(s, "lamp")).toBe(true);
   });
 
   it("多槽位互不影响（衣服+家具加成叠加）", () => {
@@ -71,6 +97,7 @@ describe("v0.95 物品购买与解锁", () => {
     const s = createInitialState();
     s.player.money = 10000;
     s.time = { ...s.time, hour: 12, minute: 0 }; // 名牌店 10-22 点
+    setActionLocation(s, "buy_suit");
     const r = performAction(s, "buy_suit");
     expect(r.ok).toBe(true);
     expect(s.inventory["suit"]).toBe(1);
@@ -81,6 +108,7 @@ describe("v0.95 物品购买与解锁", () => {
     const s = createInitialState();
     s.player.money = 30000;
     s.time = { ...s.time, hour: 12, minute: 0 };
+    setActionLocation(s, "buy_luxury_watch");
     const mood0 = s.player.attrs.mood;
     const r = performAction(s, "buy_luxury_watch");
     expect(r.ok).toBe(true);
@@ -88,21 +116,24 @@ describe("v0.95 物品购买与解锁", () => {
     expect(s.economy.ownedLuxury).toContain("luxury_watch");
   });
 
-  it("买厨具解锁煎牛排行动（flag 门槛）", () => {
+  it("买厨具后可通过正式烹饪工作台制作已知的牛排", () => {
     const s = createInitialState();
     s.player.money = 10000;
     s.time = { ...s.time, hour: 12, minute: 0 };
     s.living = { mode: "lease", govDaysLeft: 0, nightly: null, lease: { housingId: "old_apartment", rent: 1000, rentGrowthCount: 0 } }; // 月租房有灶台
-    const action = getAction("cook_steak_home")!;
-    // 未买厨具前，行动需求不满足
-    expect(canPerform(s, action).ok).toBe(false);
+    expect(canUseCookingWorkbench(s).ok).toBe(false);
+    setActionLocation(s, "buy_kitchen_set");
     const r = performAction(s, "buy_kitchen_set");
     expect(r.ok).toBe(true);
     expect(s.flags["item_kitchen_set"]).toBe(true);
-    // 厨具后补足食材与厨艺 → 可执行（canCook 校验：食材 ×1 + 厨艺 2 + 灶台）
-    s.inventory["meat"] = 1;
+    s.inventory.beef = 1;
+    s.inventory.salt = 1;
     s.player.skills.cooking = 2;
-    expect(canPerform(s, action).ok).toBe(true);
+    s.cooking.unlockedRecipeIds.push('dish_steak');
+    expect(canUseCookingWorkbench(s).ok).toBe(true);
+    const selection = selectKnownRecipeIngredients(s, 'dish_steak');
+    expect(selection.ok).toBe(true);
+    expect(cookFreeform(s, selection.ingredients, selection.seasonings, 'dish_steak').recipe?.id).toBe('dish_steak');
   });
 
   it("买家用健身器材解锁在家锻炼", () => {
@@ -110,9 +141,12 @@ describe("v0.95 物品购买与解锁", () => {
     s.player.money = 10000;
     s.time = { ...s.time, hour: 12, minute: 0 };
     const action = getAction("exercise_home_equip")!;
+    setActionLocation(s, action.id);
     expect(canPerform(s, action).ok).toBe(false);
+    setActionLocation(s, "buy_gym_equipment");
     performAction(s, "buy_gym_equipment");
     expect(s.flags["item_gym_equipment"]).toBe(true);
+    setActionLocation(s, action.id);
     expect(canPerform(s, action).ok).toBe(true);
   });
 });

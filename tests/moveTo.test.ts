@@ -1,11 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
-import { moveTo, exitLocation, travelHours, travelLabel, getLocation } from "../src/game/core/actions";
+import { moveTo, exitLocation, locationAvailabilityAtArrival, travelHours, travelLabel, getLocation } from "../src/game/core/actions";
+import { advanceHours } from "../src/game/core/time";
 import { locationsOfRegion } from "../src/game/core/regions";
 import { adoptCat } from "../src/game/core/cat";
 import { setActivePet } from "../src/game/core/catCare";
 
 describe("moveTo 区域入口", () => {
+  it("开局住处带完整三级导航路径", () => {
+    const s = createInitialState();
+    expect(s.locationId).toBe("home");
+    expect(s.navStack).toEqual(["map", "downtown", "downtown_residential"]);
+  });
+
   it("moveTo(downtown) 进入市区", () => {
     const s = createInitialState();
     s.time.hour = 12;
@@ -19,50 +26,56 @@ describe("moveTo 区域入口", () => {
   it("moveTo(suburb) 进入郊区（v0.98 已开放）", () => {
     const s = createInitialState();
     s.time.hour = 12;
+    s.flags.item_car = true;
     const r = moveTo(s, "suburb");
     expect(r.ok).toBe(true);
     expect(s.locationId).toBe("map");
-    expect(s.region).toBe("suburb");
-    expect(s.navStack).toEqual(["map", "suburb"]);
+    expect(s.region).toBe("suburban_edge");
+    expect(s.navStack).toEqual(["map", "suburb", "suburban_edge"]);
   });
 
   it("郊区二级导航：进入城市边缘显示其地点（游乐场/环湖公园/教堂/寺庙）", () => {
     const s = createInitialState();
     s.time.hour = 12;
+    s.flags.item_car = true;
     expect(moveTo(s, "suburb").ok).toBe(true);
     expect(moveTo(s, "suburban_edge").ok).toBe(true);
     expect(s.region).toBe("suburban_edge");
     expect(s.navStack).toEqual(["map", "suburb", "suburban_edge"]);
-    expect(locationsOfRegion("suburban_edge").length).toBe(4);
+    expect(locationsOfRegion("suburban_edge").map((loc) => loc.id)).toEqual(expect.arrayContaining(["temple", "suburb_room"]));
   });
 
   it("农村地带含农场/牧场/果园三地点", () => {
     const s = createInitialState();
     s.time.hour = 12;
+    s.flags.item_car = true;
     expect(moveTo(s, "suburb").ok).toBe(true);
     expect(moveTo(s, "rural").ok).toBe(true);
     expect(locationsOfRegion("rural").length).toBe(3);
   });
 
-  it("moveTo(downtown_station) 火车站区锁定", () => {
+  it("moveTo(downtown_station) 老城区直接开放", () => {
     const s = createInitialState();
+    s.time.hour = 12;
     const r = moveTo(s, "downtown_station");
-    expect(r.ok).toBe(false);
+    expect(r.ok).toBe(true);
+    expect(s.region).toBe("downtown_station");
   });
 });
 
 describe("moveTo 地点入口", () => {
-  it("锁定地点拒绝", () => {
+  it("车站地点可直接进入，乘车时再检票购票", () => {
     const s = createInitialState();
     s.time.hour = 12;
     const r = moveTo(s, "high_speed_rail");
-    expect(r.ok).toBe(false);
-    expect(r.reason).toContain("暂未开放");
+    expect(r.ok).toBe(true);
+    expect(s.locationId).toBe("high_speed_rail");
   });
 
   it("游乐场已开放可进入（P1-14：修复误锁导致内容不可达）", () => {
     const s = createInitialState();
     s.time.hour = 12;
+    s.flags.item_car = true;
     expect(moveTo(s, "suburb").ok).toBe(true);
     expect(moveTo(s, "suburban_edge").ok).toBe(true);
     const r = moveTo(s, "amusement_park");
@@ -78,7 +91,7 @@ describe("moveTo 地点入口", () => {
     expect(r.reason).toContain("打烊");
   });
 
-  it("moveTo 进入地点：region=来源区、navStack 清空", () => {
+  it("moveTo 进入地点：region=来源区并保留完整导航栈", () => {
     const s = createInitialState();
     s.time.hour = 12;
     moveTo(s, "downtown_center"); // 进入区域视图
@@ -86,16 +99,27 @@ describe("moveTo 地点入口", () => {
     expect(r.ok).toBe(true);
     expect(s.locationId).toBe("library");
     expect(s.region).toBe("downtown_center");
-    expect(s.navStack).toEqual([]);
+    expect(s.navStack).toEqual(["map", "downtown", "downtown_center"]);
   });
 
-  it("moveTo(map) 复位主地图", () => {
+  it("去图书馆的通勤不计入学习时长，抵达后在馆清醒才计入", () => {
+    const s = createInitialState();
+    s.time.hour = 10;
+    expect(moveTo(s, "library").ok).toBe(true);
+    expect(s.locationId).toBe("library");
+    expect(s.counters.libraryStudyHours).toBe(0);
+
+    advanceHours(s, 1);
+    expect(s.counters.libraryStudyHours).toBe(1);
+  });
+
+  it("moveTo(map) 回到当前城市一级地图（v1.43）", () => {
     const s = createInitialState();
     moveTo(s, "downtown_center");
     moveTo(s, "map");
     expect(s.locationId).toBe("map");
-    expect(s.region).toBeUndefined();
-    expect(s.navStack).toEqual(["map"]);
+    expect(s.region).toBe("downtown");
+    expect(s.navStack).toEqual(["map", "downtown"]);
   });
 });
 
@@ -110,7 +134,7 @@ describe("exitLocation（出门按钮）", () => {
     expect(s.region).toBe("downtown_center");
   });
 
-  it("无 region 地点态回主地图", () => {
+  it("无 region 地点态回主地图（按地点归属城市兜底，v1.43）", () => {
     const s = createInitialState();
     // 手动模拟无 region 地点（实际不会发生但兜底）
     s.locationId = "home";
@@ -118,7 +142,9 @@ describe("exitLocation（出门按钮）", () => {
     s.navStack = [];
     const r = exitLocation(s);
     expect(r.ok).toBe(true);
-    expect(s.region).toBeUndefined();
+    // home 归属 downtown_residential → 回到市区一级，而非清空
+    expect(s.region).toBe("downtown");
+    expect(s.navStack).toEqual(["map", "downtown"]);
   });
 
   it("在地图态拒绝", () => {
@@ -158,6 +184,25 @@ describe("moveTo 跨区同 id", () => {
   });
 });
 describe("通行时间（v0.93）", () => {
+  it("地图营业状态按预计抵达时间判定，清晨步行抵达可提前候场", () => {
+    const s = createInitialState(906);
+    s.region = "downtown_industrial";
+    s.area = "downtown_industrial";
+    s.time.hour = 4;
+    s.time.minute = 0;
+    s.weather.id = "sunny";
+    const library = getLocation("library")!;
+
+    const availability = locationAvailabilityAtArrival(s, library);
+    expect(travelHours(s, library)).toBe(1); // 地铁 05:00 才运营，当前只能步行
+    expect(availability.arrivalHour).toBe(5);
+    expect(availability.open).toBe(false);
+    expect(availability.phase).toBe("before");
+    expect(availability.early).toBe(true); // 距 07:00 开门两小时，地图入口应保持可点
+    expect(availability.closedText).toContain("7:00 开门");
+    expect(moveTo(s, "library").ok).toBe(true);
+  });
+
   it("v0.975：同区 0h / 跨区 0.5h（地铁）/ 主地图态按物理 area 回退", () => {
     const s = createInitialState();
     const cafe = getLocation("cafe")!; // downtown_center + downtown_residential

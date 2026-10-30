@@ -188,6 +188,17 @@
     "temple_volunteer": "temple",
     "temple_vegetarian": "temple",
     "church_mass": "church",
-    "church_confession": "church"
+    "church_confession": "church",
+    "job_convenience_clerk": "retail",
+    "job_netbar_admin": "service",
+    "job_training_assistant": "fitness",
+    "job_delivery_fulltime": "delivery",
+    "job_school_tutor": "service",
+    "job_boyue_cafe_staff": "cafe",
+    "job_boyue_convenience_clerk": "retail",
+    "job_boyue_waiter_fast": "cafe",
+    "job_boyue_waiter_west": "restaurant",
+    "job_boyue_netbar_admin": "service",
+    "job_boyue_bartender": "restaurant"
   }
 }

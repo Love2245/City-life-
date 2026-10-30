@@ -1,8 +1,9 @@
 <script lang="ts">
   import { showToast, uiState } from "../../stores/uiStore.svelte";
-  import { getRegion } from "../../game/core/regions";
-  import { travelLabel } from "../../game/core/actions";
-  import { playSound } from "../../lib/audio";
+  import { childrenOf, getRegion,isRegionUnlocked,regionLockReason } from "../../game/core/regions";
+  import {gameState} from '../../stores/gameStore.svelte';
+  import { type WaitOption } from "../../game/core/actions";
+  import MapAtlas from "./MapAtlas.svelte";
   type MapItem = {
     id: string;
     name: string;
@@ -13,6 +14,7 @@
     /** 预计通行时间（小时） */
     travelHours: number;
     travelText?: string;
+    schedule?: string;
     /** v0.935 还没开门（区别于已打烊） */
     notYetOpen?: boolean;
     /** v0.935 允许提前到达候场（开门前 2h 内） */
@@ -20,18 +22,40 @@
     /** v0.935 打烊/未开门的说明文案 */
     closedText?: string;
   };
+  type BreadcrumbItem = { id: string; label: string; icon: string };
 
   let {
     regionId,
     items,
     onSelect,
+    onReady,
+    showBack = false,
+    showHome = false,
+    onBack,
+    onHome,
+    breadcrumbs = [],
+    onCrumb,
+    waitItems = [],
+    onWait,
   }: {
     regionId: string;
     items: MapItem[];
     onSelect: (id: string) => void;
+    onReady?: () => void;
+    showBack?: boolean;
+    showHome?: boolean;
+    onBack?: () => void;
+    onHome?: () => void;
+    breadcrumbs?: BreadcrumbItem[];
+    onCrumb?: (index: number) => void;
+    waitItems?: WaitOption[];
+    onWait?: (hours: number) => void;
   } = $props();
 
   const region = $derived(getRegion(regionId));
+  const homeLabel = $derived(
+    region?.parent ? `🗺️ 回${getRegion(region.parent)?.name ?? "上一级"}` : "🗺️ 回主地图",
+  );
   // v1.3b5：玻璃强度扩为 4 档（low=最透 / medium=轻玻璃 / high=平衡 / dark=深蓝近实色）。
   // 直接给出完整渐变背景，绑定到 style:background；「低」为最透，解决「玻璃不透光」反馈。
   const GLASS_BG: Record<string, string> = {
@@ -44,7 +68,9 @@
 
   function click(item: MapItem): void {
     if (item.locked) {
-      showToast("暂未开放，下次更新推出");
+      // 与悬停 hint 同源：锁定地点各有真实门禁原因（任务未解锁/时间未到），
+      // 硬编码"暂未开放，下次更新推出"会误导玩家去等更新。
+      showToast(item.closedText ?? "暂未开放，下次更新推出");
       return;
     }
     // v0.935：开门前 2h 内允许提前过去候场，其余情况才拦
@@ -52,51 +78,51 @@
       showToast(item.closedText ?? "已打烊");
       return;
     }
-    playSound("walk");
     onSelect(item.id);
+  }
+  const portals = $derived([
+    ...childrenOf(regionId).map((child) => ({ id: child.id, name: child.id === "mall_interior" ? "商场主入口" : child.name, description: child.desc, hint: !isRegionUnlocked(gameState,child)?regionLockReason(gameState,child):child.id === "downtown_commercial" ? "沿图书馆北侧前往" : `进入${child.name}`,status:!isRegionUnlocked(gameState,child)?'locked' as const:'open' as const,disabledReason:!isRegionUnlocked(gameState,child)?regionLockReason(gameState,child):undefined })),
+    ...(regionId.startsWith('campus_')?[{id:region!.parent!,name:'返回大学城',description:'沿校门返回大学城',hint:'大学城方向'}]:[]),
+    ...(regionId === "mall_interior" ? [{ id: "downtown_mall", name: "商场出口", description: "返回商场外街区", hint: "走出商场" }] : []),
+    ...(regionId === "downtown_commercial" ? [{ id: "downtown_center", name: "返回市中心", description: "沿图书馆前的道路返回市中心", hint: "图书馆方向" }] : []),
+  ]);
+  const atlasItems = $derived([...portals, ...items.map((item) => ({
+    ...item,
+    // 锁定标牌突出显示门禁原因，不再用“即刻到达”覆盖它；锁定地点也不显示营业时间。
+    hint: item.locked ? item.closedText : item.travelText,
+    schedule: item.locked ? undefined : item.schedule,
+    status: item.locked ? "locked" as const : item.closed && !item.early ? "closed" as const : item.early ? "early" as const : "open" as const,
+    disabledReason: item.closedText,
+  }))]);
+  function clickById(id: string): void {
+    if (portals.some((portal) => portal.id === id)) {
+      onSelect(id);
+      return;
+    }
+    const item = items.find((candidate) => candidate.id === id);
+    if (item) click(item);
   }
 </script>
 
 <div class="region-view hud-scope" style:background={glassBg}>
-  <div class="head">
-    <div class="title">{region?.icon ?? "🗺️"} {region?.name ?? "区域"}</div>
-    <div class="hint dim">{region?.desc ?? ""}</div>
-  </div>
-
-  <div class="grid">
-    {#each items as item (item.id)}
-      <button
-        class="card"
-        class:locked={item.locked}
-        class:closed={item.closed && !item.early}
-        class:early={item.early}
-        onclick={() => click(item)}
-        disabled={item.locked || (item.closed && !item.early)}
-        title={item.closedText ?? ""}
-      >
-        <span class="gi-emoji" style="font-size:52px;line-height:1">{item.icon}</span>
-        <span class="name">{item.name}</span>
-        <span class="travel">{item.travelText ?? travelLabel(item.travelHours)}</span>
-        {#if item.locked}<span class="badge lock">🔒 暂未开放</span>
-        {:else if item.early}<span class="badge early">⏳ 可提前候场</span>
-        {:else if item.notYetOpen}<span class="badge closed">🌙 未开门</span>
-        {:else if item.closed}<span class="badge closed">🔒 打烊</span>
-        {/if}
-      </button>
-    {/each}
-    {#if items.length === 0}
-      <div class="empty dim">该区域暂无地点</div>
-    {/if}
-  </div>
-
-  <div class="legend">
-    <span class="lg-item">🟡 营业中可前往</span>
-    <span class="lg-item">⏳ 未开门但可提前到达等候</span>
-    <span class="lg-item">🔒 锁定 / 打烊</span>
-  </div>
+  <MapAtlas mapId={regionId} title={region?.name ?? "区域"} subtitle={region?.desc ?? "选择目的地"} items={atlasItems} onSelect={clickById} {onReady} waitItems={waitItems} onWait={onWait}>
+    {#snippet navigation()}
+      <nav class="city-atlas-navigation" aria-label="地图路径">
+        {#each breadcrumbs as crumb, index}
+          <button class:last={index === breadcrumbs.length - 1} onclick={() => onCrumb?.(index)}>{crumb.icon} {crumb.label}</button>
+        {/each}
+        {#if showBack && onBack}<button onclick={onBack}>← 返回上一级</button>{/if}
+        {#if showHome && onHome}<button onclick={onHome}>{homeLabel}</button>{/if}
+      </nav>
+    {/snippet}
+  </MapAtlas>
 </div>
 
 <style>
+  .city-atlas-navigation { display:flex; justify-content:flex-start; flex-wrap:nowrap; gap:5px; width:max-content; min-width:100%; }
+  .city-atlas-navigation button { min-height:36px; padding:5px 9px; border:1px solid #d3c39a66; border-radius:6px; background:#18231ee0; color:#fff0c9; font:inherit; font-size:11px; cursor:pointer; }
+  .city-atlas-navigation button.last { color:#bdf5dd; border-color:#8bd1b366; }
+  .city-atlas-navigation button:hover,.city-atlas-navigation button:focus-visible { background:#514c39; outline:2px solid #e5c783; outline-offset:1px; }
   .region-view {
     position: relative;
     flex: 1;
@@ -111,134 +137,7 @@
     -webkit-backdrop-filter: blur(10px) saturate(1.08);
     border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    /* v1.3b4：进入三级地点时轻量入场，强化「过场」观感 */
-    animation: viewEnter 0.34s cubic-bezier(0.22, 1, 0.36, 1);
     /* v0.91：地图文字统一加深色描边 */
     text-shadow: var(--text-shadow, 0 1px 2px rgba(0, 0, 0, 0.45));
-  }
-  @keyframes viewEnter {
-    from { opacity: 0; transform: translateY(10px) scale(0.99); }
-    to { opacity: 1; transform: none; }
-  }
-  .head {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 4px 0;
-  }
-  .title {
-    font-size: 22px;
-    font-weight: 800;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
-    letter-spacing: 1px;
-  }
-  .hint {
-    font-size: 12.5px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  /* 每行最多 5 个：市中心设施多，单行排列太挤 */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-  }
-  /* 场景区宽度随左右侧栏折叠而变，用容器查询逐级降档 */
-  @container (max-width: 820px) {
-    .grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-  }
-  @container (max-width: 660px) {
-    .grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  @container (max-width: 480px) {
-    .grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  .card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 18px 12px;
-    border-radius: 14px;
-    background: rgba(10, 18, 36, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    backdrop-filter: blur(12px) saturate(1.1);
-    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-    text-align: center;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-  }
-  .card:hover:not(:disabled) {
-    transform: translateY(-2px);
-    border-color: var(--accent, #ffd166);
-    background: rgba(255, 209, 102, 0.16);
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-  }
-  .card:disabled {
-    cursor: not-allowed;
-  }
-  .card.locked,
-  .card.closed {
-    opacity: 0.5;
-    background: rgba(255, 255, 255, 0.04);
-  }
-  .icon {
-    font-size: 36px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-  }
-  .name {
-    font-size: 13.5px;
-    font-weight: 700;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  .travel {
-    font-size: 10.5px;
-    opacity: 0.72;
-    letter-spacing: 0.2px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  .badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    margin-top: 2px;
-  }
-  .badge.lock {
-    background: rgba(255, 107, 107, 0.2);
-    color: #ff6b6b;
-  }
-  .badge.closed {
-    background: rgba(108, 198, 255, 0.18);
-    color: #6cc6ff;
-  }
-  /* v0.935 提前候场：可点，但视觉上弱于营业中 */
-  .badge.early {
-    background: rgba(255, 209, 102, 0.2);
-    color: #ffd166;
-  }
-  .card.early {
-    opacity: 0.82;
-    border-style: dashed;
-  }
-  .empty {
-    padding: 30px;
-    text-align: center;
-    font-size: 14px;
-  }
-  .legend {
-    display: flex;
-    gap: 16px;
-    font-size: 11.5px;
-    color: rgba(255, 255, 255, 0.75);
-    padding-top: 8px;
-  }
-  .dim {
-    color: rgba(255, 255, 255, 0.65);
   }
 </style>

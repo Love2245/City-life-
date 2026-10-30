@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { migrateSave, SAVE_VERSION } from "../src/game/core/migrate";
-import { gameDay } from "../src/game/core/calendar";
+import { fromLinearDay, gameDay, linearDay } from "../src/game/core/calendar";
 import {
   TAROT_CARDS,
   tarotCard,
@@ -49,6 +49,14 @@ describe("塔罗牌组：数据完整性", () => {
     expect(TAROT_CARDS[0].name).toBe("愚者");
     expect(TAROT_CARDS[21].name).toBe("世界");
   });
+
+  it("战车：完成后被重置到0%的项目仍凭持久完成标记解锁", () => {
+    const s = createInitialState();
+    s.career.projects.indie_game = 0;
+    s.flags.project_completed_indie_game = true;
+    expect(evaluateTarot(s)).toContain(7);
+    expect(s.tarot.unlocked).toContain(7);
+  });
 });
 
 describe("塔罗牌组：初始状态", () => {
@@ -62,7 +70,7 @@ describe("塔罗牌组：初始状态", () => {
 
   it("存档版本与 SAVE_VERSION 一致", () => {
     expect(createInitialState().version).toBe(SAVE_VERSION);
-    expect(SAVE_VERSION).toBe(26);
+    expect(SAVE_VERSION).toBe(38);
   });
 });
 
@@ -160,7 +168,9 @@ describe("每日结算 tickTarotDaily：连续天数计数器", () => {
 
   it("皇帝：有工作 + 当天上过班 + 未迟到才累加；迟到断链并清标记", () => {
     const s = createInitialState();
-    s.career.jobId = "factory";
+    Object.assign(s.time, fromLinearDay(linearDay(s.time) + 2)); // 周一，仓储岗位应出勤
+    s.career.jobId = "job_warehouse";
+    s.career.firstShiftDay = gameDay(s.time) - 1;
     s.career.lastWorkDay = gameDay(s.time);
     tickTarotDaily(s);
     expect(s.counters.emperorStreak).toBe(1);
@@ -178,8 +188,35 @@ describe("每日结算 tickTarotDaily：连续天数计数器", () => {
     tickTarotDaily(s);
     expect(s.counters.emperorStreak).toBe(0);
 
-    s.career.jobId = "factory";
+    Object.assign(s.time, fromLinearDay(linearDay(s.time) + 2)); // 周一，应出勤
+    s.career.jobId = "job_warehouse";
+    s.career.firstShiftDay = gameDay(s.time) - 7;
     s.career.lastWorkDay = gameDay(s.time) - 3; // 今天没去
+    tickTarotDaily(s);
+    expect(s.counters.emperorStreak).toBe(0);
+  });
+
+  it("皇帝：合法休息日计入连胜，并可连续累计30个日历日", () => {
+    const s = createInitialState();
+    s.career.jobId = "job_warehouse"; // 未配置 restDays 的岗位按每周六休息
+    s.career.firstShiftDay = gameDay(s.time) - 1;
+    s.player.skills.management = 5;
+    for (let i = 0; i < 30; i++) {
+      if (i > 0) Object.assign(s.time, fromLinearDay(linearDay(s.time) + 1));
+      const day = gameDay(s.time);
+      const saturday = (((linearDay(s.time) % 7) + 3) % 7 + 7) % 7 === 5;
+      if (!saturday) s.career.lastWorkDay = day;
+      tickTarotDaily(s);
+    }
+    expect(s.counters.emperorStreak).toBe(30);
+    expect(s.tarot.unlocked).toContain(4);
+  });
+
+  it("皇帝：正式首班前不提前累计", () => {
+    const s = createInitialState();
+    s.career.jobId = "job_warehouse";
+    s.career.firstShiftDay = gameDay(s.time) + 1;
+    s.counters.emperorStreak = 12;
     tickTarotDaily(s);
     expect(s.counters.emperorStreak).toBe(0);
   });
@@ -192,7 +229,7 @@ describe("每日结算 tickTarotDaily：连续天数计数器", () => {
     expect(s.counters.joblessStreak).toBe(50);
     expect(s.tarot.unlocked).toContain(9);
 
-    s.career.jobId = "clerk";
+    s.career.jobId = "job_warehouse";
     tickTarotDaily(s);
     expect(s.counters.joblessStreak).toBe(0);
   });

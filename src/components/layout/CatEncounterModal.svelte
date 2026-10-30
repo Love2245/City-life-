@@ -36,7 +36,7 @@
 </script>
 
 {#if payload}
-  <div class="overlay hud-scope" onclick={flee} transition:fade={{ duration: 150 }}>
+  <div class="overlay hud-scope" role="presentation" transition:fade={{ duration: 150 }}>
     <div class="modal" onclick={(e) => e.stopPropagation()}>
       <div class="m-head">
         <span class="gi-emoji" style="font-size:44px;line-height:1">🐾</span>
@@ -53,6 +53,7 @@
           <div class="opp-tags">
             <span class="tag">Lv.{payload.opponentLevel}</span>
             <span class="tag tier" class:mid={payload.tierLabel === "中级"}>{payload.tierLabel}对手</span>
+            <span class="tag range">{payload.tierRange ?? "按等级匹配"}</span>
           </div>
         </div>
       </div>

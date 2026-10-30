@@ -4,8 +4,11 @@
     "locationId": "home",
     "name": "洗澡",
     "icon": "🚿",
-    "desc": "热水澡冲走一天的疲惫和灰尘",
+    "desc": "热水澡冲走一天的疲惫和灰尘。",
     "requiresFacility": "shower",
+    "requirements": {
+      "money": 2
+    },
     "effects": {
       "hygiene": 40,
       "stamina": 5,
@@ -26,11 +29,47 @@
     "sound": "shower"
   },
   {
+    "id": "wash_basic",
+    "locationId": "home",
+    "name": "简单洗漱",
+    "icon": "🚿",
+    "desc": "用冷水擦把脸、刷个牙，勉强体面出门。",
+    "duration": 1,
+    "effects": {
+      "hygiene": 12,
+      "mood": -1,
+      "log": "将就着洗漱了一下，至少不那么邋遢了"
+    },
+    "verdicts": [
+      "冷水拍脸，瞬间清醒",
+      "牙刷得满嘴沫，凑合",
+      "没热水也认了",
+      "起码不像刚从垃圾桶爬出来",
+      "洗完神清气爽了点",
+      "穷得只剩这桶凉水了"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "eat_simple_meal_home",
+    "locationId": "home",
+    "name": "简餐",
+    "group": "cook",
+    "icon": "🍚",
+    "desc": "5元解决一顿简餐，无需餐具和食材，恢复30点饱食度。",
+    "effects": {"satiety":30,"money":-5,"log":"花5元吃了一份简餐","cureStatuses":["hungry"]},
+    "duration": 0,
+    "sound": "eat"
+  },
+  {
     "id": "eat_noodles_home",
     "locationId": "home",
     "name": "吃泡面",
     "icon": "🍜",
-    "desc": "老坛酸菜，打工人的续命神器（3 元，+26 饱腹 −2 健康，无需灶台）",
+    "desc": "老坛酸菜，打工人的续命神器。",
+    "requirements": {
+      "money": 3
+    },
     "effects": {
       "satiety": 26,
       "mood": -3,
@@ -58,12 +97,15 @@
     "locationId": "convenience_store",
     "name": "买盒饭",
     "icon": "🍱",
-    "desc": "便利店鸡腿饭，13 元一份，实惠管饱（+34 饱腹，可堂食或打包）",
+    "desc": "便利店鸡腿饭，12 元一份，实惠管饱。",
+    "requirements": {
+      "money": 12
+    },
     "effects": {
-      "money": -13,
+      "money": -12,
       "log": "买了份盒饭"
     },
-    "duration": 0.5,
+    "duration": 0,
     "verdicts": [
       "店员麻利地扫码结账",
       "便利店的灯永远亮着，让人安心",
@@ -82,12 +124,15 @@
     "locationId": "convenience_store",
     "name": "买饮料",
     "icon": "🥤",
-    "desc": "冰镇快乐水，3 元提神（+10 体力，几乎不顶饱）",
+    "desc": "3 元一杯。带走就放进背包，喝着才见效；站在店里喝，当场就舒坦。",
+    "requirements": {
+      "money": 3
+    },
     "effects": {
       "money": -3,
       "log": "买了瓶饮料"
     },
-    "duration": 0.5,
+    "duration": 0,
     "verdicts": [
       "店员麻利地扫码结账",
       "便利店的灯永远亮着，让人安心",
@@ -106,8 +151,11 @@
     "locationId": "convenience_store",
     "name": "买三明治",
     "icon": "🥪",
-    "duration": 0.5,
-    "desc": "三明治，8 元，开袋即食（+22 饱腹，可堂食或打包）",
+    "duration": 0,
+    "desc": "三明治，8 元，开袋即食。",
+    "requirements": {
+      "money": 8
+    },
     "effects": {
       "money": -8,
       "log": "买了个三明治"
@@ -130,10 +178,13 @@
     "locationId": "convenience_store",
     "name": "买沙拉",
     "icon": "🥗",
-    "duration": 0.5,
-    "desc": "轻食沙拉，11 元，健康之选（+18 饱腹 +6 健康，可堂食或打包）",
+    "duration": 0,
+    "desc": "轻食沙拉，10 元，健康之选。",
+    "requirements": {
+      "money": 10
+    },
     "effects": {
-      "money": -11,
+      "money": -10,
       "log": "买了份沙拉"
     },
     "verdicts": [
@@ -154,10 +205,13 @@
     "locationId": "convenience_store",
     "name": "买泡面",
     "icon": "🍜",
-    "duration": 0.5,
-    "desc": "桶装泡面，5 元。最便宜的一顿，但吃多了伤身（+26 饱腹 −2 健康）",
+    "duration": 0,
+    "desc": "桶装泡面，4 元。最便宜的一顿，但吃多了伤身。",
+    "requirements": {
+      "money": 4
+    },
     "effects": {
-      "money": -5,
+      "money": -4,
       "log": "买了桶泡面"
     },
     "verdicts": [
@@ -178,7 +232,7 @@
     "locationId": "library",
     "name": "图书馆自习",
     "icon": "📖",
-    "desc": "安静看书，智力 +，穷人最划算的投资",
+    "desc": "安静看书，智力 +，穷人最划算的投资。",
     "requirements": {
       "attr": {
         "stamina": 10
@@ -207,7 +261,7 @@
     "locationId": "convenience_store",
     "name": "便利店盲盒",
     "icon": "🎁",
-    "desc": "晚上 10 点后限定：10 元一个神秘盲盒，随机开出两个食物或食材",
+    "desc": "晚上 10 点后限定：神秘盲盒会随机开出两个食物或食材，价格随物价调整。",
     "duration": 0.5,
     "handler": "blind_box",
     "requirements": {
@@ -234,7 +288,7 @@
     "locationId": "library",
     "name": "看闲书",
     "icon": "📕",
-    "desc": "小说漫画随便看，放松心情",
+    "desc": "小说漫画随便看，放松心情。",
     "effects": {
       "mood": 10,
       "stamina": -3,
@@ -257,7 +311,7 @@
     "locationId": "park",
     "name": "公园散步",
     "icon": "🚶",
-    "desc": "慢悠悠走一圈，放空自己",
+    "desc": "慢悠悠走一圈，放空自己。",
     "effects": {
       "mood": 8,
       "stress": -8,
@@ -282,7 +336,7 @@
     "locationId": "park",
     "name": "锻炼身体",
     "icon": "🏃",
-    "desc": "跑几圈，练练体质",
+    "desc": "跑几圈，练练体质。",
     "requirements": {
       "attr": {
         "stamina": 25
@@ -317,12 +371,16 @@
     "locationId": "park",
     "name": "下象棋",
     "icon": "♟️",
-    "desc": "和象棋大爷摆开棋盘杀几盘，赢了还有彩头",
+    "desc": "和象棋大爷摆开棋盘杀一盘，先交 5 元彩头，赢了还有回礼（每天一次）。",
+    "requirements": {
+      "oncePerDay": "park_chess_day"
+    },
     "effects": {
       "mood": 2,
       "intelligence": 1,
       "stamina": -5,
-      "log": "和象棋大爷下了几盘棋"
+      "money": -5,
+      "log": "和象棋大爷下了一盘棋，交了 5 元彩头"
     },
     "duration": 1,
     "verdicts": [
@@ -340,7 +398,7 @@
     "locationId": "park",
     "name": "打太极",
     "icon": "🧘",
-    "desc": "跟晨练的大爷大妈学几招太极，修身养性",
+    "desc": "跟晨练的大爷大妈学几招太极，修身养性。",
     "effects": {
       "mood": 5,
       "stress": -6,
@@ -364,7 +422,7 @@
     "locationId": "park",
     "name": "跳广场舞",
     "icon": "💃",
-    "desc": "加入广场舞大军，跟着音乐扭起来，放得开才快乐",
+    "desc": "加入广场舞大军，跟着音乐扭起来，放得开才快乐。",
     "effects": {
       "mood": 7,
       "charm": 1,
@@ -388,10 +446,18 @@
     "locationId": "cafe",
     "name": "喝咖啡",
     "icon": "☕",
-    "desc": "拿铁一杯 25 元，喝的是氛围",
+    "desc": "拿铁一杯 25 元。",
+    "requirements": {
+      "money": 25,
+      "dailyLimit": {
+        "dayFlag": "cafe_coffee_day",
+        "countFlag": "cafe_coffee_count",
+        "limit": 2
+      }
+    },
     "effects": {
       "mood": 8,
-      "stamina": 8,
+      "stamina": 25,
       "money": -25,
       "log": "在咖啡厅喝了杯拿铁"
     },
@@ -412,7 +478,7 @@
     "locationId": "street",
     "name": "街头闲逛",
     "icon": "👀",
-    "desc": "随便走走，看看这座城市的烟火气",
+    "desc": "随便走走，看看这座城市的烟火气。",
     "effects": {
       "mood": 3,
       "stamina": -5,
@@ -436,9 +502,11 @@
     "locationId": "housing_agency",
     "name": "签约普通出租屋",
     "icon": "📝",
-    "desc": "住宅区老小区，月租 1000，押一付一（住房中介）",
+    "desc": "住宅区老小区，租期 30 天、首期租金 1000 元，期满续缴（住房中介）。",
     "handler": "sign_lease",
-    "requirements": {},
+    "requirements": {
+      "notFlag": "owned_property"
+    },
     "effects": {},
     "duration": 1,
     "verdicts": [
@@ -458,7 +526,7 @@
     "locationId": "library",
     "name": "运动指南",
     "icon": "🏃",
-    "desc": "从热身到拉伸，把锻炼练进日常（提升体质，耗时较长）",
+    "desc": "从热身到拉伸，把锻炼练进日常。读得慢，身子会一点点结实起来。",
     "duration": 3,
     "handler": "read_book",
     "bookId": "book_sports",
@@ -475,7 +543,7 @@
     "locationId": "library",
     "name": "健康指南",
     "icon": "💪",
-    "desc": "作息、饮食、小病不硬扛（提升健康，耗时较长）",
+    "desc": "作息、饮食、小病不硬扛。慢慢读，身体会记住。",
     "duration": 3,
     "handler": "read_book",
     "bookId": "book_health",
@@ -491,7 +559,7 @@
     "locationId": "library",
     "name": "烹饪食谱",
     "icon": "🍳",
-    "desc": "从家常小炒到拿手硬菜，解锁更多菜肴（提升厨艺）",
+    "desc": "翻翻家常菜谱，学几道拿手菜。",
     "duration": 2,
     "handler": "read_book",
     "bookId": "book_cooking",
@@ -510,7 +578,7 @@
     "locationId": "library",
     "name": "哲学总集",
     "icon": "📜",
-    "desc": "想不明白的事，书里或许早有答案（提升智力，耗时较长）",
+    "desc": "想不明白的事，书里或许早有答案。读完人会通透些。",
     "duration": 3,
     "handler": "read_book",
     "bookId": "book_philosophy",
@@ -527,7 +595,7 @@
     "locationId": "library",
     "name": "精致人生",
     "icon": "💄",
-    "desc": "仪表、谈吐、分寸感，都市生存的软实力（提升魅力，耗时较长）",
+    "desc": "仪表、谈吐、分寸感，都市生存的软实力。",
     "duration": 3,
     "handler": "read_book",
     "bookId": "book_charm",
@@ -544,7 +612,7 @@
     "locationId": "library",
     "name": "编程入门",
     "icon": "💻",
-    "desc": "从 Hello World 到第一个作品，代码改变命运（提升编程）",
+    "desc": "从 Hello World 到第一个作品，代码改变命运。",
     "duration": 2,
     "handler": "read_book",
     "bookId": "book_programming",
@@ -563,7 +631,7 @@
     "locationId": "library",
     "name": "设计美学书",
     "icon": "🎨",
-    "desc": "配色、排版、留白，审美也是生产力（提升设计）",
+    "desc": "配色、排版、留白，审美也是生产力。",
     "duration": 2,
     "handler": "read_book",
     "bookId": "book_design",
@@ -582,7 +650,7 @@
     "locationId": "library",
     "name": "运营操作",
     "icon": "📊",
-    "desc": "流量、转化、复购，把生意做明白（提升运营）",
+    "desc": "流量、转化、复购，把生意做明白。",
     "duration": 2,
     "handler": "read_book",
     "bookId": "book_operation",
@@ -601,7 +669,7 @@
     "locationId": "library",
     "name": "摆摊小技巧",
     "icon": "🍢",
-    "desc": "选址、吆喝、定价，摊主老手的心得（每读一次摆摊收入 +10%，封顶 5 级）",
+    "desc": "选址、吆喝、定价，摊主老手的心得。",
     "duration": 2,
     "handler": "read_book",
     "bookId": "book_stall_tips",
@@ -616,7 +684,11 @@
     "locationId": "home",
     "name": "做饭练手",
     "icon": "🍳",
-    "desc": "自己开火练厨艺，不用食材（花 5 元买边角料，需灶台。只练手，不管饱）",
+    "desc": "自己开火练厨艺，不用食材（花 5 元买边角料，需灶台。只练手，不管饱）。",
+    "requirements": {
+      "flag": "cook_utensil",
+      "money": 5
+    },
     "effects": {
       "skills": {
         "cooking": 1
@@ -637,9 +709,7 @@
     ],
     "sound": "eat",
     "group": "cook",
-    "requirements": {
-      "flag": "cook_utensil"
-    }
+    "requiresFacility": "cook"
   },
   {
     "id": "cook_dish_veg",
@@ -647,7 +717,7 @@
     "name": "炒时蔬",
     "icon": "🥬",
     "duration": 1,
-    "desc": "用背包里的蔬菜炒一盘，热乎着吃（需灶台 + 蔬菜 ×1）",
+    "desc": "用背包里的蔬菜炒一盘，热乎着吃。",
     "handler": "cook_item",
     "recipeId": "dish_veg",
     "effects": {
@@ -664,6 +734,7 @@
     ],
     "sound": "eat",
     "group": "cook",
+    "requiresFacility": "cook",
     "requirements": {
       "flag": "cook_utensil"
     }
@@ -674,7 +745,7 @@
     "name": "拌沙拉",
     "icon": "🥗",
     "duration": 0.5,
-    "desc": "蔬菜洗切拌一拌，比便利店便宜（需灶台 + 蔬菜 ×1）",
+    "desc": "蔬菜洗切拌一拌，比便利店便宜。",
     "handler": "cook_item",
     "recipeId": "dish_salad",
     "effects": {
@@ -691,6 +762,7 @@
     ],
     "sound": "eat",
     "group": "cook",
+    "requiresFacility": "cook",
     "requirements": {
       "flag": "cook_utensil"
     }
@@ -701,7 +773,7 @@
     "name": "炖红烧肉",
     "icon": "🥩",
     "duration": 1.5,
-    "desc": "小火慢炖一锅肉，幸福感拉满（需灶台 + 肉类 ×1，厨艺 1 级）",
+    "desc": "小火慢炖一锅肉，幸福感拉满。",
     "handler": "cook_item",
     "recipeId": "dish_meat",
     "effects": {
@@ -718,6 +790,7 @@
     ],
     "sound": "eat",
     "group": "cook",
+    "requiresFacility": "cook",
     "requirements": {
       "flag": "cook_utensil"
     }
@@ -728,7 +801,7 @@
     "name": "做两菜一汤",
     "icon": "🍲",
     "duration": 2,
-    "desc": "正经做一顿家常饭（需灶台 + 蔬菜 ×1 + 肉类 ×1，厨艺 2 级）",
+    "desc": "正经做一顿家常饭。",
     "handler": "cook_item",
     "recipeId": "dish_full_meal",
     "effects": {
@@ -745,6 +818,7 @@
     ],
     "sound": "eat",
     "group": "cook",
+    "requiresFacility": "cook",
     "requirements": {
       "flag": "cook_utensil"
     }
@@ -754,7 +828,7 @@
     "locationId": "street",
     "name": "街头卖艺",
     "icon": "🎤",
-    "desc": "街头唱几首歌，赚点打赏攒名气（需魅力 25）",
+    "desc": "两小时街头演出，60 分起按表现结算打赏，每日最多两场（需魅力 25）。",
     "requirements": {
       "attr": {
         "charm": 25
@@ -764,10 +838,9 @@
       ]
     },
     "effects": {
-      "fame": 2,
-      "money": 20,
-      "mood": 5,
-      "stress": -5,
+      "fame": 1,
+      "mood": 3,
+      "stress": -3,
       "stamina": -12,
       "log": "在街头唱了几首歌，收获了掌声和打赏"
     },
@@ -785,9 +858,9 @@
   {
     "id": "use_laptop_home",
     "locationId": "home",
-    "name": "使用笔记本",
+    "name": "使用电脑",
     "icon": "💻",
-    "desc": "打开笔记本全屏桌面：设置、社交、外卖、网购、直播、论坛与编程设计工作台（需拥有笔记本）",
+    "desc": "打开电脑桌面：设置、社交、外卖、网购、论坛与编程设计工作台（需拥有电脑）。",
     "handler": "use_laptop",
     "effects": {},
     "duration": 0,
@@ -802,20 +875,59 @@
     "sound": "computer"
   },
   {
+    "id": "open_wardrobe_home",
+    "locationId": "home",
+    "name": "打开衣柜",
+    "icon": "👔",
+    "desc": "查看已拥有的套装和帽子，随时更换穿搭。",
+    "handler": "open_wardrobe",
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "衣柜门一开，今天想成为什么样的人由你决定",
+      "把衣服按类别理好，换装也变得很轻松",
+      "试了几种搭配，镜子里的自己顺眼多了",
+      "帽子可以先不戴，舒服最重要",
+      "基础衣物洗得很干净，随时都能出门",
+      "穿搭不赶时间，慢慢挑就好"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "open_home_storage",
+    "locationId": "home",
+    "name": "家中收纳",
+    "icon": "🗄️",
+    "desc": "管理工具、家居、食材与收藏。随身用品放在背包，服装配饰放在衣柜。",
+    "handler": "open_home_storage",
+    "effects": {},
+    "duration": 0,
+    "sound": "success",
+    "verdicts": [
+      "把工具和家居理好，寻找物品方便了许多。",
+      "打开收纳柜，用品都分门别类放着。",
+      "检查了家中的工具和收藏。",
+      "食材和用品各归其位。",
+      "整理好收纳，屋子显得清爽了些。",
+      "把需要的物品找出来，再开始今天的事情。"
+    ]
+  },
+  {
     "id": "stall_street_night",
     "locationId": "street",
     "name": "摆摊创业",
     "icon": "🍢",
-    "desc": "晚上在街边支个摊卖小吃（需厨艺 2 级，或拥有摆摊小车）（服务顾客按人头计钱，多劳多得）",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
     "handler": "work_project",
     "projectId": "street_stall",
     "requirements": {
       "skill": {
         "cooking": 2
-      }
+      },
+      "oncePerDay": "stall_street_day"
     },
     "effects": {},
-    "duration": 0,
+    "duration": 2,
     "verdicts": [
       "今天客流不错，卖得七七八八",
       "隔壁摊位生意太好，羡慕",
@@ -831,8 +943,11 @@
     "locationId": "market",
     "name": "买水果",
     "icon": "🍎",
-    "duration": 0.5,
-    "desc": "当季新鲜水果，5 元。解馋补维生素，但当饭吃可撑不住（+8 饱腹）",
+    "duration": 0,
+    "desc": "当季新鲜水果，5 元。解馋补维生素，但当饭吃可撑不住。",
+    "requirements": {
+      "money": 5
+    },
     "effects": {
       "money": -5,
       "log": "在水果摊挑了几个当季水果"
@@ -854,66 +969,12 @@
     }
   },
   {
-    "id": "buy_vegetable_market",
-    "locationId": "market",
-    "name": "买蔬菜",
-    "icon": "🥬",
-    "duration": 0.5,
-    "desc": "新鲜时蔬，4 元一把。生的不能直接吃，带回住处下厨最划算（一把能炒出 +36 饱腹）",
-    "effects": {
-      "money": -4,
-      "log": "买了一把新鲜蔬菜，装进袋子带走"
-    },
-    "verdicts": [
-      "付了钱，东西收进背包",
-      "价格还行，买了",
-      "摊位老板很热情",
-      "挑挑拣拣，选了新鲜的",
-      "拎着袋子回去，路上想着怎么做",
-      "这钱花得值"
-    ],
-    "sound": "coin",
-    "handler": "buy_ingredient",
-    "itemId": "vegetable",
-    "discount": {
-      "afterHour": 21,
-      "rate": 0.75
-    }
-  },
-  {
-    "id": "buy_meat_market",
-    "locationId": "market",
-    "name": "买肉",
-    "icon": "🥩",
-    "duration": 0.5,
-    "desc": "猪肉/鸡肉，15 元。生的不能直接吃，炖一锅能顶一整天（+52 饱腹）",
-    "effects": {
-      "money": -15,
-      "log": "称了点肉，老板顺手切好了"
-    },
-    "verdicts": [
-      "付了钱，东西收进背包",
-      "价格还行，买了",
-      "摊位老板很热情",
-      "挑挑拣拣，选了新鲜的",
-      "拎着袋子回去，路上想着怎么做",
-      "这钱花得值"
-    ],
-    "sound": "coin",
-    "handler": "buy_ingredient",
-    "itemId": "meat",
-    "discount": {
-      "afterHour": 21,
-      "rate": 0.75
-    }
-  },
-  {
     "id": "exercise_gym",
     "locationId": "gym",
     "name": "健身房锻炼",
     "icon": "🏋️",
     "duration": 2,
-    "desc": "器械区练 2 小时，比公园专业多了（需有效期内的健身月卡）",
+    "desc": "器械区练 2 小时，比公园专业多了（需有效期内的健身月卡）。",
     "requirements": {
       "attr": {
         "stamina": 30,
@@ -950,7 +1011,7 @@
     "name": "办健身月卡",
     "icon": "💳",
     "duration": 0.5,
-    "desc": "300 元办卡，30 天有效期，卡片会放进背包；到期后锻炼重新锁定",
+    "desc": "300 元办卡，30 天有效期，卡片会放进背包。",
     "requirements": {
       "money": 300
     },
@@ -971,28 +1032,26 @@
     "membershipId": "gym"
   },
   {
-    "id": "internet_play",
+    "id": "netbar_session",
     "locationId": "internet_cafe",
-    "name": "上网打游戏",
-    "icon": "🎮",
-    "duration": 3,
-    "desc": "开黑三小时，暂时忘掉烦恼（8 元/小时）",
-    "effects": {
-      "mood": 12,
-      "stress": -10,
-      "stamina": -10,
-      "money": -24,
-      "log": "在网吧打了三小时游戏"
+    "name": "上机",
+    "icon": "🖥️",
+    "duration": 0,
+    "desc": "开一台电脑，上网、查资料或处理手头的工作。机时用完或离店后需重新登记。",
+    "handler": "netbar_session",
+    "requirements": {
+      "money": 24
     },
+    "effects": {},
     "verdicts": [
-      "五杀！这把值了",
-      "队友太菜，气得肝疼",
-      "赢了，今晚心情不错",
-      "通宵党的世界我不懂，但挺解压",
-      "网速不错，体验好",
-      "打完有点空虚，但爽"
+      "机器不算新，但比家里那台顺手",
+      "戴上耳机，一整排键盘声就都远了",
+      "开机、登录、连上网——像暂时有了个自己的位置",
+      "屏幕亮起来的时候，心里踏实了一点",
+      "隔壁在打排位，你打开了自己的东西",
+      "桌面很干净，账号一登就进去了"
     ],
-    "sound": "game"
+    "sound": "computer"
   },
   {
     "id": "internet_night_job",
@@ -1000,12 +1059,13 @@
     "name": "网吧兼职网管",
     "icon": "🖥️",
     "duration": 8,
-    "desc": "帮忙看店、维护机器、盯监控，随时都能上班",
+    "desc": "帮忙看店、维护机器、盯监控，随时都能上班。",
     "requirements": {
       "noStatus": [
         "sick",
         "muscle_strain"
-      ]
+      ],
+      "oncePerDay": "internet_night_job_day"
     },
     "effects": {
       "money": 110,
@@ -1032,7 +1092,7 @@
     "name": "人民医院看诊",
     "icon": "🩺",
     "duration": 2,
-    "desc": "挂号看医生，感冒发烧都能治（60 元）",
+    "desc": "挂号看医生，治疗感冒和生病状态（60 元）。",
     "requirements": {
       "money": 60
     },
@@ -1042,7 +1102,8 @@
       "mood": 3,
       "log": "看了医生，开了点药，感觉好多了",
       "cureStatuses": [
-        "sick"
+        "sick",
+        "cold"
       ]
     },
     "verdicts": [
@@ -1061,7 +1122,7 @@
     "name": "心理门诊",
     "icon": "🫂",
     "duration": 2,
-    "desc": "看心理医生 + 开药，走出抑郁（200 元）",
+    "desc": "看心理医生 + 开药，走出抑郁（200 元）。",
     "requirements": {
       "money": 200
     },
@@ -1086,7 +1147,7 @@
     "name": "买药",
     "icon": "💊",
     "duration": 1,
-    "desc": "在小诊所买点常用药（20 元，放入背包）",
+    "desc": "在小诊所买点常用药（20 元，放入背包）。",
     "requirements": {
       "money": 20
     },
@@ -1112,7 +1173,7 @@
     "name": "买二手电动车",
     "icon": "🛵",
     "duration": 1,
-    "desc": "800 元，外卖收入从 90 涨到 140",
+    "desc": "800 元，外卖收入从 90 涨到 140。",
     "requirements": {
       "money": 800
     },
@@ -1138,7 +1199,7 @@
     "locationId": "hospital",
     "name": "大病治疗",
     "icon": "💉",
-    "desc": "住院部治疗，大病一次治（100 元，健康低于 40 可用）",
+    "desc": "住院部治疗，大病一次治（100 元，健康低于 40 可用）。",
     "duration": 3,
     "requirements": {
       "money": 100,
@@ -1150,7 +1211,11 @@
       "money": -100,
       "health": 40,
       "mood": -3,
-      "log": "做了个大治疗，花了 100 元，健康恢复了不少"
+      "log": "做了个大治疗，花了 100 元，健康恢复了不少",
+      "cureStatuses": [
+        "sick",
+        "cold"
+      ]
     },
     "verdicts": [
       "打了两瓶点滴，护士很温柔",
@@ -1167,7 +1232,7 @@
     "locationId": "hospital",
     "name": "医院买药",
     "icon": "💊",
-    "desc": "在医院药房买药，比小诊所贵但效果一样（30 元，放入背包）",
+    "desc": "在医院药房买药，比小诊所贵但效果一样（30 元，放入背包）。",
     "duration": 1,
     "requirements": {
       "money": 30
@@ -1193,7 +1258,7 @@
     "locationId": "hospital",
     "name": "办理住院",
     "icon": "🛏️",
-    "desc": "办理住院手续，每晚 60 元，恢复快（健康过低时推荐）",
+    "desc": "办个住院，一晚 60 元。身体撑不住的时候别硬扛。",
     "duration": 1,
     "requirements": {
       "money": 60
@@ -1218,7 +1283,7 @@
     "locationId": "western_restaurant",
     "name": "吃牛排",
     "icon": "🥩",
-    "desc": "西餐厅的招牌牛排，犒劳一下自己（80 元，+58 饱腹 +10 心情）",
+    "desc": "西餐厅的招牌牛排，犒劳一下自己。",
     "duration": 2,
     "requirements": {
       "money": 80
@@ -1245,13 +1310,13 @@
     "locationId": "fast_food",
     "name": "吃汉堡",
     "icon": "🍔",
-    "desc": "快餐店的汉堡套餐，快且管饱（22 元，+34 饱腹）",
+    "desc": "快餐店的汉堡套餐，快且管饱。",
     "duration": 1,
     "requirements": {
-      "money": 22
+      "money": 18
     },
     "effects": {
-      "money": -22,
+      "money": -18,
       "satiety": 34,
       "mood": 3,
       "log": "汉堡加可乐，快餐快乐餐"
@@ -1271,11 +1336,13 @@
     "locationId": "housing_agency",
     "name": "签约出租公寓",
     "icon": "🏢",
-    "desc": "市中心精装公寓，月租 2000，押一付一",
+    "desc": "市中心精装公寓，租期 30 天、首期租金 2000 元，期满续缴。",
     "duration": 2,
     "handler": "sign_lease",
     "housingId": "rental_apartment",
-    "requirements": {},
+    "requirements": {
+      "notFlag": "owned_property"
+    },
     "effects": {},
     "verdicts": [
       "看了样板间，采光不错",
@@ -1288,11 +1355,34 @@
     "sound": "success"
   },
   {
+    "id": "sign_lease_suburb",
+    "locationId": "housing_agency",
+    "name": "签约城市边缘小屋",
+    "icon": "🏡",
+    "desc": "城市边缘的朴素小屋，租期 30 天、租金 800 元，去紫羊区和重工业区上班更方便。",
+    "duration": 1,
+    "handler": "sign_lease",
+    "housingId": "suburb_room",
+    "requirements": {
+      "notFlag": "owned_property"
+    },
+    "effects": {},
+    "verdicts": [
+      "离重工业区近了不少，通勤轻松许多",
+      "小屋不大，但窗外就是紫羊区的风景",
+      "签下租约，工作和生活都方便了些",
+      "房间朴素，住着踏实",
+      "每天少跑一段路，回家也方便了",
+      "屋里有灶台，辛苦一天后能自己做饭"
+    ],
+    "sound": "success"
+  },
+  {
     "id": "buy_old_unit",
     "locationId": "housing_agency",
     "name": "买断老破小",
     "icon": "🏚️",
-    "desc": "一次性 30000 元买断住宅区老小区，从此免租",
+    "desc": "30000 元购入一套老破小，可重复购买；非自住时月租收入 800 元。",
     "duration": 3,
     "handler": "buy_property",
     "housingId": "own_old_unit",
@@ -1317,7 +1407,7 @@
     "locationId": "housing_agency",
     "name": "买断精装公寓",
     "icon": "🏢",
-    "desc": "一次性 80000 元买断市中心精装公寓，电梯直达",
+    "desc": "80000 元购入一套精装公寓，可重复购买；非自住时月租收入 1000 元。",
     "duration": 3,
     "handler": "buy_property",
     "housingId": "own_apartment",
@@ -1342,7 +1432,7 @@
     "locationId": "housing_agency",
     "name": "买断城市住宅",
     "icon": "🏡",
-    "desc": "一次性 200000 元买断独门独院住宅，安身立命",
+    "desc": "200000 元购入一套城市住宅，可重复购买；非自住时月租收入 2000 元。",
     "duration": 4,
     "handler": "buy_property",
     "housingId": "own_villa",
@@ -1367,7 +1457,7 @@
     "locationId": "bathhouse",
     "name": "快速淋浴",
     "icon": "🚿",
-    "desc": "30 元冲个澡，一小时进出，只求干净",
+    "desc": "30 元冲个澡，一小时进出，只求干净。",
     "duration": 1,
     "requirements": {
       "money": 30
@@ -1393,7 +1483,7 @@
     "locationId": "bathhouse",
     "name": "搓背按摩",
     "icon": "💆",
-    "desc": "120 元三小时，搓背加肩颈按摩，出来浑身轻松",
+    "desc": "120 元三小时，搓背加肩颈按摩，出来浑身轻松。",
     "duration": 3,
     "requirements": {
       "money": 120
@@ -1421,7 +1511,7 @@
     "locationId": "bathhouse",
     "name": "泡澡一条龙",
     "icon": "🫧",
-    "desc": "300 元泡一整天，蒸桑拿搓背，出来干净度饱食体力全回满",
+    "desc": "300 元泡一整天。",
     "duration": 24,
     "handler": "wash_center",
     "requirements": {
@@ -1445,12 +1535,9 @@
     "locationId": "hotel",
     "name": "开房住宿（豪华间）",
     "icon": "🏨",
-    "desc": "在酒店按天开豪华间（150 元/晚），今晚睡个好觉",
-    "duration": 1,
+    "desc": "入住预付一晚房费，住客堂食包含在房费中",
+    "duration": 0,
     "handler": "stay_hotel",
-    "requirements": {
-      "money": 150
-    },
     "effects": {},
     "verdicts": [
       "前台小姐姐服务很周到",
@@ -1467,7 +1554,7 @@
     "locationId": "hospital",
     "name": "病房休息",
     "icon": "🛏️",
-    "desc": "在病房睡一觉（仅住院期间可用）",
+    "desc": "在病房睡一觉（仅住院期间可用）。",
     "duration": 8,
     "handler": "sleep_modal",
     "requirements": {
@@ -1489,7 +1576,7 @@
     "locationId": "hospital",
     "name": "办理出院",
     "icon": "🏥",
-    "desc": "病情好转，办理出院手续",
+    "desc": "病情好转，办理出院手续。",
     "duration": 1,
     "handler": "discharge",
     "requirements": {
@@ -1511,7 +1598,7 @@
     "locationId": "car_rental",
     "name": "租用汽车",
     "icon": "🚗",
-    "desc": "押金 3000 元，跑网约车/出租车；退租或买断时押金退还（需驾驶本）",
+    "desc": "押金 3000 元，租车后通勤更方便、相关工作可增收；退租或买断时押金退还（租车需驾驶本）。",
     "duration": 2,
     "handler": "rent_vehicle",
     "vehicleType": "car",
@@ -1537,7 +1624,7 @@
     "locationId": "car_rental",
     "name": "租用电动车",
     "icon": "🛵",
-    "desc": "押金 600 元，外卖效率翻倍；退租或买断时押金退还",
+    "desc": "押金 600 元，外卖效率翻倍；退租或买断时押金退还。",
     "duration": 1,
     "handler": "rent_vehicle",
     "vehicleType": "e_bike",
@@ -1562,7 +1649,7 @@
     "locationId": "car_rental",
     "name": "租用三轮车",
     "icon": "🛺",
-    "desc": "押金 1200 元，快递配送神器；退租或买断时押金退还",
+    "desc": "押金 1200 元，快递配送神器；退租或买断时押金退还。",
     "duration": 1,
     "handler": "rent_vehicle",
     "vehicleType": "tricycle",
@@ -1587,7 +1674,7 @@
     "locationId": "car_rental",
     "name": "买断自行车",
     "icon": "🚲",
-    "desc": "一次性 300 元买断自行车，通勤省力，永久自有",
+    "desc": "买一辆自行车，穿街过巷更方便。",
     "duration": 1,
     "handler": "buy_vehicle",
     "vehicleType": "bicycle",
@@ -1612,7 +1699,7 @@
     "locationId": "car_rental",
     "name": "退还电动车",
     "icon": "🛵",
-    "desc": "把租用的电动车还回去，押金 600 元退还",
+    "desc": "把租用的电动车还回去，押金 600 元退还。",
     "duration": 1,
     "handler": "return_vehicle",
     "vehicleType": "e_bike",
@@ -1635,7 +1722,7 @@
     "locationId": "car_rental",
     "name": "退还三轮车",
     "icon": "🛺",
-    "desc": "把租用的三轮车还回去，押金 1200 元退还",
+    "desc": "把租用的三轮车还回去，押金 1200 元退还。",
     "duration": 1,
     "handler": "return_vehicle",
     "vehicleType": "tricycle",
@@ -1658,7 +1745,7 @@
     "locationId": "car_rental",
     "name": "退还汽车",
     "icon": "🚗",
-    "desc": "把租用的汽车还回去，押金 3000 元退还",
+    "desc": "把租用的汽车还回去，押金 3000 元退还。",
     "duration": 1,
     "handler": "return_vehicle",
     "vehicleType": "car",
@@ -1681,7 +1768,7 @@
     "locationId": "car_rental",
     "name": "买断电动车",
     "icon": "🛵",
-    "desc": "一次性 3000 元买断电动车，永久自有，送外卖不再续租",
+    "desc": "买一辆电动车，通勤和送餐都有个帮手。",
     "duration": 2,
     "handler": "buy_vehicle",
     "vehicleType": "e_bike",
@@ -1706,7 +1793,7 @@
     "locationId": "car_rental",
     "name": "买断三轮车",
     "icon": "🛺",
-    "desc": "一次性 8000 元买断三轮车，拉货摆摊自由安排",
+    "desc": "一次性 8000 元买断三轮车，拉货摆摊自由安排。",
     "duration": 2,
     "handler": "buy_vehicle",
     "vehicleType": "tricycle",
@@ -1731,7 +1818,7 @@
     "locationId": "car_rental",
     "name": "买断汽车",
     "icon": "🚗",
-    "desc": "一次性 50000 元买断汽车，跑网约车/出租车无月租压力（需驾驶本）",
+    "desc": "一次性 50000 元买断汽车，通勤更方便、相关工作可增收且无月租压力（购车需驾驶本）。",
     "duration": 3,
     "handler": "buy_vehicle",
     "vehicleType": "car",
@@ -1757,7 +1844,7 @@
     "locationId": "home",
     "name": "睡觉",
     "icon": "😴",
-    "desc": "睡个好觉，恢复体力（可自由选择时长）",
+    "desc": "睡个好觉，睡多久你定。",
     "duration": 8,
     "handler": "sleep_modal",
     "effects": {},
@@ -1776,9 +1863,13 @@
     "locationId": "driving_school",
     "name": "报名学车",
     "icon": "📝",
-    "desc": "交 1500 元报名费，开始学车（需有耐心和钱）",
+    "desc": "报名费 1500 元，仅需报名一次；考试还需 500 元并要求智力达到 40。",
     "requirements": {
-      "money": 1500
+      "money": 1500,
+      "notFlags": [
+        "item_driving_course",
+        "item_driving_license"
+      ]
     },
     "effects": {
       "money": -1500,
@@ -1803,10 +1894,13 @@
     "locationId": "driving_school",
     "name": "驾照考试",
     "icon": "🚦",
-    "desc": "科目一到科目四连考，智力达标 + 已报名才能过",
+    "desc": "报名后参加考试，考试费 500 元；智力达到 40 才能通过，通过后驾驶本会放入背包。",
     "requirements": {
       "money": 500,
       "flag": "item_driving_course",
+      "notFlags": [
+        "item_driving_license"
+      ],
       "attr": {
         "intelligence": 40
       }
@@ -1833,11 +1927,43 @@
     "sound": "success"
   },
   {
+    "id": "apply_industry_pass",
+    "locationId": "labor_company",
+    "name": "办理工业通行证",
+    "icon": "🏗️",
+    "desc": "到窗口办理园区通行手续，带上自己的工作证明。",
+    "duration": 1,
+    "requirements": {
+      "money": 80,
+      "flagAtLeast": {
+        "flag": "jobs_done_count",
+        "value": 2
+      },
+      "notFlag": "route_heavy_industry"
+    },
+    "effects": {
+      "money": -80,
+      "flags": {
+        "route_heavy_industry": true
+      },
+      "log": "办理了工业通行证，重工业区的路线开放了"
+    },
+    "verdicts": [
+      "窗口盖章很快，工业区的地图亮了起来",
+      "拿着证件，终于能去看看真正的工厂了",
+      "工作人员提醒高危岗位要量力而行",
+      "证件塑封得很平整，手续比想象中简单",
+      "你把工业区的班次记进了待办",
+      "新的路线意味着新的选择"
+    ],
+    "sound": "success"
+  },
+  {
     "id": "resign_job",
     "locationId": "labor_company",
     "name": "办理离职",
     "icon": "✍️",
-    "desc": "辞职当前工作（首次辞职免费）",
+    "desc": "辞职当前工作（首次辞职免费）。",
     "duration": 1,
     "handler": "resign",
     "effects": {},
@@ -1856,15 +1982,15 @@
     "locationId": "luxury_store",
     "name": "买羊绒大衣",
     "icon": "🧥",
-    "desc": "3000 元，纯羊绒大衣，穿出去倍儿有面子",
+    "desc": "2999 元，纯羊绒大衣，穿出去倍儿有面子。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "luxury_coat",
     "requirements": {
-      "money": 3000
+      "money": 2999
     },
     "effects": {
-      "money": -3000
+      "money": -2999
     },
     "verdicts": [
       "手感软糯，剪裁利落",
@@ -1881,7 +2007,7 @@
     "locationId": "luxury_store",
     "name": "买名表",
     "icon": "⌚",
-    "desc": "10000 元，瑞士名表，男人/女人的顶级配饰",
+    "desc": "10000 元，瑞士名表，男人/女人的顶级配饰。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "luxury_watch",
@@ -1906,7 +2032,7 @@
     "locationId": "luxury_store",
     "name": "买名牌包",
     "icon": "👜",
-    "desc": "15000 元，限量款名牌包，身份与品位的象征",
+    "desc": "15000 元，限量款名牌包，身份与品位的象征。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "luxury_bag",
@@ -1928,18 +2054,18 @@
   },
   {
     "id": "buy_shirt",
-    "locationId": "luxury_store",
+    "locationId": "clothing_store",
     "name": "买衬衫",
     "icon": "👔",
-    "desc": "800 元，干净得体的衬衫，装备后魅力 +2",
+    "desc": "199 元。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "shirt",
     "requirements": {
-      "money": 800
+      "money": 199
     },
     "effects": {
-      "money": -800
+      "money": -199
     },
     "verdicts": [
       "版型挺括，颜色也衬肤色",
@@ -1956,15 +2082,15 @@
     "locationId": "luxury_store",
     "name": "买西装",
     "icon": "🤵",
-    "desc": "5000 元，笔挺西装，装备后魅力 +5，重要场合战袍",
+    "desc": "1299 元。",
     "duration": 2,
     "handler": "buy_item",
     "itemId": "suit",
     "requirements": {
-      "money": 5000
+      "money": 1299
     },
     "effects": {
-      "money": -5000
+      "money": -1299
     },
     "verdicts": [
       "量身定制的版型，精神极了",
@@ -1977,11 +2103,68 @@
     "sound": "coin"
   },
   {
+    "id": "open_clothing_store",
+    "locationId": "clothing_store",
+    "name": "挑选服装",
+    "icon": "👗",
+    "desc": "整套试穿，帽子可单独搭配。",
+    "handler": "open_clothing_store",
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "店里的灯光把每种颜色都照得很漂亮",
+      "先试穿再决定，买衣服也可以很从容",
+      "这套搭配看起来比想象中更合适",
+      "导购递来一顶帽子，整体感觉立刻变了",
+      "把喜欢的几件放在一起，结账前再确认一次",
+      "新衣服装进袋子，今天的心情也亮了一点"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "open_luxury_clothing_store",
+    "locationId": "luxury_store",
+    "name": "试穿精品服装",
+    "icon": "🤵",
+    "desc": "试穿正装和羊绒大衣套装。",
+    "handler": "open_clothing_store",
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "店员拉开厚重帘幕，里面的剪裁一眼就不便宜",
+      "羊绒大衣摸起来很轻，保暖和体面都顾到了",
+      "试衣镜里的肩线很利落，整个人挺拔了不少",
+      "高级店不催着结账，先把版型看清楚再说",
+      "这套正装适合重要场合，也得掂量一下钱包",
+      "灯光落在面料上，细节比远看更有说服力"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "open_budget_clothing_store",
+    "locationId": "budget_clothing_store",
+    "name": "挑选日常套装",
+    "icon": "👕",
+    "desc": "试穿 T 恤与长裤组成的日常套装。",
+    "handler": "open_clothing_store",
+    "effects": {},
+    "duration": 0,
+    "verdicts": [
+      "货架上的基础款整整齐齐，挑起来很省心",
+      "纯色 T 恤摸着舒服，日常穿正合适",
+      "店里不讲花哨包装，价格和实用都摆在明面上",
+      "试穿后活动了一下，裤子的版型比想象中利落",
+      "平价店也能搭出干净的一身，关键是颜色别太乱",
+      "把合身的基础款装进袋子，今天算是买得很踏实"
+    ],
+    "sound": "success"
+  },
+  {
     "id": "buy_lamp",
     "locationId": "furniture_store",
     "name": "买暖光灯",
     "icon": "💡",
-    "desc": "600 元，暖黄色台灯，摆放后心情 +2",
+    "desc": "600 元。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "lamp",
@@ -2006,7 +2189,7 @@
     "locationId": "furniture_store",
     "name": "买布艺沙发",
     "icon": "🛋️",
-    "desc": "3000 元，松软布艺沙发，摆放后心情 +4",
+    "desc": "3000 元。",
     "duration": 2,
     "handler": "buy_item",
     "itemId": "sofa",
@@ -2031,7 +2214,7 @@
     "locationId": "furniture_store",
     "name": "买摆摊小车",
     "icon": "🛒",
-    "desc": "500 元，一辆折叠摆摊小车，买下就能去街边/周末集市摆摊（无需厨艺门槛）",
+    "desc": "500 元，一辆折叠摆摊小车，买下就能去街边/周末集市摆摊（无需厨艺门槛）。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "stall_cart",
@@ -2056,7 +2239,7 @@
     "locationId": "furniture_store",
     "name": "买绿植盆栽",
     "icon": "🪴",
-    "desc": "1200 元，生机勃勃的绿植，摆放后心情 +3",
+    "desc": "1200 元。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "plant",
@@ -2081,15 +2264,15 @@
     "locationId": "furniture_store",
     "name": "买厨具套装",
     "icon": "🍳",
-    "desc": "2000 元，锅碗瓢盆一应俱全，解锁在家煎牛排",
+    "desc": "锅碗瓢盆配齐，在家也能好好做顿饭。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "kitchen_set",
     "requirements": {
-      "money": 2000
+      "money": 200
     },
     "effects": {
-      "money": -2000
+      "money": -200
     },
     "verdicts": [
       "不锈钢锅很亮，锅铲趁手",
@@ -2106,7 +2289,7 @@
     "locationId": "furniture_store",
     "name": "买家用健身器材",
     "icon": "🏋️",
-    "desc": "1500 元，哑铃+瑜伽垫，解锁在家锻炼",
+    "desc": "添置哑铃和瑜伽垫，把家里的空角落布置成锻炼区。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "gym_equipment",
@@ -2132,7 +2315,7 @@
     "name": "煎牛排",
     "icon": "🥩",
     "duration": 1.5,
-    "desc": "用厨具套装煎块牛排，需灶台 + 肉类 ×1 + 厨艺 2（厨具限定菜谱）",
+    "desc": "用厨具套装煎块牛排，需灶台 + 肉类 ×1 + 厨艺 2（厨具限定菜谱）。",
     "requirements": {
       "flag": "cook_utensil"
     },
@@ -2150,14 +2333,15 @@
       "煎牛排的滋滋声，太治愈了"
     ],
     "sound": "eat",
-    "group": "cook"
+    "group": "cook",
+    "requiresFacility": "cook"
   },
   {
     "id": "exercise_home_equip",
     "locationId": "home",
     "name": "在家锻炼",
     "icon": "🏋️",
-    "desc": "用家用健身器材练一组，体质 +4（需体力 20，消耗体力 25）",
+    "desc": "用家用健身器材练一组。",
     "duration": 1,
     "requirements": {
       "flag": "item_gym_equipment",
@@ -2187,7 +2371,7 @@
     "locationId": "market_fair",
     "name": "逛集市",
     "icon": "🎪",
-    "desc": "在周末集市里逛逛，感受烟火气",
+    "desc": "在周末集市里逛逛，感受烟火气。",
     "effects": {
       "mood": 4,
       "stress": -3,
@@ -2209,8 +2393,9 @@
     "locationId": "market_fair",
     "name": "帮摊主看摊",
     "icon": "🛒",
-    "desc": "帮小吃摊主招呼客人，赚点零花钱",
+    "desc": "帮小吃摊主招呼客人，赚点零花钱。",
     "requirements": {
+      "oncePerDay": "market_help_stand_day",
       "attr": {
         "stamina": 40
       }
@@ -2238,16 +2423,17 @@
     "locationId": "market_fair",
     "name": "周末集市摆摊",
     "icon": "🎪",
-    "desc": "在周末集市支个摊卖小吃（需厨艺 2 级，或拥有摆摊小车）（服务顾客按人头计钱，多劳多得）",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
     "handler": "work_project",
     "projectId": "market_stall",
     "requirements": {
       "skill": {
         "cooking": 2
-      }
+      },
+      "oncePerDay": "stall_market_day"
     },
     "effects": {},
-    "duration": 0,
+    "duration": 3,
     "verdicts": [
       "集市人流量就是大，卖得飞快",
       "隔壁摊主都来打听你的配方",
@@ -2260,17 +2446,17 @@
   },
   {
     "id": "farm_buy_vegetable",
-    "name": "采购蔬菜（3 元/份）",
+    "name": "采购卷心菜（3 元/份）",
     "icon": "🥬",
-    "desc": "农场直采新鲜蔬菜，比菜市场便宜。（+12 饱腹，背包中食用）",
+    "desc": "农场直采卷心菜，比菜市场便宜。可带回厨房烹饪。",
     "locationId": "farm",
-    "handler": "buy_item",
-    "itemId": "farm_vegetable",
+    "handler": "buy_ingredient",
+    "itemId": "cabbage",
     "duration": 0.5,
     "effects": {
       "money": -3,
       "mood": 2,
-      "log": "在农场买了一份新鲜蔬菜"
+      "log": "在农场买了一份新鲜卷心菜"
     },
     "verdicts": [
       "刚摘的蔬菜还带着露水，新鲜得能掐出水",
@@ -2286,10 +2472,10 @@
     "id": "farm_buy_egg",
     "name": "买土鸡蛋（2 元/打）",
     "icon": "🥚",
-    "desc": "散养土鸡蛋，一打 12 枚。（+8 饱腹，背包中食用）",
+    "desc": "散养土鸡蛋，一打 12 枚；可直接送入冰箱，作为布丁、蛋挞等菜品的食材。",
     "locationId": "farm",
     "handler": "buy_item",
-    "itemId": "farm_egg",
+    "itemId": "egg",
     "duration": 0.5,
     "effects": {
       "money": -2,
@@ -2310,10 +2496,10 @@
     "id": "pasture_buy_milk",
     "name": "买鲜牛奶（4 元/L）",
     "icon": "🥛",
-    "desc": "清晨现挤鲜奶。（+10 饱腹 +2 健康，背包中食用）",
+    "desc": "清晨现挤鲜奶；可直接送入冰箱，作为布丁、蛋挞和米粥的食材。",
     "locationId": "pasture",
     "handler": "buy_item",
-    "itemId": "farm_milk",
+    "itemId": "milk",
     "duration": 0.5,
     "effects": {
       "money": -4,
@@ -2334,7 +2520,7 @@
     "id": "orchard_buy_fruit",
     "name": "买时令水果（3 元/份）",
     "icon": "🍎",
-    "desc": "果园刚摘水果，新鲜实惠。（+8 饱腹 +2 心情，背包中食用）",
+    "desc": "果园刚摘水果，新鲜实惠。",
     "locationId": "orchard",
     "handler": "buy_item",
     "itemId": "farm_fruit",
@@ -2358,9 +2544,9 @@
     "id": "amusement_icecream",
     "name": "冰淇淋店",
     "icon": "🍦",
-    "desc": "8 元来一份圣代：当场吃（饱腹 +25 心情 +4）或打包带走，凉丝丝的甜最解压",
+    "desc": "8 元来一份圣代：当场吃或打包带走，凉丝丝的甜最解压。",
     "locationId": "amusement_park",
-    "duration": 0.5,
+    "duration": 0,
     "handler": "buy_food",
     "itemId": "icecream_sundae",
     "requirements": {
@@ -2384,7 +2570,7 @@
     "id": "amusement_cinema",
     "name": "电影院",
     "icon": "🎬",
-    "desc": "15 元一场：爆米花、大银幕、黑暗中偷走两小时（直接结算，+8 心情 -5 压力）",
+    "desc": "15 元一场：爆米花、大银幕、黑暗中偷走两小时。",
     "locationId": "amusement_park",
     "duration": 2,
     "requirements": {
@@ -2411,7 +2597,7 @@
     "id": "amusement_bowling",
     "name": "保龄球馆",
     "icon": "🎳",
-    "desc": "12 元一局：随便打两杆出出汗，心情不错（直接结算）",
+    "desc": "12 元一局：随便打两杆出出汗，心情不错。",
     "locationId": "amusement_park",
     "duration": 0.5,
     "requirements": {
@@ -2437,7 +2623,7 @@
     "id": "amusement_dart",
     "name": "飞镖气球",
     "icon": "🎯",
-    "desc": "10 元 10 支镖：扎爆几个气球解解压，别碰摊主的爱心气球（直接结算）",
+    "desc": "10 元 10 支镖：扎爆几个气球解解压，别碰摊主的爱心气球。",
     "locationId": "amusement_park",
     "duration": 0.5,
     "requirements": {
@@ -2463,7 +2649,7 @@
     "id": "amusement_ringtoss",
     "name": "套圈",
     "icon": "⭕",
-    "desc": "5 元 10 个圈：丢着玩个乐子，开心就好（直接结算）",
+    "desc": "5 元 10 个圈：丢着玩个乐子，开心就好。",
     "locationId": "amusement_park",
     "duration": 0.5,
     "requirements": {
@@ -2489,9 +2675,9 @@
     "id": "amusement_tournament",
     "name": "喵喵对决赛赛场",
     "icon": "🏆",
-    "desc": "城市边缘游乐场里的喵喵对决赛场：周日 14:00 开赛，连赢 3 场夺冠赢奖金（先在城市论坛报名，凭门票参赛）",
+    "desc": "城市边缘游乐场里的喵喵对决赛场：周日 14:00 开赛，连赢 3 场夺冠赢奖金（先在城市论坛报名，凭门票参赛）。",
     "locationId": "amusement_park",
-    "duration": 0,
+    "duration": 2,
     "handler": "tournament_arena",
     "requirements": {
       "hasActivePet": true,
@@ -2516,7 +2702,7 @@
     "id": "lake_walk",
     "name": "环湖散步",
     "icon": "🚶",
-    "desc": "吹着湖风走一圈，比街心公园舒服多了（免费，+5 心情）",
+    "desc": "吹着湖风走一圈，让脚步慢下来。",
     "locationId": "lake_park",
     "duration": 1.5,
     "eventChance": 0.4,
@@ -2540,7 +2726,7 @@
     "id": "lake_run",
     "name": "环湖跑步",
     "icon": "🏃",
-    "desc": "沿湖岸慢跑，比公园跑步带劲（免费，+3 体质 +2 心情）",
+    "desc": "沿湖岸跑一圈，迎着风舒展身体。",
     "locationId": "lake_park",
     "duration": 1,
     "requirements": {
@@ -2574,7 +2760,7 @@
     "name": "训练攻击",
     "icon": "🥊",
     "duration": 1,
-    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "atk",
@@ -2601,7 +2787,7 @@
     "name": "训练防御",
     "icon": "🛡️",
     "duration": 1,
-    "desc": "花 20 元训练防御（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练防御（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "def",
@@ -2628,7 +2814,7 @@
     "name": "训练速度",
     "icon": "💨",
     "duration": 1,
-    "desc": "花 20 元训练速度（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练速度（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "spd",
@@ -2655,7 +2841,7 @@
     "name": "训练体质",
     "icon": "❤️",
     "duration": 1,
-    "desc": "花 20 元训练体质（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练体质（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "hp",
@@ -2677,7 +2863,7 @@
     "id": "cat_free_train_lake",
     "name": "猫咪自由锻炼",
     "icon": "🏃",
-    "desc": "带猫咪在湖边撒欢跑跑：50% 随机提升一个属性，50% 遭遇野生猫咪（可决斗或逃跑，失败无惩罚）。每日限 3 次",
+    "desc": "带猫咪在湖边撒欢跑跑，要么练出点长进，要么撞见别的野猫。打不打随你，输了也不吃亏。每天三回。",
     "locationId": "lake_park",
     "group": "cat_train",
     "duration": 0.5,
@@ -2699,10 +2885,35 @@
     "sound": "exercise"
   },
   {
+    "id": "church_catechumen",
+    "name": "参加慕道会",
+    "icon": "📖",
+    "desc": "参加一小时慕道班，每次随机获赠一张未拥有的圣母或门徒纪念卡，集齐后不重复赠送。首次另赠《思高圣经》上下册，每日一次。",
+    "locationId": "church",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "church_catechumen_day"
+    },
+    "effects": {
+      "mood": 2,
+      "stress": -1,
+      "log": "参加了教堂慕道会"
+    },
+    "verdicts": [
+      "听完分享，把今天的疑问记在了心里",
+      "与大家一起读了一段经文，时间过得很快",
+      "小组讨论结束后，带着新的问题走出教堂",
+      "听见不同的理解，也认真说出了自己的想法",
+      "把没听懂的地方记下来，准备下次再请教",
+      "散会前与大家道别，心情比来时平静了一些"
+    ],
+    "sound": "success"
+  },
+  {
     "id": "church_mass",
     "name": "参加弥撒",
     "icon": "✝️",
-    "desc": "每周六 15:00–18:00 的弥撒。参加多次后解锁洗礼（洗礼后寺庙无法进入）",
+    "desc": "周六下午的弥撒，钟声响起时可以入席。",
     "locationId": "church",
     "duration": 3,
     "requirements": {
@@ -2731,17 +2942,64 @@
     "sound": "success"
   },
   {
+    "id": "church_gospel_box",
+    "name": "福音小盒",
+    "icon": "📜",
+    "desc": "从经句匣中取一张纸条，安静读一读。",
+    "locationId": "church",
+    "duration": 0,
+    "requirements": {
+      "oncePerDay": "church_gospel_box_action_day"
+    },
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "从福音小盒中取出今天的经句。",
+      "读一读抽中的福音，记下出处。",
+      "翻开今天的福音摘录。",
+      "在盒子旁静静读完这句话。",
+      "带着今天的经句走出教堂。",
+      "将抽到的经句留作阅读摘录。"
+    ]
+  },
+  {
+    "id": "church_meal",
+    "name": "教会聚餐",
+    "icon": "🍲",
+    "desc": "周末的教会聚餐，长桌旁还留着空位。",
+    "locationId": "church",
+    "duration": 0,
+    "requirements": {
+      "weekday": [
+        "sat",
+        "sun"
+      ],
+      "oncePerDay": "church_meal_action_day"
+    },
+    "effects": {},
+    "sound": "eat",
+    "verdicts": [
+      "和教友们一起吃了一顿热饭。",
+      "餐桌上有菜有汤，大家围坐着聊天。",
+      "领取一份饭菜，向准备餐食的人道谢。",
+      "在教会聚餐中填饱了肚子。",
+      "这顿饭不收费，大家一起帮忙收拾桌子。",
+      "热饭端上桌，聊一聊这一周的生活。"
+    ]
+  },
+  {
     "id": "temple_volunteer",
     "name": "寺庙义工",
     "icon": "🙏",
-    "desc": "帮寺里扫落叶、劈柴火，劳动换一天免费食宿。（连续参加后解锁佛法会→三宝，完成后教堂无法进入）",
+    "desc": "做 4 小时义工，换取可住至完成日后第二天结束的禅房及素斋资格。每日一次，住宿有效期内无需重新登记，再次做义工刷新期限。",
     "locationId": "temple",
     "duration": 4,
     "requirements": {
       "attr": {
         "stamina": 30,
         "health": 25
-      }
+      },
+      "oncePerDay": "temple_volunteer_day"
     },
     "effects": {
       "stamina": -35,
@@ -2764,7 +3022,7 @@
     "id": "church_confession",
     "name": "告解",
     "icon": "🕊️",
-    "desc": "向神父倾诉心里的负担，每日一次。告解完，心里轻快许多",
+    "desc": "向神父倾诉心里的负担，每日一次。告解完，心里轻快许多。",
     "locationId": "church",
     "duration": 1,
     "requirements": {
@@ -2790,14 +3048,15 @@
     "id": "temple_vegetarian",
     "name": "用素斋",
     "icon": "🥗",
-    "desc": "义工换来的素斋，一碗清粥小菜，胃里暖了心也静了（需先做过义工）",
+    "desc": "当次义工换来的素斋，每日一餐，需持有未到期的食宿资格。",
     "locationId": "temple",
     "duration": 1,
     "requirements": {
       "flagAtLeast": {
         "flag": "temple_volunteered",
         "value": 1
-      }
+      },
+      "oncePerDay": "temple_meal_day"
     },
     "effects": {
       "satiety": 30,
@@ -2817,11 +3076,11 @@
   },
   {
     "id": "temple_lodging",
-    "name": "禅房过夜",
+    "name": "登记禅房挂单",
     "icon": "🛏️",
-    "desc": "在寺里禅房歇一晚，清静无梦（需先做过义工；仅无固定住处时可选）",
+    "desc": "使用本次义工取得的有效资格入住；只到次日中午 12:00，登记不会延长有效期。",
     "locationId": "temple",
-    "duration": 1,
+    "duration": 0,
     "handler": "stay_hotel",
     "housingId": "temple",
     "requirements": {
@@ -2830,19 +3089,14 @@
         "value": 1
       }
     },
-    "effects": {
-      "mood": 2,
-      "stress": -2,
-      "log": "在禅房里睡了一夜"
-    },
+    "effects": {},
     "verdicts": [
-      "禅房朴素，却比哪儿都安稳",
-      "晨钟响起时，竟舍不得起身",
-      "木鱼声里，一夜无梦",
-      "推开房门，满院晨光",
-      "山里夜凉，被褥晒过太阳的味道",
-      "半夜醒来听见风穿过檐铃，又睡了过去",
-      "没有手机信号的一晚，睡得出奇沉"
+      "办好挂单，今晚有了清静去处",
+      "义工劳动得到了寺里的信任",
+      "禅房朴素，铺盖收拾得整整齐齐",
+      "师父指了指禅房，让我晚些自行休息",
+      "木鱼声渐远，今晚总算有地方落脚",
+      "已安排好今晚禅房，可在寺里安心睡觉"
     ],
     "sound": "success"
   },
@@ -2850,7 +3104,7 @@
     "id": "church_worship",
     "name": "祈祷礼拜",
     "icon": "🙏",
-    "desc": "在教堂静心祈祷，每日一次，压力稍缓",
+    "desc": "在教堂静心祈祷，每日一次，压力稍缓。",
     "locationId": "church",
     "duration": 1,
     "requirements": {
@@ -2876,7 +3130,7 @@
     "id": "temple_worship",
     "name": "上香祈福",
     "icon": "🕯️",
-    "desc": "在佛前上香祈福，每日一次，心绪平复",
+    "desc": "在佛前上香祈福，每日一次，心绪平复。",
     "locationId": "temple",
     "duration": 1,
     "requirements": {
@@ -2901,9 +3155,9 @@
   {
     "id": "buy_laptop_mid",
     "locationId": "electronics_store",
-    "name": "买办公笔记本",
-    "icon": "💻",
-    "desc": "1500 元，主流办公本，开发效率明显提升",
+    "name": "买办公台式电脑",
+    "icon": "🖥️",
+    "desc": "1500 元，屏幕键盘鼠标都配齐，写东西快不少。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "laptop_mid",
@@ -2926,9 +3180,9 @@
   {
     "id": "buy_laptop_pro",
     "locationId": "electronics_store",
-    "name": "买高端电竞本",
-    "icon": "💻",
-    "desc": "5000 元，顶配电竞本，开发效率拉满",
+    "name": "买高级游戏台式电脑",
+    "icon": "🖥️",
+    "desc": "5000 元，高性能游戏台式电脑，独立机箱带侧透和双风扇，开发效率拉满。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "laptop_pro",
@@ -2953,7 +3207,7 @@
     "locationId": "electronics_store",
     "name": "买大米手机",
     "icon": "📱",
-    "desc": "800 元，简约耐用的国产机（换手机主题）",
+    "desc": "800 元，简约耐用的国产机（换手机主题）。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "phone_rice",
@@ -2978,7 +3232,7 @@
     "locationId": "electronics_store",
     "name": "买花朵手机",
     "icon": "📱",
-    "desc": "2000 元，粉彩时尚机（换手机主题）",
+    "desc": "2000 元，粉彩时尚机（换手机主题）。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "phone_flower",
@@ -3003,7 +3257,7 @@
     "locationId": "electronics_store",
     "name": "买水果手机",
     "icon": "📱",
-    "desc": "5000 元，深色科技旗舰机（换手机主题）",
+    "desc": "5000 元，深色科技旗舰机（换手机主题）。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "phone_fruit",
@@ -3028,7 +3282,7 @@
     "locationId": "electronics_store",
     "name": "买摄像机",
     "icon": "📹",
-    "desc": "1200 元，能拍能录的摄像机（剧情道具）",
+    "desc": "1200 元，能拍能录的摄像机（剧情道具）。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "camera",
@@ -3053,7 +3307,7 @@
     "locationId": "electronics_store",
     "name": "买老旧笔记本",
     "icon": "💻",
-    "desc": "500 元，二手老笔记本，跑代码有点卡",
+    "desc": "500 元，二手老笔记本，跑代码有点卡。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "laptop",
@@ -3078,7 +3332,7 @@
     "locationId": "furniture_store",
     "name": "买专业厨具",
     "icon": "🍳",
-    "desc": "1000 元，做饭更快",
+    "desc": "1000 元，做饭更快。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "cook_set_mid",
@@ -3103,7 +3357,7 @@
     "locationId": "furniture_store",
     "name": "买豪华厨具",
     "icon": "🍳",
-    "desc": "3000 元，做饭又快又好",
+    "desc": "3000 元，做饭又快又好。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "cook_set_high",
@@ -3128,7 +3382,7 @@
     "locationId": "furniture_store",
     "name": "买杠铃套装",
     "icon": "🏋️",
-    "desc": "1000 元，锻炼效果更好",
+    "desc": "1000 元，锻炼效果更好。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "gym_mid",
@@ -3153,7 +3407,7 @@
     "locationId": "furniture_store",
     "name": "买健身套装",
     "icon": "🏋️",
-    "desc": "3000 元，全套健身器材",
+    "desc": "3000 元，全套健身器材。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "gym_high",
@@ -3178,7 +3432,7 @@
     "locationId": "furniture_store",
     "name": "买纺织床品",
     "icon": "🛏️",
-    "desc": "400 元，休息恢复小幅提升",
+    "desc": "400 元的纺织床品，睡着比以前踏实。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "bed_basic",
@@ -3203,7 +3457,7 @@
     "locationId": "furniture_store",
     "name": "买真丝床品",
     "icon": "🛏️",
-    "desc": "1500 元，休息恢复更好",
+    "desc": "1500 元的真丝床品，一觉到天亮。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "bed_standard",
@@ -3228,7 +3482,7 @@
     "locationId": "furniture_store",
     "name": "买梦幻床品",
     "icon": "🛏️",
-    "desc": "4000 元，一觉满血",
+    "desc": "4000 元，一觉满血。",
     "duration": 1,
     "handler": "buy_item",
     "itemId": "bed_premium",
@@ -3253,7 +3507,7 @@
     "locationId": "training_school",
     "name": "上培训课",
     "icon": "📚",
-    "desc": "免费听一堂职业技能课，智力 +1（每天限 1 次，连续 3 天或累计 5 次领结业证书）",
+    "desc": "每天最多上一堂、每堂 2 小时。当前证书等级完成连续 3 天课程或累计 5 堂即可结业，进度与本次结算条件会显示在卡片和结果里。",
     "duration": 2,
     "handler": "train_study",
     "effects": {
@@ -3275,7 +3529,7 @@
     "locationId": "cafe",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识店里的常客（每日限 2 次）",
+    "desc": "主动上前搭话，结识店里的常客（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3294,7 +3548,7 @@
     "locationId": "park",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识公园里遛弯的人（每日限 2 次）",
+    "desc": "主动上前搭话，结识公园里遛弯的人（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3313,7 +3567,7 @@
     "locationId": "labor_market",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识劳务市场等活的人（每日限 2 次）",
+    "desc": "主动上前搭话，结识劳务市场等活的人（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3332,7 +3586,7 @@
     "locationId": "fast_food",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识快餐店里的人（每日限 2 次）",
+    "desc": "主动上前搭话，结识快餐店里的人（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3351,7 +3605,7 @@
     "locationId": "electronics_factory",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识厂里的同事（每日限 2 次）",
+    "desc": "主动上前搭话，结识厂里的同事（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3370,7 +3624,7 @@
     "locationId": "internet_cafe",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识网吧的常客（每日限 2 次）",
+    "desc": "主动上前搭话，结识网吧的常客（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3389,7 +3643,7 @@
     "locationId": "library",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识图书馆里读书的人（每日限 2 次）",
+    "desc": "主动上前搭话，结识图书馆里读书的人（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3408,7 +3662,7 @@
     "locationId": "clinic",
     "name": "搭话认识新朋友",
     "icon": "👋",
-    "desc": "主动上前搭话，结识诊所里候诊的人（每日限 2 次）",
+    "desc": "主动上前搭话，结识诊所里候诊的人（每日限 2 次）。",
     "duration": 0.5,
     "handler": "meet_someone",
     "effects": {},
@@ -3427,7 +3681,7 @@
     "locationId": "hotel",
     "name": "自助早餐",
     "icon": "🍳",
-    "desc": "酒店自助早餐：粥粉面蛋管饱（20 元）",
+    "desc": "酒店自助早餐：粥粉面蛋管饱（20 元）。",
     "duration": 0.5,
     "requirements": {
       "money": 20
@@ -3448,31 +3702,12 @@
     "sound": "eat"
   },
   {
-    "id": "hotel_frontdesk",
-    "locationId": "hotel",
-    "name": "酒店前台",
-    "icon": "🛎️",
-    "desc": "向前台咨询房型与自助早餐（特惠间 40 元/晚 · 豪华间 150 元/晚）",
-    "duration": 0.5,
-    "handler": "hotel_frontdesk",
-    "effects": {},
-    "sound": "cashier",
-    "verdicts": [
-      "前台小哥耐心介绍了房型和早餐时间",
-      "看了房型图，特惠间性价比不错",
-      "前台推荐了朝南的豪华间，视野很好",
-      "咨询完房型，顺便问了下周边美食",
-      "前台帮你办了会员，说下次入住有折扣",
-      "聊了几句，前台态度很好，体验不错"
-    ]
-  },
-  {
     "id": "buy_egg_market",
     "locationId": "market",
     "name": "买鸡蛋",
     "icon": "🥚",
     "duration": 0.5,
-    "desc": "成筐的鸡蛋，比农场贵一些（5 元/打）。(+8 饱腹，背包中食用)",
+    "desc": "成筐的鸡蛋，比农场贵一些（5 元/打）；买后自动送入冰箱。",
     "effects": {
       "money": -5,
       "log": "在菜市场买了一打鸡蛋"
@@ -3487,7 +3722,7 @@
     ],
     "sound": "coin",
     "handler": "buy_ingredient",
-    "itemId": "farm_egg",
+    "itemId": "egg",
     "discount": {
       "afterHour": 21,
       "rate": 0.75
@@ -3499,7 +3734,7 @@
     "name": "买牛奶",
     "icon": "🥛",
     "duration": 0.5,
-    "desc": "包装鲜奶，比牧场贵一些（6 元/L）。(+10 饱腹 +2 健康，背包中食用)",
+    "desc": "包装鲜奶，比牧场贵一些（6 元/L）；买后自动送入冰箱。",
     "effects": {
       "money": -6,
       "log": "在菜市场买了一升牛奶"
@@ -3508,13 +3743,13 @@
       "保质期比牧场奶短，胜在随时能买",
       "冷藏柜里拿的，凉丝丝",
       "城市里喝的就是这份方便",
-      "比牧场贵两块钱，但不用跑郊区",
+      "比牧场贵两块钱，但不用跑紫羊区",
       "超市同款这里更便宜",
       "店员说这批次是今早到的"
     ],
     "sound": "coin",
     "handler": "buy_ingredient",
-    "itemId": "farm_milk",
+    "itemId": "milk",
     "discount": {
       "afterHour": 21,
       "rate": 0.75
@@ -3523,17 +3758,17 @@
   {
     "id": "farm_buy_meat",
     "locationId": "farm",
-    "name": "买农家肉（10 元/份）",
+    "name": "买农家猪肉（10 元/份）",
     "icon": "🥩",
     "duration": 0.5,
-    "desc": "农家自养猪肉，比菜市场便宜。（+52 饱腹，需烹饪）",
+    "desc": "农家自养猪肉，比菜市场便宜。",
     "effects": {
       "money": -10,
       "log": "在农户家割了块肉"
     },
     "verdicts": [
       "现杀的，还带着热气",
-      "比菜市场便宜五块，赚到了",
+      "比菜市场便宜两块，赚到了",
       "农户说自家喂的，没饲料",
       "切好装袋，晚上炖一锅",
       "这肉看着就紧实，是好肉",
@@ -3541,7 +3776,7 @@
     ],
     "sound": "coin",
     "handler": "buy_ingredient",
-    "itemId": "meat"
+    "itemId": "pork"
   },
   {
     "id": "cat_feed",
@@ -3549,7 +3784,7 @@
     "name": "喂猫咪",
     "icon": "🥫",
     "duration": 0.5,
-    "desc": "给猫咪喂猫粮，恢复饱食度（消耗背包里的猫粮）",
+    "desc": "喂一顿猫粮，猫咪吃得踏实。（消耗背包里的猫粮）",
     "handler": "cat_care",
     "catAction": "feed",
     "group": "cat",
@@ -3572,7 +3807,7 @@
     "name": "给猫咪洗澡",
     "icon": "🛁",
     "duration": 1,
-    "desc": "花 15 元给猫咪洗个澡，恢复干净度",
+    "desc": "花 15 元给猫咪洗个澡，出来一身清爽。",
     "handler": "cat_care",
     "catAction": "clean",
     "group": "cat",
@@ -3595,7 +3830,7 @@
     "name": "陪猫咪玩",
     "icon": "🧶",
     "duration": 0.5,
-    "desc": "陪猫咪玩耍，恢复心情（消耗少量饱食）",
+    "desc": "陪猫咪玩一阵，它开心，你也松快。",
     "handler": "cat_care",
     "catAction": "play",
     "group": "cat",
@@ -3621,7 +3856,7 @@
     "name": "训练攻击",
     "icon": "🥊",
     "duration": 1,
-    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练攻击（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "atk",
@@ -3648,7 +3883,7 @@
     "name": "训练防御",
     "icon": "🛡️",
     "duration": 1,
-    "desc": "花 20 元训练防御（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练防御（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "def",
@@ -3675,7 +3910,7 @@
     "name": "训练速度",
     "icon": "💨",
     "duration": 1,
-    "desc": "花 20 元训练速度（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练速度（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "spd",
@@ -3702,7 +3937,7 @@
     "name": "训练体质",
     "icon": "❤️",
     "duration": 1,
-    "desc": "花 20 元训练体质（每日限 3 次，重复递减）",
+    "desc": "花 20 元训练体质（每日限 3 次，重复递减）。",
     "handler": "cat_care",
     "catAction": "train",
     "trainType": "hp",
@@ -3726,7 +3961,7 @@
     "name": "买普通猫粮",
     "icon": "🥫",
     "duration": 0.5,
-    "desc": "购买猫咪用品：普通猫粮（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：普通猫粮（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_food_basic",
     "group": "pet_food",
@@ -3749,7 +3984,7 @@
     "name": "买优质猫粮",
     "icon": "🍣",
     "duration": 0.5,
-    "desc": "购买猫咪用品：优质猫粮（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：优质猫粮（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_food_good",
     "group": "pet_food",
@@ -3772,7 +4007,7 @@
     "name": "买豪华猫粮",
     "icon": "🍱",
     "duration": 0.5,
-    "desc": "购买猫咪用品：豪华猫粮（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：豪华猫粮（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_food_lux",
     "group": "pet_food",
@@ -3795,7 +4030,7 @@
     "name": "买毛线球",
     "icon": "🧶",
     "duration": 0.5,
-    "desc": "购买猫咪用品：毛线球（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：毛线球（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_toy_basic",
     "group": "pet_toy",
@@ -3818,7 +4053,7 @@
     "name": "买逗猫棒",
     "icon": "🪶",
     "duration": 0.5,
-    "desc": "购买猫咪用品：逗猫棒（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：逗猫棒（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_toy_good",
     "group": "pet_toy",
@@ -3841,7 +4076,7 @@
     "name": "买智能玩具",
     "icon": "🤖",
     "duration": 0.5,
-    "desc": "购买猫咪用品：智能玩具（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：智能玩具（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_toy_lux",
     "group": "pet_toy",
@@ -3864,7 +4099,7 @@
     "name": "买纸箱猫窝",
     "icon": "📦",
     "duration": 0.5,
-    "desc": "购买猫咪用品：纸箱猫窝（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：纸箱猫窝（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_bed_basic",
     "group": "pet_bed",
@@ -3887,7 +4122,7 @@
     "name": "买软垫猫窝",
     "icon": "🛏️",
     "duration": 0.5,
-    "desc": "购买猫咪用品：软垫猫窝（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：软垫猫窝（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_bed_good",
     "group": "pet_bed",
@@ -3910,7 +4145,7 @@
     "name": "买豪华猫别墅",
     "icon": "🏰",
     "duration": 0.5,
-    "desc": "购买猫咪用品：豪华猫别墅（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：豪华猫别墅（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_bed_lux",
     "group": "pet_bed",
@@ -3933,7 +4168,7 @@
     "name": "买训练垫",
     "icon": "🎯",
     "duration": 0.5,
-    "desc": "购买猫咪用品：训练垫（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：训练垫（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_train_basic",
     "group": "pet_train",
@@ -3956,7 +4191,7 @@
     "name": "买训练器",
     "icon": "🏋️",
     "duration": 0.5,
-    "desc": "购买猫咪用品：训练器（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：训练器（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_train_good",
     "group": "pet_train",
@@ -3979,7 +4214,7 @@
     "name": "买训练舱",
     "icon": "🚀",
     "duration": 0.5,
-    "desc": "购买猫咪用品：训练舱（入背包，开销计入周记）",
+    "desc": "购买猫咪用品：训练舱（入背包，开销计入周记）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_train_lux",
     "group": "pet_train",
@@ -3997,12 +4232,35 @@
     "sound": "coin"
   },
   {
+    "id": "cat_buy_auto_feeder",
+    "locationId": "pet_store",
+    "name": "购买自动照料机",
+    "icon": "🤖",
+    "duration": 0.5,
+    "desc": "500 元。饥饿低于三分之一时消耗已有猫粮自动喂食，干净度低于三分之一时自动清洁；无法代替治病。",
+    "handler": "buy_cat_item",
+    "catItemId": "cat_auto_feeder",
+    "group": "pet_equipment",
+    "effects": {
+      "log": "购买了自动照料机"
+    },
+    "verdicts": [
+      "自动照料机已经装好，猫咪饿了会自己吃上猫粮",
+      "店员把自动照料机仔细打包好了",
+      "猫粮补给就交给这台机器吧",
+      "设备会在猫咪饱食度低于三分之一时自动补粮",
+      "机器不占携带栏，放在住处就能工作",
+      "记得在背包备好猫粮，库存不足时机器无法补给"
+    ],
+    "sound": "coin"
+  },
+  {
     "id": "pet_adopt",
     "locationId": "pet_store",
     "name": "领养猫咪",
     "icon": "🐾",
     "duration": 0.5,
-    "desc": "看看店里待领养的猫咪，按稀有度明码标价",
+    "desc": "看看店里待领养的猫咪，按稀有度明码标价。",
     "handler": "pet_adopt",
     "group": "pet_adopt",
     "effects": {
@@ -4024,7 +4282,7 @@
     "name": "治疗猫咪伤势",
     "icon": "💊",
     "duration": 1,
-    "desc": "给携带的猫咪治疗伤势：按伤势收费，重伤需多次治疗（费用随伤势浮动）",
+    "desc": "给携带的猫咪治疗伤势：按伤势收费，重伤需多次治疗（费用随伤势浮动）。",
     "handler": "treat_injury",
     "group": "hos_treat",
     "effects": {
@@ -4046,7 +4304,7 @@
     "name": "恢复猫咪生命",
     "icon": "❤️‍🩹",
     "duration": 1,
-    "desc": "给猫咪做生命恢复治疗，补满当前生命值（按缺失量收费；生命归零倒地的猫咪必须来此治疗）",
+    "desc": "把猫咪的生命补回来，缺多少收多少。已经倒地的，只能来这儿救。",
     "handler": "cat_restore_hp",
     "group": "hos_treat",
     "effects": {
@@ -4065,10 +4323,10 @@
   {
     "id": "cat_special_train",
     "locationId": "pet_hospital",
-    "name": "猫咪特殊训练",
+    "name": "卡牌永久强化＋",
     "icon": "💪",
     "duration": 1,
-    "desc": "付费任选一张卡强化：攻击卡加伤害、防御卡加格挡、治疗卡加治疗（每周限 3 次，按次数定价 200/400/600 元）",
+    "desc": "从共享收藏选择一张普通牌，永久强化为＋版；每张仅一次。每周3次，200/400/600元，各耗1小时。",
     "handler": "cat_special_train",
     "requirements": {
       "hasActivePet": true
@@ -4090,10 +4348,10 @@
   {
     "id": "cat_focus_train",
     "locationId": "pet_hospital",
-    "name": "猫咪专注性训练",
+    "name": "免费卡组指导与试打",
     "icon": "🎯",
-    "duration": 1,
-    "desc": "在医生指导下永久删除一张卡，精简卡组让出牌更专注（每周限 3 次，按次数定价 200/400/600 元）",
+    "duration": 0,
+    "desc": "免费编辑12–20张牌组，或进入不影响生活存档的无奖励试打。不会销毁收藏卡。",
     "handler": "cat_focus_train",
     "requirements": {
       "hasActivePet": true
@@ -4118,7 +4376,7 @@
     "name": "买猫用药水",
     "icon": "🧪",
     "duration": 0.5,
-    "desc": "购买猫咪用品：猫用药水（即时治疗一个等级伤势，入背包）",
+    "desc": "购买猫咪用品：猫用药水（即时治疗一个等级伤势，入背包）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_potion",
     "group": "hos_special",
@@ -4141,7 +4399,7 @@
     "name": "买生命药剂",
     "icon": "💊",
     "duration": 0.5,
-    "desc": "购买猫咪用品：生命药剂（喂服后恢复 50% 最大生命值，入背包）",
+    "desc": "一小瓶生命药剂，收进背包。猫咪撑不住的时候喂一支。",
     "handler": "buy_cat_item",
     "catItemId": "cat_hp_potion",
     "group": "hos_special",
@@ -4164,7 +4422,7 @@
     "name": "买净化剂",
     "icon": "✨",
     "duration": 0.5,
-    "desc": "购买猫咪用品：净化剂（战斗中清除异常状态，入背包）",
+    "desc": "购买猫咪用品：净化剂（战斗中清除异常状态，入背包）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_purifier",
     "group": "hos_special",
@@ -4187,7 +4445,7 @@
     "name": "买复活石",
     "icon": "💎",
     "duration": 0.5,
-    "desc": "购买猫咪用品：复活石（战斗中被击倒自动复活一次，入背包）",
+    "desc": "购买猫咪用品：复活石（战斗中被击倒自动复活一次，入背包）。",
     "handler": "buy_cat_item",
     "catItemId": "cat_revive",
     "group": "hos_special",
@@ -4208,7 +4466,7 @@
     "id": "cat_free_train",
     "name": "猫咪自由锻炼",
     "icon": "🏃",
-    "desc": "带猫咪在公园撒欢跑跑：50% 随机提升一个属性，50% 遭遇野生猫咪（可决斗或逃跑，失败无惩罚）。每日限 3 次",
+    "desc": "带猫咪在湖边撒欢跑跑，要么练出点长进，要么撞见别的野猫。打不打随你，输了也不吃亏。每天三回。",
     "locationId": "park",
     "group": "cat_train",
     "duration": 0.5,
@@ -4233,7 +4491,7 @@
     "id": "amusement_fun_match",
     "name": "喵喵娱乐赛",
     "icon": "🥊",
-    "desc": "无需门票、立即开战：大概率普通对手、小概率中级对手，输了没惩罚，赢了随机提升一个猫咪属性。每日限 3 场",
+    "desc": "带猫咪参加一场友谊赛，和别家的小家伙切磋。",
     "locationId": "amusement_park",
     "duration": 0.5,
     "handler": "fun_match",
@@ -4397,7 +4655,7 @@
     "name": "买治愈水晶",
     "icon": "💎",
     "duration": 0.5,
-    "desc": "购买饰品：治愈水晶（稀有，15000元）——蕴藏治愈之力的水晶，提升体质。",
+    "desc": "治愈水晶，一万五，稀罕物件。据说握着它，身子骨会硬朗些。",
     "handler": "buy_accessory",
     "accessoryId": "ac_crystal",
     "group": "pet_acc",
@@ -4436,5 +4694,5150 @@
       "钱袋又轻了一些，但值得"
     ],
     "sound": "coin"
+  },
+  {
+    "id": "steel_shift",
+    "locationId": "steel_factory",
+    "name": "钢炉辅助班",
+    "icon": "🔥",
+    "desc": "10 小时重工业班次：需达到体力与健康要求，日结 180 元，并积累生产运营履历。",
+    "duration": 10,
+    "requirements": {
+      "attr": {
+        "health": 55,
+        "stamina": 60
+      },
+      "oncePerDay": "steel_shift_day"
+    },
+    "effects": {
+      "money": 180,
+      "stamina": -75,
+      "health": -2,
+      "stress": 12,
+      "skills": {
+        "operation": 2
+      },
+      "log": "在钢铁厂完成了一班炉前辅助工作，赚了 180 元"
+    },
+    "verdicts": [
+      "炉火烤得脸发烫，但工资到账很踏实",
+      "师傅说你今天动作越来越稳",
+      "安全帽扣紧，十小时班终于收工",
+      "仪表盘的红线不能碰，按规程做事最重要",
+      "下班时鞋底还带着热气，但今天没有出差错",
+      "工业区的夜色很亮，像给辛苦的人留了盏灯"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "glass_quality_shift",
+    "locationId": "glass_factory",
+    "name": "玻璃质检班",
+    "icon": "🪟",
+    "desc": "检查玻璃瑕疵与厚度，10 小时质检班次日结 150 元；细心和操作技能越高越容易拿到奖金。",
+    "duration": 10,
+    "requirements": {
+      "attr": {
+        "intelligence": 50
+      },
+      "skill": {
+        "operation": 2
+      },
+      "oncePerDay": "glass_quality_shift_day"
+    },
+    "effects": {
+      "money": 150,
+      "stamina": -45,
+      "stress": 8,
+      "skills": {
+        "operation": 2
+      },
+      "log": "在玻璃厂完成质检，赚了 150 元"
+    },
+    "verdicts": [
+      "灯光下的气泡和裂纹无处可藏",
+      "抽检合格率很漂亮，主管点了点头",
+      "重复但专业的工作，熟练度涨了",
+      "把厚度数据记得一丝不差",
+      "同事说你的眼睛像扫描仪一样可靠",
+      "今天的成品顺利装车，心里很有成就感"
+    ],
+    "sound": "cashier"
+  },
+  {
+    "id": "aluminum_recycle_shift",
+    "locationId": "aluminum_factory",
+    "name": "铝材回收班",
+    "icon": "🪨",
+    "desc": "10 小时铝材回收班，偏体力工作，日结 175 元并积累工业运营经验。",
+    "duration": 10,
+    "requirements": {
+      "attr": {
+        "health": 50,
+        "stamina": 55
+      },
+      "oncePerDay": "aluminum_recycle_shift_day"
+    },
+    "effects": {
+      "money": 175,
+      "stamina": -70,
+      "stress": 12,
+      "skills": {
+        "operation": 1
+      },
+      "log": "在铝厂完成一班回收工作，赚了 175 元"
+    },
+    "verdicts": [
+      "铝材在阳光下闪闪发亮，今天没白忙",
+      "分类装车一气呵成",
+      "手套磨薄了，钱包厚了一点",
+      "边角料也有自己的去处，流程不能马虎",
+      "队长夸你分拣速度快了不少",
+      "收工清点无误，今天的辛苦有了回报"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "station_route_planning",
+    "locationId": "high_speed_rail",
+    "name": "车站路线调研",
+    "icon": "🗺️",
+    "desc": "在站内收集城市周边信息，发现新的工作与社交机会。",
+    "duration": 2,
+    "requirements": {
+      "attr": {
+        "intelligence": 35
+      },
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "mood": 3,
+      "fame": 1,
+      "flags": {
+        "station_scouted": true
+      },
+      "log": "在车站做了路线调研，记下了几座城市的出发时间"
+    },
+    "verdicts": [
+      "看着时刻表，第一次认真想了想远方",
+      "站台广播让城市显得比想象中更大",
+      "收集到一手路线信息，下一次出发会更从容",
+      "把换乘站点和末班车时间都记下来了",
+      "工作人员指了指一条少有人走的线路",
+      "地图上的空白少了一块，心里也踏实了些"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "bus_station_gig",
+    "locationId": "bus_station",
+    "name": "巴士站临时协助",
+    "icon": "🚌",
+    "desc": "帮忙引导旅客与整理行李，适合服务轨道的入门工作。",
+    "duration": 4,
+    "requirements": {
+      "attr": {
+        "health": 35,
+        "stamina": 35
+      },
+      "oncePerDay": "bus_station_gig_day"
+    },
+    "effects": {
+      "money": 48,
+      "stamina": -30,
+      "stress": 5,
+      "skills": {
+        "service": 1
+      },
+      "log": "在巴士站协助旅客，赚了 48 元"
+    },
+    "verdicts": [
+      "帮一家人找到了正确的检票口",
+      "行李很多，但流程已经熟了",
+      "短班结束，感觉自己和城市更熟了一点",
+      "旅客道谢时，你发现服务也是一种技能",
+      "广播响起前把队伍疏导得很顺",
+      "四小时的临时班，给远方留了一点好印象"
+    ],
+    "sound": "cashier"
+  },
+  {
+    "id": "station_intercity_bus",
+    "locationId": "bus_station",
+    "name": "购买/乘坐城际巴士",
+    "icon": "🚌",
+    "desc": "选择直达车站，确认车票与预计抵达时间后出发。",
+    "duration": 0,
+    "handler": "intercity_station",
+    "stationMode": "bus",
+    "effects": {},
+    "verdicts": [
+      "看了看巴士时刻表，远方突然有了具体的时间",
+      "站台广播让这座城市显得更大了",
+      "把车票和出发时间记在了心里",
+      "工作人员耐心说明了乘车流程",
+      "候车区的人们都带着各自的目的地",
+      "下一段路已经安排妥当"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "development_station_intercity_bus",
+    "locationId": "development_bus_station",
+    "name": "城际交通",
+    "icon": "🚌",
+    "desc": "可直达树堰区巴士站与紫羊区巴士站；树堰—伯月新区直达线全天每小时一班。",
+    "duration": 0,
+    "handler": "intercity_station",
+    "stationMode": "bus",
+    "effects": {},
+    "verdicts": [
+      "选择好下一段路，查看抵达时间",
+      "车站广播里传来各地的站名",
+      "工作人员指向了对应的候车处",
+      "出发前再核对一次目的地",
+      "远方的行程有了安排",
+      "下一段路已经安排妥当"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "station_intercity_train",
+    "locationId": "high_speed_rail",
+    "name": "购买/乘坐城际火车",
+    "icon": "🚆",
+    "desc": "选择直达车站，确认火车班次、车票与预计抵达时间后出发。",
+    "duration": 0,
+    "handler": "intercity_station",
+    "stationMode": "train",
+    "effects": {},
+    "verdicts": [
+      "看了看火车时刻表，远方突然有了具体的时间",
+      "站台广播让这座城市显得更大了",
+      "把车票和出发时间记在了心里",
+      "工作人员耐心说明了乘车流程",
+      "候车区的人们都带着各自的目的地",
+      "下一段路已经安排妥当"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "suburb_station_intercity_bus",
+    "locationId": "suburb_bus_station",
+    "name": "购买/乘坐返程巴士",
+    "icon": "🚌",
+    "desc": "选择直达车站，确认车票与预计抵达时间后出发。",
+    "duration": 0,
+    "handler": "intercity_station",
+    "stationMode": "bus",
+    "effects": {},
+    "verdicts": [
+      "回程路线已经查清楚了",
+      "边缘车站的广播提醒着你别错过班次",
+      "把车票和出发时间记在了心里",
+      "工作人员耐心说明了乘车流程",
+      "候车区的人们都带着各自的目的地",
+      "下一段路已经安排妥当"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "suburb_station_intercity_train",
+    "locationId": "suburb_train_station",
+    "name": "购买/乘坐返程火车",
+    "icon": "🚆",
+    "desc": "选择直达车站，确认火车班次、车票与预计抵达时间后出发。",
+    "duration": 0,
+    "handler": "intercity_station",
+    "stationMode": "train",
+    "effects": {},
+    "verdicts": [
+      "回程路线已经查清楚了",
+      "站台广播提醒着你别错过班次",
+      "把车票和出发时间记在了心里",
+      "工作人员耐心说明了乘车流程",
+      "候车区的人们都带着各自的目的地",
+      "下一段路已经安排妥当"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "buy_flower_flower_market",
+    "locationId": "flower_market",
+    "name": "买鲜花花束",
+    "icon": "💐",
+    "desc": "35 元，周五至周日开放，买一束鲜花为房间添点颜色。",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "market_flower",
+    "group": "market_shop",
+    "weekendOnly": true,
+    "requirements": {
+      "money": 35,
+      "weekday": [
+        "fri",
+        "sat",
+        "sun"
+      ]
+    },
+    "effects": {
+      "money": -35,
+      "log": "在花鸟市场买了一束鲜花"
+    },
+    "verdicts": [
+      "花束的颜色让摊位亮了起来",
+      "摊主替你挑了几枝新鲜的花",
+      "把周末的好心情带回了家",
+      "花香短暂地盖过了城市的喧闹",
+      "房间里多了一点柔软的颜色",
+      "今天的市场闲逛收获很不错"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_plant_flower_market",
+    "locationId": "flower_market",
+    "name": "买绿植盆栽",
+    "icon": "🪴",
+    "desc": "挑一盆喜欢的绿植，给住处添点绿意。",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "plant",
+    "group": "market_shop",
+    "requirements": {
+      "money": 80
+    },
+    "effects": {
+      "money": -80,
+      "log": "在花鸟市场买了一盆绿植"
+    },
+    "verdicts": [
+      "挑到了一盆看起来很有生命力的绿植",
+      "摊主教你记住了浇水的分寸",
+      "把一点绿色带回了家",
+      "花鸟市场的空气里有泥土和叶子的味道",
+      "新盆栽让房间显得更有生气",
+      "今天的闲逛有了一个温柔的收尾"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "small_pet_adopt_bird",
+    "locationId": "flower_market",
+    "name": "购买宠物鸟",
+    "icon": "🐦",
+    "desc": "80 元，周五至周日开放，带一只小鸟回家陪伴。",
+    "duration": 0.5,
+    "handler": "small_pet_adopt",
+    "smallPetKind": "bird",
+    "group": "market_pet",
+    "weekendOnly": true,
+    "requirements": {
+      "money": 80,
+      "weekday": [
+        "fri",
+        "sat",
+        "sun"
+      ]
+    },
+    "effects": {
+      "money": -80
+    },
+    "verdicts": [
+      "小鸟在笼边轻轻叫了一声",
+      "挑选宠物时你认真问了饲养方法",
+      "新的小伙伴被稳稳地带回家",
+      "摊主提醒你每天观察饮水和食量",
+      "回家的路上，身边多了一份细小的期待",
+      "花鸟市场的叫卖声变成了温柔的背景"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "small_pet_adopt_goldfish",
+    "locationId": "flower_market",
+    "name": "购买宠物金鱼",
+    "icon": "🐠",
+    "desc": "30 元，周五至周日开放，带一条小金鱼回家。",
+    "duration": 0.5,
+    "handler": "small_pet_adopt",
+    "smallPetKind": "goldfish",
+    "group": "market_pet",
+    "weekendOnly": true,
+    "requirements": {
+      "money": 30,
+      "weekday": [
+        "fri",
+        "sat",
+        "sun"
+      ]
+    },
+    "effects": {
+      "money": -30
+    },
+    "verdicts": [
+      "小金鱼在水里摆了摆尾巴",
+      "挑选宠物时你认真问了饲养方法",
+      "新的小伙伴被稳稳地带回家",
+      "摊主提醒你留意水质和食量",
+      "回家的路上，身边多了一份细小的期待",
+      "花鸟市场的灯光映在了鱼缸上"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "small_pet_feed_bird",
+    "locationId": "flower_market",
+    "name": "购买鸟食并喂食",
+    "icon": "🌾",
+    "desc": "5 元一包鸟食，撒进去，它高兴，你也踏实。",
+    "duration": 0.5,
+    "handler": "small_pet_care",
+    "smallPetKind": "bird",
+    "smallPetAction": "feed",
+    "group": "market_pet",
+    "requirements": {
+      "money": 5
+    },
+    "effects": {
+      "money": -5
+    },
+    "verdicts": [
+      "小鸟啄了几口新鲜的鸟食",
+      "看着它恢复精神，你也安心了一点",
+      "细小的照料让陪伴变得具体",
+      "今天的饲料分量刚刚好",
+      "宠物在你手边轻轻动了动",
+      "照顾小生命也需要一点耐心"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "small_pet_feed_goldfish",
+    "locationId": "flower_market",
+    "name": "购买鱼食并喂食",
+    "icon": "🐟",
+    "desc": "3 元一撮鱼食，喂完它就活泼起来。",
+    "duration": 0.5,
+    "handler": "small_pet_care",
+    "smallPetKind": "goldfish",
+    "smallPetAction": "feed",
+    "group": "market_pet",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3
+    },
+    "verdicts": [
+      "小金鱼追着鱼食游了一圈",
+      "看着它恢复精神，你也安心了一点",
+      "细小的照料让陪伴变得具体",
+      "今天的鱼食分量刚刚好",
+      "水面荡开了几圈小小的涟漪",
+      "照顾小生命也需要一点耐心"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "small_pet_comfort",
+    "locationId": "flower_market",
+    "name": "陪小宠物待一会儿",
+    "icon": "💛",
+    "desc": "陪它待一会儿，它就不会觉得自己被忘了。",
+    "duration": 0.5,
+    "handler": "small_pet_care",
+    "smallPetAction": "comfort",
+    "group": "market_pet",
+    "effects": {},
+    "verdicts": [
+      "你在旁边安静陪了它一会儿",
+      "小宠物的情绪慢慢平稳下来",
+      "没有复杂的训练，陪伴本身就很重要",
+      "花鸟市场的喧闹声隔在了门外",
+      "它似乎认出了你的声音",
+      "今天也给小伙伴留了一点安心"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "small_pet_checkup",
+    "locationId": "flower_market",
+    "name": "小宠物体检",
+    "icon": "🩺",
+    "desc": "20 元做个体检，顺便让小家伙吃顿好的。",
+    "duration": 0.5,
+    "handler": "small_pet_checkup",
+    "group": "market_pet",
+    "requirements": {
+      "money": 20
+    },
+    "effects": {
+      "money": -20
+    },
+    "verdicts": [
+      "医生仔细看了看小宠物的状态",
+      "体检结束，小伙伴看起来精神了一些",
+      "把饥饿和情绪问题及时处理了",
+      "宠物医院的检查很快就完成了",
+      "你记下了医生提醒的照料方法",
+      "平安健康就是最好的检查结果"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "snack_street_skewer",
+    "locationId": "snack_street",
+    "name": "买烤串",
+    "icon": "🍢",
+    "desc": "树堰老街炭火现烤，10 元一份；背包物品显示为“烤串”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_skewer",
+    "group": "market_shop",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "在树堰老街小吃街买了一份烤串"
+    },
+    "verdicts": [
+      "烤串刚出炉，香味立刻钻进了鼻子",
+      "撒料的声音和街边的吆喝混在一起",
+      "这一份烤串让肚子踏实了不少",
+      "摊主熟练地把食物装好递给你",
+      "边走边吃也能感受到小吃街的热闹",
+      "简单的一餐也有自己的满足感"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "snack_street_noodles",
+    "locationId": "snack_street",
+    "name": "买炒面",
+    "icon": "🍝",
+    "desc": "树堰老街铁锅炒面，14 元一份；背包物品显示为“炒面”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_noodles",
+    "group": "market_shop",
+    "requirements": {
+      "money": 14
+    },
+    "effects": {
+      "money": -14,
+      "log": "在树堰老街小吃街买了一份炒面"
+    },
+    "verdicts": [
+      "炒面在铁锅里翻出热气",
+      "锅铲声和街边的音乐交织在一起",
+      "这一份炒面让肚子踏实了不少",
+      "摊主熟练地把食物装好递给你",
+      "热腾腾的香气让人暂时忘了烦恼",
+      "简单的一餐也有自己的满足感"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "snack_street_tofu",
+    "locationId": "snack_street",
+    "name": "买臭豆腐",
+    "icon": "🧈",
+    "desc": "树堰老街传统臭豆腐，8 元一份；背包物品显示为“臭豆腐”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_tofu",
+    "group": "market_shop",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在树堰老街小吃街买了一份臭豆腐"
+    },
+    "verdicts": [
+      "臭豆腐的香味在街口就能闻到",
+      "外酥里嫩的口感让你点了点头",
+      "这一份小吃让心情也亮了一点",
+      "摊主熟练地把食物装好递给你",
+      "街边的热闹给晚饭添了点趣味",
+      "简单的一餐也有自己的满足感"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "stall_snack_street",
+    "locationId": "snack_street",
+    "name": "小吃街摆摊",
+    "icon": "🍢",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
+    "duration": 2,
+    "handler": "work_project",
+    "projectId": "snack_stall",
+    "group": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      },
+      "oncePerDay": "stall_snack_day"
+    },
+    "effects": {},
+    "verdicts": [
+      "摊位前很快聚起了几位顾客",
+      "火候和调味都比普通街边摊更讲究",
+      "小吃街的客流让今天格外忙碌",
+      "顾客吃得开心，摊位的招牌也亮了起来",
+      "忙完一轮，你对经营小摊更有把握了",
+      "旺盛的人气换来了更高的回报"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_tomato_market",
+    "locationId": "market",
+    "name": "买番茄",
+    "icon": "🍅",
+    "desc": "4 元一份，酸甜番茄适合炒蛋或炖肉。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "tomato",
+    "requirements": {
+      "money": 4
+    },
+    "effects": {
+      "money": -4,
+      "log": "在菜市场买了番茄"
+    },
+    "verdicts": [
+      "挑到一篮子颜色漂亮的番茄",
+      "摊主把番茄装得很仔细",
+      "番茄闻起来有一股清新的酸甜味",
+      "今天的食材采购很顺利",
+      "这份番茄足够做一顿家常菜",
+      "把新鲜食材带回厨房"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_cabbage_market",
+    "locationId": "market",
+    "name": "买卷心菜",
+    "icon": "🥬",
+    "desc": "5 元一颗，脆甜卷心菜适合炒肉。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "cabbage",
+    "effects": {
+      "money": -5,
+      "log": "在菜市场买了卷心菜"
+    },
+    "verdicts": [
+      "挑到一颗脆嫩的卷心菜",
+      "菜叶水灵，今晚适合炒肉",
+      "摊主利落地剥掉了外层老叶",
+      "一份简单的家常菜有着落了",
+      "采购篮子越来越丰富",
+      "新鲜卷心菜装进了袋子"
+    ],
+    "sound": "coin",
+    "discount": { "afterHour": 21, "rate": 0.75 }
+  },
+  {
+    "id": "buy_potato_market",
+    "locationId": "market",
+    "name": "买土豆",
+    "icon": "🥔",
+    "desc": "3 元一份，耐储存又百搭。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "potato",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在菜市场买了土豆"
+    },
+    "verdicts": [
+      "土豆个头均匀，适合炖煮",
+      "摸起来结实新鲜",
+      "耐储存的土豆让冰箱更安心",
+      "今晚可以做一锅暖胃的菜",
+      "摊主按份装好了土豆",
+      "采购又完成了一项"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_carrot_market",
+    "locationId": "market",
+    "name": "买胡萝卜",
+    "icon": "🥕",
+    "desc": "3 元一份，清甜胡萝卜让菜色更亮。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "carrot",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在菜市场买了胡萝卜"
+    },
+    "verdicts": [
+      "胡萝卜颜色鲜亮",
+      "脆甜的食材让菜色更有精神",
+      "摊主挑了几根粗细合适的",
+      "切片后一定很好看",
+      "今天的采购很有条理",
+      "把清甜带回了厨房"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_onion_market",
+    "locationId": "market",
+    "name": "买洋葱",
+    "icon": "🧅",
+    "desc": "3 元一份，炒热后甜香四溢。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "onion",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在菜市场买了洋葱"
+    },
+    "verdicts": [
+      "洋葱外皮干爽，状态不错",
+      "炒热之后会有甜甜的香气",
+      "摊主提醒你回家再剥皮",
+      "一道肉菜的香味开始有了轮廓",
+      "购物清单又划掉一项",
+      "洋葱安全地装进了袋子"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_mushroom_market",
+    "locationId": "market",
+    "name": "买蘑菇",
+    "icon": "🍄",
+    "desc": "6 元一份，鲜味蘑菇和鸡蛋很搭。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "mushroom",
+    "requirements": {
+      "money": 6
+    },
+    "effects": {
+      "money": -6,
+      "log": "在菜市场买了蘑菇"
+    },
+    "verdicts": [
+      "蘑菇带着淡淡的泥土清香",
+      "挑到的菌伞完整而饱满",
+      "这份鲜味很适合和鸡蛋搭配",
+      "摊位上的蘑菇卖得很快",
+      "冰箱里多了一份鲜美选择",
+      "新鲜蘑菇采购完成"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_pork_market",
+    "locationId": "market",
+    "name": "买猪肉",
+    "icon": "🥩",
+    "desc": "12 元一份，切好的猪肉片适合家常炒菜。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "pork",
+    "effects": {
+      "money": -12,
+      "log": "在菜市场买了猪肉"
+    },
+    "verdicts": [
+      "选到纹理漂亮的猪肉片",
+      "摊主把肥瘦切得刚刚好",
+      "今晚的小炒肉有了主角",
+      "肉香已经开始在脑海里预热",
+      "这份猪肉值得一顿认真对待",
+      "食材袋沉甸甸的，收获感也很足"
+    ],
+    "sound": "coin",
+    "discount": { "afterHour": 21, "rate": 0.75 }
+  },
+  {
+    "id": "buy_chicken_market",
+    "locationId": "market",
+    "name": "买鸡肉",
+    "icon": "🍗",
+    "desc": "11 元一份，鲜嫩鸡肉适合焖饭。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "chicken",
+    "requirements": {
+      "money": 11
+    },
+    "effects": {
+      "money": -11,
+      "log": "在菜市场买了鸡肉"
+    },
+    "verdicts": [
+      "鸡肉颜色清亮，闻起来很新鲜",
+      "摊主把鸡肉切成方便下锅的大小",
+      "米饭和鸡汁的组合已经安排上了",
+      "这份鸡肉足够做一顿热饭",
+      "冰箱里多了一个可靠的晚餐方案",
+      "采购鸡肉完成"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_beef_market",
+    "locationId": "market",
+    "name": "买牛肉",
+    "icon": "🥩",
+    "desc": "18 元一份，适合土豆烧牛肉和洋葱炒牛肉。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "beef",
+    "requirements": {
+      "money": 18
+    },
+    "effects": {
+      "money": -18,
+      "log": "在菜市场买了牛肉"
+    },
+    "verdicts": [
+      "牛肉纹理紧实，颜色漂亮",
+      "摊主推荐用它做炖菜",
+      "土豆和牛肉的组合很诱人",
+      "今天的菜谱选择一下变多了",
+      "把一份扎实的蛋白质带回家",
+      "牛肉采购完成"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_rice_market",
+    "locationId": "market",
+    "name": "买大米",
+    "icon": "🍚",
+    "desc": "一人份大米，焖饭和蛋炒饭的基础（4 元/份），可以随其他食材一起采购。",
+    "duration": 0.5,
+    "handler": "buy_ingredient",
+    "itemId": "rice",
+    "effects": {
+      "money": -4,
+      "log": "在菜市场买了一份大米"
+    },
+    "verdicts": [
+      "称好的一份大米，正好够做一餐",
+      "米袋扎好了，和其他食材一起收好",
+      "挑了份颗粒完整的大米",
+      "回去可以焖饭，也可以做一碗蛋炒饭",
+      "这回主食也备齐了",
+      "摊主收好钱，把称好的米递给你"
+    ],
+    "discount": {
+      "afterHour": 21,
+      "rate": 0.75
+    },
+    "sound": "coin"
+  },
+  {
+    "id": "farm_buy_rice",
+    "locationId": "farm",
+    "name": "买农家大米",
+    "icon": "🍚",
+    "desc": "4 元一份，农家米适合焖饭和蛋炒饭。",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "rice",
+    "requirements": {
+      "money": 4
+    },
+    "effects": {
+      "money": -4,
+      "log": "在农场买了一份农家大米"
+    },
+    "verdicts": [
+      "农家大米颗粒饱满",
+      "米香在袋子里也能闻到",
+      "今晚可以做蛋炒饭或焖饭",
+      "从产地买到的食材格外踏实",
+      "一份主食让菜谱完整起来",
+      "把田野的收成带回厨房"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_salt_convenience",
+    "locationId": "convenience_store",
+    "name": "买盐",
+    "icon": "🧂",
+    "desc": "1 元一份，最基础的调味料。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salt",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在便利店买了一包盐"
+    },
+    "verdicts": [
+      "最基础的调味料也不能少",
+      "这一包盐能让蔬菜更有滋味",
+      "便利店结账很快",
+      "小小的采购补上了厨房缺口",
+      "调味架又完整了一点",
+      "盐已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_sugar_convenience",
+    "locationId": "convenience_store",
+    "name": "买糖",
+    "icon": "🍬",
+    "desc": "1 元一份，给甜点和米粥加点甜。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "sugar",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在便利店买了一包糖"
+    },
+    "verdicts": [
+      "给甜点准备了一点甜味",
+      "糖的包装在灯光下闪着光",
+      "蛋挞和米粥都能用上",
+      "一元的小采购也很有价值",
+      "厨房里有了更灵活的选择",
+      "糖已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_soy_sauce_convenience",
+    "locationId": "convenience_store",
+    "name": "买酱油",
+    "icon": "🫙",
+    "desc": "2 元一瓶，炒菜提鲜上色。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "soy_sauce",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在便利店买了一瓶酱油"
+    },
+    "verdicts": [
+      "酱油是家常锅气的关键",
+      "瓶身贴着熟悉的深色标签",
+      "炒饭和小炒肉都等着它",
+      "这一瓶调料很快就能派上用场",
+      "调味选择一下丰富了",
+      "酱油已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_chili_powder_convenience",
+    "locationId": "convenience_store",
+    "name": "买辣椒粉",
+    "icon": "🌶️",
+    "desc": "2 元一份，香辣风味随手可得。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "chili_powder",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在便利店买了一包辣椒粉"
+    },
+    "verdicts": [
+      "今天想给饭菜加一点热度",
+      "辣椒粉的香气很有存在感",
+      "辣子鸡马上有了灵魂",
+      "这份调料能改变一整道菜",
+      "小小一包也值得收进冰箱",
+      "辣椒粉已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_salad_dressing_convenience",
+    "locationId": "convenience_store",
+    "name": "买沙拉酱",
+    "icon": "🥣",
+    "desc": "3 元一瓶，蔬菜拌一拌就能吃。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salad_dressing",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在便利店买了一瓶沙拉酱"
+    },
+    "verdicts": [
+      "沙拉酱让蔬菜有了清爽方案",
+      "瓶子小巧，放进冰箱正合适",
+      "不想开火的日子也能吃得认真",
+      "这份调料给菜单添了变化",
+      "便利店的补给很及时",
+      "沙拉酱已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_fridge_small",
+    "locationId": "furniture_store",
+    "name": "买小冰箱",
+    "icon": "🧊",
+    "desc": "300 元，20 格容量；只能安装在月租房或产权房。",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "fridge_small",
+    "effects": {
+      "log": "购买并安装了小冰箱"
+    },
+    "verdicts": [
+      "小冰箱刚好填进厨房角落",
+      "从今天起食材有了自己的位置",
+      "20 格容量足够开启烹饪循环",
+      "安装师傅把门缝调得很平整",
+      "以后买菜可以直接远程入库",
+      "厨房生活正式升级"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_fridge_medium",
+    "locationId": "furniture_store",
+    "name": "升级中冰箱",
+    "icon": "🧊",
+    "desc": "700 元标价，已有小冰箱时只补 400 元，容量 40 格。",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "fridge_medium",
+    "effects": {
+      "log": "购买并安装了中冰箱"
+    },
+    "verdicts": [
+      "中冰箱把储存空间扩大了一倍",
+      "旧食材一件不少地保留下来",
+      "40 格容量足够规划一周菜单",
+      "升级只补差价，花得很划算",
+      "冰箱门关上的声音让人安心",
+      "厨房储备进入了新阶段"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_fridge_large",
+    "locationId": "furniture_store",
+    "name": "升级大冰箱",
+    "icon": "🧊",
+    "desc": "1200 元标价，已有中冰箱时只补 500 元，容量 100 格。",
+    "duration": 1,
+    "handler": "buy_item",
+    "itemId": "fridge_large",
+    "effects": {
+      "log": "购买并安装了大冰箱"
+    },
+    "verdicts": [
+      "大冰箱的储备能力非常惊人",
+      "100 格空间可以容纳完整食材库",
+      "升级保留了原有库存",
+      "以后采购和烹饪都更从容",
+      "这是一笔面向日常生活的投资",
+      "厨房正式拥有了长期储备"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "stay_hostel",
+    "locationId": "hostel",
+    "name": "入住青年旅舍",
+    "icon": "🛏️",
+    "desc": "登记一张青旅床位，放下行李，歇歇脚。",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "hostel",
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "登记好了，今晚有地方住了",
+      "把行李放下，终于能歇口气",
+      "房间收拾得干净整齐",
+      "拿到房间钥匙，心里踏实下来",
+      "接下来可以洗漱、读书和好好休息",
+      "这座城市里又有了落脚的地方"
+    ]
+  },
+  {
+    "id": "stay_minsu",
+    "locationId": "minsu",
+    "name": "入住民宿",
+    "icon": "🏡",
+    "desc": "租一间民宿客房，今晚有个安静的落脚处。",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "minsu",
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "登记好了，今晚有地方住了",
+      "把行李放下，终于能歇口气",
+      "房间收拾得干净整齐",
+      "拿到房间钥匙，心里踏实下来",
+      "接下来可以洗漱、读书和好好休息",
+      "这座城市里又有了落脚的地方"
+    ]
+  },
+  {
+    "id": "stay_worker_dorm",
+    "locationId": "worker_dormitory",
+    "name": "登记入住工人集体宿舍",
+    "icon": "🛏️",
+    "desc": "完成过钢铁厂、玻璃厂或铝厂班次后可免费入住；提供休息与淋浴，地图定位会将这里作为当前住处。",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "worker_dorm",
+    "requirements": {
+      "flagAtLeast": {
+        "flag": "industrial_dorm_qualified",
+        "value": 1
+      }
+    },
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "工牌核验通过，今晚有宿舍床位了",
+      "洗去车间的灰尘，终于能好好歇会儿",
+      "宿舍就在厂区旁边，通勤轻松多了",
+      "登记完成，淋浴间和休息区都可以使用",
+      "值班室留好了床位，辛苦一天总算有了着落",
+      "早班下工直接回宿舍，明天更有精神"
+    ]
+  },
+  {
+    "id": "sign_lease_at_residence",
+    "locationId": "old_apartment",
+    "name": "签约普通出租屋",
+    "icon": "📝",
+    "desc": "住宅区老小区，租期 30 天、首期租金 1000 元，期满续缴（住房中介）。",
+    "handler": "sign_lease",
+    "requirements": {
+      "notFlag": "owned_property"
+    },
+    "effects": {},
+    "duration": 1,
+    "verdicts": [
+      "签完字的那一刻，心里踏实了",
+      "终于有个像样的家了",
+      "从此告别流浪的夜晚",
+      "房租虽贵，但值得",
+      "把钥匙攥在手心，感觉不一样了",
+      "房东挺和气，希望别老涨价",
+      "这是我在这座城市的第一份安定"
+    ],
+    "sound": "success",
+    "housingId": "old_apartment"
+  },
+  {
+    "id": "sign_lease_apartment_at_residence",
+    "locationId": "housing_agency",
+    "name": "签约出租公寓",
+    "icon": "🏢",
+    "desc": "在住房中介申请市中心精装公寓，租期 30 天、首期租金 2000 元，期满续缴。",
+    "duration": 2,
+    "handler": "sign_lease",
+    "housingId": "rental_apartment",
+    "requirements": {
+      "notFlag": "owned_property"
+    },
+    "effects": {},
+    "verdicts": [
+      "看了样板间，采光不错",
+      "签合同的时候手有点抖",
+      "中介费交得肉疼",
+      "电梯公寓，档次不一样",
+      "终于住上像样的地方了",
+      "房东很好说话"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "sign_lease_suburb_at_residence",
+    "locationId": "housing_agency",
+    "name": "签约城市边缘小屋",
+    "icon": "🏡",
+    "desc": "在住房中介申请城市边缘小屋，租期 30 天、租金 800 元，去紫羊区和重工业区上班更方便。",
+    "duration": 1,
+    "handler": "sign_lease",
+    "housingId": "suburb_room",
+    "requirements": {
+      "notFlag": "owned_property"
+    },
+    "effects": {},
+    "verdicts": [
+      "离重工业区近了不少，通勤轻松许多",
+      "小屋不大，但窗外就是紫羊区的风景",
+      "签下租约，工作和生活都方便了些",
+      "房间朴素，住着踏实",
+      "每天少跑一段路，回家也方便了",
+      "屋里有灶台，辛苦一天后能自己做饭"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_old_unit_at_residence",
+    "locationId": "own_old_unit",
+    "name": "买断老破小",
+    "icon": "🏚️",
+    "desc": "30000 元购入一套老破小，可重复购买；非自住时月租收入 800 元。",
+    "duration": 3,
+    "handler": "buy_property",
+    "housingId": "own_old_unit",
+    "requirements": {
+      "money": 30000
+    },
+    "effects": {
+      "money": -30000
+    },
+    "verdicts": [
+      "交了全款，房本到手",
+      "房子虽旧，但终于有自己的家了",
+      "过户手续办完，心里踏实了",
+      "从此不用再看房东脸色",
+      "钥匙握在手里，沉甸甸的",
+      "老破小也是家"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_apartment_at_residence",
+    "locationId": "own_apartment",
+    "name": "买断精装公寓",
+    "icon": "🏢",
+    "desc": "80000 元购入一套精装公寓，可重复购买；非自住时月租收入 1000 元。",
+    "duration": 3,
+    "handler": "buy_property",
+    "housingId": "own_apartment",
+    "requirements": {
+      "money": 80000
+    },
+    "effects": {
+      "money": -80000
+    },
+    "verdicts": [
+      "电梯公寓，一梯两户，安静",
+      "终于住进像样的地方了",
+      "房产证红彤彤的，值了",
+      "物业费不便宜，但值",
+      "阳台视野开阔，心情都好了",
+      "这就是奋斗的意义"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "buy_villa_at_residence",
+    "locationId": "own_villa",
+    "name": "买断城市住宅",
+    "icon": "🏡",
+    "desc": "200000 元购入一套城市住宅，可重复购买；非自住时月租收入 2000 元。",
+    "duration": 4,
+    "handler": "buy_property",
+    "housingId": "own_villa",
+    "requirements": {
+      "money": 200000
+    },
+    "effects": {
+      "money": -200000
+    },
+    "verdicts": [
+      "独门独院，再也不用和邻居抢卫生间",
+      "院子里的树是自家的",
+      "这辈子的奋斗目标达成了一半",
+      "请朋友来暖房，倍儿有面子",
+      "站在自家院子里，风吹过来都是甜的",
+      "城市虽大，终于有了一盏属于自己的灯"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "stay_hotel_budget",
+    "locationId": "hotel",
+    "name": "入住酒店特惠间",
+    "icon": "🏡",
+    "desc": "入住预付一晚房费，住客堂食包含在房费中",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "hotel_budget",
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "登记好了，今晚有地方住了",
+      "把行李放下，终于能歇口气",
+      "房间收拾得干净整齐",
+      "拿到房间钥匙，心里踏实下来",
+      "接下来可以洗漱、读书和好好休息",
+      "这座城市里又有了落脚的地方"
+    ]
+  },
+  {
+    "id": "stay_hotel_boyu_nightmarket",
+    "locationId": "hotel_boyu_nightmarket",
+    "name": "入住泊月快捷酒店 · 108元/晚",
+    "icon": "🏨",
+    "desc": "前台登记夜市旁快捷客房；登记不即时扣款，入睡时结算 108 元房费，可随时改住或退房。",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "hotel_boyu_nightmarket",
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "夜市还亮着灯，房间就在附近",
+      "登记好客房，逛累了就能歇脚",
+      "安顿好行李，夜晚终于慢下来",
+      "前台交来房卡，洗漱和休息都方便了",
+      "今晚不用再穿过整座城找住处",
+      "客房收拾得整洁，窗外还能看见夜市灯光"
+    ]
+  },
+  {
+    "id": "dev_university_canteen_6",
+    "locationId": "campus_teacher_canteen",
+    "name": "食堂朴素餐 · 6元",
+    "icon": "🍚",
+    "desc": "热粥配小菜，朴素又暖胃。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 6
+    },
+    "effects": {
+      "money": -6,
+      "satiety": 20,
+      "log": "在食堂吃了一份朴素餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "dev_university_canteen_10",
+    "locationId": "campus_teacher_canteen",
+    "name": "食堂标准餐 · 10元",
+    "icon": "🍚",
+    "desc": "一份家常饭菜，找个位子慢慢吃。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "satiety": 35,
+      "log": "在食堂吃了一份标准餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "dev_university_canteen_15",
+    "locationId": "campus_teacher_canteen",
+    "name": "食堂丰盛餐 · 15元",
+    "icon": "🍚",
+    "desc": "荤素搭配的套餐，窗口阿姨给得很实在。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 15
+    },
+    "effects": {
+      "money": -15,
+      "satiety": 50,
+      "log": "在食堂吃了一份丰盛餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "boyue_engineering_college_canteen_6",
+    "locationId": "campus_engineering_canteen",
+    "name": "食堂朴素餐 · 6元",
+    "icon": "🍚",
+    "desc": "热粥配小菜，朴素又暖胃。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 6
+    },
+    "effects": {
+      "money": -6,
+      "satiety": 20,
+      "log": "在食堂吃了一份朴素餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "boyue_engineering_college_canteen_10",
+    "locationId": "campus_engineering_canteen",
+    "name": "食堂标准餐 · 10元",
+    "icon": "🍚",
+    "desc": "一份家常饭菜，找个位子慢慢吃。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "satiety": 35,
+      "log": "在食堂吃了一份标准餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "boyue_engineering_college_canteen_15",
+    "locationId": "campus_engineering_canteen",
+    "name": "食堂丰盛餐 · 15元",
+    "icon": "🍚",
+    "desc": "荤素搭配的套餐，窗口阿姨给得很实在。",
+    "duration": 0.5,
+    "requirements": {
+      "money": 15
+    },
+    "effects": {
+      "money": -15,
+      "satiety": 50,
+      "log": "在食堂吃了一份丰盛餐"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "端着餐盘找了个空位，热乎的饭菜让胃里舒服了些。",
+      "食堂窗口忙而有序，你吃完饭，把餐盘放回回收处。",
+      "一顿朴素的校园饭，分量足，吃起来也安心。",
+      "你慢慢吃完这份饭，听着邻桌学生聊起新学期。",
+      "饭菜没有花哨的摆盘，家常的味道正好合胃口。",
+      "吃饱后走出食堂，准备继续今天的安排。"
+    ]
+  },
+  {
+    "id": "sign_lease_boyue_talent_apartment",
+    "locationId": "housing_agency",
+    "name": "签约人才公寓",
+    "icon": "📝",
+    "desc": "在住房中介申请伯月新区学院旁的人才公寓，月租 650 元、签约首期覆盖 30 天。",
+    "handler": "sign_lease",
+    "requirements": {
+      "notFlag": "owned_property"
+    },
+    "effects": {},
+    "duration": 1,
+    "verdicts": [
+      "签完字的那一刻，心里踏实了",
+      "终于有个像样的家了",
+      "从此告别流浪的夜晚",
+      "房租虽贵，但值得",
+      "把钥匙攥在手心，感觉不一样了",
+      "房东挺和气，希望别老涨价",
+      "这是我在这座城市的第一份安定"
+    ],
+    "sound": "success",
+    "housingId": "boyue_talent_apartment"
+  },
+  {
+    "id": "camping_stay",
+    "locationId": "camping_base",
+    "name": "登记野营住宿",
+    "icon": "⛺",
+    "desc": "租一顶营地帐篷过夜，公共淋浴就在不远处。",
+    "handler": "stay_hotel",
+    "duration": 0,
+    "requirements": {
+      "money": 30
+    },
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "你登记了营地帐篷，今晚可以在这里休息。",
+      "营地工作人员指给你帐篷的位置，也介绍了公共淋浴。",
+      "你记下营位，准备在安静的营地度过今晚。",
+      "帐篷已经备好，你收好登记凭证。",
+      "今晚的临时住处安排好了，原来的住房仍然保留。",
+      "你确认了营位，睡觉时会按今晚房价结算。"
+    ],
+    "housingId": "camping_lodging"
+  },
+  {
+    "id": "camping_barbecue",
+    "locationId": "camping_base",
+    "name": "自助烧烤 · 30元",
+    "icon": "🍖",
+    "desc": "炭火已经生好，挑些喜欢的食材，慢慢烤一顿。",
+    "duration": 1,
+    "requirements": {
+      "money": 30
+    },
+    "effects": {
+      "money": -30,
+      "satiety": 45,
+      "mood": 8,
+      "log": "在野营基地享用自助烧烤"
+    },
+    "sound": "coin",
+    "verdicts": [
+      "炭火把食材烤出香气，你在营地吃了一顿热乎的烧烤。",
+      "湖边微风吹过，刚出炉的烤串让你放松下来。",
+      "你坐在营地的小桌前，把这一份烧烤慢慢吃完。",
+      "香气从烤架上升起，一顿简单的户外饭也有乐趣。",
+      "你蘸了点调料，吃饱后收拾好餐具。",
+      "炭火渐渐暗下去，你带着好心情结束了这顿饭。"
+    ]
+  },
+  {
+    "id": "moon_fortune",
+    "locationId": "moon_mountain",
+    "name": "东月道观抽签",
+    "icon": "🎋",
+    "desc": "在签筒前静心片刻，问一问今日的际遇。",
+    "handler": "district_fortune",
+    "duration": 0.25,
+    "requirements": {
+      "oncePerDay": "moon_fortune_day",
+      "notFlag": "church_baptized",
+      "hourRange": {
+        "start": 6,
+        "end": 18
+      }
+    },
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "在签筒前静心片刻，问一问今日的际遇。"
+    ]
+  },
+  {
+    "id": "moon_clinic",
+    "locationId": "moon_mountain",
+    "name": "道观义诊",
+    "icon": "🩺",
+    "desc": "善堂的道长正在义诊，可以请他看看身体。",
+    "handler": "district_clinic",
+    "duration": 0.5,
+    "requirements": {
+      "hourRange": {
+        "start": 6,
+        "end": 18
+      }
+    },
+    "effects": {
+      "health": 10,
+      "satiety": 10
+    },
+    "sound": "success",
+    "verdicts": [
+      "善堂的道长正在义诊，可以请他看看身体。"
+    ]
+  },
+  {
+    "id": "moon_porridge",
+    "locationId": "moon_mountain",
+    "name": "领取施粥",
+    "icon": "🥣",
+    "desc": "善堂飘来米香，领一碗热粥暖暖胃。",
+    "duration": 0.25,
+    "requirements": {
+      "oncePerDay": "moon_porridge_day",
+      "hourRange": {
+        "start": 6,
+        "end": 18
+      }
+    },
+    "effects": {
+      "satiety": 20,
+      "log": "在东月道观领了一碗热粥"
+    },
+    "sound": "success",
+    "verdicts": [
+      "你接过一碗温热的粥，在道观边安静地喝完。",
+      "米粥熬得软糯，喝完后胃里暖了起来。",
+      "志愿者递来一碗粥，叮嘱你小心烫。",
+      "简单的一碗粥，也让人感受到山里的善意。",
+      "你喝完粥，把碗归还，轻声道了谢。",
+      "道观里粥香淡淡，今日这顿免费小餐刚好解饿。"
+    ]
+  },
+  {
+    "id": "moon_hike",
+    "locationId": "moon_mountain",
+    "name": "登月亮山",
+    "icon": "🥾",
+    "desc": "沿石阶走向山顶，途中有树荫，也有几段陡坡。请量力而行。",
+    "handler": "district_hike",
+    "duration": 2,
+    "requirements": {
+      "oncePerDay": "moon_hike_day",
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ],
+      "attr": {
+        "stamina": 40,
+        "health": 40
+      }
+    },
+    "effects": {
+      "stamina": -40,
+      "mood": 5,
+      "fitness": 1
+    },
+    "sound": "success",
+    "verdicts": [
+      "沿石阶走向山顶，途中有树荫，也有几段陡坡。请量力而行。"
+    ]
+  },
+  {
+    "id": "dev_museum_exhibition",
+    "locationId": "dev_museum",
+    "name": "参观博物馆",
+    "icon": "🖼️",
+    "desc": "跟随讲解员，看看这座城市留下的旧物与故事。",
+    "handler": "district_exhibition",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "dev_museum_exhibition_day"
+    },
+    "effects": {
+      "intelligence": 1,
+      "mood": 5
+    },
+    "sound": "success",
+    "verdicts": [
+      "跟随讲解员，看看这座城市留下的旧物与故事。"
+    ]
+  },
+  {
+    "id": "dev_science_museum_exhibition",
+    "locationId": "dev_science_museum",
+    "name": "参观科技馆",
+    "icon": "🖼️",
+    "desc": "走进展厅，看看日常生活背后的科学。",
+    "handler": "district_exhibition",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "dev_science_museum_exhibition_day"
+    },
+    "effects": {
+      "intelligence": 1,
+      "mood": 5
+    },
+    "sound": "success",
+    "verdicts": [
+      "走进展厅，看看日常生活背后的科学。"
+    ]
+  },
+  {
+    "id": "dev_art_gallery_exhibition",
+    "locationId": "dev_art_gallery",
+    "name": "欣赏美术展",
+    "icon": "🖼️",
+    "desc": "沿展厅慢慢看，留意这期展览里的色彩与笔触。",
+    "handler": "district_exhibition",
+    "duration": 1,
+    "requirements": {
+      "oncePerDay": "dev_art_gallery_exhibition_day"
+    },
+    "effects": {
+      "mood": 10
+    },
+    "sound": "success",
+    "verdicts": [
+      "沿展厅慢慢看，留意这期展览里的色彩与笔触。"
+    ]
+  },
+  {
+    "id": "treasure_lake_walk",
+    "name": "环湖散步",
+    "icon": "🚶",
+    "desc": "沿湖岸走走，听水声和林间的鸟鸣。",
+    "locationId": "treasure_lake",
+    "duration": 1.5,
+    "eventChance": 0.4,
+    "effects": {
+      "mood": 5,
+      "fitness": 1,
+      "stress": -3,
+      "log": "环湖走了一圈，心旷神怡"
+    },
+    "verdicts": [
+      "水面波光粼粼，风一吹全是清凉",
+      "遛狗的大爷跟你聊了会儿天气",
+      "偶遇一对拍婚纱照的情侣，沾了喜气",
+      "走了快一小时，腿有点酸但心里轻",
+      "湖心亭里有人拉二胡，悠扬得很",
+      "结束时夕阳正好落进湖里，舍不得走"
+    ],
+    "sound": "walk"
+  },
+  {
+    "id": "treasure_lake_run",
+    "name": "环湖跑步",
+    "icon": "🏃",
+    "desc": "沿着湖岸慢跑，前方是一段平缓的林荫路。",
+    "locationId": "treasure_lake",
+    "duration": 1,
+    "requirements": {
+      "attr": {
+        "stamina": 30
+      },
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ]
+    },
+    "effects": {
+      "stamina": -25,
+      "fitness": 3,
+      "mood": 2,
+      "stress": -2,
+      "log": "沿湖跑了一圈，酣畅淋漓"
+    },
+    "verdicts": [
+      "湖景一路相伴，跑起来不枯燥",
+      "跑到一半追上一只撒欢的狗",
+      "呼吸节奏稳住后，进入了状态",
+      "终点处有大爷鼓掌叫好",
+      "汗出透了，整个人轻了三斤",
+      "回来称了下，配速比上次快了"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "boyue_football_run",
+    "name": "球场慢跑",
+    "icon": "🏃",
+    "desc": "绕着球场慢跑，和晨练的人一起活动筋骨。",
+    "locationId": "boyue_football_field",
+    "duration": 1,
+    "requirements": {
+      "attr": {
+        "stamina": 30
+      },
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ]
+    },
+    "effects": {
+      "stamina": -25,
+      "fitness": 3,
+      "mood": 2,
+      "stress": -2,
+      "log": "沿足球场慢跑，酣畅淋漓"
+    },
+    "verdicts": [
+      "湖景一路相伴，跑起来不枯燥",
+      "跑到一半追上一只撒欢的狗",
+      "呼吸节奏稳住后，进入了状态",
+      "终点处有大爷鼓掌叫好",
+      "汗出透了，整个人轻了三斤",
+      "回来称了下，配速比上次快了"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "boyue_drink_cafe",
+    "locationId": "boyue_cafe",
+    "name": "喝咖啡",
+    "icon": "☕",
+    "desc": "点一杯拿铁，找个靠窗的位置坐一会儿。",
+    "requirements": {
+      "money": 25,
+      "dailyLimit": {
+        "dayFlag": "cafe_coffee_day",
+        "countFlag": "cafe_coffee_count",
+        "limit": 2
+      }
+    },
+    "effects": {
+      "mood": 8,
+      "stamina": 25,
+      "money": -25,
+      "log": "在咖啡厅喝了杯拿铁"
+    },
+    "duration": 0.5,
+    "verdicts": [
+      "这拿铁拉花不错，值 25 块",
+      "咖啡的香气让人放松",
+      "坐一下午，蹭了个氛围",
+      "苦涩回甘，像极了生活",
+      "看着白领们办公，自己像局外人",
+      "美式太苦，还是拿铁好",
+      "换个环境，思路都开阔了"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_lunch_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买盒饭",
+    "icon": "🍱",
+    "desc": "便利店鸡腿饭，12 元一份，实惠管饱。",
+    "requirements": {
+      "money": 12
+    },
+    "effects": {
+      "money": -12,
+      "log": "买了份盒饭"
+    },
+    "duration": 0,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "微波炉转了两分钟，香味飘出来",
+      "盒饭的分量刚刚好，谈不上惊喜"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "bento"
+  },
+  {
+    "id": "boyue_buy_drink_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买饮料",
+    "icon": "🥤",
+    "desc": "3 元一杯。带走就放进背包，喝着才见效；站在店里喝，当场就舒坦。",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "买了瓶饮料"
+    },
+    "duration": 0,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "冰镇的，握在手里很舒服",
+      "喝完随手把瓶子扔进了回收箱"
+    ],
+    "sound": "coin",
+    "handler": "buy_food",
+    "itemId": "drink"
+  },
+  {
+    "id": "boyue_buy_sandwich_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买三明治",
+    "icon": "🥪",
+    "duration": 0,
+    "desc": "三明治，8 元，开袋即食。",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "买了个三明治"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "切成三角的形状，吃着不腻",
+      "面包边有点干，但夹心还行"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "sandwich"
+  },
+  {
+    "id": "boyue_buy_salad_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买沙拉",
+    "icon": "🥗",
+    "duration": 0,
+    "desc": "轻食沙拉，10 元，健康之选。",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "买了份沙拉"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "酱汁单独一小包，可以自己控制量",
+      "菜叶还挺脆，没蔫"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "salad"
+  },
+  {
+    "id": "boyue_buy_noodles_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买泡面",
+    "icon": "🍜",
+    "duration": 0,
+    "desc": "桶装泡面，4 元。最便宜的一顿，但吃多了伤身。",
+    "requirements": {
+      "money": 4
+    },
+    "effects": {
+      "money": -4,
+      "log": "买了桶泡面"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "泡面香气在小店里散开",
+      "撕开料包的那一刻最治愈"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "noodles"
+  },
+  {
+    "id": "boyue_convenience_blind_box",
+    "locationId": "boyue_convenience_store",
+    "name": "便利店盲盒",
+    "icon": "🎁",
+    "desc": "晚上 10 点后限定：神秘盲盒会随机开出两个食物或食材，价格随物价调整。",
+    "duration": 0.5,
+    "handler": "blind_box",
+    "requirements": {
+      "hourRange": {
+        "start": 22,
+        "end": 6
+      }
+    },
+    "effects": {
+      "money": -10
+    },
+    "verdicts": [
+      "拆开盒子，收获满满",
+      "盲盒的快乐，就是未知的惊喜",
+      "店员说这盒手气不错",
+      "十块钱买到两份吃的，值了",
+      "今晚的夜宵有着落了",
+      "盲盒拆开的一瞬间最刺激"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_salt_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买盐",
+    "icon": "🧂",
+    "desc": "1 元一份，最基础的调味料。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salt",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在便利店买了一包盐"
+    },
+    "verdicts": [
+      "最基础的调味料也不能少",
+      "这一包盐能让蔬菜更有滋味",
+      "便利店结账很快",
+      "小小的采购补上了厨房缺口",
+      "调味架又完整了一点",
+      "盐已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_sugar_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买糖",
+    "icon": "🍬",
+    "desc": "1 元一份，给甜点和米粥加点甜。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "sugar",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在便利店买了一包糖"
+    },
+    "verdicts": [
+      "给甜点准备了一点甜味",
+      "糖的包装在灯光下闪着光",
+      "蛋挞和米粥都能用上",
+      "一元的小采购也很有价值",
+      "厨房里有了更灵活的选择",
+      "糖已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_soy_sauce_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买酱油",
+    "icon": "🫙",
+    "desc": "2 元一瓶，炒菜提鲜上色。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "soy_sauce",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在便利店买了一瓶酱油"
+    },
+    "verdicts": [
+      "酱油是家常锅气的关键",
+      "瓶身贴着熟悉的深色标签",
+      "炒饭和小炒肉都等着它",
+      "这一瓶调料很快就能派上用场",
+      "调味选择一下丰富了",
+      "酱油已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_chili_powder_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买辣椒粉",
+    "icon": "🌶️",
+    "desc": "2 元一份，香辣风味随手可得。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "chili_powder",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在便利店买了一包辣椒粉"
+    },
+    "verdicts": [
+      "今天想给饭菜加一点热度",
+      "辣椒粉的香气很有存在感",
+      "辣子鸡马上有了灵魂",
+      "这份调料能改变一整道菜",
+      "小小一包也值得收进冰箱",
+      "辣椒粉已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_buy_salad_dressing_convenience",
+    "locationId": "boyue_convenience_store",
+    "name": "买沙拉酱",
+    "icon": "🥣",
+    "desc": "3 元一瓶，蔬菜拌一拌就能吃。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salad_dressing",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在便利店买了一瓶沙拉酱"
+    },
+    "verdicts": [
+      "沙拉酱让蔬菜有了清爽方案",
+      "瓶子小巧，放进冰箱正合适",
+      "不想开火的日子也能吃得认真",
+      "这份调料给菜单添了变化",
+      "便利店的补给很及时",
+      "沙拉酱已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_eat_burger_fastfood",
+    "locationId": "boyue_fast_food",
+    "name": "吃汉堡",
+    "icon": "🍔",
+    "desc": "快餐店的汉堡套餐，快且管饱。",
+    "duration": 1,
+    "requirements": {
+      "money": 18
+    },
+    "effects": {
+      "money": -18,
+      "satiety": 34,
+      "mood": 3,
+      "log": "汉堡加可乐，快餐快乐餐"
+    },
+    "verdicts": [
+      "薯条有点软，但管饱",
+      "可乐加冰，快乐加倍",
+      "快餐就是快，十分钟搞定",
+      "吃完了还有点儿饿",
+      "这家店的酱给得足",
+      "汉堡王和麦当劳之争，无所谓了"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_eat_steak_western",
+    "locationId": "boyue_western_restaurant",
+    "name": "吃牛排",
+    "icon": "🥩",
+    "desc": "西餐厅的招牌牛排，犒劳一下自己。",
+    "duration": 2,
+    "requirements": {
+      "money": 80
+    },
+    "effects": {
+      "money": -80,
+      "satiety": 58,
+      "mood": 10,
+      "stress": -5,
+      "log": "吃了顿正经牛排，幸福感拉满"
+    },
+    "verdicts": [
+      "七分熟刚刚好，肉汁饱满",
+      "服务员给倒了两杯水，很周到",
+      "西餐厅的氛围确实不一样",
+      "结账时心在滴血，但值得",
+      "隔壁桌在庆祝生日，羡慕",
+      "刀叉用得磕磕绊绊，但吃得很香"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_exercise_gym",
+    "locationId": "boyue_gym",
+    "name": "健身房锻炼",
+    "icon": "🏋️",
+    "duration": 2,
+    "desc": "器械区练 2 小时，比公园专业多了（需有效期内的健身月卡）。",
+    "requirements": {
+      "attr": {
+        "stamina": 30,
+        "health": 40
+      },
+      "membership": "gym",
+      "noStatus": [
+        "sick",
+        "muscle_strain",
+        "hungry",
+        "depressed"
+      ]
+    },
+    "effects": {
+      "fitness": 5,
+      "stamina": -25,
+      "health": 2,
+      "stress": -5,
+      "log": "在健身房练了两小时"
+    },
+    "verdicts": [
+      "练到力竭，痛快",
+      "器械比公园的全面多了",
+      "镜子里的自己，感觉变了点",
+      "被教练纠正了姿势，学到了",
+      "撸铁一小时，虚脱但爽",
+      "汗流浃背，值！"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "boyue_gym_membership",
+    "locationId": "boyue_gym",
+    "name": "办健身月卡",
+    "icon": "💳",
+    "duration": 0.5,
+    "desc": "到前台办一张健身月卡，之后可以来器械区练习。",
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "mood": 3,
+      "log": "在前台办了张健身月卡"
+    },
+    "verdicts": [
+      "300 块心疼，但健康是投资",
+      "办完卡感觉已经瘦了三斤",
+      "前台把卡递过来，塑料还是热的",
+      "交了钱就得练，不然亏大了",
+      "月卡在手，这个月得多来几趟",
+      "'这个月一定坚持'——你对自己说"
+    ],
+    "sound": "coin",
+    "handler": "buy_membership",
+    "membershipId": "gym"
+  },
+  {
+    "id": "boyue_shower_quick",
+    "locationId": "boyue_bathhouse",
+    "name": "快速淋浴",
+    "icon": "🚿",
+    "desc": "30 元冲个澡，一小时进出，只求干净。",
+    "duration": 1,
+    "requirements": {
+      "money": 30
+    },
+    "effects": {
+      "money": -30,
+      "hygiene": 45,
+      "mood": 2,
+      "log": "在洗浴中心冲了个澡，清爽了"
+    },
+    "verdicts": [
+      "水压比出租屋强多了",
+      "十分钟解决战斗",
+      "擦干头发就走人",
+      "便宜实惠，干净就行",
+      "没敢多待，怕忍不住加钱",
+      "隔壁池子的水声挺让人心痒"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "boyue_bath_massage",
+    "locationId": "boyue_bathhouse",
+    "name": "搓背按摩",
+    "icon": "💆",
+    "desc": "120 元三小时，搓背加肩颈按摩，出来浑身轻松。",
+    "duration": 3,
+    "requirements": {
+      "money": 120
+    },
+    "effects": {
+      "money": -120,
+      "hygiene": 80,
+      "stamina": 15,
+      "mood": 12,
+      "stress": -8,
+      "log": "搓了背又做了按摩，浑身骨头都松了"
+    },
+    "verdicts": [
+      "师傅手劲大，搓下来一层泥",
+      "肩颈的硬块被按开了",
+      "躺着睡着了，被叫醒时天都暗了",
+      "一百二花得不冤",
+      "按完感觉年轻了五岁",
+      "热毛巾盖脸的一刻，什么都值了"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "boyue_bath_center",
+    "locationId": "boyue_bathhouse",
+    "name": "泡澡一条龙",
+    "icon": "🫧",
+    "desc": "泡个热水澡，蒸蒸桑拿，慢慢松快下来。",
+    "duration": 24,
+    "handler": "wash_center",
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "money": -300
+    },
+    "verdicts": [
+      "泡了整整一天，皮都泡皱了",
+      "搓背师傅的手劲够大",
+      "桑拿房里睡了一觉",
+      "出来的时候感觉换了个身体",
+      "荷包空了一半，但值",
+      "下次有钱还来"
+    ],
+    "sound": "shower"
+  },
+  {
+    "id": "dev_food_street_skewer",
+    "locationId": "dev_food_street",
+    "name": "买盒饭",
+    "icon": "🍱",
+    "desc": "师范大学城的平价学生餐，热菜配米饭，背包物品显示为“盒饭”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "bento",
+    "group": "market_shop",
+    "requirements": {
+      "money": 12
+    },
+    "effects": {
+      "money": -12,
+      "log": "在师范大学城美食街买了一份盒饭"
+    },
+    "verdicts": [
+      "下课后来份热饭，正好补上体力",
+      "几样家常菜配米饭，价格对学生很友好",
+      "排队很快，盒饭拿到手还是热的",
+      "一份实惠的饭菜让下午的课有了着落",
+      "师范大学城的学生餐简单又管饱",
+      "热菜和米饭都装好了，适合赶时间时吃"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "dev_food_street_noodles",
+    "locationId": "dev_food_street",
+    "name": "买三明治",
+    "icon": "🥪",
+    "desc": "方便带去自习室的平价早餐，背包物品显示为“三明治”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "sandwich",
+    "group": "market_shop",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在师范大学城美食街买了一份三明治"
+    },
+    "verdicts": [
+      "早课前买好早餐，边走边吃也来得及",
+      "三明治装袋方便，正好带去图书馆",
+      "简简单单垫一口，赶课不耽误",
+      "这份平价早餐比空着肚子上课好多了",
+      "自习间隙拆开包装，几口就能吃完",
+      "学生街的早餐选择实在，拿了就能走"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "dev_food_street_tofu",
+    "locationId": "dev_food_street",
+    "name": "买饮料",
+    "icon": "🧋",
+    "desc": "课间顺手买一杯。带走的话收进背包，喝的时候才见效。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "drink",
+    "group": "market_shop",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在师范大学城美食街买了一瓶饮料"
+    },
+    "verdicts": [
+      "花几块钱买瓶饮料，课间正好解渴",
+      "冰饮拿在手里，自习时也能慢慢喝",
+      "下课和同学碰面，顺手带上一瓶",
+      "平价饮料补充点水分和精神",
+      "瓶装饮料方便带进校园继续赶路",
+      "一瓶冰饮配上课间休息刚刚好"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "stall_dev_food_street",
+    "locationId": "dev_food_street",
+    "name": "摆摊卖小吃",
+    "icon": "🍢",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
+    "duration": 2,
+    "handler": "work_project",
+    "projectId": "snack_stall",
+    "group": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      },
+      "oncePerDay": "stall_dev_food_street_day"
+    },
+    "effects": {},
+    "verdicts": [
+      "摊位前很快聚起了几位顾客",
+      "火候和调味都比普通街边摊更讲究",
+      "小吃街的客流让今天格外忙碌",
+      "顾客吃得开心，摊位的招牌也亮了起来",
+      "忙完一轮，你对经营小摊更有把握了",
+      "旺盛的人气换来了更高的回报"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_food_street_skewer",
+    "locationId": "boyue_food_street",
+    "name": "买烤串",
+    "icon": "🍢",
+    "desc": "工程学院下课后的快速补能烤串，现烤现拿，背包物品显示为“烤串”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_skewer",
+    "group": "market_shop",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "在工程学院美食街买了一份烤串"
+    },
+    "verdicts": [
+      "实验课下课，拿上刚烤好的串就能继续赶路",
+      "工程学院学生常来这儿补一口夜宵",
+      "烤物趁热装袋，边走边吃也方便",
+      "实训结束来份烤串，快速垫垫肚子",
+      "现烤的香气从美食街一路飘到校门口",
+      "夜间赶作业前，先补点热量再回实验室"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_food_street_noodles",
+    "locationId": "boyue_food_street",
+    "name": "买炒面",
+    "icon": "🍝",
+    "desc": "工程学院附近的铁锅快炒夜宵，出餐快、饱腹实在，背包物品显示为“炒面”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_noodles",
+    "group": "market_shop",
+    "requirements": {
+      "money": 14
+    },
+    "effects": {
+      "money": -14,
+      "log": "在工程学院美食街买了一份炒面"
+    },
+    "verdicts": [
+      "铁锅炒面出餐很快，正合赶时间的学生",
+      "实训晚了也能吃上一份热乎夜宵",
+      "炒面装盒带走，回宿舍路上就能吃",
+      "工程学院周边的夜宵讲究快而管饱",
+      "锅气十足的一份炒面，补足晚上的能量",
+      "熬夜赶图前先吃点热饭，肚子踏实多了"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_food_street_tofu",
+    "locationId": "boyue_food_street",
+    "name": "买盒饭",
+    "icon": "🍱",
+    "desc": "适合实训后快速吃饱的热菜米饭，背包物品显示为“盒饭”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "bento",
+    "group": "market_shop",
+    "requirements": {
+      "money": 12
+    },
+    "effects": {
+      "money": -12,
+      "log": "在工程学院美食街买了一份盒饭"
+    },
+    "verdicts": [
+      "盒饭装好就能走，实训后不必等太久",
+      "几样热菜配米饭，给晚间学习补充能量",
+      "忙完课程来份热饭，吃完再回宿舍",
+      "盒饭拿在手上，赶着回去做实验也方便",
+      "工程学院周边的学生餐讲究实在管饱",
+      "一份热菜米饭，为熬夜赶作业垫好底"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "stall_boyue_food_street",
+    "locationId": "boyue_food_street",
+    "name": "摆摊卖小吃",
+    "icon": "🍢",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
+    "duration": 2,
+    "handler": "work_project",
+    "projectId": "snack_stall",
+    "group": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      },
+      "oncePerDay": "stall_boyue_food_street_day"
+    },
+    "effects": {},
+    "verdicts": [
+      "摊位前很快聚起了几位顾客",
+      "火候和调味都比普通街边摊更讲究",
+      "小吃街的客流让今天格外忙碌",
+      "顾客吃得开心，摊位的招牌也亮了起来",
+      "忙完一轮，你对经营小摊更有把握了",
+      "旺盛的人气换来了更高的回报"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_snack_street_skewer",
+    "locationId": "boyue_snack_street",
+    "name": "买烤串",
+    "icon": "🍢",
+    "desc": "夜市餐吧的潮流串烧，撒上特色香料现烤现吃，背包物品显示为“烤串”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_skewer",
+    "group": "market_shop",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "在泊月夜市买了一份串烧"
+    },
+    "verdicts": [
+      "串烧香气裹着霓虹灯色，夜市气氛正热",
+      "特色香料撒上刚烤好的串，边逛边吃",
+      "餐吧窗口递来一份热乎串烧，正适合夜游",
+      "音乐和烤炉声混在一起，夜市越晚越热闹",
+      "这份串烧带着泊月夜市独有的潮流调味",
+      "看完球形夜总会的灯光，再来一份夜宵"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_snack_street_noodles",
+    "locationId": "boyue_snack_street",
+    "name": "买炒面",
+    "icon": "🍝",
+    "desc": "夜市餐吧的霓虹铁板炒面，适合看演出或逛夜市时吃，背包物品显示为“炒面”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_noodles",
+    "group": "market_shop",
+    "requirements": {
+      "money": 14
+    },
+    "effects": {
+      "money": -14,
+      "log": "在泊月夜市买了一份铁板炒面"
+    },
+    "verdicts": [
+      "铁板上的火光映着夜市招牌，香味扑面而来",
+      "锅铲节拍跟着附近的音乐一起响起来",
+      "夜游到一半来份热炒面，正好补充体力",
+      "餐吧把炒面装进纸盒，拿着继续逛也方便",
+      "霓虹街区里的一口锅气，夜宵吃得很满足",
+      "看演出前吃点热乎的，今晚还能玩很久"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "boyue_snack_street_tofu",
+    "locationId": "boyue_snack_street",
+    "name": "买饮料",
+    "icon": "🧋",
+    "desc": "手作柑橘气泡饮或冰奶茶。带走收进背包，喝的时候才见效。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "drink",
+    "group": "market_shop",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在泊月夜市买了一杯手作冰饮"
+    },
+    "verdicts": [
+      "气泡饮装进透明杯，杯壁映出一片霓虹",
+      "手作冰饮酸甜清爽，逛夜市时拿着正合适",
+      "夜市餐吧把冰奶茶递来，今晚的灯光更亮了",
+      "杯里的柑橘香气跟着音乐一起散开",
+      "喝一口清爽冰饮，再接着去看夜总会灯光",
+      "这杯手作饮品为夜市夜游添了点新鲜感"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "stall_boyue_snack_street",
+    "locationId": "boyue_snack_street",
+    "name": "摆摊卖小吃",
+    "icon": "🍢",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
+    "duration": 2,
+    "handler": "work_project",
+    "projectId": "snack_stall",
+    "group": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      },
+      "oncePerDay": "stall_boyue_snack_street_day"
+    },
+    "effects": {},
+    "verdicts": [
+      "摊位前很快聚起了几位顾客",
+      "火候和调味都比普通街边摊更讲究",
+      "小吃街的客流让今天格外忙碌",
+      "顾客吃得开心，摊位的招牌也亮了起来",
+      "忙完一轮，你对经营小摊更有把握了",
+      "旺盛的人气换来了更高的回报"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "boyue_netbar_session",
+    "locationId": "boyue_internet_cafe",
+    "name": "上机",
+    "icon": "🖥️",
+    "duration": 0,
+    "desc": "开一台电脑，上网、查资料或处理手头的工作。机时用完或离店后需重新登记。",
+    "handler": "netbar_session",
+    "requirements": {
+      "money": 24
+    },
+    "effects": {},
+    "verdicts": [
+      "机器不算新，但比家里那台顺手",
+      "戴上耳机，一整排键盘声就都远了",
+      "开机、登录、连上网——像暂时有了个自己的位置",
+      "屏幕亮起来的时候，心里踏实了一点",
+      "隔壁在打排位，你打开了自己的东西",
+      "桌面很干净，账号一登就进去了"
+    ],
+    "sound": "computer"
+  },
+  {
+    "id": "boyue_internet_night_job",
+    "locationId": "boyue_internet_cafe",
+    "name": "网吧兼职网管",
+    "icon": "🖥️",
+    "duration": 8,
+    "desc": "帮忙看店、维护机器、盯监控，随时都能上班。",
+    "requirements": {
+      "noStatus": [
+        "sick",
+        "muscle_strain"
+      ],
+      "oncePerDay": "boyue_internet_night_job_day"
+    },
+    "effects": {
+      "money": 110,
+      "stamina": -40,
+      "stress": 6,
+      "skills": {
+        "operation": 1
+      },
+      "log": "在网吧当了一天网管，赚了 110 元"
+    },
+    "verdicts": [
+      "帮客人重启了两台死机，轻松搞定",
+      "网管的工作比想象中清闲，钱到账了",
+      "有人问路，你顺手指了条近道",
+      "维护完机器，还能蹭会儿网",
+      "店长说你这人手挺稳，下回还找你",
+      "网吧的泡面味飘了一整天，习惯了"
+    ],
+    "sound": "cashier"
+  },
+  {
+    "id": "boyue_nightclub_alcohol_25",
+    "locationId": "boyue_nightclub",
+    "name": "清爽啤酒 · 25元",
+    "icon": "🍷",
+    "desc": "一杯冰凉的啤酒，泡沫刚好漫到杯沿。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25,
+      "mood": 5,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "一杯冰凉的啤酒，泡沫刚好漫到杯沿。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_alcohol_60",
+    "locationId": "boyue_nightclub",
+    "name": "青柠高球 · 60元",
+    "icon": "🍷",
+    "desc": "青柠和苏打添了清爽的香气，慢慢喝。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 60
+    },
+    "effects": {
+      "money": -60,
+      "mood": 8,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "青柠和苏打添了清爽的香气，慢慢喝。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_alcohol_120",
+    "locationId": "boyue_nightclub",
+    "name": "月夜鸡尾酒 · 120元",
+    "icon": "🍷",
+    "desc": "酒保调好一杯月夜鸡尾酒，杯沿挂着一片果皮。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 120
+    },
+    "effects": {
+      "money": -120,
+      "mood": 10,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "酒保调好一杯月夜鸡尾酒，杯沿挂着一片果皮。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_alcohol_300",
+    "locationId": "boyue_nightclub",
+    "name": "珍藏红酒 · 300元",
+    "icon": "🍷",
+    "desc": "一杯珍藏红酒，适合坐下来慢慢品。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "money": -300,
+      "mood": 12,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "一杯珍藏红酒，适合坐下来慢慢品。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_alcohol_800",
+    "locationId": "boyue_nightclub",
+    "name": "年份威士忌 · 800元",
+    "icon": "🍷",
+    "desc": "年份威士忌倒入杯中，冰块轻轻碰响杯壁。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 800
+    },
+    "effects": {
+      "money": -800,
+      "mood": 15,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "年份威士忌倒入杯中，冰块轻轻碰响杯壁。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_alcohol_1500",
+    "locationId": "boyue_nightclub",
+    "name": "典藏干邑 · 1500元",
+    "icon": "🍷",
+    "desc": "酒保取出典藏干邑，小心斟好这一杯。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500,
+      "mood": 20,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "酒保取出典藏干邑，小心斟好这一杯。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_coupon_drink",
+    "locationId": "boyue_lounge_bar",
+    "name": "用啤酒券换一杯",
+    "icon": "🎟️",
+    "desc": "交给酒保一张清吧啤酒券，换一杯清爽啤酒。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "sound": "coin",
+    "effects": {
+      "money": 0,
+      "mood": 5,
+      "health": -1,
+      "stamina": -2
+    },
+    "verdicts": [
+      "酒保收好啤酒券，给你倒了一杯清爽啤酒。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_25",
+    "locationId": "boyue_lounge_bar",
+    "name": "清爽啤酒 · 25元",
+    "icon": "🍷",
+    "desc": "一杯冰凉的啤酒，泡沫刚好漫到杯沿。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25,
+      "mood": 5,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "一杯冰凉的啤酒，泡沫刚好漫到杯沿。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_60",
+    "locationId": "boyue_lounge_bar",
+    "name": "青柠高球 · 60元",
+    "icon": "🍷",
+    "desc": "青柠和苏打添了清爽的香气，慢慢喝。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 60
+    },
+    "effects": {
+      "money": -60,
+      "mood": 8,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "青柠和苏打添了清爽的香气，慢慢喝。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_120",
+    "locationId": "boyue_lounge_bar",
+    "name": "月夜鸡尾酒 · 120元",
+    "icon": "🍷",
+    "desc": "酒保调好一杯月夜鸡尾酒，杯沿挂着一片果皮。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 120
+    },
+    "effects": {
+      "money": -120,
+      "mood": 10,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "酒保调好一杯月夜鸡尾酒，杯沿挂着一片果皮。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_300",
+    "locationId": "boyue_lounge_bar",
+    "name": "珍藏红酒 · 300元",
+    "icon": "🍷",
+    "desc": "一杯珍藏红酒，适合坐下来慢慢品。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 300
+    },
+    "effects": {
+      "money": -300,
+      "mood": 12,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "一杯珍藏红酒，适合坐下来慢慢品。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_800",
+    "locationId": "boyue_lounge_bar",
+    "name": "年份威士忌 · 800元",
+    "icon": "🍷",
+    "desc": "年份威士忌倒入杯中，冰块轻轻碰响杯壁。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 800
+    },
+    "effects": {
+      "money": -800,
+      "mood": 15,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "年份威士忌倒入杯中，冰块轻轻碰响杯壁。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_alcohol_1500",
+    "locationId": "boyue_lounge_bar",
+    "name": "典藏干邑 · 1500元",
+    "icon": "🍷",
+    "desc": "酒保取出典藏干邑，小心斟好这一杯。",
+    "handler": "district_alcohol",
+    "duration": 0.25,
+    "requirements": {
+      "money": 1500
+    },
+    "effects": {
+      "money": -1500,
+      "mood": 20,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "coin",
+    "verdicts": [
+      "酒保取出典藏干邑，小心斟好这一杯。"
+    ]
+  },
+  {
+    "id": "boyue_nightclub_free_drink",
+    "locationId": "boyue_nightclub",
+    "name": "兑换免费清爽啤酒",
+    "icon": "🎟️",
+    "desc": "把酒券交给酒保，换一杯清爽啤酒。",
+    "handler": "district_free_drink",
+    "duration": 0.25,
+    "effects": {
+      "mood": 5,
+      "health": -1,
+      "stamina": -2
+    },
+    "sound": "success",
+    "verdicts": [
+      "把酒券交给酒保，换一杯清爽啤酒。"
+    ]
+  },
+  {
+    "id": "boyue_lounge_singing",
+    "locationId": "boyue_lounge_bar",
+    "name": "清吧驻唱",
+    "icon": "🎤",
+    "desc": "问问店主今晚的舞台是否空着，唱几首拿手的歌。",
+    "handler": "district_singer",
+    "duration": 2,
+    "requirements": {
+      "attr": {
+        "charm": 25
+      },
+      "noStatus": [
+        "sick"
+      ],
+      "hourRange": {
+        "start": 18,
+        "end": 4
+      }
+    },
+    "effects": {
+      "stamina": -12,
+      "fame": 2,
+      "mood": 5,
+      "stress": -5
+    },
+    "sound": "success",
+    "verdicts": [
+      "问问店主今晚的舞台是否空着，唱几首拿手的歌。"
+    ]
+  },
+  {
+    "id": "convenience_store_energy_drink",
+    "locationId": "convenience_store",
+    "name": "买能量饮料 · 25元",
+    "icon": "⚡",
+    "desc": "25 元一瓶。带在路上喝，提神顶一阵。",
+    "handler": "buy_food",
+    "duration": 0,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25
+    },
+    "sound": "coin",
+    "verdicts": [
+      "你买下能量饮料，收好后可以从背包饮用。",
+      "店员把饮料递给你，瓶身还有些凉。",
+      "你看过标签，把这瓶饮料放进背包。",
+      "一瓶能量饮料已经备好，运动后可以补充体力。",
+      "付清账款，你收起了这瓶饮料。",
+      "你带走一瓶饮料，准备留给需要精神的时候。"
+    ],
+    "itemId": "energy_drink"
+  },
+  {
+    "id": "boyue_convenience_store_energy_drink",
+    "locationId": "boyue_convenience_store",
+    "name": "买能量饮料 · 25元",
+    "icon": "⚡",
+    "desc": "25 元一瓶。带在路上喝，提神顶一阵。",
+    "handler": "buy_food",
+    "duration": 0,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25
+    },
+    "sound": "coin",
+    "verdicts": [
+      "你买下能量饮料，收好后可以从背包饮用。",
+      "店员把饮料递给你，瓶身还有些凉。",
+      "你看过标签，把这瓶饮料放进背包。",
+      "一瓶能量饮料已经备好，运动后可以补充体力。",
+      "付清账款，你收起了这瓶饮料。",
+      "你带走一瓶饮料，准备留给需要精神的时候。"
+    ],
+    "itemId": "energy_drink"
+  },
+  {
+    "id": "boyue_sports_store_energy_drink",
+    "locationId": "boyue_sports_store",
+    "name": "买能量饮料 · 25元",
+    "icon": "⚡",
+    "desc": "25 元一瓶。带在路上喝，提神顶一阵。",
+    "handler": "buy_food",
+    "duration": 0,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25
+    },
+    "sound": "coin",
+    "verdicts": [
+      "你买下能量饮料，收好后可以从背包饮用。",
+      "店员把饮料递给你，瓶身还有些凉。",
+      "你看过标签，把这瓶饮料放进背包。",
+      "一瓶能量饮料已经备好，运动后可以补充体力。",
+      "付清账款，你收起了这瓶饮料。",
+      "你带走一瓶饮料，准备留给需要精神的时候。"
+    ],
+    "itemId": "energy_drink"
+  },
+  {
+    "id": "buy_football_jersey",
+    "locationId": "boyue_sports_store",
+    "name": "买足球球衣 · 99元",
+    "icon": "⚽",
+    "desc": "99 元购买足球球衣，可在衣柜中装备。",
+    "handler": "buy_item",
+    "duration": 0.5,
+    "requirements": {
+      "money": 99
+    },
+    "effects": {
+      "money": -99
+    },
+    "sound": "coin",
+    "verdicts": [
+      "99 元购买足球球衣，可在衣柜中装备。",
+      "你确认了用品的规格，付清款项后收好。",
+      "店员核对了商品，你把这件用品带走。",
+      "这次采购顺利完成，用品已放进背包。",
+      "你看了看刚买的用品，收好后继续今天的安排。",
+      "商品和收据都已收妥，这趟采购结束了。"
+    ],
+    "itemId": "football_jersey"
+  },
+  {
+    "id": "buy_basketball_jersey",
+    "locationId": "boyue_sports_store",
+    "name": "买篮球球衣 · 89元",
+    "icon": "🏀",
+    "desc": "89 元购买篮球球衣，可在衣柜中装备。",
+    "handler": "buy_item",
+    "duration": 0.5,
+    "requirements": {
+      "money": 89
+    },
+    "effects": {
+      "money": -89
+    },
+    "sound": "coin",
+    "verdicts": [
+      "89 元购买篮球球衣，可在衣柜中装备。",
+      "你确认了用品的规格，付清款项后收好。",
+      "店员核对了商品，你把这件用品带走。",
+      "这次采购顺利完成，用品已放进背包。",
+      "你看了看刚买的用品，收好后继续今天的安排。",
+      "商品和收据都已收妥，这趟采购结束了。"
+    ],
+    "itemId": "basketball_jersey"
+  },
+  {
+    "id": "buy_sports_shorts",
+    "locationId": "boyue_sports_store",
+    "name": "买运动短裤 · 69元",
+    "icon": "🩳",
+    "desc": "69 元购买运动短裤，可在衣柜中装备。",
+    "handler": "buy_item",
+    "duration": 0.5,
+    "requirements": {
+      "money": 69
+    },
+    "effects": {
+      "money": -69
+    },
+    "sound": "coin",
+    "verdicts": [
+      "69 元购买运动短裤，可在衣柜中装备。",
+      "你确认了用品的规格，付清款项后收好。",
+      "店员核对了商品，你把这件用品带走。",
+      "这次采购顺利完成，用品已放进背包。",
+      "你看了看刚买的用品，收好后继续今天的安排。",
+      "商品和收据都已收妥，这趟采购结束了。"
+    ],
+    "itemId": "sports_shorts"
+  },
+  {
+    "id": "buy_fishing_rod",
+    "locationId": "camping_base",
+    "name": "买鱼竿 · 80元",
+    "icon": "🎣",
+    "desc": "80 元购买鱼竿。",
+    "handler": "buy_item",
+    "duration": 0.25,
+    "requirements": {
+      "money": 80,
+      "notFlag": "fishing_rod_owned"
+    },
+    "effects": {
+      "money": -80
+    },
+    "sound": "coin",
+    "verdicts": [
+      "80 元购买鱼竿。",
+      "你确认了用品的规格，付清款项后收好。",
+      "店员核对了商品，你把这件用品带走。",
+      "这次采购顺利完成，用品已放进背包。",
+      "你看了看刚买的用品，收好后继续今天的安排。",
+      "商品和收据都已收妥，这趟采购结束了。"
+    ],
+    "itemId": "fishing_rod"
+  },
+  {
+    "id": "buy_fishing_bait",
+    "locationId": "camping_base",
+    "name": "买鱼饵桶 · 20元 / 25次",
+    "icon": "🪱",
+    "desc": "20 元购买一桶鱼饵，可供垂钓 25 次；每竿消耗 1 份。",
+    "handler": "buy_item",
+    "itemQuantity": 25,
+    "duration": 0.25,
+    "requirements": {
+      "money": 20
+    },
+    "effects": {
+      "money": -20
+    },
+    "sound": "coin",
+    "verdicts": [
+      "20 元购买一桶鱼饵，共 25 份。",
+      "一桶鱼饵共 25 份，足够钓上 25 竿。",
+      "店员把一桶 25 份的鱼饵交给你，收好即可出发。",
+      "25 份鱼饵装进背包，记得每竿消耗 1 份。",
+      "这桶鱼饵够钓 25 次，正好补足湖边库存。",
+      "按桶购买的 25 份鱼饵已经放进背包。"
+    ],
+    "itemId": "fishing_bait"
+  },
+  {
+    "id": "buy_fishing_bucket",
+    "locationId": "camping_base",
+    "name": "买鱼桶 · 25元",
+    "icon": "🪣",
+    "desc": "提手结实的鱼桶，放在岸边也很稳当。",
+    "handler": "buy_item",
+    "duration": 0.25,
+    "requirements": {
+      "money": 25,
+      "notFlag": "fishing_bucket_owned"
+    },
+    "effects": {
+      "money": -25
+    },
+    "sound": "coin",
+    "verdicts": [
+      "提手结实的鱼桶，放在岸边也很稳当。",
+      "你确认了用品的规格，付清款项后收好。",
+      "店员核对了商品，你把这件用品带走。",
+      "这次采购顺利完成，用品已放进背包。",
+      "你看了看刚买的用品，收好后继续今天的安排。",
+      "商品和收据都已收妥，这趟采购结束了。"
+    ],
+    "itemId": "fishing_bucket"
+  },
+  {
+    "id": "boyue_swimming_match",
+    "locationId": "boyue_swimming_pool",
+    "name": "游泳赛事",
+    "icon": "🚧",
+    "desc": "赛事尚未开放，场馆正在准备。",
+    "handler": "district_placeholder",
+    "duration": 0,
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "赛事尚未开放，场馆正在准备。"
+    ]
+  },
+  {
+    "id": "boyue_football_match",
+    "locationId": "boyue_football_field",
+    "name": "足球赛事",
+    "icon": "🚧",
+    "desc": "赛事尚未开放，球场正在准备。",
+    "handler": "district_placeholder",
+    "duration": 0,
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "赛事尚未开放，球场正在准备。"
+    ]
+  },
+  {
+    "id": "boyue_basketball_match",
+    "locationId": "boyue_basketball_court",
+    "name": "篮球赛事",
+    "icon": "🚧",
+    "desc": "赛事尚未开放，场馆正在准备。",
+    "handler": "district_placeholder",
+    "duration": 0,
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "赛事尚未开放，场馆正在准备。"
+    ]
+  },
+  {
+    "id": "development_bus_station_gig",
+    "locationId": "development_bus_station",
+    "name": "巴士站临时协助",
+    "icon": "🚌",
+    "desc": "帮忙引导旅客与整理行李，适合服务轨道的入门工作。",
+    "duration": 4,
+    "requirements": {
+      "attr": {
+        "health": 35,
+        "stamina": 35
+      },
+      "oncePerDay": "bus_station_gig_day"
+    },
+    "effects": {
+      "money": 48,
+      "stamina": -30,
+      "stress": 5,
+      "skills": {
+        "service": 1
+      },
+      "log": "在巴士站协助旅客，赚了 48 元"
+    },
+    "verdicts": [
+      "帮一家人找到了正确的检票口",
+      "行李很多，但流程已经熟了",
+      "短班结束，感觉自己和城市更熟了一点",
+      "旅客道谢时，你发现服务也是一种技能",
+      "广播响起前把队伍疏导得很顺",
+      "四小时的临时班，给远方留了一点好印象"
+    ],
+    "sound": "cashier"
+  },
+  {
+    "id": "buy_home_wall_ivory",
+    "name": "买暖白素色墙纸",
+    "icon": "▧",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_wall_ivory",
+    "requirements": {
+      "money": 80
+    },
+    "effects": {
+      "money": -80
+    },
+    "verdicts": [
+      "暖白素色墙纸已买下，回家就能换上。",
+      "把样品贴近看了一会儿，这个颜色和家里的木家具很合。",
+      "店员把墙纸卷好，顺手附上了铺贴说明。",
+      "想象了一下换好墙面的房间，回家的路也有了期待。",
+      "给家选的花色不必赶时髦，住着舒服就很好。",
+      "墙纸装进了袋子，原来的样式也能随时换回来。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_wall_sage",
+    "name": "买浅绿细纹墙纸",
+    "icon": "▧",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_wall_sage",
+    "requirements": {
+      "money": 140
+    },
+    "effects": {
+      "money": -140
+    },
+    "verdicts": [
+      "浅绿细纹墙纸已买下，回家就能换上。",
+      "把样品贴近看了一会儿，这个颜色和家里的木家具很合。",
+      "店员把墙纸卷好，顺手附上了铺贴说明。",
+      "想象了一下换好墙面的房间，回家的路也有了期待。",
+      "给家选的花色不必赶时髦，住着舒服就很好。",
+      "墙纸装进了袋子，原来的样式也能随时换回来。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_wall_blue",
+    "name": "买雾蓝织纹墙纸",
+    "icon": "▧",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_wall_blue",
+    "requirements": {
+      "money": 160
+    },
+    "effects": {
+      "money": -160
+    },
+    "verdicts": [
+      "雾蓝织纹墙纸已买下，回家就能换上。",
+      "把样品贴近看了一会儿，这个颜色和家里的木家具很合。",
+      "店员把墙纸卷好，顺手附上了铺贴说明。",
+      "想象了一下换好墙面的房间，回家的路也有了期待。",
+      "给家选的花色不必赶时髦，住着舒服就很好。",
+      "墙纸装进了袋子，原来的样式也能随时换回来。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_wall_linen",
+    "name": "买米杏亚麻墙纸",
+    "icon": "▧",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_wall_linen",
+    "requirements": {
+      "money": 180
+    },
+    "effects": {
+      "money": -180
+    },
+    "verdicts": [
+      "米杏亚麻墙纸已买下，回家就能换上。",
+      "把样品贴近看了一会儿，这个颜色和家里的木家具很合。",
+      "店员把墙纸卷好，顺手附上了铺贴说明。",
+      "想象了一下换好墙面的房间，回家的路也有了期待。",
+      "给家选的花色不必赶时髦，住着舒服就很好。",
+      "墙纸装进了袋子，原来的样式也能随时换回来。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_floor_oak",
+    "name": "买浅橡木地板贴",
+    "icon": "▤",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_floor_oak",
+    "requirements": {
+      "money": 180
+    },
+    "effects": {
+      "money": -180
+    },
+    "verdicts": [
+      "浅橡木地板贴已买下，回家就能铺上。",
+      "摸过材料的表面，决定给起居地面换个样子。",
+      "店员包好了材料，提醒你湿区保留防水地面。",
+      "站在样品旁看了看，脚下的颜色让房间显得更安稳。",
+      "给常走动的地方添一点舒服，这笔钱花得明白。",
+      "材料带回家后可以反复更换，不用每次重新买一份。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_floor_walnut",
+    "name": "买胡桃木地板贴",
+    "icon": "▤",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_floor_walnut",
+    "requirements": {
+      "money": 280
+    },
+    "effects": {
+      "money": -280
+    },
+    "verdicts": [
+      "胡桃木地板贴已买下，回家就能铺上。",
+      "摸过材料的表面，决定给起居地面换个样子。",
+      "店员包好了材料，提醒你湿区保留防水地面。",
+      "站在样品旁看了看，脚下的颜色让房间显得更安稳。",
+      "给常走动的地方添一点舒服，这笔钱花得明白。",
+      "材料带回家后可以反复更换，不用每次重新买一份。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_floor_stone",
+    "name": "买暖灰拼接地垫",
+    "icon": "▤",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_floor_stone",
+    "requirements": {
+      "money": 120
+    },
+    "effects": {
+      "money": -120
+    },
+    "verdicts": [
+      "暖灰拼接地垫已买下，回家就能铺上。",
+      "摸过材料的表面，决定给起居地面换个样子。",
+      "店员包好了材料，提醒你湿区保留防水地面。",
+      "站在样品旁看了看，脚下的颜色让房间显得更安稳。",
+      "给常走动的地方添一点舒服，这笔钱花得明白。",
+      "材料带回家后可以反复更换，不用每次重新买一份。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "buy_home_floor_woven",
+    "name": "买亚麻编织地垫",
+    "icon": "▤",
+    "desc": "购买后回家，在“墙面与地面”中更换，已购买的样式可以反复使用。",
+    "locationId": "furniture_store",
+    "duration": 0.5,
+    "handler": "buy_item",
+    "itemId": "home_floor_woven",
+    "requirements": {
+      "money": 140
+    },
+    "effects": {
+      "money": -140
+    },
+    "verdicts": [
+      "亚麻编织地垫已买下，回家就能铺上。",
+      "摸过材料的表面，决定给起居地面换个样子。",
+      "店员包好了材料，提醒你湿区保留防水地面。",
+      "站在样品旁看了看，脚下的颜色让房间显得更安稳。",
+      "给常走动的地方添一点舒服，这笔钱花得明白。",
+      "材料带回家后可以反复更换，不用每次重新买一份。"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_lunch_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买盒饭",
+    "icon": "🍱",
+    "desc": "便利店鸡腿饭，12 元一份，实惠管饱。",
+    "requirements": {
+      "money": 12
+    },
+    "effects": {
+      "money": -12,
+      "log": "在月角便利店买了份盒饭"
+    },
+    "duration": 0,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "微波炉转了两分钟，香味飘出来",
+      "盒饭的分量刚刚好，谈不上惊喜"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "bento"
+  },
+  {
+    "id": "commercial_buy_drink_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买饮料",
+    "icon": "🥤",
+    "desc": "3 元一杯。带走就放进背包，喝着才见效；站在店里喝，当场就舒坦。",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在月角便利店买了瓶饮料"
+    },
+    "duration": 0,
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "冰镇的，握在手里很舒服",
+      "喝完随手把瓶子扔进了回收箱"
+    ],
+    "sound": "coin",
+    "handler": "buy_food",
+    "itemId": "drink"
+  },
+  {
+    "id": "commercial_buy_sandwich_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买三明治",
+    "icon": "🥪",
+    "duration": 0,
+    "desc": "三明治，8 元，开袋即食。",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在月角便利店买了个三明治"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "切成三角的形状，吃着不腻",
+      "面包边有点干，但夹心还行"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "sandwich"
+  },
+  {
+    "id": "commercial_buy_salad_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买沙拉",
+    "icon": "🥗",
+    "duration": 0,
+    "desc": "轻食沙拉，10 元，健康之选。",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "在月角便利店买了份沙拉"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "酱汁单独一小包，可以自己控制量",
+      "菜叶还挺脆，没蔫"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "salad"
+  },
+  {
+    "id": "commercial_buy_noodles_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买泡面",
+    "icon": "🍜",
+    "duration": 0,
+    "desc": "桶装泡面，4 元。最便宜的一顿，但吃多了伤身。",
+    "requirements": {
+      "money": 4
+    },
+    "effects": {
+      "money": -4,
+      "log": "在月角便利店买了桶泡面"
+    },
+    "verdicts": [
+      "店员麻利地扫码结账",
+      "便利店的灯永远亮着，让人安心",
+      "热了一下，冒着白气",
+      "收银小哥说了句慢走",
+      "这一顿，花得不心疼",
+      "泡面香气在小店里散开",
+      "撕开料包的那一刻最治愈"
+    ],
+    "sound": "eat",
+    "handler": "buy_food",
+    "itemId": "noodles"
+  },
+  {
+    "id": "commercial_convenience_blind_box",
+    "locationId": "commercial_convenience_store",
+    "name": "便利店盲盒",
+    "icon": "🎁",
+    "desc": "晚上 10 点后限定：神秘盲盒会随机开出两个食物或食材，价格随物价调整。",
+    "duration": 0.5,
+    "handler": "blind_box",
+    "requirements": {
+      "hourRange": {
+        "start": 22,
+        "end": 6
+      }
+    },
+    "effects": {
+      "money": -10
+    },
+    "verdicts": [
+      "拆开盒子，收获满满",
+      "盲盒的快乐，就是未知的惊喜",
+      "店员说这盒手气不错",
+      "十块钱买到两份吃的，值了",
+      "今晚的夜宵有着落了",
+      "盲盒拆开的一瞬间最刺激"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_salt_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买盐",
+    "icon": "🧂",
+    "desc": "1 元一份，最基础的调味料。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salt",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在月角便利店在便利店买了一包盐"
+    },
+    "verdicts": [
+      "最基础的调味料也不能少",
+      "这一包盐能让蔬菜更有滋味",
+      "便利店结账很快",
+      "小小的采购补上了厨房缺口",
+      "调味架又完整了一点",
+      "盐已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_sugar_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买糖",
+    "icon": "🍬",
+    "desc": "1 元一份，给甜点和米粥加点甜。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "sugar",
+    "requirements": {
+      "money": 1
+    },
+    "effects": {
+      "money": -1,
+      "log": "在月角便利店在便利店买了一包糖"
+    },
+    "verdicts": [
+      "给甜点准备了一点甜味",
+      "糖的包装在灯光下闪着光",
+      "蛋挞和米粥都能用上",
+      "一元的小采购也很有价值",
+      "厨房里有了更灵活的选择",
+      "糖已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_soy_sauce_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买酱油",
+    "icon": "🫙",
+    "desc": "2 元一瓶，炒菜提鲜上色。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "soy_sauce",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在月角便利店在便利店买了一瓶酱油"
+    },
+    "verdicts": [
+      "酱油是家常锅气的关键",
+      "瓶身贴着熟悉的深色标签",
+      "炒饭和小炒肉都等着它",
+      "这一瓶调料很快就能派上用场",
+      "调味选择一下丰富了",
+      "酱油已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_chili_powder_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买辣椒粉",
+    "icon": "🌶️",
+    "desc": "2 元一份，香辣风味随手可得。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "chili_powder",
+    "requirements": {
+      "money": 2
+    },
+    "effects": {
+      "money": -2,
+      "log": "在月角便利店在便利店买了一包辣椒粉"
+    },
+    "verdicts": [
+      "今天想给饭菜加一点热度",
+      "辣椒粉的香气很有存在感",
+      "辣子鸡马上有了灵魂",
+      "这份调料能改变一整道菜",
+      "小小一包也值得收进冰箱",
+      "辣椒粉已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_buy_salad_dressing_convenience",
+    "locationId": "commercial_convenience_store",
+    "name": "买沙拉酱",
+    "icon": "🥣",
+    "desc": "3 元一瓶，蔬菜拌一拌就能吃。",
+    "duration": 0.25,
+    "handler": "buy_item",
+    "itemId": "salad_dressing",
+    "requirements": {
+      "money": 3
+    },
+    "effects": {
+      "money": -3,
+      "log": "在月角便利店在便利店买了一瓶沙拉酱"
+    },
+    "verdicts": [
+      "沙拉酱让蔬菜有了清爽方案",
+      "瓶子小巧，放进冰箱正合适",
+      "不想开火的日子也能吃得认真",
+      "这份调料给菜单添了变化",
+      "便利店的补给很及时",
+      "沙拉酱已随食材自动入库"
+    ],
+    "sound": "coin"
+  },
+  {
+    "id": "commercial_convenience_store_energy_drink",
+    "locationId": "commercial_convenience_store",
+    "name": "买能量饮料 · 25元",
+    "icon": "⚡",
+    "desc": "25 元一瓶。带在路上喝，提神顶一阵。",
+    "handler": "buy_food",
+    "duration": 0,
+    "requirements": {
+      "money": 25
+    },
+    "effects": {
+      "money": -25
+    },
+    "sound": "coin",
+    "verdicts": [
+      "你买下能量饮料，收好后可以从背包饮用。",
+      "店员把饮料递给你，瓶身还有些凉。",
+      "你看过标签，把这瓶饮料放进背包。",
+      "一瓶能量饮料已经备好，运动后可以补充体力。",
+      "付清账款，你收起了这瓶饮料。",
+      "你带走一瓶饮料，准备留给需要精神的时候。"
+    ],
+    "itemId": "energy_drink"
+  },
+  {
+    "id": "commercial_street_skewer",
+    "locationId": "commercial_street",
+    "name": "买烤串",
+    "icon": "🍢",
+    "desc": "树堰老街炭火现烤，10 元一份；背包物品显示为“烤串”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_skewer",
+    "group": "market_shop",
+    "requirements": {
+      "money": 10
+    },
+    "effects": {
+      "money": -10,
+      "log": "在核心商业街买了一份烤串"
+    },
+    "verdicts": [
+      "小店把热食装进纸袋，递到你手中",
+      "沿街的香气飘过来，挑一份喜欢的小吃",
+      "店主把餐盒盖好，叮嘱趁热吃"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "commercial_street_noodles",
+    "locationId": "commercial_street",
+    "name": "买炒面",
+    "icon": "🍝",
+    "desc": "树堰老街铁锅炒面，14 元一份；背包物品显示为“炒面”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_noodles",
+    "group": "market_shop",
+    "requirements": {
+      "money": 14
+    },
+    "effects": {
+      "money": -14,
+      "log": "在核心商业街买了一份炒面"
+    },
+    "verdicts": [
+      "小店把热食装进纸袋，递到你手中",
+      "沿街的香气飘过来，挑一份喜欢的小吃",
+      "店主把餐盒盖好，叮嘱趁热吃"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "commercial_street_tofu",
+    "locationId": "commercial_street",
+    "name": "买臭豆腐",
+    "icon": "🧈",
+    "desc": "树堰老街传统臭豆腐，8 元一份；背包物品显示为“臭豆腐”。",
+    "duration": 0,
+    "handler": "buy_food",
+    "itemId": "snack_tofu",
+    "group": "market_shop",
+    "requirements": {
+      "money": 8
+    },
+    "effects": {
+      "money": -8,
+      "log": "在核心商业街买了一份臭豆腐"
+    },
+    "verdicts": [
+      "小店把热食装进纸袋，递到你手中",
+      "沿街的香气飘过来，挑一份喜欢的小吃",
+      "店主把餐盒盖好，叮嘱趁热吃"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "municipal_apply_industry_pass",
+    "locationId": "municipal_hall",
+    "name": "办理工业通行证",
+    "icon": "🏗️",
+    "desc": "凭两次已完成的工作记录办理工业区通行手续，工本及登记费 80 元。",
+    "duration": 1,
+    "requirements": {
+      "money": 80,
+      "flagAtLeast": {
+        "flag": "jobs_done_count",
+        "value": 2
+      },
+      "notFlag": "route_heavy_industry"
+    },
+    "effects": {
+      "money": -80,
+      "flags": {
+        "route_heavy_industry": true
+      },
+      "log": "办理了工业通行证，重工业区的路线开放了"
+    },
+    "verdicts": [
+      "窗口盖章很快，工业区的地图亮了起来",
+      "拿着证件，终于能去看看真正的工厂了",
+      "工作人员提醒高危岗位要量力而行",
+      "证件塑封得很平整，手续比想象中简单",
+      "你把工业区的班次记进了待办",
+      "新的路线意味着新的选择"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "municipal_apply_student_pass",
+    "locationId": "municipal_hall",
+    "name": "办理学生通行证",
+    "icon": "🎓",
+    "desc": "登记学习与校园通行信息，办理后可进入两处大学城的校园；免费办理。",
+    "duration": 0.5,
+    "requirements": {
+      "notFlag": "item_student_pass"
+    },
+    "effects": {
+      "flags": {
+        "item_student_pass": true
+      },
+      "log": "在市政大厅办理了学生通行证"
+    },
+    "verdicts": [
+      "工作人员核对登记信息，把通行证交到你手里"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "stay_hotel_mooncourt",
+    "locationId": "hotel_mooncourt",
+    "name": "入住月庭大酒店 · 180元/晚",
+    "icon": "🏨",
+    "desc": "入住预付一晚房费，住客堂食包含在房费中",
+    "duration": 0,
+    "handler": "stay_hotel",
+    "housingId": "hotel_mooncourt",
+    "effects": {},
+    "sound": "success",
+    "verdicts": [
+      "前台交来房卡，窗边的大床客房已经收拾好了"
+    ]
+  },
+  {
+    "id": "mooncourt_dining",
+    "locationId": "hotel_mooncourt",
+    "name": "下楼用餐",
+    "icon": "🍳",
+    "desc": "在酒店餐厅享用包含在房费里的住客餐，不提供打包。",
+    "duration": 0.5,
+    "effects": {
+      "satiety": 45,
+      "mood": 4
+    },
+    "verdicts": [
+      "在餐厅坐下，慢慢吃了一顿热饭",
+      "窗边还有空位，饭菜刚好端上来",
+      "喝完热汤，身体暖和了起来",
+      "吃过饭，向餐厅服务员道了声谢",
+      "餐厅里不太吵，可以好好吃顿饭",
+      "放下碗筷，精神恢复了一些"
+    ],
+    "sound": "eat"
+  },
+  {
+    "id": "commercial_office_read",
+    "locationId": "commercial_office",
+    "name": "整理资料",
+    "icon": "🗂️",
+    "desc": "在大堂安静地整理笔记与求职资料。",
+    "duration": 0.5,
+    "effects": {
+      "stress": -3,
+      "skills": {
+        "writing": 0.2
+      }
+    },
+    "verdicts": [
+      "把零散的笔记排好，下一步要做什么清楚了些"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "commercial_street_stroll",
+    "locationId": "commercial_street",
+    "name": "逛一逛商业街",
+    "icon": "🚶",
+    "desc": "沿着店铺走一段，看看橱窗和街景。",
+    "duration": 0.5,
+    "effects": {
+      "mood": 3,
+      "stress": -4,
+      "stamina": -2
+    },
+    "verdicts": [
+      "慢慢逛过几家小店，街边的树影落在橱窗上"
+    ],
+    "sound": "success"
+  },
+  {
+    "id": "campus_teacher_lecture",
+    "locationId": "dev_university",
+    "name": "旁听公开课",
+    "icon": "🎓",
+    "desc": "在开放课堂里听完一节课，记下几个新想法。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.3,
+      "skills": {
+        "writing": 0.2
+      },
+      "stress": 2
+    },
+    "verdicts": [
+      "记下了几行课堂笔记",
+      "最后一排也能听清老师的声音",
+      "一个没想明白的问题有了头绪",
+      "课间和旁边的同学聊了几句",
+      "带着新的想法走出教室",
+      "铃声响起时，笔记刚好翻过一页"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "campus_teacher_study",
+    "locationId": "campus_teacher_library",
+    "name": "安静自习",
+    "icon": "📚",
+    "desc": "找一张靠窗的桌子，安静地读书和整理笔记。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.2,
+      "skills": {
+        "writing": 0.3
+      },
+      "stress": -2
+    },
+    "verdicts": [
+      "终于理清了这一页的思路",
+      "窗外树影慢慢移过书桌",
+      "把没读懂的段落又看了一遍",
+      "合上书，脑子比刚才清楚了一些",
+      "安静的半小时过得很快",
+      "记下一个问题，留着下次继续想"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "campus_teacher_run",
+    "locationId": "campus_teacher_sports",
+    "name": "沿操场慢跑",
+    "icon": "🏃",
+    "desc": "沿跑道慢慢跑上一会儿，呼吸逐渐平稳。",
+    "duration": 0.5,
+    "effects": {
+      "stamina": -8,
+      "stress": -5,
+      "mood": 2,
+      "fitness": 0.2
+    },
+    "verdicts": [
+      "沿着跑道慢慢跑完了一圈",
+      "额头冒出细汗，呼吸渐渐平稳",
+      "路边的树影陪着脚步向前",
+      "放慢速度走了一会儿，身体舒展开来",
+      "操场上的风吹散了一点疲惫",
+      "今天的运动量刚刚好"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "campus_teacher_affairs_chat",
+    "locationId": "campus_teacher_affairs",
+    "name": "咨询校园事务",
+    "icon": "🏫",
+    "desc": "在学工窗口了解课程、住宿与校园活动的安排。",
+    "duration": 0.5,
+    "effects": {
+      "stress": -2
+    },
+    "verdicts": [
+      "老师耐心说清了办理流程",
+      "把需要准备的材料记在手机里",
+      "值班老师帮忙核对了校园安排",
+      "在窗口问清了自己的疑惑",
+      "离开前又确认了一遍开放时间",
+      "学工楼的公告栏贴着新的通知"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "campus_engineering_lecture",
+    "locationId": "boyue_engineering_college",
+    "name": "旁听公开课",
+    "icon": "🎓",
+    "desc": "在开放课堂里听完一节课，记下几个新想法。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.3,
+      "skills": {
+        "writing": 0.2
+      },
+      "stress": 2
+    },
+    "verdicts": [
+      "记下了几行课堂笔记",
+      "最后一排也能听清老师的声音",
+      "一个没想明白的问题有了头绪",
+      "课间和旁边的同学聊了几句",
+      "带着新的想法走出教室",
+      "铃声响起时，笔记刚好翻过一页"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "campus_engineering_study",
+    "locationId": "campus_engineering_library",
+    "name": "安静自习",
+    "icon": "📚",
+    "desc": "找一张靠窗的桌子，安静地读书和整理笔记。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.2,
+      "skills": {
+        "writing": 0.3
+      },
+      "stress": -2
+    },
+    "verdicts": [
+      "终于理清了这一页的思路",
+      "窗外树影慢慢移过书桌",
+      "把没读懂的段落又看了一遍",
+      "合上书，脑子比刚才清楚了一些",
+      "安静的半小时过得很快",
+      "记下一个问题，留着下次继续想"
+    ],
+    "sound": "study"
+  },
+  {
+    "id": "campus_engineering_run",
+    "locationId": "campus_engineering_sports",
+    "name": "沿操场慢跑",
+    "icon": "🏃",
+    "desc": "沿跑道慢慢跑上一会儿，呼吸逐渐平稳。",
+    "duration": 0.5,
+    "effects": {
+      "stamina": -8,
+      "stress": -5,
+      "mood": 2,
+      "fitness": 0.2
+    },
+    "verdicts": [
+      "沿着跑道慢慢跑完了一圈",
+      "额头冒出细汗，呼吸渐渐平稳",
+      "路边的树影陪着脚步向前",
+      "放慢速度走了一会儿，身体舒展开来",
+      "操场上的风吹散了一点疲惫",
+      "今天的运动量刚刚好"
+    ],
+    "sound": "exercise"
+  },
+  {
+    "id": "campus_engineering_affairs_chat",
+    "locationId": "campus_engineering_affairs",
+    "name": "咨询校园事务",
+    "icon": "🏫",
+    "desc": "在学工窗口了解课程、住宿与校园活动的安排。",
+    "duration": 0.5,
+    "effects": {
+      "stress": -2
+    },
+    "verdicts": [
+      "老师耐心说清了办理流程",
+      "把需要准备的材料记在手机里",
+      "值班老师帮忙核对了校园安排",
+      "在窗口问清了自己的疑惑",
+      "离开前又确认了一遍开放时间",
+      "学工楼的公告栏贴着新的通知"
+    ],
+    "sound": "study"
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "拿到钥匙，这里终于属于自己了",
+      "产权手续收好，心里踏实了一点",
+      "核对完合同，房子正式过户",
+      "站在门口，开始盘算以后的布置",
+      "旧的租房日子翻过了一页",
+      "把房门打开，仔细看了看自己的住处"
+    ],
+    "sound": "success",
+    "id": "purchase_own_rental_studio",
+    "locationId": "housing_agency",
+    "name": "买断普通出租屋",
+    "icon": "🏠",
+    "handler": "buy_property",
+    "housingId": "own_rental_studio",
+    "duration": 3
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "拿到钥匙，这里终于属于自己了",
+      "产权手续收好，心里踏实了一点",
+      "核对完合同，房子正式过户",
+      "站在门口，开始盘算以后的布置",
+      "旧的租房日子翻过了一页",
+      "把房门打开，仔细看了看自己的住处"
+    ],
+    "sound": "success",
+    "id": "purchase_own_rental_apartment",
+    "locationId": "housing_agency",
+    "name": "买断出租公寓",
+    "icon": "🏠",
+    "handler": "buy_property",
+    "housingId": "own_rental_apartment",
+    "duration": 3
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "拿到钥匙，这里终于属于自己了",
+      "产权手续收好，心里踏实了一点",
+      "核对完合同，房子正式过户",
+      "站在门口，开始盘算以后的布置",
+      "旧的租房日子翻过了一页",
+      "把房门打开，仔细看了看自己的住处"
+    ],
+    "sound": "success",
+    "id": "purchase_own_suburb_room",
+    "locationId": "housing_agency",
+    "name": "买断城市边缘小屋",
+    "icon": "🏠",
+    "handler": "buy_property",
+    "housingId": "own_suburb_room",
+    "duration": 3
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "钥匙交到手里，新的住处安排好了",
+      "把合同收进包里，记下下次交租日期",
+      "房东交代了水电和门锁的用法",
+      "推开门，开始想象住在这里的日常",
+      "签完最后一页，终于能安心安顿下来",
+      "搬家清单又添了几项要准备的东西"
+    ],
+    "sound": "success",
+    "id": "sign_lease_old_unit",
+    "locationId": "housing_agency",
+    "name": "签约老破小产权房",
+    "icon": "🏠",
+    "handler": "sign_lease",
+    "housingId": "lease_old_unit",
+    "duration": 1
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "钥匙交到手里，新的住处安排好了",
+      "把合同收进包里，记下下次交租日期",
+      "房东交代了水电和门锁的用法",
+      "推开门，开始想象住在这里的日常",
+      "签完最后一页，终于能安心安顿下来",
+      "搬家清单又添了几项要准备的东西"
+    ],
+    "sound": "success",
+    "id": "sign_lease_premium_apartment",
+    "locationId": "housing_agency",
+    "name": "签约精装公寓",
+    "icon": "🏠",
+    "handler": "sign_lease",
+    "housingId": "lease_premium_apartment",
+    "duration": 1
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "钥匙交到手里，新的住处安排好了",
+      "把合同收进包里，记下下次交租日期",
+      "房东交代了水电和门锁的用法",
+      "推开门，开始想象住在这里的日常",
+      "签完最后一页，终于能安心安顿下来",
+      "搬家清单又添了几项要准备的东西"
+    ],
+    "sound": "success",
+    "id": "sign_lease_villa",
+    "locationId": "housing_agency",
+    "name": "签约城市住宅",
+    "icon": "🏠",
+    "handler": "sign_lease",
+    "housingId": "lease_villa",
+    "duration": 1
+  },
+  {
+    "effects": {
+      "money": -100
+    },
+    "verdicts": [
+      "试了试刹车，自行车骑起来很顺",
+      "交好押金，接过了车锁钥匙",
+      "调了调坐垫高度，准备出发",
+      "租赁员提醒退车时带好钥匙",
+      "绕门口骑了一圈，车况还不错",
+      "这下附近的路可以轻松一点走了"
+    ],
+    "sound": "success",
+    "id": "rent_bicycle_shop",
+    "locationId": "car_rental",
+    "name": "租用自行车",
+    "icon": "🚲",
+    "handler": "rent_vehicle",
+    "vehicleType": "bicycle",
+    "duration": 1,
+    "desc": "押金100元，退租或买断时返还或抵扣，不限租期。",
+    "requirements": {
+      "money": 100
+    }
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "车锁和钥匙一起还给了店员",
+      "核对车况后，押金退回了",
+      "车停回原位，租赁手续结束",
+      "店员确认了刹车和轮胎的状态",
+      "退还自行车，腾出手来继续走走",
+      "押金收好，下次需要再来租"
+    ],
+    "sound": "success",
+    "id": "return_bicycle_shop",
+    "locationId": "car_rental",
+    "name": "退还自行车",
+    "icon": "🚲",
+    "handler": "return_vehicle",
+    "vehicleType": "bicycle",
+    "duration": 1,
+    "desc": "归还租用的自行车，退回当时缴纳的押金。"
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "拿到房卡，沿走廊找到自己的房间",
+      "前台确认了房型和住客用餐安排",
+      "房门打开，床铺已经收拾整齐",
+      "把行李放下，今晚的住处安排好了",
+      "收好房卡，可以安心休息了",
+      "窗帘拉开一点，房间里亮堂起来"
+    ],
+    "sound": "success",
+    "id": "stay_hotel_mooncourt_budget",
+    "locationId": "hotel_mooncourt",
+    "name": "入住月庭特惠间",
+    "icon": "🏨",
+    "handler": "stay_hotel",
+    "housingId": "hotel_mooncourt_budget",
+    "duration": 0,
+    "desc": "入住预付一晚房费，住客堂食包含在房费中"
+  },
+  {
+    "effects": {
+      "satiety": 45,
+      "mood": 4
+    },
+    "verdicts": [
+      "在餐厅坐下，慢慢吃了一顿热饭",
+      "窗边还有空位，饭菜刚好端上来",
+      "喝完热汤，身体暖和了起来",
+      "吃过饭，向餐厅服务员道了声谢",
+      "餐厅里不太吵，可以好好吃顿饭",
+      "放下碗筷，精神恢复了一些"
+    ],
+    "sound": "eat",
+    "id": "hotel_resident_dining",
+    "locationId": "hotel",
+    "name": "下楼用餐",
+    "icon": "🍳",
+    "desc": "在酒店餐厅享用包含在房费里的住客餐，不提供打包。",
+    "duration": 0.5
+  },
+  {
+    "effects": {},
+    "verdicts": [
+      "摊位前很快聚起了几位顾客",
+      "火候和调味都比普通街边摊更讲究",
+      "小吃街的客流让今天格外忙碌",
+      "顾客吃得开心，摊位的招牌也亮了起来",
+      "忙完一轮，你对经营小摊更有把握了",
+      "旺盛的人气换来了更高的回报"
+    ],
+    "sound": "coin",
+    "id": "commercial_street_stall",
+    "locationId": "commercial_street",
+    "name": "商业街摆摊",
+    "icon": "🍢",
+    "desc": "找个合适的摊位，摆好食材，招呼来往的客人。",
+    "duration": 2,
+    "handler": "work_project",
+    "projectId": "snack_stall",
+    "group": "market_stall",
+    "requirements": {
+      "skill": {
+        "cooking": 2
+      },
+      "oncePerDay": "stall_snack_day"
+    }
+  },
+  {
+    "id": "campus_teacher_book_sports",
+    "locationId": "campus_teacher_library",
+    "name": "运动指南",
+    "icon": "🏃",
+    "desc": "从热身到拉伸，把锻炼练进日常。读得慢，身子会一点点结实起来。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_sports",
+    "group": "read",
+    "effects": {
+      "fitness": 4,
+      "stamina": -8,
+      "stress": -3
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_health",
+    "locationId": "campus_teacher_library",
+    "name": "健康指南",
+    "icon": "💪",
+    "desc": "作息、饮食、小病不硬扛。慢慢读，身体会记住。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_health",
+    "group": "read",
+    "effects": {
+      "health": 4,
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_cooking",
+    "locationId": "campus_teacher_library",
+    "name": "烹饪食谱",
+    "icon": "🍳",
+    "desc": "翻翻家常菜谱，学几道拿手菜。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_cooking",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "cooking": 1
+      },
+      "satiety": 5,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_philosophy",
+    "locationId": "campus_teacher_library",
+    "name": "哲学总集",
+    "icon": "📜",
+    "desc": "想不明白的事，书里或许早有答案。读完人会通透些。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_philosophy",
+    "group": "read",
+    "effects": {
+      "intelligence": 4,
+      "stress": -4,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_charm",
+    "locationId": "campus_teacher_library",
+    "name": "精致人生",
+    "icon": "💄",
+    "desc": "仪表、谈吐、分寸感，都市生存的软实力。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_charm",
+    "group": "read",
+    "effects": {
+      "charm": 4,
+      "mood": 3,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_programming",
+    "locationId": "campus_teacher_library",
+    "name": "编程入门",
+    "icon": "💻",
+    "desc": "从 Hello World 到第一个作品，代码改变命运。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_programming",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "programming": 1
+      },
+      "intelligence": 1,
+      "stamina": -10
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_design",
+    "locationId": "campus_teacher_library",
+    "name": "设计美学书",
+    "icon": "🎨",
+    "desc": "配色、排版、留白，审美也是生产力。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_design",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "design": 1
+      },
+      "charm": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_operation",
+    "locationId": "campus_teacher_library",
+    "name": "运营操作",
+    "icon": "📊",
+    "desc": "流量、转化、复购，把生意做明白。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_operation",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "operation": 1
+      },
+      "intelligence": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_book_stall_tips",
+    "locationId": "campus_teacher_library",
+    "name": "摆摊小技巧",
+    "icon": "🍢",
+    "desc": "选址、吆喝、定价，摊主老手的心得。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_stall_tips",
+    "group": "read",
+    "effects": {
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_sports",
+    "locationId": "campus_engineering_library",
+    "name": "运动指南",
+    "icon": "🏃",
+    "desc": "从热身到拉伸，把锻炼练进日常。读得慢，身子会一点点结实起来。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_sports",
+    "group": "read",
+    "effects": {
+      "fitness": 4,
+      "stamina": -8,
+      "stress": -3
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_health",
+    "locationId": "campus_engineering_library",
+    "name": "健康指南",
+    "icon": "💪",
+    "desc": "作息、饮食、小病不硬扛。慢慢读，身体会记住。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_health",
+    "group": "read",
+    "effects": {
+      "health": 4,
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_cooking",
+    "locationId": "campus_engineering_library",
+    "name": "烹饪食谱",
+    "icon": "🍳",
+    "desc": "翻翻家常菜谱，学几道拿手菜。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_cooking",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "cooking": 1
+      },
+      "satiety": 5,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_philosophy",
+    "locationId": "campus_engineering_library",
+    "name": "哲学总集",
+    "icon": "📜",
+    "desc": "想不明白的事，书里或许早有答案。读完人会通透些。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_philosophy",
+    "group": "read",
+    "effects": {
+      "intelligence": 4,
+      "stress": -4,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_charm",
+    "locationId": "campus_engineering_library",
+    "name": "精致人生",
+    "icon": "💄",
+    "desc": "仪表、谈吐、分寸感，都市生存的软实力。",
+    "duration": 3,
+    "handler": "read_book",
+    "bookId": "book_charm",
+    "group": "read",
+    "effects": {
+      "charm": 4,
+      "mood": 3,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_programming",
+    "locationId": "campus_engineering_library",
+    "name": "编程入门",
+    "icon": "💻",
+    "desc": "从 Hello World 到第一个作品，代码改变命运。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_programming",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "programming": 1
+      },
+      "intelligence": 1,
+      "stamina": -10
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_design",
+    "locationId": "campus_engineering_library",
+    "name": "设计美学书",
+    "icon": "🎨",
+    "desc": "配色、排版、留白，审美也是生产力。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_design",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "design": 1
+      },
+      "charm": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_operation",
+    "locationId": "campus_engineering_library",
+    "name": "运营操作",
+    "icon": "📊",
+    "desc": "流量、转化、复购，把生意做明白。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_operation",
+    "group": "read",
+    "effects": {
+      "skills": {
+        "operation": 1
+      },
+      "intelligence": 1,
+      "stamina": -8
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_engineering_book_stall_tips",
+    "locationId": "campus_engineering_library",
+    "name": "摆摊小技巧",
+    "icon": "🍢",
+    "desc": "选址、吆喝、定价，摊主老手的心得。",
+    "duration": 2,
+    "handler": "read_book",
+    "bookId": "book_stall_tips",
+    "group": "read",
+    "effects": {
+      "stamina": -6
+    },
+    "sound": "read"
+  },
+  {
+    "id": "campus_teacher_reading_room",
+    "locationId": "campus_teacher_library",
+    "name": "自习室复习",
+    "icon": "📖",
+    "desc": "安静整理笔记，巩固今天学到的内容。",
+    "duration": 1,
+    "effects": {
+      "intelligence": 0.4,
+      "stamina": -4,
+      "stress": 1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_stretch",
+    "locationId": "campus_teacher_sports",
+    "name": "拉伸与恢复",
+    "icon": "🧘",
+    "desc": "沿着操场放松肌肉，不赶速度，慢慢活动。",
+    "duration": 0.5,
+    "effects": {
+      "fitness": 0.15,
+      "stamina": -3,
+      "stress": -4,
+      "hygiene": -1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_ball",
+    "locationId": "campus_teacher_sports",
+    "name": "球场练习",
+    "icon": "🏀",
+    "desc": "在空场练习投篮和传球，出一身汗。",
+    "duration": 1,
+    "effects": {
+      "fitness": 0.4,
+      "stamina": -12,
+      "mood": 4,
+      "hygiene": -5
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_water",
+    "locationId": "campus_teacher_canteen",
+    "name": "接一杯温水",
+    "icon": "☕",
+    "desc": "食堂饮水处提供免费温水。",
+    "duration": 0.1,
+    "effects": {
+      "stamina": 1,
+      "stress": -1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_break",
+    "locationId": "campus_teacher_canteen",
+    "name": "课间休息",
+    "icon": "🪑",
+    "desc": "在靠窗的座位歇一会，听听校园里的动静。",
+    "duration": 0.5,
+    "effects": {
+      "stamina": 6,
+      "stress": -3
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_careers",
+    "locationId": "campus_teacher_affairs",
+    "name": "职业规划咨询",
+    "icon": "💼",
+    "desc": "与老师讨论工作方向，整理求职思路。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.15,
+      "stress": -3,
+      "skills": {
+        "management": 0.2
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_volunteer",
+    "locationId": "campus_teacher_affairs",
+    "name": "参加校园志愿服务",
+    "icon": "🤝",
+    "desc": "整理活动物资、引导来访者，为校园帮一点忙。",
+    "duration": 1,
+    "effects": {
+      "charm": 0.2,
+      "stamina": -7,
+      "stress": -2,
+      "skills": {
+        "service": 0.2
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_reading_room",
+    "locationId": "campus_engineering_library",
+    "name": "自习室复习",
+    "icon": "📖",
+    "desc": "安静整理笔记，巩固今天学到的内容。",
+    "duration": 1,
+    "effects": {
+      "intelligence": 0.4,
+      "stamina": -4,
+      "stress": 1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_stretch",
+    "locationId": "campus_engineering_sports",
+    "name": "拉伸与恢复",
+    "icon": "🧘",
+    "desc": "沿着操场放松肌肉，不赶速度，慢慢活动。",
+    "duration": 0.5,
+    "effects": {
+      "fitness": 0.15,
+      "stamina": -3,
+      "stress": -4,
+      "hygiene": -1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_ball",
+    "locationId": "campus_engineering_sports",
+    "name": "球场练习",
+    "icon": "🏀",
+    "desc": "在空场练习投篮和传球，出一身汗。",
+    "duration": 1,
+    "effects": {
+      "fitness": 0.4,
+      "stamina": -12,
+      "mood": 4,
+      "hygiene": -5
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_water",
+    "locationId": "campus_engineering_canteen",
+    "name": "接一杯温水",
+    "icon": "☕",
+    "desc": "食堂饮水处提供免费温水。",
+    "duration": 0.1,
+    "effects": {
+      "stamina": 1,
+      "stress": -1
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_break",
+    "locationId": "campus_engineering_canteen",
+    "name": "课间休息",
+    "icon": "🪑",
+    "desc": "在靠窗的座位歇一会，听听校园里的动静。",
+    "duration": 0.5,
+    "effects": {
+      "stamina": 6,
+      "stress": -3
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_careers",
+    "locationId": "campus_engineering_affairs",
+    "name": "职业规划咨询",
+    "icon": "💼",
+    "desc": "与老师讨论工作方向，整理求职思路。",
+    "duration": 0.5,
+    "effects": {
+      "intelligence": 0.15,
+      "stress": -3,
+      "skills": {
+        "management": 0.2
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_volunteer",
+    "locationId": "campus_engineering_affairs",
+    "name": "参加校园志愿服务",
+    "icon": "🤝",
+    "desc": "整理活动物资、引导来访者，为校园帮一点忙。",
+    "duration": 1,
+    "effects": {
+      "charm": 0.2,
+      "stamina": -7,
+      "stress": -2,
+      "skills": {
+        "service": 0.2
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_teacher_writing",
+    "locationId": "dev_university",
+    "name": "写作研讨",
+    "icon": "📖",
+    "desc": "围绕一篇短文交换意见，再把自己的想法写清楚。",
+    "duration": 1,
+    "effects": {
+      "intelligence": 0.3,
+      "stamina": -5,
+      "skills": {
+        "writing": 0.4
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
+  },
+  {
+    "id": "campus_engineering_practice",
+    "locationId": "boyue_engineering_college",
+    "name": "机房编程练习",
+    "icon": "📖",
+    "desc": "使用教学机房，完成一组基础编程练习。",
+    "duration": 1,
+    "effects": {
+      "intelligence": 0.3,
+      "stamina": -6,
+      "skills": {
+        "programming": 0.4
+      }
+    },
+    "sound": "success",
+    "verdicts": [
+      "你把这段时间留给了自己，按计划完成了今天的安排。",
+      "窗外的人来来往往，你专注地完成了手头的事情。",
+      "离开前又检查了一遍，今天的安排没有白费。",
+      "忙完这一段，你收拾好东西，准备去下一个地方。",
+      "你和身边的人点头告别，继续今天的生活。",
+      "事情做完了，你把随身物品收好，走出了校园的这间屋子。"
+    ]
   }
 ]

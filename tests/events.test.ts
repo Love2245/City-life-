@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { applyFamily } from "../src/game/core/families";
-import { rollEvent, checkEventConditions, applyEventChoice, EVENTS } from "../src/game/core/events";
+import { rollEvent, checkEventConditions, applyEventChoice, EVENTS, eventChoiceNetEffect, isNegativeEvent } from "../src/game/core/events";
 import { absoluteDay } from "../src/game/core/membership";
+import { signLease } from "../src/game/core/housing";
 
 describe("随机事件：数据", () => {
   it("事件库至少 10 个", () => {
@@ -13,6 +14,17 @@ describe("随机事件：数据", () => {
     for (const ev of EVENTS) {
       expect(ev.choices.length).toBeGreaterThanOrEqual(2);
     }
+  });
+
+  it("缺少 tone 时从负向效果识别事件，明确基调优先", () => {
+    const event = (id: string) => EVENTS.find((entry) => entry.id === id)!;
+    expect(isNegativeEvent(event("ev_street_lottery"))).toBe(true);
+    expect(isNegativeEvent(event("ev_lottery_scratch"))).toBe(true);
+    expect(isNegativeEvent(event("ev_park_coach"))).toBe(false);
+    expect(isNegativeEvent({
+      ...event("ev_street_lottery"),
+      tone: "positive",
+    })).toBe(false);
   });
 });
 
@@ -115,6 +127,45 @@ describe("随机事件：抽签与选项", () => {
     expect(s.player.money).toBeGreaterThanOrEqual(before - 5);
   });
 
+  it("被扒窃后报警备案不会再额外损失 50 元", () => {
+    const event = EVENTS.find((entry) => entry.id === "ev_street_pickpocket")!;
+    expect(event.choices[1].gamble).toEqual({ cost: 0, win: 50, lose: 0, winChance: 0.3 });
+  });
+
+  it("v1.43 修复：eventChoiceNetEffect 净效果判定（纯函数）", () => {
+    // 花钱换属性的公平交易：净效果应为正（不误报风险）
+    const fair = eventChoiceNetEffect({ label: "买热食", effects: { money: -8, satiety: 12, mood: 5 } });
+    expect(fair.tone).toBe("positive");
+
+    // 纯亏损：花钱还掉属性 → 风险
+    const trap = eventChoiceNetEffect({ label: "被坑", effects: { money: -30, mood: -5 } });
+    expect(trap.tone).toBe("negative");
+
+    // 中性：等价交换（金钱亏损恰好被属性补偿）
+    const neutral = eventChoiceNetEffect({ label: "等价", effects: { money: -9, stamina: 3 } });
+    expect(neutral.tone).toBe("neutral");
+
+    // 运气选项按期望收益估算：成本 10，赢 50(30%) 输 0(70%)，期望 = -10 + 15 = +5 → 正
+    const gambleGood = eventChoiceNetEffect({
+      label: "押注",
+      effects: {},
+      gamble: { cost: 10, win: 50, lose: 0, winChance: 0.3 },
+    });
+    expect(gambleGood.money).toBeCloseTo(5, 5);
+    expect(gambleGood.tone).toBe("positive");
+
+    // 负 EV 赌博：成本 10，赢 10(20%) 输 20(80%)，期望 = -10 + 2 - 16 = -24 → 风险
+    const gambleBad = eventChoiceNetEffect({
+      label: "赌运气",
+      effects: {},
+      gamble: { cost: 10, win: 10, lose: -20, winChance: 0.2 },
+    });
+    expect(gambleBad.tone).toBe("negative");
+
+    // 空效果 → 中性
+    expect(eventChoiceNetEffect({ label: "无", effects: {} }).tone).toBe("neutral");
+  });
+
   it("健身房教练指点：体质按属性加成，不产生 NaN 技能（P1-13）", () => {
     const s = createInitialState(7);
     applyFamily(s, "ordinary");
@@ -133,9 +184,22 @@ describe("随机事件：抽签与选项", () => {
 });
 
 describe("v1.4 猫咪收养事件", () => {
+  it("没有自租或自有住房时，不触发主动收养事件，也不能直接领养", () => {
+    const s = createInitialState(7);
+    applyFamily(s, "ordinary");
+    s.locationId = "street";
+    s.time.hour = 12;
+    const event = EVENTS.find((entry) => entry.id === "ev_street_orphan_kitten")!;
+    expect(checkEventConditions(s, event)).toBe(false);
+    expect(applyEventChoice(s, "ev_street_orphan_kitten", 1).ok).toBe(false);
+    expect(s.pets).toHaveLength(0);
+  });
+
   it("纸箱里的小猫：选择收养写入 pets 并解锁图鉴", () => {
     const s = createInitialState(7);
     applyFamily(s, "ordinary");
+    s.player.money = 5000;
+    expect(signLease(s, "old_apartment").ok).toBe(true);
     s.locationId = "street";
     s.time.hour = 12;
     const r = applyEventChoice(s, "ev_street_orphan_kitten", 1); // 带回家收养
@@ -148,6 +212,8 @@ describe("v1.4 猫咪收养事件", () => {
   it("收养后 notFlag 门控：再次选择收养被拒", () => {
     const s = createInitialState(7);
     applyFamily(s, "ordinary");
+    s.player.money = 5000;
+    expect(signLease(s, "old_apartment").ok).toBe(true);
     s.locationId = "street";
     s.time.hour = 12;
     applyEventChoice(s, "ev_street_orphan_kitten", 1); // 第一次收养成功
@@ -160,6 +226,8 @@ describe("v1.4 猫咪收养事件", () => {
     // 收养任一流浪猫后写入全局标记 stray_adopted
     const s = createInitialState(7);
     applyFamily(s, "ordinary");
+    s.player.money = 5000;
+    expect(signLease(s, "old_apartment").ok).toBe(true);
     s.locationId = "street";
     s.time.hour = 12;
     const r = applyEventChoice(s, "ev_street_orphan_kitten", 1); // 收养一只流浪猫
@@ -171,6 +239,8 @@ describe("v1.4 猫咪收养事件", () => {
     // 未收养前则可在公园正常收养薄荷猫
     const s2 = createInitialState(7);
     applyFamily(s2, "ordinary");
+    s2.player.money = 5000;
+    expect(signLease(s2, "old_apartment").ok).toBe(true);
     s2.locationId = "park";
     s2.time.hour = 12;
     expect(applyEventChoice(s2, "ev_adopt_mint_cat", 0).ok).toBe(true);

@@ -14,6 +14,7 @@ describe("v1.33-hotfix 场景面板渲染", () => {
   it("进入游乐场后面板渲染出地点卡与全部六个设施", () => {
     gameState.time.hour = 12;
     gameState.player.money = 5000;
+    gameState.flags.item_car = true;
     moveTo(gameState, "suburb");
     moveTo(gameState, "suburban_edge");
     const r = moveTo(gameState, "amusement_park");

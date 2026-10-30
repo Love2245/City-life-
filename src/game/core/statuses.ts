@@ -60,6 +60,8 @@ export interface ReconcileCtx {
   staminaCost?: number;
   /** 本次是否休息（躺平） */
   rested?: boolean;
+  /** 本次有住院治疗，避免治疗后在同一笔睡眠结算立刻重新感染。 */
+  medicalCare?:boolean;
 }
 
 /** 查询是否有某状态 */
@@ -77,6 +79,25 @@ export function upsertStatus(state: GameState, id: StatusId, severityUp = 1): vo
     state.statuses.push({ id, severity: Math.min(3, severityUp), count: 1 });
     pushLog(state, STATUS_ICONS[id], `获得了【${STATUS_NAMES[id]}】状态！`);
   }
+}
+
+/** 设置由当前数值阈值决定的状态等级；重复检查不会额外升级或推进状态计数。 */
+function setThresholdStatus(state: GameState, id: StatusId, severity: number): void {
+  const level = Math.max(1, Math.min(3, Math.floor(severity)));
+  const existing = state.statuses.find((s) => s.id === id);
+  if (existing) {
+    existing.severity = level;
+    return;
+  }
+  state.statuses.push({ id, severity: level, count: 1 });
+  pushLog(state, STATUS_ICONS[id], `获得了【${STATUS_NAMES[id]}】状态！`);
+}
+
+/** 条件型状态只在首次满足条件时生成，不把状态检查次数当作状态成长。 */
+function ensureThresholdStatus(state: GameState, id: StatusId): void {
+  if (hasStatus(state, id)) return;
+  state.statuses.push({ id, severity: 1, count: 1 });
+  pushLog(state, STATUS_ICONS[id], `获得了【${STATUS_NAMES[id]}】状态！`);
 }
 
 /** 移除状态 */
@@ -148,8 +169,8 @@ export function reconcileStatuses(state: GameState, ctx: ReconcileCtx = {}): voi
 
   // ---- 生病：健康过低 ----
   if (health < 25) {
-    upsertStatus(state, "sick");
-  } else if (health >= 60) {
+    ensureThresholdStatus(state, "sick");
+  } else if (health >= 40) {
     remove(state, "sick");
   }
 
@@ -157,13 +178,15 @@ export function reconcileStatuses(state: GameState, ctx: ReconcileCtx = {}): voi
   const satiety = state.player.attrs.satiety;
   const hungry = state.statuses.find((st) => st.id === "hungry");
   if (satiety <= 5) {
-    upsertStatus(state, "hungry", 3);
+    setThresholdStatus(state, "hungry", 3);
   } else if (satiety <= 15) {
-    upsertStatus(state, "hungry", 2);
+    setThresholdStatus(state, "hungry", 2);
   } else if (satiety <= 30) {
-    upsertStatus(state, "hungry", 1);
-  } else if (satiety >= 50 && hungry) {
+    setThresholdStatus(state, "hungry", 1);
+  } else if (satiety >= 35 && hungry) {
     remove(state, "hungry");
+  } else if (hungry) {
+    setThresholdStatus(state, "hungry", 1);
   }
 
   // ---- v0.95 失眠：短睡累积、长睡解除 ----
@@ -177,7 +200,7 @@ export function reconcileStatuses(state: GameState, ctx: ReconcileCtx = {}): voi
   }
 
   // ---- v0.95 恶性循环：失眠(≥2级) → 感冒（每晚概率触发；雨天概率翻倍）----
-  if (ctx.slept) {
+  if (ctx.slept && !ctx.medicalCare) {
     const ins = state.statuses.find((s) => s.id === "insomnia");
     if (ins && ins.severity >= 2 && !hasStatus(state, "cold")) {
       const rainy = state.weather?.id === "rain" || state.weather?.id === "snow";

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111b29">
+<meta name="description" content="街头派送：驾驶黄色电动车，取餐送达、规划路线、避让车辆，在90秒内成为城市王牌骑手。支持键盘和触控的免费街机小游戏。">
+<title>街头派送 · 外卖骑手小游戏</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23ffcc47'/%3E%3Cpath d='M19 24h26v25H19zM25 24v-6a7 7 0 0 1 14 0v6' fill='none' stroke='%23111b29' stroke-width='5' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- STREET_DISPATCH_STYLES -->
+</head>
+<body>
+<main class="shell">
+ <header class="topbar">
+  <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14v12H5zM8 8V6a4 4 0 0 1 8 0v2M9 13h6M10 16h4"/></svg></div><div><h1>街头派送</h1><small>STREET DISPATCH</small></div></div>
+  <div class="header-right"><span class="header-tag">一座小城，一路热乎。</span><button id="soundBtn" class="icon-btn" aria-label="关闭声音" title="声音"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4M17 8a6 6 0 0 1 0 8M20 5a10 10 0 0 1 0 14"/></svg></button><button id="helpBtn" class="icon-btn" aria-label="查看玩法" title="玩法说明"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5c-.5.2-.5.5-.5 1.5M12 16h.01"/></svg></button><button id="pauseBtn" class="icon-btn" aria-label="暂停游戏" title="暂停 · P"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button></div>
+ </header>
+ <section class="statusbar" aria-label="配送数据">
+  <div class="stat time" id="timeStat"><div class="stat-label"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 8v5l3 2M9 2h6"/></svg>营业倒计时</div><div class="stat-value" id="timeValue">01:30</div></div>
+  <div class="stat money" title="显示本班累计工资；交通罚款会单独即时扣除。"><div class="stat-label">本班工资</div><div class="stat-value">¥ <span id="moneyValue">0</span></div></div>
+  <div class="stat"><div class="stat-label">已送达</div><div class="stat-value"><span id="deliveredValue">0</span><em>单</em></div></div>
+  <div class="stat"><div class="stat-label">连续准时</div><div class="stat-value"><span id="comboValue">0</span><em>连单</em></div></div>
+  <div class="shift-info"><strong>午高峰挑战</strong><small id="loadInfo">手上 1 单 · 箱中 0 份</small></div>
+ </section>
+ <div class="game-layout">
+  <section class="stage-wrap" aria-label="城市配送游戏">
+   <div class="stage" id="stage">
+    <canvas id="game" tabindex="0" aria-label="游戏画面。WASD或方向键驾驶，Shift加速，Space刹车，E合取合送；鼠标按住画面指向方向，松开刹车。"></canvas>
+    <div class="world-label"><b>LIVE MAP</b> 南风街区</div><span class="map-caption">街区导航</span>
+    <div class="game-bottom"><div class="speedbox"><div class="speed-line"><b id="speedValue">0</b><span>km/h</span></div><div class="boost-label"><span class="drive-mode" id="driveState">巡航模式</span></div><span class="cargo-label" id="cargoCount">0 份在箱</span></div><div class="mission-hint" id="missionHint">前往黄色标记取餐<span>点订单导航 · 同店一键合取</span></div></div>
+    <div class="pointer-guide">按住画面指向方向 · 松开刹车</div>
+    <button class="action-prompt" id="actionPrompt" hidden><kbd>E</kbd><span>取餐</span></button>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="touch-controls" id="touchControls" aria-label="触控操作">
+     <div class="joystick" id="joystick" role="group" aria-label="全方向驾驶摇杆"><button class="joystick-knob" id="joystickKnob" aria-label="按住圆形摇杆，向任意方向拖动驾驶；松手减速" title="全方向驾驶摇杆"></button></div>
+     <div class="touch-actions"><button class="touch-action" id="fastBtn" aria-label="切换持续加速" aria-pressed="false">加速 关</button><button class="touch-action brake" data-key="Brake" aria-label="按住刹车">刹车</button><button class="touch-action deliver" id="touchDeliver" aria-label="一起取餐或送达">取 / 送</button></div>
+    </div>
+    <div class="overlay" id="startOverlay"><div class="modal"><div class="modal-body"><p class="eyebrow">你的城市，现在开跑</p><h2>热饭，准时到。</h2><p class="modal-copy">穿过小巷，或从公园抄近路。自动接下顺路的餐，<br class="desktop-tip">控制速度、一起装箱，跟随规划路线配送。</p><div class="start-rules"><div><b>90 秒</b>午高峰营业</div><div><b>1–6 单</b>自动接单与补单</div><div><b>速度有惯性</b>入弯记得刹车</div></div><button class="primary" id="startBtn" disabled aria-busy="true">正在准备配送…</button><div class="start-note"><span class="desktop-tip">WASD 驾驶 · Shift 加速 · Space 刹车 · E 合取送<br>鼠标按住画面驾驶 · 点击加速开关 · 松开逐渐刹停</span><span class="mobile-tip">单指按住画面驾驶 · 加速开关 · 松开刹车<br>也可拖动左侧圆形摇杆 · 路线自动排序 · 停稳后取送</span></div></div></div></div>
+    <div class="overlay" id="pauseOverlay" hidden><div class="modal compact-modal"><div class="modal-body"><p class="eyebrow">TAKE A BREATHER</p><h2 id="pauseTitle">歇一会儿，再出发。</h2><p class="modal-copy">暂停期间，营业时间和订单时限都会冻结。</p><div class="pause-controls"><div><b>驾驶</b><br>WASD / 方向键<br>鼠标 / 单指按住画面驾驶</div><div><b>加速与取送</b><br>Shift / 加速开关持续提速<br>松开方向或 Space 刹车</div><div><b>路线</b><br>自动维持 1–6 单，路线自动排序<br>同店同址一次合取合送</div><div><b>路况与餐品</b><br>公园可走，但会减速<br>撞楼、碰车都会损伤箱中餐品</div></div><button class="primary" id="resumeBtn">继续配送</button><button class="secondary" id="restartBtn">重新开一轮</button></div></div></div>
+    <div class="overlay" id="resultOverlay" hidden><div class="modal compact-modal results"><div class="modal-body"><div class="result-badge" id="resultBadge">S</div><p class="eyebrow">SHIFT COMPLETE</p><h2 id="resultTitle">今天的王牌骑手</h2><div class="result-grid"><div><b id="resultMoney">¥0</b><span id="resultMoneyLabel">本班工资</span></div><div><b id="resultDelivered">0 单</b><span>准时送达</span></div><div><b id="resultCombo">0 连单</b><span>最高连续准时</span></div><div><b id="resultBest">¥0</b><span>本机最高收入</span></div></div><p class="result-comment" id="resultComment"></p><button class="primary" id="againBtn">再跑一轮</button><button class="secondary" id="backBtn">返回出发站</button></div></div></div>
+   </div>
+   <div class="stage-footer"><div class="keys desktop-tip"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>驾驶</span><span class="sep"></span><kbd>Shift</kbd><span>加速</span><span class="sep"></span><kbd>Space</kbd><span>刹车</span><span class="sep"></span><kbd>E</kbd><span>合取送</span><span class="sep"></span><kbd>P</kbd><span>暂停</span></div><span class="mobile-tip">按住画面指向方向 · 松手刹车 · 停稳后取送</span><span id="footerStatus">准备出发</span></div>
+  </section>
+  <aside class="sidebar"><section class="dispatch-panel"><div class="dispatch-top"><h2>接单设置</h2><button class="dispatch-toggle" id="autoAcceptBtn" aria-pressed="true">自动接单 开</button></div><label class="dispatch-capacity" for="autoLimit"><span>同时接单量</span><select id="autoLimit" aria-label="自动接单量"><option value="1">1 单</option><option value="2">2 单</option><option value="3" selected>3 单</option><option value="4">4 单</option><option value="5">5 单</option><option value="6">6 单</option></select></label><p class="dispatch-status" id="autoStatus">保持 3 单 · 送完自动补单</p><p class="landscape-note">横屏游玩，地图与订单同屏显示</p></section><section class="route-panel"><div class="route-title"><h3>配送顺序</h3><button class="route-auto" id="routeAutoBtn" aria-pressed="true">自动路线</button></div><p class="route-summary" id="routeSummary">自动规划全部取送点</p><ol class="route-list" id="routeList"></ol></section><section class="orders-panel"><div class="panel-title"><h2><svg viewBox="0 0 24 24"><path d="M7 4H5v17h14V4h-2M9 2h6v4H9zM8 11h8M8 15h5"/></svg>我的订单</h2><span class="count-chip" id="orderCount">1 单在手</span></div><div class="order-list" id="orderList"></div><p class="order-tip">自动规划全部取送点 · 同店合取<br>点击订单可优先导航，再点「恢复自动」。</p></section><section class="pool-panel"><div class="pool-title"><h3>附近订单池</h3><span>点击接单</span></div><div class="offer-list" id="offerList"></div></section><section class="side-help"><h3>稳稳跑，争取 ¥200+</h3><p class="income-note" id="incomeNote">准时、餐品与连单影响收益 · 争取 ¥200+</p><div class="help-row"><span class="help-n">01</span><span><b>主街与小巷</b><br>大街跑得快，小巷有近路，死路要回头。</span></div><div class="help-row"><span class="help-n">02</span><span><b>公园可穿行</b><br>草地会减速，近路未必更快。</span></div><div class="help-row"><span class="help-n">03</span><span><b>入弯先减速</b><br>越快越难转，撞楼碰车都损伤餐品。</span></div></section><section class="daily-goal"><div class="goal-title"><span>本轮目标</span><span id="goalCount">0 / 6</span></div><strong>成为南风街区的金牌骑手</strong><div class="goal-track" id="goalTrack"><i></i><i></i><i></i><i></i><i></i><i></i></div></section></aside>
+ </div>
+ <footer class="fineprint"><span>本机最佳 <b id="bestFooter">¥0</b> <span aria-hidden="true"> · </span> 每一单，都是小小的城市冒险。</span><span>STREET DISPATCH <span aria-hidden="true"> / </span> 午高峰街机挑战</span></footer>
+</main>
+<!-- STREET_DISPATCH_RUNTIME -->
+</body>
+</html>

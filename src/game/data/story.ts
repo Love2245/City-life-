@@ -209,7 +209,6 @@ export const CARDS: StoryCardDef[] = [
     solutions: [
       sol("yield", "省吃俭用寄药费", "泡面馒头过一个月", { effects: { satiety: -10, mood: -3 }, goal: 200 }),
       sol("money", "寄 200 元", "药不能断", { requires: { money: 200 }, effects: { money: -200 }, goal: 200 }),
-      sol("special", "老医生帮忙开便宜药", "社区老医生给你开了平价替代药", { requires: { npc: "npc_pharmacist", npcAffinity: 20 }, effects: { mood: 4 }, goal: 200 }),
     ],
     ignoreConsequence: { effects: { mood: -8 }, conscience: -2, log: "这个月没寄药费，奶奶停药三天" },
   },
@@ -232,7 +231,6 @@ export const CARDS: StoryCardDef[] = [
     text: "有人给你介绍了一家'包治百病'的诊所，说 5000 元就能'加急手术'。老医生听了直摇头。",
     window: [60, 120], deadlineDays: 7,
     solutions: [
-      sol("special", "让老医生出具正规方案", "社区老医生帮你核对资质，揭穿骗局", { requires: { npc: "npc_pharmacist", npcAffinity: 30 }, effects: { mood: 5, intelligence: 1 }, conscience: 1 }),
       sol("money", "多花 500 挂号正规医院", "宁可多花钱，也不走野路子", { requires: { money: 500 }, effects: { money: -500 }, goal: 500, conscience: 1 }),
       sol("yield", "把 5000 交给黑诊所", "赌一把", { requires: { money: 5000 }, effects: { money: -5000, mood: -10 }, conscience: -2, log: "钱被骗了，奶奶的病情还耽误了一周" }),
     ],
@@ -246,7 +244,6 @@ export const CARDS: StoryCardDef[] = [
     solutions: [
       sol("yield", "日夜连轴打工", "一个月不休息，拼出定金", { requires: { attr: { stamina: 40, health: 40 } }, effects: { stamina: -70, health: -5, stress: 12 }, goal: 20000 }),
       sol("money", "一次性交定金", "把积蓄都押上去", { requires: { money: 20000 }, effects: { money: -20000 }, goal: 20000 }),
-      sol("special", "老医生担保分期", "他愿意担保，先交一半", { requires: { npc: "npc_pharmacist", npcAffinity: 50 }, effects: { mood: 6 }, goal: 10000 }),
       sol("ignore", "再等等", "说不定费用会降", { conscience: -2, log: "手术窗口又缩了一个月" }),
     ],
     ignoreConsequence: { effects: { mood: -12 }, conscience: -3, log: "定金没凑齐，手术往后推了一个月" },
@@ -550,7 +547,6 @@ export const CARDS: StoryCardDef[] = [
     window: [40, 150], deadlineDays: 7, requires: { stageMin: 1 },
     solutions: [
       sol("money", "花 500 元核实资质", "你花钱查了他们的底", { requires: { money: 500 }, effects: { money: -500 }, conscience: 1 }),
-      sol("special", "老医生帮你写'防骗单'", "他把常见骗术写给你看", { requires: { npc: "npc_pharmacist", npcAffinity: 35 }, effects: { intelligence: 1, mood: 4 }, conscience: 1 }),
       sol("ignore", "撕了传单", "眼不见心不烦", { effects: { mood: -2 } }),
     ],
     ignoreConsequence: { effects: { money: -2000, mood: -10 }, conscience: -2, log: "你半信半疑交了定金，人跑了" },
@@ -786,7 +782,6 @@ export const CARDS: StoryCardDef[] = [
     solutions: [
       sol("yield", "送他们去医院", "折腾半宿，天亮才回来", { effects: { stamina: -20, mood: 5 }, conscience: 2 }),
       sol("ignore", "说自己也病了", "不是不想帮", { effects: { mood: -5 }, conscience: -1 }),
-      sol("special", "请药房大哥上门看看", "他懂点医，先应急", { requires: { npc: "npc_pharmacist", npcAffinity: 40 }, effects: { mood: 6 }, conscience: 2 }),
     ],
     ignoreConsequence: { effects: { mood: -6 }, log: "老太太自己背孙子去了医院，你一夜没睡好" },
   },

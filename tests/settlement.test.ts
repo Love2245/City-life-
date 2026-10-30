@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
-import { sleepSettlement, advanceHours } from "../src/game/core/time";
+import { gameDay } from "../src/game/core/calendar";
+import { sleepSettlement, advanceHours, sleep } from "../src/game/core/time";
 import { triggerCollapse } from "../src/game/engine";
 import { recordMoney } from "../src/game/core/weekly";
 
@@ -18,7 +19,7 @@ describe("P1-3 晕倒结算去重（settledToday 哨兵）", () => {
   it("sleepSettlement 同日不重复扣月租", () => {
     const s = ready();
     s.living.mode = "lease";
-    s.living.lease = { housingId: "rent_room", rent: 500, rentGrowthCount: 0 };
+    s.living.lease = { housingId: "rent_room", rent: 500, rentGrowthCount: 0, nextRentDay: 0 };
     s.time.day = 1;
     expect(rentLogs(s)).toBe(0);
     sleepSettlement(s);
@@ -41,12 +42,16 @@ describe("P1-3 晕倒结算去重（settledToday 哨兵）", () => {
     expect(rentLogs(s)).toBe(rentL);
   });
 
-  it("跨天后 settledToday 重置，新一天可正常结算", () => {
+  it("跨天后第一次补觉仍锚定昨日，正常入睡后可结算新一天", () => {
     const s = ready();
     sleepSettlement(s);
     expect(s.flags["settledToday"]).toBe(3);
     advanceHours(s, 24); // 跨到 day 4
     expect(s.flags["settledToday"]).toBeUndefined();
+    sleepSettlement(s);
+    expect(s.flags["settledAnchor"]).toBe(20260803);
+    sleep(s, 1); // 补觉不会重复结算昨日，醒来后开启新的清醒周期
+    advanceHours(s, 12); // day 4 晚间
     sleepSettlement(s);
     expect(s.flags["settledToday"]).toBe(4);
   });

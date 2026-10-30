@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { adoptCat, getCatDef } from "../src/game/core/cat";
-import { setActivePet } from "../src/game/core/catCare";
+import { fosterCat, reclaimCat, setActivePet } from "../src/game/core/catCare";
 import {
   ENERGY_PER_TURN,
   HAND_SIZE,
@@ -77,12 +77,7 @@ describe("v1.33 P2 卡牌数据层", () => {
     }
   });
 
-  it("攻击牌都有威力，防御牌都有格挡", () => {
-    for (const c of allCards()) {
-      if (c.type === "attack") expect(c.effect?.power, `${c.id} 缺威力`).toBeGreaterThan(0);
-      if (c.type === "defend") expect(c.effect?.block, `${c.id} 缺格挡`).toBeGreaterThan(0);
-    }
-  });
+  it('攻击牌具有直接伤害或格挡转伤害，防御牌具有格挡',()=>{for(const c of allCards()){if(c.type==='attack')expect(c.effect?.power??c.effect?.blockDamage,c.id).toBeGreaterThan(0);if(c.type==='defend')expect(c.effect?.block,c.id).toBeGreaterThan(0);}});
 
   it("getCardDef 查询可用", () => {
     expect(getCardDef("scratch")?.name).toBe("抓挠");
@@ -98,10 +93,7 @@ describe("v1.33 P2 卡组构建", () => {
     for (const id of deck) expect(getCardDef(id), `卡组引用不存在的卡 ${id}`).toBeTruthy();
   });
 
-  it("橘猫专属牌并入卡组", () => {
-    const deck = buildPlayerDeck("orange", getCatDef("orange")?.skills ?? []);
-    expect(deck).toContain("orange_exclusive");
-  });
+  it('所有猫共用起始牌组，原专属牌保留为可收藏的通用卡',()=>{expect(buildPlayerDeck('orange',[])).toEqual(buildPlayerDeck('golden',[]));expect(buildPlayerDeck('orange',[])).toHaveLength(12);expect(getCardDef('orange_exclusive')).toBeDefined();});
 
   it("未知猫种回退基础卡组", () => {
     const deck = buildPlayerDeck("nonexistent", []);
@@ -115,25 +107,11 @@ describe("v1.33 P2 克制与数值", () => {
     expect(elementMultiplier("tech", "normal")).toBe(1);
   });
 
-  it("自然克科技（1.5），科技被自然克（0.5）", () => {
-    expect(elementMultiplier("nature", "tech")).toBe(1.5);
-    expect(elementMultiplier("tech", "nature")).toBe(0.5);
-  });
+  it('元素题材不再放大战斗伤害',()=>{expect(elementMultiplier('nature','tech')).toBe(1);expect(elementMultiplier('tech','nature')).toBe(1);});
 
-  it("五系循环克制完整", () => {
-    expect(elementMultiplier("tech", "mystic")).toBe(1.5);
-    expect(elementMultiplier("mystic", "cosmic")).toBe(1.5);
-    expect(elementMultiplier("cosmic", "nature")).toBe(1.5);
-  });
+  it('五种元素均使用统一的伤害倍率',()=>{for(const a of ['normal','nature','tech','mystic','cosmic'] as const)for(const b of ['normal','nature','tech','mystic','cosmic'] as const)expect(elementMultiplier(a,b)).toBe(1);});
 
-  it("伤害随攻击/防御成长", () => {
-    const atk = mkUnit({ attrs: { hp: 100, atk: 20, def: 10, spd: 10 } });
-    const def = mkUnit({ attrs: { hp: 100, atk: 10, def: 20, spd: 10 } });
-    const d1 = cardDamage(atk, 0, def, 12);
-    const d2 = cardDamage(atk, 5, def, 12);
-    expect(d2).toBeGreaterThan(d1);
-    expect(cardBlockValue(20, 10)).toBeGreaterThan(cardBlockValue(10, 10));
-  });
+  it('战斗伤害只增加本场力量，生活攻击与防御不提供倍率',()=>{const a=mkUnit({attrs:{hp:999,atk:999,def:999,spd:999}}),d=mkUnit();expect(cardDamage(a,0,d,12)).toBe(12);expect(cardDamage(a,5,d,12)).toBe(17);expect(cardBlockValue(999,10)).toBe(10);expect(cardBlockValue(10,10)).toBe(10);});
 });
 
 describe("v1.33 P2 战斗回合流程", () => {
@@ -158,24 +136,25 @@ describe("v1.33 P2 战斗回合流程", () => {
     expect(b.opponent.name).toBe("流浪猫");
   });
 
-  it("playCard 扣能量、结算、弃牌", () => {
+  it('playCard 使用独立实例，扣能量并将该实例送入弃牌堆',()=>{const s=setupCat();startBattle(s,'wild_stray');const b=s.catBattle!;const uid=b.playerHand.find(id=>getCardDef(b.duel!.cards[id])?.type==='attack')!;const def=getCardDef(b.duel!.cards[uid])!;const hp=b.opponent.hp,energy=b.playerEnergy;expect(playCard(s,uid).ok).toBe(true);expect(b.playerEnergy).toBe(energy-def.cost);expect(b.playerHand).not.toContain(uid);expect(b.playerDiscardPile).toContain(uid);expect(b.opponent.hp).toBeLessThan(hp);});
+
+  it("寄养不能带走正在对决的猫；旧存档寄养状态会暂停出牌，领回后可恢复", () => {
     const s = setupCat();
-    startBattle(s, "wild_stray");
-    const b = s.catBattle!;
-    const cardId = b.playerHand.find((id) => getCardDef(id)?.type === "attack") ?? b.playerHand[0];
-    const cost = getCardDef(cardId)!.cost;
-    const hpBefore = b.opponent.hp;
-    const energyBefore = b.playerEnergy;
-    const beforeCount = b.playerHand.filter((x) => x === cardId).length;
-    const r = playCard(s, cardId);
-    expect(r.ok).toBe(true);
-    expect(b.playerEnergy).toBe(energyBefore - cost);
-    expect(b.playerHand.filter((x) => x === cardId).length).toBe(beforeCount - 1);
-    expect(b.playerDiscardPile.filter((x) => x === cardId).length).toBeGreaterThan(0);
-    // 攻击牌应造成伤害
-    if (getCardDef(cardId)?.type === "attack") {
-      expect(b.opponent.hp).toBeLessThan(hpBefore);
-    }
+    const pet = s.pets[0];
+    expect(startBattle(s, "wild_stray").ok).toBe(true);
+    const battle = s.catBattle!;
+    const cardId = battle.playerHand[0];
+    const energy = battle.playerEnergy;
+    s.locationId = "flower_market";
+    expect(fosterCat(s, pet.uid).ok).toBe(false);
+
+    // 模拟坏旧档 / 外部写入：运行时猫咪寄养状态不得让存档战斗继续推进。
+    pet.fostered = true;
+    expect(playCard(s, cardId).ok).toBe(false);
+    expect(endPlayerTurn(s).ok).toBe(false);
+    expect(battle.playerEnergy).toBe(energy);
+    expect(reclaimCat(s, pet.uid).ok).toBe(true);
+    expect(playCard(s, cardId).ok).toBe(true);
   });
 
   it("能量不足不能出牌", () => {
@@ -183,7 +162,7 @@ describe("v1.33 P2 战斗回合流程", () => {
     startBattle(s, "wild_stray");
     const b = s.catBattle!;
     b.playerEnergy = 0;
-    const cardId = b.playerHand[0];
+    const cardId = b.playerHand.find(uid=>getCardDef(b.duel!.cards[uid])!.cost>0)!;
     const r = playCard(s, cardId);
     expect(r.ok).toBe(false);
     expect(r.reason).toContain("能量");
@@ -260,19 +239,7 @@ describe("v1.33 P2 状态异常", () => {
     expect(u.statusTurns).toBe(STATUS_DURATION.poison);
   });
 
-  it("中毒回合末扣血并递减", () => {
-    const rng = { seed: 1, calls: 0 };
-    const b = {
-      player: mkUnit(),
-      opponent: mkUnit({ name: "敌猫", attrs: { hp: 100, atk: 10, def: 10, spd: 10 } }),
-    } as unknown as Parameters<typeof endOfTurn>[0];
-    applyStatus(rng, b.opponent, "poison");
-    const hpBefore = b.opponent.hp;
-    const logs = endOfTurn(b);
-    expect(b.opponent.hp).toBeLessThan(hpBefore);
-    expect(logs.some((l) => l.includes("中毒"))).toBe(true);
-    expect(b.opponent.statusTurns).toBe(STATUS_DURATION.poison - 1);
-  });
+  it('新版中毒在敌方行动开始前按层数扣血，再减少一层',()=>{const s=setupCat();startBattle(s,'wild_stray');const b=s.catBattle!;b.duel!.conditions.opponent.poison=3;const hp=b.opponent.hp;const logs=endOfTurn(b);expect(b.opponent.hp).toBe(hp-3);expect(b.duel!.conditions.opponent.poison).toBe(2);expect(logs.some(l=>l.includes('中毒'))).toBe(true);});
 });
 
 describe("v1.33 P2 奖励结算", () => {

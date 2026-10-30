@@ -1,44 +1,21 @@
-import { defineConfig } from "vitest/config";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
-
-// Tauri 开发时固定端口，避免随机端口导致 Rust 侧配置失效
-const host = process.env.TAURI_DEV_HOST;
-
-// 测试环境下 vitest2 + vite6 的 preprocessCSS 存在兼容崩溃；本项目所有
-// .svelte 仅用纯 CSS（无 scss/less），关闭预处理可安全绕开该问题。
-const isTest = "VITEST" in process.env;
-
+import {optimizeAssets} from './vite.optimizeAssets';
+import { defineConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { npcPortraitLibrary } from './vite.npcPortraitLibrary';
+import {assetUsage} from './vite.assetUsage';
+import {mobileModels} from './vite.mobileModels';
 export default defineConfig({
-  plugins: [svelte(isTest ? { preprocess: [] } : {})],
-  // 测试环境需要 browser 条件才能从 "svelte" 解析到客户端（含 mount）入口
-  resolve: isTest ? { conditions: ["browser"] } : {},
-  // 开发/测试缓存写入工作区本地目录（node_modules 可能为外部联接，避免写穿到只读目录）
-  cacheDir: ".vite-cache",
-  // Vite 选项参考 Tauri 2 官方模板
-  clearScreen: false,
+  plugins: [mobileModels(),npcPortraitLibrary(), svelte(),optimizeAssets(),assetUsage()],
+  base: './',
   server: {
-    port: 1420,
-    strictPort: true,
-    host: host || false,
-    hmr: host
-      ? {
-          protocol: "ws",
-          host,
-          port: 1421,
-        }
-      : undefined,
-    watch: {
-      // 忽略 src-tauri，避免 Rust 文件改动触发前端重载
-      ignored: ["**/src-tauri/**"],
-    },
+    host: '127.0.0.1', port: 1420, strictPort: true,
+    // Windows can report EBUSY when large portable HTML files are replaced.
+    // Build output and backups are not source inputs and must not restart the preview.
+    watch: { ignored: ['**/.cache/**', '**/dist-portable/**', '**/artifacts/**', '**/待清理文件/**', '**/[0-9]*.html', '**/docs/**/before/**', '**/docs/**/ai-art/**', '**/都市生活_v*.html', '**/urban-life-v*.html', '**/src-tauri/target/**', '**/src-tauri/gen/android/**'] },
   },
-  build: {
-    target: "es2021",
-    minify: "esbuild",
-    sourcemap: false,
-  },
-  test: {
-    environment: "node",
-    include: ["tests/**/*.test.ts"],
-  },
+  build: { target: 'es2020' },
+  // Let the browser request the app's modules directly instead of crawling the
+  // entire static asset graph before Vite serves the first page.
+  optimizeDeps: { noDiscovery: true },
 });
+

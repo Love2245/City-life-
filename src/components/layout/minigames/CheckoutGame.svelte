@@ -1,517 +1,140 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
-  import type { CheckoutCfg } from "../../../game/core/minigame";
-  import { playSound } from "../../../lib/audio";
-
-  /** 便利店收银模板（C）：购物篮扫码 → 计算应收 → 顾客付款 → 输入找零，耐心耗尽则投诉扣血。
-   *  适用于便利店(日班/夜班) —— 同一玩法，仅商品池不同。 */
-  let { cfg, onFinish }: { cfg: CheckoutCfg; onFinish: (ratio: number) => void } = $props();
-
-  const lives0 = cfg.lives ?? 3;
-  const customers0 = cfg.customers ?? 5;
-  const timeLimit = cfg.timeLimit ?? 0;
-  const patienceMs = cfg.patienceMs ?? 1.2;
-  const notes = cfg.notes ?? [1, 5, 10, 20, 50, 100];
-  const minBasket = cfg.minBasket ?? 3;
-  const maxBasket = cfg.maxBasket ?? 6;
-  const labels = { guest: "顾客", resource: "商品" };
-
-  interface CartItem {
-    inst: number;
-    itemId: string;
-    name: string;
-    icon: string;
-    price: number;
-  }
-
-  let customerIndex = 0;
-  let basket = $state<CartItem[]>([]);
-  let scanned = $state<CartItem[]>([]);
-  let totalPrice = $state(0);
-  let stage = $state<"scan" | "pay" | "done">("scan");
-  let customerPay = $state(0);
-  let payBills = $state<number[]>([]); // 占位，下面真正赋值
-  let changeInput = $state("");
-  let patience = $state(100);
-  let lives = $state(lives0);
-  let success = $state(0);
-  let finished = $state(false);
-  let shake = $state(false);
-  let timeLeft = $state(timeLimit);
-  let instSeq = 0;
+  import { onMount, onDestroy } from 'svelte';
+  import { miniGameRandom } from '../../../lib/minigameRandom';
+  import type { CheckoutCfg } from '../../../game/core/minigame';
+  import { playSound } from '../../../lib/audio';
+  import { checkoutProductSvg, checkoutCustomerSvg, checkoutStoreSvg } from '../../../lib/checkoutArt';
+  import './checkoutWorkshop.css';
+  const random = miniGameRandom();
+  let { cfg, onFinish, sceneKey, paused = false }: {
+    cfg: CheckoutCfg; onFinish: (ratio: number) => void; sceneKey?: string; paused?: boolean;
+  } = $props();
+  const lives0 = $derived(cfg.lives ?? 3), customers0 = $derived(cfg.customers ?? 5);
+  const timeLimit = $derived(cfg.timeLimit ?? 0), patienceMs = $derived(cfg.patienceMs ?? 1.2);
+  const notes = $derived(cfg.notes ?? [1, 5, 10, 20, 50, 100]);
+  const minBasket = $derived(cfg.minBasket ?? 3), maxBasket = $derived(cfg.maxBasket ?? 6);
+  const warm = $derived(sceneKey === 'job_convenience_clerk' || cfg.title.includes('便利店'));
+  interface CartItem { inst: number; itemId: string; name: string; icon: string; price: number; }
+  interface ScanBurst { inst: number; itemId: string; x: number; y: number; dx: number; dy: number; }
+  let customerIndex = $state(0), basket = $state<CartItem[]>([]), scanned = $state<CartItem[]>([]);
+  let totalPrice = $state(0), stage = $state<'scan' | 'pay' | 'done'>('scan');
+  let customerPay = $state(0), payBills = $state<number[]>([]), changeInput = $state('');
+  let patience = $state(100), lives = $state(0), success = $state(0), finished = $state(false);
+  let shake = $state(false), timeLeft = $state(0), scanBursts = $state<ScanBurst[]>([]);
+  let lastScanned = $state<CartItem | null>(null), feedback = $state(''), feedbackKind = $state<'ok' | 'error'>('ok');
+  let lastSale = $state<{ seq: number; total: number; change: number } | null>(null);
+  let beltElement: HTMLDivElement;
+  let instSeq = 0, saleSeq = 0;
   let timer: ReturnType<typeof setInterval> | null = null;
-
-  /** v1.3b2 九宫格键盘：纯触控输入，不再依赖系统数字键盘 */
+  const effects = new Set<ReturnType<typeof setTimeout>>();
+  const allGoods = $derived([...basket, ...scanned].sort((a, b) => a.inst - b.inst));
+  const blocked = $derived(finished || paused);
+  function later(fn: () => void, ms: number) {
+    const handle = setTimeout(() => { effects.delete(handle); fn(); }, ms); effects.add(handle);
+  }
   function press(k: string): void {
-    if (finished || stage !== "pay") return;
-    playSound("game");
-    if (k === "⌫") {
-      changeInput = changeInput.slice(0, -1);
-      return;
-    }
-    if (k === ".") {
-      if (changeInput.includes(".")) return;
-      changeInput = (changeInput || "0") + ".";
-      return;
-    }
-    if (changeInput.includes(".")) {
-      const dp = changeInput.split(".")[1] ?? "";
-      if (dp.length >= 2) return;
-    } else if (changeInput.replace("-", "").length >= 4) {
-      return;
-    }
-    if (changeInput === "0") {
-      changeInput = k;
-      return;
-    }
-    changeInput += k;
+    if (blocked || stage !== 'pay') return;
+    playSound('computer');
+    if (k === '⌫') { changeInput = changeInput.slice(0, -1); return; }
+    if (k === '.') { if (!changeInput.includes('.')) changeInput = (changeInput || '0') + '.'; return; }
+    if (changeInput.includes('.')) { if ((changeInput.split('.')[1] ?? '').length >= 2) return; }
+    else if (changeInput.replace('-', '').length >= 4) return;
+    changeInput = changeInput === '0' ? k : changeInput + k;
   }
-
-  function clearInput(): void {
-    if (finished || stage !== "pay") return;
-    changeInput = "";
-    playSound("game");
-  }
-
+  function clearInput(): void { if (!blocked && stage === 'pay') { changeInput = ''; playSound('computer'); } }
   function initCustomer(): void {
-    const count = minBasket + Math.floor(Math.random() * (maxBasket - minBasket + 1));
-    const b: CartItem[] = [];
-    for (let i = 0; i < count; i++) {
-      const it = cfg.items[Math.floor(Math.random() * cfg.items.length)];
-      b.push({ inst: ++instSeq, itemId: it.id, name: it.name, icon: it.icon, price: it.price });
-    }
-    basket = b;
-    scanned = [];
-    totalPrice = 0;
-    stage = "scan";
-    patience = 100;
-    changeInput = "";
+    const count = minBasket + Math.floor(random() * (maxBasket - minBasket + 1));
+    basket = Array.from({ length: count }, () => {
+      const it = cfg.items[Math.floor(random() * cfg.items.length)];
+      return { inst: ++instSeq, itemId: it.id, name: it.name, icon: it.icon, price: it.price };
+    });
+    scanned = []; totalPrice = 0; stage = 'scan'; patience = 100; changeInput = ''; customerPay = 0; payBills = []; lastScanned = null;
   }
-
-  function scanItem(inst: number): void {
-    if (finished || stage !== "scan") return;
-    const idx = basket.findIndex((x) => x.inst === inst);
-    if (idx < 0) return;
-    const it = basket[idx];
-    scanned = [...scanned, it];
-    totalPrice += it.price;
-    basket = basket.filter((x) => x.inst !== inst);
-    playSound("game");
-    if (basket.length === 0) enterPay();
+  function scanItem(inst: number, event: MouseEvent): void {
+    if (blocked || stage !== 'scan') return;
+    const it = basket.find(x => x.inst === inst); if (!it) return;
+    // Independent flights allow rapid scans without delaying the next item or payment.
+    const source = (event.currentTarget as HTMLButtonElement).getBoundingClientRect(), belt = beltElement.getBoundingClientRect();
+    const x = source.x - belt.x + source.width / 2, y = source.y - belt.y + 35;
+    scanBursts = [...scanBursts, { inst, itemId: it.itemId, x, y, dx: belt.width * .5 - x, dy: belt.height - 31 - y }];
+    later(() => { scanBursts = scanBursts.filter(x => x.inst !== inst); }, 580);
+    scanned = [...scanned, it]; totalPrice = Math.round((totalPrice + it.price) * 100) / 100;
+    basket = basket.filter(x => x.inst !== inst); lastScanned = it; playSound('cashier');
+    if (basket.length === 0) { stage = 'pay'; customerPay = calculatePay(totalPrice); payBills = breakBills(customerPay); }
   }
-
-  function enterPay(): void {
-    stage = "pay";
-    customerPay = calculatePay(totalPrice);
-    payBills = breakBills(customerPay);
-  }
-
   function calculatePay(total: number): number {
-    let minNote = notes.find((n) => n >= total);
-    if (minNote == null) minNote = 100;
-    const rand = Math.random();
-    if (rand < 0.75) return minNote;
-    const i = notes.indexOf(minNote);
-    if (rand < 0.95 && i < notes.length - 1) return notes[i + 1];
-    return 100;
+    let minNote = notes.find(n => n >= total); if (minNote == null) minNote = 100;
+    const rand = random(); if (rand < .75) return minNote;
+    const i = notes.indexOf(minNote); if (rand < .95 && i < notes.length - 1) return notes[i + 1]; return 100;
   }
-
   function breakBills(amount: number): number[] {
-    const out: number[] = [];
-    let rem = amount;
-    const sorted = [...notes].sort((a, b) => b - a);
-    for (const n of sorted) {
-      while (rem >= n) {
-        out.push(n);
-        rem -= n;
-      }
-    }
-    return out.sort(() => Math.random() - 0.5);
+    const out: number[] = []; let rem = amount;
+    for (const n of [...notes].sort((a, b) => b - a)) while (rem >= n) { out.push(n); rem -= n; }
+    return out.sort(() => random() - .5);
   }
-
+  function notify(text: string, kind: 'ok' | 'error') { feedback = text; feedbackKind = kind; }
   function submitChange(): void {
-    if (finished || stage !== "pay") return;
-    const input = parseFloat(changeInput);
-    const correct = customerPay - totalPrice;
-    if (!isNaN(input) && Math.abs(input - correct) < 0.01) {
-      success++;
-      playSound("success");
-      nextCustomer();
-    } else {
-      playSound("error");
-      loseHp();
-      if (lives > 0) nextCustomer();
-    }
+    if (blocked || stage !== 'pay') return;
+    const input = parseFloat(changeInput), correct = customerPay - totalPrice;
+    if (!isNaN(input) && Math.abs(input - correct) < .01) {
+      lastSale = { seq: ++saleSeq, total: totalPrice, change: Math.round(correct * 100) / 100 };
+      notify(`找零正确 · 已完成第 ${customerIndex + 1} 位顾客`, 'ok'); success++; playSound('success'); nextCustomer();
+    } else { notify('找零有误，顾客提出投诉', 'error'); playSound('error'); loseHp(); if (lives > 0) nextCustomer(); }
   }
-
-  function loseHp(): void {
-    lives--;
-    shake = true;
-    setTimeout(() => (shake = false), 350);
-    if (lives <= 0) finishGame();
-  }
-
-  function nextCustomer(): void {
-    customerIndex++;
-    if (customerIndex >= customers0) {
-      finishGame();
-      return;
-    }
-    initCustomer();
-  }
-
+  function loseHp(): void { lives--; shake = true; later(() => shake = false, 350); if (lives <= 0) finishGame(); }
+  function nextCustomer(): void { customerIndex++; if (customerIndex >= customers0) finishGame(); else initCustomer(); }
   function tick(): void {
-    if (finished || stage === "done") return;
-    if (timeLimit > 0) {
-      timeLeft--;
-      if (timeLeft <= 0) {
-        finishGame();
-        return;
-      }
-    }
+    if (blocked || stage === 'done' || document.hidden) return;
+    if (timeLimit > 0 && --timeLeft <= 0) { finishGame(); return; }
     patience -= patienceMs;
-    if (patience <= 0) {
-      // 顾客投诉
-      lives--;
-      shake = true;
-      setTimeout(() => (shake = false), 350);
-      playSound("error");
-      if (lives <= 0) {
-        finishGame();
-        return;
-      }
-      nextCustomer();
-    }
+    if (patience <= 0) { notify('顾客等待太久，提出投诉', 'error'); playSound('error'); loseHp(); if (lives > 0) nextCustomer(); }
   }
-
   function finishGame(): void {
-    if (finished) return;
-    finished = true;
-    if (timer) clearInterval(timer);
-    /**
-     * v1.3b2：分母取「实际接待到的顾客数」，避免限时到点时还没轮到的顾客把得分拖低。
-     * 未限时时 customerIndex 必然走到 customers0，与旧口径一致。
-     */
-    const denom = Math.max(1, Math.min(customers0, customerIndex + 1));
-    onFinish(Math.min(1, success / denom));
+    if (finished) return; finished = true; stage = 'done'; if (timer) clearInterval(timer);
+    // Early exit does not turn one successful customer into a full shift.
+    const denom = Math.max(1, customers0); onFinish(Math.min(1, success / denom));
   }
-
-  onMount(() => {
-    initCustomer();
-    timer = setInterval(tick, 1000);
-  });
-  onDestroy(() => {
-    if (timer) clearInterval(timer);
-  });
+  onMount(() => { lives = lives0; timeLeft = timeLimit; initCustomer(); timer = setInterval(tick, 1000); });
+  onDestroy(() => { if (timer) clearInterval(timer); for (const handle of effects) clearTimeout(handle); });
 </script>
 
-<div class="cg" class:shake={shake}>
-  <div class="cg-top">
-    <span class="cg-stat">🧍 第 {Math.min(customerIndex + 1, customers0)}/{customers0} 位</span>
-    <span class="cg-stat">✅ {success}</span>
-    {#if timeLimit > 0}
-      <span class="cg-stat" class:urgent={timeLeft <= 8}>⏱ {Math.max(0, timeLeft)}s</span>
-    {/if}
-    <span class="cg-lives">
-      {#each Array(lives0) as _, i}
-        <span class:lost={i >= lives}>❤️</span>
-      {/each}
-    </span>
+<div class="checkout-shop" class:warm class:shake class:paused data-stage={stage}>
+  <div class="checkout-backdrop" aria-hidden="true">{@html checkoutStoreSvg(warm)}</div>
+  <header class="checkout-header">
+    <div class="shop-title"><span>WUTONG DAILY / CHECKOUT 01</span><h2>梧桐便利 <small>{warm ? '街角店' : '生活店'}</small></h2></div>
+    <div class="checkout-stats"><span>本班接待<b>{Math.min(customerIndex + 1, customers0)}<small> / {customers0}</small></b></span><span>完成结账<b>{success}<small> 位</small></b></span>{#if timeLimit > 0}<span class:urgent={timeLeft <= 8}>剩余时间<b>{Math.max(0, timeLeft)}<small> 秒</small></b></span>{/if}<span class="service-hearts">服务机会<b>{#each Array(lives0) as _, i}<i class:lost={i >= lives}>♥</i>{/each}</b></span></div>
+  </header>
+  <div class="checkout-customer">
+    {#key customerIndex}<div class="guest-portrait" aria-hidden="true">{@html checkoutCustomerSvg(customerIndex)}</div>{/key}
+    <div class="guest-speech"><small>第 {Math.min(customerIndex + 1, customers0)} 位顾客</small><b>{stage === 'pay' ? `给您 ¥${customerPay.toFixed(2)}，麻烦帮我找零。` : stage === 'done' ? '辛苦了，谢谢！' : '这些一起结账，谢谢。'}</b></div>
+    <div class="customer-patience"><div><span>顾客耐心</span><b>{Math.max(0, Math.round(patience))}%</b></div><div class="patience-track"><i class:low={patience <= 30} style:width={`${Math.max(0, patience)}%`}></i></div></div>
   </div>
-
-  <div class="cg-patience">
-    <div
-      class="cg-patience-fill"
-      style="width:{Math.max(0, patience)}%;background:{patience > 60 ? 'var(--ok,#7bd88f)' : patience > 30 ? 'var(--accent,#ffd166)' : '#ff8a7a'}"
-    ></div>
-    <span class="cg-patience-text">耐心 {Math.max(0, Math.round(patience))}%</span>
+  <div class="checkout-step"><span class:current={stage === 'scan'}><i>01</i> 商品扫码</span><b>›</b><span class:current={stage === 'pay'}><i>02</i> 收款找零</span><small>{stage === 'scan' ? `点击商品经过扫码口 · 还剩 ${basket.length} 件` : stage === 'pay' ? '根据实收和应收计算找零，输入后确认' : '本班收银结束'}</small></div>
+  <div class="checkout-counter">
+    <section class="checkout-worktop" aria-label="商品扫码台">
+      <div class="belt-frame"><div class="panel-heading"><b>商品输送台</b><span>{scanned.length} / {allGoods.length} 件已扫码</span></div>
+        <div class="checkout-belt" bind:this={beltElement}>
+          {#key customerIndex}<div class="checkout-products">{#each allGoods as it (it.inst)}{@const done = scanned.some(x => x.inst === it.inst)}<button type="button" class="checkout-product" class:scanned={done} disabled={done || blocked || stage !== 'scan'} aria-label={`${done ? '已扫码' : '扫码'} ${it.name}`} onclick={event => scanItem(it.inst, event)}><span class="product-art">{@html checkoutProductSvg(it.itemId)}</span><span class="product-label">{it.name}</span>{#if done}<span class="product-check">✓ 已扫码</span>{:else}<span class="product-price">¥{it.price.toFixed(2)}</span>{/if}</button>{/each}</div>{/key}
+          <div class="scanner-glass" class:active={scanBursts.length > 0} aria-hidden="true"><span></span><i></i><i></i><i></i><i></i><i></i></div>
+          {#each scanBursts as burst (burst.inst)}<div class="scan-flight" aria-hidden="true" style={`--x:${burst.x}px;--y:${burst.y}px;--dx:${burst.dx}px;--dy:${burst.dy}px`}>{@html checkoutProductSvg(burst.itemId)}</div>{/each}
+        </div>
+        <div class="scanner-footer"><i class:active={stage === 'pay'}></i><b>{lastScanned ? `${lastScanned.name} · ¥${lastScanned.price.toFixed(2)}` : '扫描器已就绪'}</b><span>{stage === 'pay' ? 'SCAN COMPLETE' : 'BARCODE READER'}</span></div>
+      </div>
+      <div class="checkout-ledger"><div class="receipt-paper"><div class="receipt-heading"><b>梧桐便利 · 购物小票</b><span>NO. {String(Math.min(customerIndex + 1, customers0)).padStart(3, '0')}</span></div><div class="receipt-lines">{#each scanned as it (it.inst)}<div class="receipt-line"><span>{it.name}</span><b>¥{it.price.toFixed(2)}</b></div>{/each}{#if !scanned.length}<div class="receipt-empty">扫码后，商品会记录在这里<span>欢迎光临，祝您今天愉快</span></div>{/if}</div><div class="receipt-total"><span>合计 <small>{scanned.length} 件</small></span><b>¥{totalPrice.toFixed(2)}</b></div></div><div class="paper-clip" aria-hidden="true"></div></div>
+    </section>
+    <section class="checkout-register" aria-label="收银机">
+      <div class="register-bezel"><div class="register-brand"><span>WUTONG POS</span><b><i></i> ONLINE</b></div><div class="register-display">
+        <div class="lcd-status"><span>{stage === 'scan' ? '商品扫码中' : stage === 'pay' ? '现金付款 · 等待找零' : '本班已结束'}</span><b>NO.{String(Math.min(customerIndex + 1, customers0)).padStart(3,'0')}</b></div>
+        <div class="lcd-amount"><span>应收金额<small>TOTAL DUE</small></span><b>¥{totalPrice.toFixed(2)}</b></div>
+        <div class="lcd-paid"><span>顾客实收</span><b>{stage === 'pay' ? `¥${customerPay.toFixed(2)}` : '—'}</b><span>{stage === 'pay' ? '请输入应找零金额' : '全部扫码后收款'}</span></div>
+      </div></div>
+      <div class="register-body"><div class="register-payment">
+        <div class="cash-tray" class:received={stage === 'pay'}><span>顾客付款盘</span><div>{#if stage === 'pay'}{#each payBills as n, i}<span class="cash-note" style={`--n:${i}`}><i>¥</i><b>{n}</b><small>现金</small></span>{/each}{:else}<div class="tray-pending"><i>¥</i><small>等待顾客付款</small></div>{/if}</div></div>
+        <div class="receipt-printer"><span>热敏小票机</span><div class="printer-slot"></div>{#if lastSale}{#key lastSale.seq}<div class="printed-ticket" aria-hidden="true"><b>结账完成</b><span>应收 ¥{lastSale.total.toFixed(2)}</span><span>找零 ¥{lastSale.change.toFixed(2)}</span><div class="barcode"></div><small>THANK YOU</small></div>{/key}{:else}<div class="printer-ready"><i></i> READY</div>{/if}</div>
+      </div>
+      <div class="register-pad"><div class="change-label"><b>找零输入</b><span>CHANGE / CNY</span></div><div class="change-display"><span>¥</span><output aria-label="找零金额" class:placeholder={!changeInput}>{changeInput || '0'}</output><button type="button" class="clear-key" disabled={blocked || stage !== 'pay'} onclick={clearInput} aria-label="清空找零">C</button></div><div class="register-keys">{#each ['1','2','3','4','5','6','7','8','9','.','0','⌫'] as k}<button type="button" class="register-key" class:function-key={k === '.' || k === '⌫'} disabled={blocked || stage !== 'pay'} onclick={() => press(k)} aria-label={k === '⌫' ? '删除一位' : k}>{k}</button>{/each}</div><button type="button" class="change-submit" onclick={submitChange} disabled={blocked || stage !== 'pay' || !changeInput}><span>确认找零</span><b>{changeInput ? `¥${changeInput}` : 'ENTER'}</b></button></div></div>
+      <div class="register-base"><div class="cash-drawer">{#if lastSale}{#key lastSale.seq}<div class="drawer-interior" aria-hidden="true"><i></i><i></i><i></i><i></i></div>{/key}{/if}<span></span><b>CASH DRAWER</b><i></i></div><div class="register-feet" aria-hidden="true"></div></div>
+    </section>
   </div>
-
-  <div class="cg-hint">
-    {#if stage === "scan"}把商品逐个点击扫码{/if}
-    {#if stage === "pay"}计算应找给 {labels.guest} 的零钱{/if}
-  </div>
-
-  <div class="cg-main">
-    <div class="cg-basket">
-      <div class="cg-sub">🛒 购物篮</div>
-      <div class="cg-items">
-        {#each basket as it (it.inst)}
-          <button class="cg-item" onclick={() => scanItem(it.inst)}>
-            <span class="cg-item-icon">{it.icon}</span>
-            <span class="cg-item-name">{it.name}</span>
-          </button>
-        {/each}
-        {#if basket.length === 0}<div class="cg-dim">已扫完，去右侧付款</div>{/if}
-      </div>
-    </div>
-
-    <div class="cg-scan">
-      <div class="cg-sub">📠 已扫码</div>
-      <div class="cg-scanned">
-        {#each scanned as it (it.inst)}
-          <div class="cg-scanned-row"><span>{it.icon} {it.name}</span><span>¥{it.price.toFixed(2)}</span></div>
-        {/each}
-        <div class="cg-total"><span>合计</span><span>¥{totalPrice.toFixed(2)}</span></div>
-      </div>
-
-    </div>
-  </div>
-
-  {#if stage === "pay"}
-    <!-- v1.3b2：付款/找零区独立整行，屏幕九宫格直接算 -->
-    <div class="cg-pay">
-      <div class="cg-pay-info">
-        <div class="cg-pay-label">💰 {labels.guest}付款</div>
-        <div class="cg-notes">
-          {#each payBills as n}<span class="cg-note">¥{n}</span>{/each}
-        </div>
-        <div class="cg-calc">
-          <div class="cg-calc-row"><span>实收</span><b>¥{customerPay.toFixed(2)}</b></div>
-          <div class="cg-calc-row"><span>应收</span><b>−¥{totalPrice.toFixed(2)}</b></div>
-          <div class="cg-calc-row eq"><span>应找零</span><b>= ?</b></div>
-        </div>
-      </div>
-
-      <div class="cg-pad">
-        <div class="cg-screen">
-          <span class="cg-screen-cur">¥</span>
-          <span class="cg-screen-val" class:placeholder={!changeInput}>{changeInput || "0"}</span>
-          <button class="cg-clear" onclick={clearInput} title="清空">C</button>
-        </div>
-        <div class="cg-keys">
-          {#each ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "⌫"] as k (k)}
-            <button class="cg-key" class:fn={k === "." || k === "⌫"} onclick={() => press(k)}>{k}</button>
-          {/each}
-        </div>
-        <button class="cg-submit" onclick={submitChange} disabled={!changeInput}>
-          确认找零{changeInput ? ` ¥${changeInput}` : ""}
-        </button>
-      </div>
-    </div>
-  {/if}
+  <footer class="checkout-feedback" class:error={feedbackKind === 'error'} role="status"><i>{feedback ? feedbackKind === 'ok' ? '✓' : '!' : 'i'}</i><span>{feedback || '商品逐个扫码 → 收取现金 → 输入找零；找错或耐心耗尽会减少服务机会。'}</span><b>梧桐便利 · 用心服务</b></footer>
 </div>
-
-<style>
-  .cg {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .cg.shake {
-    animation: cgshake 0.35s ease;
-  }
-  @keyframes cgshake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-  .cg-top {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 13px;
-    font-weight: 800;
-    flex-wrap: wrap;
-  }
-  .cg-stat { color: var(--text-main, #e0e6ed); }
-  .cg-lives { margin-left: auto; letter-spacing: 1px; }
-  .cg-lives .lost { opacity: 0.25; }
-  .cg-patience {
-    position: relative;
-    height: 18px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 9px;
-    overflow: hidden;
-  }
-  .cg-patience-fill {
-    height: 100%;
-    transition: width 0.3s linear;
-  }
-  .cg-patience-text {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.6rem;
-    font-weight: 700;
-    color: #fff;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
-  }
-  .cg-hint {
-    font-size: 0.66rem;
-    color: var(--accent, #ffd166);
-    font-weight: 700;
-    text-align: center;
-  }
-  .cg-main {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .cg-sub {
-    font-size: 0.62rem;
-    color: var(--text-dim, #9aa3c7);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-  }
-  .cg-basket, .cg-scan {
-    background: rgba(0, 0, 0, 0.22);
-    border-radius: 8px;
-    padding: 8px;
-  }
-  .cg-items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .cg-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1px;
-    background: var(--bg-card, #222842);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    padding: 4px 6px;
-    min-width: 46px;
-    cursor: pointer;
-    color: var(--text-main);
-  }
-  .cg-item:hover { border-color: var(--accent, #ffd166); }
-  .cg-item-icon { font-size: 1.1rem; }
-  .cg-item-name { font-size: 0.55rem; color: var(--text-dim, #9aa3c7); }
-  .cg-dim { font-size: 0.62rem; color: var(--text-dim, #9aa3c7); text-align: center; padding: 8px; }
-  .cg-scanned { display: flex; flex-direction: column; gap: 2px; font-size: 0.66rem; }
-  .cg-scanned-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 1px 0;
-    color: var(--text-main, #e0e6ed);
-  }
-  .cg-total {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0 2px;
-    font-weight: 800;
-    color: var(--ok, #7bd88f);
-    border-top: 1px dashed rgba(255, 255, 255, 0.2);
-    margin-top: 3px;
-  }
-  .cg-stat.urgent { color: #ff8a7a; }
-  /* v1.3b2 付款区：左侧账目 + 右侧九宫格 */
-  .cg-pay {
-    display: grid;
-    grid-template-columns: 1fr 190px;
-    gap: 10px;
-    background: rgba(255, 209, 102, 0.1);
-    border: 1px solid rgba(255, 209, 102, 0.35);
-    border-radius: 10px;
-    padding: 10px;
-  }
-  .cg-pay-info { min-width: 0; }
-  .cg-pay-label { font-size: 0.7rem; font-weight: 700; color: var(--text-main, #e0e6ed); margin-bottom: 5px; }
-  .cg-notes { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
-  .cg-note {
-    background: #85bb65;
-    color: #fff;
-    font-size: 0.64rem;
-    font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 4px;
-  }
-  .cg-calc {
-    font-size: 0.74rem;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .cg-calc-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    color: var(--text-dim, #9aa3c7);
-  }
-  .cg-calc-row b { color: var(--text-main, #e0e6ed); font-variant-numeric: tabular-nums; }
-  .cg-calc-row.eq {
-    border-top: 1px dashed rgba(255, 255, 255, 0.25);
-    padding-top: 4px;
-    margin-top: 2px;
-  }
-  .cg-calc-row.eq b { color: var(--accent, #ffd166); }
-  .cg-pad { display: flex; flex-direction: column; gap: 6px; }
-  .cg-screen {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 209, 102, 0.45);
-    border-radius: 8px;
-    padding: 6px 8px;
-  }
-  .cg-screen-cur { font-size: 0.8rem; color: var(--text-dim, #9aa3c7); }
-  .cg-screen-val {
-    flex: 1;
-    text-align: right;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--ok, #7bd88f);
-    font-variant-numeric: tabular-nums;
-    overflow: hidden;
-  }
-  .cg-screen-val.placeholder { color: rgba(255, 255, 255, 0.28); }
-  .cg-clear {
-    width: 30px;
-    height: 30px;
-    flex: none;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.08);
-    color: var(--text-dim, #9aa3c7);
-    font-size: 0.72rem;
-    font-weight: 800;
-    cursor: pointer;
-  }
-  .cg-clear:hover { background: rgba(255, 138, 122, 0.3); color: #fff; }
-  .cg-keys {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
-  }
-  .cg-key {
-    min-height: 44px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: var(--bg-card, #222842);
-    color: var(--text-main, #e0e6ed);
-    font-size: 1.05rem;
-    font-weight: 800;
-    cursor: pointer;
-    font-variant-numeric: tabular-nums;
-    transition: background 0.1s ease, transform 0.08s ease;
-  }
-  .cg-key:hover { background: rgba(255, 255, 255, 0.14); }
-  .cg-key:active { transform: scale(0.94); background: var(--accent, #ffd166); color: #1a1300; }
-  .cg-key.fn { color: var(--text-dim, #9aa3c7); font-size: 0.92rem; }
-  .cg-submit {
-    width: 100%;
-    min-height: 44px;
-    padding: 8px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--ok, #7bd88f), #3aa564);
-    color: #06281c;
-    font-weight: 800;
-    cursor: pointer;
-    font-size: 0.8rem;
-  }
-  .cg-submit:hover:not(:disabled) { filter: brightness(1.08); }
-  .cg-submit:disabled { opacity: 0.4; cursor: not-allowed; }
-  @media (max-width: 480px) {
-    .cg-main { grid-template-columns: 1fr; }
-    .cg-pay { grid-template-columns: 1fr; }
-    .cg-pad { max-width: 240px; margin: 0 auto; width: 100%; }
-  }
-</style>

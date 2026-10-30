@@ -1,243 +1,95 @@
 <script lang="ts">
-  import { uiState } from "../../stores/uiStore.svelte";
-  import { transitionThemeImages } from "../../game/data/transitionThemes";
-  import { fade } from "svelte/transition";
-  // v1.3b3-fix6：把 base64 图片转成 url() 一次性解析（每张图只解析一次）
-  const BG_URL: Record<"city" | "industry" | "rural" | "suburb", string> = {
-    city: `url("${transitionThemeImages.city}")`,
-    industry: `url("${transitionThemeImages.industry}")`,
-    rural: `url("${transitionThemeImages.rural}")`,
-    suburb: `url("${transitionThemeImages.suburb}")`,
-  };
-
-  const ICONS: Record<string, string> = {
-    walk: "🚶",
-    bike: "🚲",
-    ebike: "🛵",
-    car: "🚗",
-    metro: "🚇",
-    bus: "🚌",
-  };
-  const LABELS: Record<string, string> = {
-    walk: "步行前往",
-    bike: "骑车前往",
-    ebike: "电动车前往",
-    car: "开车前往",
-    metro: "地铁前往",
-    bus: "乘巴士前往",
-  };
-  const t = $derived(uiState.transition);
-  const kind = $derived(t?.kind ?? "bus");
-  const icon = $derived(ICONS[kind] ?? "🚌");
-  const verb = $derived(LABELS[kind] ?? "前往");
-  /**
-   * v1.3b3-fix3：动画时长直接内联到车辆元素 animation-duration，
-   * 不再依赖 CSS 变量（--tr-dur 经 Svelte 作用域/单文件打包后失效，
-   * 车辆 1.15s 冲出屏幕后画面静止 → 表现为「卡死不动」）。
-   * 完整过场（跨一级地图）3s，简短过场（跨二级区域）1.2s。
-   */
-  const dur = $derived(`${Math.max(900, t?.durationMs ?? 1150) / 1000}s`);
-
-  /**
-   * v1.3b3-fix5：按目标区域 id 推导背景主题。
-   * 二级地图过场带区域特色：工业区=工厂烟囱、市中心=高楼、
-   * 农村=山野农田、郊区=树林田野；一级区域（市区/郊区）取默认对应主题。
-   */
-  function themeOf(regionId?: string): "city" | "industry" | "rural" | "suburb" {
-    switch (regionId) {
-      case "downtown_industrial":
-      case "heavy_industry":
-        return "industry";
-      case "rural":
-        return "rural";
-      case "suburb":
-      case "suburban_edge":
-        return "suburb";
-      case "downtown":
-      case "downtown_center":
-      case "downtown_mall":
-      case "downtown_residential":
-      case "downtown_station":
-      default:
-        return "city";
-    }
+  import { tick } from 'svelte';
+  import { sceneLoading, markLoadingCovered } from '../../stores/sceneLoading.svelte';
+  import { LOADING_DISTRICTS, loadingArtStyle } from '../../lib/loadingArt';
+  import LoadingLandmark from './LoadingLandmark.svelte';
+  import { LOADING_FEEDBACK_GROUP, LOADING_TIP_INTERVAL_MS, LOADING_TIP_COUNT } from '../../game/data/loadingTips';
+  import {drawContextualLoadingTips} from '../../lib/loadingTips';
+  import {financialAlertActive} from '../../game/core/financialRisk';
+  import {gameState} from '../../stores/gameStore.svelte';
+  const current = $derived(sceneLoading.current);
+  const loadId = $derived(current?.id);
+  const alert=$derived(financialAlertActive(gameState));
+  const tips=$derived.by(()=>{alert;return loadId===undefined?[]:drawContextualLoadingTips(gameState);});
+  const artKey=$derived(current?[current.regionId,current.time,current.weather].join(':'):'');
+  const district = $derived(LOADING_DISTRICTS[current?.regionId ?? 'downtown'] ?? { name: '都市生活', number: '—', detail: '生活，在下一处继续' });
+  let panel = $state<HTMLDivElement>();
+  let artReadyKey=$state(''),tipStep=$state(0),tipOwner=$state<number>();
+  const tipIndex=$derived(tipOwner===loadId?tipStep:0);
+  const feedback=$derived(tipIndex>=LOADING_TIP_COUNT+1);
+  function overlayKeydown(event:KeyboardEvent){
+    event.stopPropagation();
+    if(event.key!=='Tab'||!panel)return;
+    const buttons=[...panel.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+    if(!buttons.length){event.preventDefault();panel.focus();return;}
+    const first=buttons[0],last=buttons[buttons.length-1];
+    if(event.shiftKey&&(document.activeElement===first||document.activeElement===panel)){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&(document.activeElement===last||document.activeElement===panel)){event.preventDefault();first.focus();}
   }
-  const theme = $derived(themeOf(t?.regionId));
+  $effect(() => {
+    const id = loadId;
+    const key=artKey;
+    if (id === undefined || artReadyKey!==key) return;
+    let cancelled = false, frame = 0, nextFrame = 0;
+    let tipsTimer:ReturnType<typeof setInterval>|undefined;
+    tipOwner=id;tipStep=0;
+    void tick().then(() => {
+      if (cancelled) return;
+      frame = requestAnimationFrame(() => {
+        nextFrame = requestAnimationFrame(() => {
+          if (cancelled) return;
+          panel?.focus({ preventScroll: true });
+          markLoadingCovered(id);
+          const tipsStartedAt=Date.now();
+          tipsTimer=setInterval(()=>{
+            if(sceneLoading.current?.id===id&&sceneLoading.current.phase!=='leaving'){
+              tipStep=Math.min(LOADING_TIP_COUNT+1,Math.floor((Date.now()-tipsStartedAt)/LOADING_TIP_INTERVAL_MS));
+              if(tipStep===LOADING_TIP_COUNT+1)clearInterval(tipsTimer);
+            }
+          },LOADING_TIP_INTERVAL_MS);
+        });
+      });
+    });
+    return () => { cancelled = true; cancelAnimationFrame(frame); cancelAnimationFrame(nextFrame); clearInterval(tipsTimer); };
+  });
 </script>
 
-{#if t}
-  <div class="tr-overlay" data-theme-bg={theme} in:fade={{ duration: 180 }} out:fade={{ duration: 260 }}>
-    <!-- v1.3b3-fix6：AI 生成的主题背景图（每张 ~60-80KB JPEG，base64 内联）
-         style 上直接绑定 background-image（避开 Svelte <style> 不能用 JS 变量） -->
-    <div class="bg bg-city"    style={`background-image: ${BG_URL.city}`}    aria-hidden="true"></div>
-    <div class="bg bg-industry" style={`background-image: ${BG_URL.industry}`} aria-hidden="true"></div>
-    <div class="bg bg-rural"   style={`background-image: ${BG_URL.rural}`}   aria-hidden="true"></div>
-    <div class="bg bg-suburb"  style={`background-image: ${BG_URL.suburb}`}  aria-hidden="true"></div>
-
-    <!-- 天空光晕 / 云朵叠加在图片之上作气氛层（淡而不夺） -->
-    <div class="tr-glow"></div>
-    <div class="tr-clouds" aria-hidden="true">
-      <i></i><i></i><i></i>
-    </div>
-
-    <!-- 地面层：马路 + 车道线 -->
-    <div class="tr-road"></div>
-    <div class="tr-lines" aria-hidden="true">
-      <span></span><span></span><span></span><span></span>
-    </div>
-    <!-- 载具：时长内联，随 durationMs 放慢/加快 -->
-    <div
-      class="tr-veh"
-      class:car={kind === "car"}
-      class:metro={kind === "metro"}
-      class:bus={kind === "bus"}
-      style={`animation-duration: ${dur}`}
-    >
-      <span class="tr-veh-ic">{icon}</span>
-    </div>
-    <div class="tr-label">{verb} {t.label}…</div>
+{#if current}
+  <div class="loading-cover" class:leaving={current.phase === 'leaving'} data-scene-loading-overlay data-scene-loading data-loading-id={current.id} data-loading-phase={current.phase} data-loading-region={current.regionId} data-loading-time={current.time} data-loading-weather={current.weather} style={loadingArtStyle(current.time, current.weather, current.regionId)} bind:this={panel} onkeydown={overlayKeydown} onkeyup={(event)=>event.stopPropagation()} tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="scene-loading-title" aria-busy={current.phase !== 'failed'}>
+    <header class="loading-masthead"><span class="wordmark">都市生活<span class="wordmark-dot"></span></span><span class="edition">生活图景 / {district.number}</span></header>
+    <main class="loading-composition">
+      <div class="district-caption"><span class="caption-line"></span><span>{district.detail}</span><span class="caption-line"></span></div>
+      <div class="loading-art-frame"><LoadingLandmark regionId={current.regionId} time={current.time} weather={current.weather} onReady={key=>{artReadyKey=key;}}/></div>
+      <div class="loading-copy">
+        <span class="district-index">DISTRICT / {district.number}</span>
+        <h1 id="scene-loading-title">{district.name}</h1>
+        <p class="loading-destination">{current.phase === 'failed' ? '暂时无法准备好场景' : current.kind === '3d' ? `正在准备${current.label}` : `正在前往${current.label}`}</p>
+        <div class="loading-state" role="status" aria-live="polite">
+          {#if current.phase === 'failed'}<span class="state-dot failed-dot"></span><span>{current.error || '请重新载入，或使用简化场景继续。'}</span>
+          {:else}<span class="loading-orbit" aria-hidden="true"><i></i></span><span>{current.slow||tipIndex>=LOADING_TIP_COUNT ? '预计加载时间可能较长，请稍候' : '生活，即将继续'}</span>{/if}
+        </div>
+        {#if current.phase === 'failed' || current.slow}<div class="loading-actions">
+          {#if current.retry}<button class="retry" onclick={() => current?.retry?.()}>重新载入</button>{/if}
+          {#if current.fallback}<button onclick={() => current?.fallback?.()}>{current.kind === '3d' ? '使用 2D 场景' : '使用简化地图'}</button>{/if}
+        </div>{/if}
+      </div>
+    </main>
+    <aside class="loading-tip" data-loading-tip={feedback?'feedback':tipIndex>=LOADING_TIP_COUNT?'long-wait':tipIndex} aria-live="polite">
+      <span class="tip-caption">{feedback?'反馈与帮助':tipIndex>=LOADING_TIP_COUNT?'加载提示':'都市小知识'}</span>
+      <span>{feedback?`如果加载一直没有完成，欢迎加入官方群 QQ ${LOADING_FEEDBACK_GROUP}，反馈遇到的场景与问题；也可以在设置里选择 3D 或 2D 场景。`:tipIndex>=LOADING_TIP_COUNT?(current.phase==='failed'?'请重新载入场景。':'场景仍在准备中，请稍候。'):tips[tipIndex]}</span>
+    </aside>
+    <footer class="loading-footer"><span>每一处，都有日常</span><div class="loading-track" aria-hidden="true"><i></i></div><span class="footer-mark">URBAN LIFE</span></footer>
   </div>
 {/if}
 
 <style>
-  .tr-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    pointer-events: none;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    /* v1.38 P1：隔离合成层 + 提示浏览器优化透明度合成，降低过场期间底层重绘拖累 */
-    will-change: opacity;
-    contain: layout paint;
-  }
-
-  /* v1.3b3-fix6：主题背景图（AI 生成，base64 内联）
-     占满 overlay 顶部到马路（bottom: 24.5%）之间 */
-  .bg {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 24.5%;
-    top: 0;
-    background-size: cover;
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    opacity: 0.95;
-  }
-  .bg { display: none; }
-  .tr-overlay[data-theme-bg="city"] .bg-city { display: block; }
-  .tr-overlay[data-theme-bg="industry"] .bg-industry { display: block; }
-  .tr-overlay[data-theme-bg="rural"] .bg-rural { display: block; }
-  .tr-overlay[data-theme-bg="suburb"] .bg-suburb { display: block; }
-
-  /* 天空光晕（夕阳氛围，叠加在图片之上） */
-  .tr-glow {
-    position: absolute;
-    top: 4%;
-    right: 8%;
-    width: 32vw;
-    height: 32vw;
-    max-width: 360px;
-    max-height: 360px;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--accent, #ffd166) 30%, transparent) 0%,
-      color-mix(in srgb, var(--accent, #ffd166) 8%, transparent) 50%,
-      transparent 75%
-    );
-    opacity: 0.75;
-    pointer-events: none;
-  }
-
-  /* 飘云（叠加在图片之上作气氛） */
-  .tr-clouds i {
-    position: absolute;
-    top: 18%;
-    width: 180px;
-    height: 26px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    filter: blur(8px);
-    animation: tr-cloud 16s linear infinite;
-    pointer-events: none;
-  }
-  .tr-clouds i:nth-child(2) { top: 30%; width: 240px; animation-duration: 22s; animation-delay: -6s; opacity: 0.6; }
-  .tr-clouds i:nth-child(3) { top: 12%; width: 140px; animation-duration: 13s; animation-delay: -3s; opacity: 0.5; }
-  @keyframes tr-cloud {
-    from { left: -20%; }
-    to { left: 110%; }
-  }
-
-  /* ---- 地面层（AI 图片底部已含马路效果，但保留独立的黑色马路强化前景） ---- */
-  .tr-road {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 24%;
-    background:
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0 22px, transparent 22px 56px),
-      linear-gradient(180deg, #1c1f2e, #0a0c14);
-    border-top: 3px solid rgba(255, 255, 255, 0.18);
-  }
-  .tr-lines span {
-    position: absolute;
-    bottom: 13%;
-    width: 60px;
-    height: 3px;
-    border-radius: 3px;
-    background: rgba(255, 255, 255, 0.28);
-    animation: tr-streak 0.7s linear infinite;
-  }
-  .tr-lines span:nth-child(1) { animation-delay: 0s; }
-  .tr-lines span:nth-child(2) { animation-delay: 0.18s; bottom: 19%; }
-  .tr-lines span:nth-child(3) { animation-delay: 0.36s; bottom: 8%; }
-  .tr-lines span:nth-child(4) { animation-delay: 0.52s; bottom: 16%; }
-  @keyframes tr-streak {
-    from { left: 100%; opacity: 0; }
-    20% { opacity: 1; }
-    to { left: -80px; opacity: 0; }
-  }
-
-  /* ---- 载具 ---- */
-  .tr-veh {
-    position: absolute;
-    bottom: 15%;
-    left: -14%;
-    font-size: 3.4rem;
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.55));
-    animation-name: tr-drive;
-    animation-duration: 1.15s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
-    animation-iteration-count: 1;
-    animation-fill-mode: forwards;
-  }
-  .tr-veh.car { font-size: 4rem; }
-  .tr-veh.metro { font-size: 3.6rem; }
-  .tr-veh.bus { font-size: 4.2rem; }
-  @keyframes tr-drive {
-    0% { left: -16%; transform: translateY(0) rotate(-1deg); }
-    50% { transform: translateY(-8px) rotate(1deg); }
-    100% { left: 112%; transform: translateY(0) rotate(-1deg); }
-  }
-
-  .tr-label {
-    position: absolute;
-    top: 14%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--text-main, #fff);
-    background: rgba(0, 0, 0, 0.45);
-    padding: 7px 18px;
-    border-radius: 999px;
-    white-space: nowrap;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
-  }
+  .loading-cover{position:fixed;inset:0;z-index:15000;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;padding:clamp(22px,4.2vh,52px) clamp(24px,5.5vw,96px);color:var(--load-ink);background:var(--load-paper);font-family:var(--font-ui,"Microsoft YaHei",system-ui,sans-serif);opacity:1;transition:opacity 250ms ease;pointer-events:auto;touch-action:none;outline:none;contain:layout paint}.loading-cover.leaving{opacity:0}.loading-masthead{display:flex;justify-content:space-between;align-items:center;gap:16px;flex:none;letter-spacing:.08em}.wordmark{display:inline-flex;align-items:center;gap:12px;font-size:19px;font-weight:650;letter-spacing:.16em}.wordmark-dot{height:5px;width:5px;border-radius:50%;background:var(--load-accent)}.edition{font-size:10px;color:var(--load-muted);letter-spacing:.18em}.loading-composition{flex:1;min-height:0;width:min(1100px,100%);align-self:center;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-top:clamp(6px,2vh,22px)}.district-caption{display:flex;align-items:center;justify-content:center;gap:17px;color:var(--load-muted);font-size:11px;letter-spacing:.2em;flex:none}.caption-line{height:1px;width:28px;background:var(--load-faint)}.loading-art-frame{width:100%;max-width:1000px;flex:0 1 auto;min-height:0;margin-top:3px}.loading-copy{text-align:center;flex:none;margin-top:clamp(-23px,-1.5vh,-4px);padding:0 8px 9px}.district-index{font-size:9px;letter-spacing:.3em;color:var(--load-muted)}h1{font-size:clamp(30px,3.6vw,48px);font-weight:500;line-height:1.3;letter-spacing:.16em;margin:9px 0 8px;text-indent:.16em}.loading-destination{font-size:13px;line-height:1.6;letter-spacing:.055em;color:var(--load-muted);margin:0}.loading-state{min-height:18px;display:flex;align-items:center;justify-content:center;gap:9px;font-size:11px;letter-spacing:.07em;color:var(--load-muted);margin-top:18px;max-width:600px;line-height:1.7}.loading-orbit{position:relative;display:block;box-sizing:border-box;width:12px;height:12px;border:1px solid var(--load-faint);border-radius:50%;animation:orbit-turn 2s linear infinite;flex:none}.loading-orbit i{position:absolute;top:-2px;left:3px;height:3px;width:3px;border-radius:50%;background:var(--load-accent)}.state-dot{display:block;flex:none;width:4px;height:4px;border-radius:50%;background:var(--load-accent)}.loading-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:16px}.loading-actions button{border:1px solid var(--load-faint);padding:10px 17px;min-height:42px;border-radius:6px;background:transparent;color:var(--load-ink);font:inherit;font-size:12px;letter-spacing:.04em;cursor:pointer;touch-action:manipulation}.loading-actions button.retry{border-color:var(--load-accent);color:var(--load-accent)}.loading-actions button:hover{background:var(--load-fill)}.loading-actions button:focus-visible{outline:2px solid var(--load-accent);outline-offset:3px}.loading-footer{display:flex;align-items:center;justify-content:space-between;gap:30px;flex:none;font-size:10px;letter-spacing:.12em;color:var(--load-muted);padding-top:12px}.loading-track{height:1px;position:relative;flex:1;max-width:270px;background:var(--load-faint);overflow:hidden}.loading-track i{display:block;position:absolute;top:0;left:-35%;width:35%;height:1px;background:var(--load-accent);animation:loading-travel 2.5s ease-in-out infinite}.footer-mark{font-size:9px;letter-spacing:.27em}@keyframes orbit-turn{to{transform:rotate(360deg)}}@keyframes loading-travel{to{transform:translateX(390%)}}
+  @media (max-width:650px) and (orientation:portrait){.loading-cover{padding:max(25px,env(safe-area-inset-top)) max(22px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(22px,env(safe-area-inset-left))}.wordmark{font-size:17px}.edition{font-size:9px;letter-spacing:.08em}.loading-composition{padding-top:0}.district-caption{font-size:10px;letter-spacing:.12em;gap:12px}.caption-line{width:17px}.loading-art-frame{width:calc(100% + 42px);margin:26px -21px 23px;max-width:none}.loading-copy{margin-top:0}h1{font-size:36px;margin-top:12px}.district-index{font-size:9px}.loading-state{margin-top:21px;font-size:11px;max-width:290px}.loading-footer{gap:18px;font-size:9px}.loading-track{max-width:76px}.footer-mark{font-size:8px;letter-spacing:.12em}}
+  @media (max-height:600px) and (orientation:landscape){.loading-cover{padding:18px max(26px,env(safe-area-inset-right)) 15px max(26px,env(safe-area-inset-left))}.loading-masthead .wordmark{font-size:16px}.loading-composition{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(200px,1fr);grid-template-rows:1fr;gap:4px 24px;padding-top:2px}.district-caption{display:none}.loading-art-frame{align-self:center;width:calc(100% + 35px);margin-left:-20px;max-width:670px}.loading-copy{align-self:center;margin:0;padding-bottom:0}h1{font-size:32px}.loading-state{margin-top:15px;font-size:10px}.loading-destination{font-size:12px}.loading-footer{padding-top:6px;font-size:9px}.loading-actions{margin-top:10px;gap:6px}.loading-actions button{min-height:36px;padding:7px 12px;font-size:11px}.loading-track{max-width:170px}}
+  @media (max-height:350px){.loading-cover{padding-top:12px;padding-bottom:10px}.loading-masthead .wordmark{font-size:14px}.loading-footer{display:none}.loading-actions button{min-height:32px}.loading-state{margin-top:8px}h1{margin-top:5px;font-size:28px}.loading-composition{grid-template-columns:minmax(0,1.2fr) minmax(210px,1fr)}}
+  @media (prefers-reduced-motion:reduce){.loading-orbit,.loading-track i{animation:none}.loading-track i{left:32%}.loading-cover{transition-duration:100ms}}
+  .loading-tip{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline;width:min(650px,100%);box-sizing:border-box;min-height:44px;align-self:center;margin:8px 0 14px;padding:10px 16px;border-left:2px solid var(--load-faint);color:var(--load-muted);font-size:12px;line-height:1.7;flex:none;text-align:left}
+  .tip-caption{font-size:10px;letter-spacing:.08em;color:var(--load-accent);white-space:nowrap}
+  @media(max-width:650px) and (orientation:portrait){.loading-tip{padding:6px 10px;gap:9px;font-size:11px;min-height:62px;margin:10px 0 14px}.tip-caption{font-size:9px}}
+  @media(max-height:600px) and (orientation:landscape){.loading-tip{min-height:34px;padding:4px 10px;margin:4px 0;font-size:10px;max-width:720px;gap:9px}.tip-caption{font-size:9px}.loading-art-frame{max-height:100%;overflow:hidden}}
 </style>

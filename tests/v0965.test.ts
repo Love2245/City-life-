@@ -1,59 +1,90 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
-import { applyJob, checkAutoQuit } from "../src/game/core/career";
-import { getJobDef } from "../src/game/core/jobs";
+import { checkAutoQuit } from "../src/game/core/career";
+import { applyForJob, completeWork, getJobDef, performJob } from "../src/game/core/jobs";
 import { refreshDailyQuests, questIdOf } from "../src/game/core/quests";
-import { gameDay } from "../src/game/core/calendar";
+import { fromLinearDay, gameDay, START_EPOCH } from "../src/game/core/calendar";
 import { workDialogue, qualityOf, QUALITY_LABEL } from "../src/game/core/workDialogue";
 import { migrateSave, SAVE_VERSION } from "../src/game/core/migrate";
 import type { GameState } from "../src/game/types";
 
-describe("v0.965 Bug 回归：连续工作后『今天已上过班』误判", () => {
-  it("同一天重复上班仍被拒绝（幂等保留）", () => {
-    const s = createInitialState();
-    const job = getJobDef("job_factory_qc")!; // weekly 正式工
-    expect(applyJob(s, job).ok).toBe(true); // 入职 = 上班第 1 天
-    const r2 = applyJob(s, job);
-    expect(r2.ok).toBe(false);
-    expect(r2.reason).toContain("今天已经上过班");
-  });
-
-  it("跨月同日上班不再误判（核心 bug）", () => {
+describe("v0.965 工作标记与绝对日回归", () => {
+  it("同一正式班重复点击复用班次，结算后无法再上一次", () => {
     const s = createInitialState();
     const job = getJobDef("job_factory_qc")!;
-    expect(applyJob(s, job).ok).toBe(true); // 2026-08-01 上班（gameDay 0）
-    // 下月 1 号（2026-09-01，gameDay 30）：旧逻辑 lastWorkDay=1 === day=1 误判
-    s.time = { ...s.time, month: 9, day: 1 };
-    const r = applyJob(s, job);
-    expect(r.ok).toBe(true); // 新的一天，应能上班
-    expect(s.career.workedDays).toBe(2);
+    s.time = { ...s.time, day: 3, hour: 8, minute: 0 };
+    s.locationId = "electronics_factory";
+    expect(applyForJob(s, job).ok).toBe(true);
+    expect(s.career.workedDays).toBe(0);
+    const first = performJob(s, job.id);
+    expect(first.ok).toBe(true);
+    expect(performJob(s, job.id).session?.id).toBe(first.session?.id);
+    expect(completeWork(s, first.session!.id, 1).ok).toBe(true);
+    expect(s.career.workedDays).toBe(1);
+    expect(performJob(s, job.id).ok).toBe(false);
+    expect(completeWork(s, first.session!.id, 1).ok).toBe(false);
+    expect(s.career.workedDays).toBe(1);
   });
 
-  it("连续上班 3 天仍可上班（不因月内日撞号被拒）", () => {
+  it("跨月相同日号的日结工作保留不同绝对日标记", () => {
     const s = createInitialState();
-    const job = getJobDef("job_factory_qc")!;
-    applyJob(s, job); // day0
-    s.time = { ...s.time, day: 2 }; // gameDay 1
-    expect(applyJob(s, job).ok).toBe(true);
-    s.time = { ...s.time, day: 3 }; // gameDay 2
-    expect(applyJob(s, job).ok).toBe(true);
-    expect(s.career.workedDays).toBe(3);
+    s.locationId = "electronics_factory";
+    s.time = { ...s.time, day: 3, hour: 8, minute: 0 };
+    s.player.attrs.stamina = 100;
+    s.player.attrs.satiety = 100;
+    const firstDay = gameDay(s.time);
+    const first = performJob(s, "job_factory_line");
+    expect(first.ok).toBe(true);
+    expect(completeWork(s, first.session!.id, 1).ok).toBe(true);
+    s.time = { ...s.time, month: 9, day: 3, hour: 8, minute: 0 };
+    s.player.attrs.stamina = 100;
+    s.player.attrs.satiety = 100;
+    const secondDay = gameDay(s.time);
+    const second = performJob(s, "job_factory_line");
+    expect(second.ok).toBe(true);
+    expect(completeWork(s, second.session!.id, 1).ok).toBe(true);
+    expect(secondDay - firstDay).toBe(30);
+    expect(s.flags[`worked_job_factory_line_${firstDay}`]).toBe(true);
+    expect(s.flags[`worked_job_factory_line_${secondDay}`]).toBe(true);
+    expect(s.work?.wageRecords.filter((row) => row.jobId === "job_factory_line")).toHaveLength(2);
   });
 
-  it("自动离职判定跨月正确（绝对日差值）", () => {
+  it("连续三天完成日结班分别计薪和积累熟练工时", () => {
+    const s = createInitialState();
+    const job = getJobDef("job_factory_line")!;
+    s.locationId = "electronics_factory";
+    const initialMoney = s.player.money;
+    for (const day of [3, 4, 5]) {
+      s.time = { ...s.time, day, hour: 8, minute: 0 };
+      s.player.attrs.stamina = 100;
+      s.player.attrs.satiety = 100;
+      const workDay = gameDay(s.time);
+      const started = performJob(s, job.id);
+      expect(started.ok).toBe(true);
+      expect(completeWork(s, started.session!.id, 1).ok).toBe(true);
+      expect(s.flags[`worked_${job.id}_${workDay}`]).toBe(true);
+    }
+    expect(s.player.money).toBeGreaterThan(initialMoney);
+    expect(s.work?.wageRecords.filter((row) => row.jobId === job.id)).toHaveLength(3);
+    expect(s.work?.masteryMinutes[job.id]).toBe(job.duration * 60 * 3);
+  });
+
+  it("跨月按三个实际应出勤班次解除合同，不把周末算缺勤", () => {
     const s = createInitialState();
     const job = getJobDef("job_factory_qc")!;
-    applyJob(s, job); // lastWorkDay = gameDay 0
-    // 跨月 + 3 天（2026-09-04，gameDay 33 ≥ 3）
-    s.time = { ...s.time, month: 9, day: 4 };
+    s.time = { ...s.time, month: 8, day: 29, hour: 8 };
+    expect(applyForJob(s, job).ok).toBe(true);
+    expect(s.career.firstShiftDay).toBe(gameDay({ ...s.time, month: 9, day: 1 }));
+    s.time = { ...s.time, month: 9, day: 3, hour: 18 };
     checkAutoQuit(s);
     expect(s.career.jobId).toBeNull();
-    // 未满 3 天不离职
     const s2 = createInitialState();
-    applyJob(s2, job);
-    s2.time = { ...s2.time, day: 2 }; // gameDay 1 < 3
+    s2.time = { ...s2.time, month: 8, day: 29, hour: 8 };
+    expect(applyForJob(s2, job).ok).toBe(true);
+    s2.time = { ...s2.time, month: 9, day: 2, hour: 18 };
     checkAutoQuit(s2);
-    expect(s2.career.jobId).not.toBeNull();
+    expect(s2.career.jobId).toBe(job.id);
+    expect(s2.career.consecutiveAbsences).toBe(2);
   });
 
   it("任务栏同日幂等 id 使用绝对日（跨月不撞）", () => {
@@ -99,6 +130,15 @@ describe("v0.965 人物对话系统", () => {
     expect(d?.quality).toBe("good");
   });
 
+  it("审查报告列出的 11 个岗位都有负责人点评", () => {
+    const missingJobs = [
+      "job_convenience_clerk", "job_netbar_admin", "job_training_assistant", "job_delivery_fulltime", "job_school_tutor",
+      "job_boyue_cafe_staff", "job_boyue_convenience_clerk", "job_boyue_waiter_fast", "job_boyue_waiter_west",
+      "job_boyue_netbar_admin", "job_boyue_bartender",
+    ];
+    for (const jobId of missingJobs) expect(workDialogue(jobId, 0.7)).not.toBeNull();
+  });
+
   it("街头卖艺：观众对话；摆摊用 _stall 专属文案", () => {
     const busk = workDialogue("street_perform", 0.9);
     expect(busk?.speaker.role).toBe("围观群众");
@@ -135,20 +175,25 @@ describe("v0.965 存档迁移 v13 → v14", () => {
     return s;
   }
 
-  it("月内日字段置 -1（哨兵/强制刷新），任务栏清空", () => {
+  it("月内日旧字段清除；无在职合同的新账期从当天建立", () => {
     const m = migrateSave(makeV13());
     expect(m.version).toBe(SAVE_VERSION);
     expect(m.career.lastWorkDay).toBe(-1);
-    expect(m.career.hiredDay).toBe(-1);
+    expect(m.career.hiredDay).toBe(0);
     expect(m.questsGeneratedDay).toBe(-1);
     expect(m.laborMarket.generatedDay).toBe(-1);
     expect(m.quests).toEqual([]);
   });
 
-  it("绝对日大值（>30）不受迁移影响", () => {
+  it("在职旧档的有效绝对日出勤记录在新账期迁移中保留", () => {
     const s = makeV13();
-    s.career.lastWorkDay = 400; // 已按新语义记录的档
+    s.time = { ...s.time, ...fromLinearDay(START_EPOCH + 420) };
+    s.career.jobId = "job_factory_qc";
+    s.career.kind = "weekly";
+    s.career.lastWorkDay = 400;
     const m = migrateSave(s);
     expect(m.career.lastWorkDay).toBe(400);
+    expect(m.career.jobId).toBe("job_factory_qc");
+    expect(m.career.nextPayDay).toBe(gameDay(m.time) + 7);
   });
 });

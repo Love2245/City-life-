@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { reconcileStatuses, upsertStatus, hasStatus, STATUS_NAMES, STATUS_ICONS } from "../src/game/core/statuses";
-import { sleepSettlement } from "../src/game/core/time";
+import { advanceHours, sleepSettlement } from "../src/game/core/time";
 import { rollEvent } from "../src/game/core/events";
 
 describe("v0.95 状态/Buff 扩展", () => {
@@ -101,6 +101,7 @@ describe("v0.95 状态/Buff 扩展", () => {
     for (let i = 0; i < 50; i++) {
       const ev = rollEvent(s, 1); // 必触发
       if (ev && ev.tone === "negative") negative++;
+      advanceHours(s, 2, false); // 每次随机抽取之间至少留出 90 分钟游戏时间
     }
     expect(negative).toBeGreaterThan(0); // 霉运使负面事件权重 ×1.5，必能抽到
   });

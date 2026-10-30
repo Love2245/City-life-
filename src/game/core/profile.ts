@@ -9,8 +9,9 @@ import { gameDay } from "./calendar";
 import type { EndingDef } from "./endings";
 import { getMaxStamina } from "./stats";
 import { applyFamily, applyAllocation } from "./families";
-import { applyItem } from "./items";
+import { addItem, applyItem } from "./items";
 import { isProjectDone } from "./projects";
+import { changeGrowthStat } from "./growthStats";
 
 /** 回忆录条目（每次结局结算追加一条） */
 export interface MemoirEntry {
@@ -37,8 +38,10 @@ export interface MemoirEntry {
 export interface ProfileState {
   /** 累计命运点数（可兑换永久加成） */
   fatePoints: number;
-  /** 已解锁模式 */
+  /** 已解锁模式（当前版不再开放剧情入口，保留字段兼容当前版档案） */
   unlocked: { eternal: boolean; story: boolean };
+  /** 跨周目累计解锁的结局 id */
+  unlockedEndings: string[];
   /** 已购永久加成：boostId → 档位（0=未购买） */
   boosts: Record<string, number>;
   /** 历次生平记录 */
@@ -99,7 +102,13 @@ export const BOOST_DEFS: BoostDef[] = [
 ];
 
 export function emptyProfile(): ProfileState {
-  return { fatePoints: 0, unlocked: { eternal: false, story: false }, boosts: {}, memoirs: [] };
+  return {
+    fatePoints: 0,
+    unlocked: { eternal: false, story: false },
+    unlockedEndings: [],
+    boosts: {},
+    memoirs: [],
+  };
 }
 
 /** 结局 tier → 命运点基础奖励（多次游玩累积，单局给得克制） */
@@ -179,7 +188,7 @@ export function applyBoosts(state: GameState, profile: ProfileState): void {
   }
   const charmBoost = tier("boost_charm");
   if (charmBoost > 0) {
-    state.player.stats.charm = Math.min(100, state.player.stats.charm + 5 * charmBoost);
+    changeGrowthStat(state, "charm", 5 * charmBoost);
   }
   if (tier("boost_lucky") > 0) {
     state.inventory["fruit"] = (state.inventory["fruit"] ?? 0) + 2;
@@ -213,7 +222,8 @@ export function applyNewGameSetup(
   state.mode = mode;
   applyFamily(state, familyId);
   applyAllocation(state, allocation);
-  for (const itemId of ownedItems) {
+  for (const itemId of new Set(ownedItems)) {
+    addItem(state, itemId, 1);
     applyItem(state, itemId);
   }
   applyBoosts(state, profile);
@@ -244,14 +254,29 @@ export function buyBoost(profile: ProfileState, boostId: string): { ok: boolean;
   return { ok: true };
 }
 
-/** 结局结算：发放命运点 + 写回忆录 + 解锁永恒/剧情模式（返回本局点数） */
+/** 结局结算：发放命运点 + 写回忆录 + 解锁永恒模式 + 记录结局图鉴（返回本局点数） */
 export function settleProfile(profile: ProfileState, state: GameState, ending: EndingDef): number {
   const points = calcFatePoints(state, ending);
   profile.fatePoints += points;
+  if (!profile.unlockedEndings.includes(ending.id)) profile.unlockedEndings.push(ending.id);
   profile.memoirs = [buildMemoirEntry(state, ending, points), ...profile.memoirs].slice(0, 50);
   profile.unlocked.eternal = true;
-  profile.unlocked.story = true;
+  profile.unlocked.story = false;
   return points;
+}
+
+/** 将本局已解锁图鉴并入跨周目档案，不发放结局命运点或回忆录奖励。 */
+export function syncProfileEndings(profile: ProfileState, state: GameState): boolean {
+  const known = new Set(profile.unlockedEndings ?? []);
+  let changed = false;
+  for (const id of state.unlockedEndings ?? []) {
+    if (!known.has(id)) {
+      known.add(id);
+      profile.unlockedEndings.push(id);
+      changed = true;
+    }
+  }
+  return changed;
 }
 
 export type { EndingDef };

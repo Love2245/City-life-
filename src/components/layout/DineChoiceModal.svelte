@@ -8,6 +8,7 @@
   import { uiState, showResult, showToast } from "../../stores/uiStore.svelte";
   import { fade } from "svelte/transition";
   import { performAction, getAction, DINE_IN_EXTRA_HOURS, type DineMode } from "../../game/core/actions";
+  import { formatDuration } from "../../game/core/quests";
   import { rollEvent } from "../../game/core/events";
   import { playSound } from "../../lib/audio";
 
@@ -51,9 +52,9 @@
         <button class="opt primary" onclick={() => choose("eat")}>
           <span class="o-icon">🍽️</span>
           <div class="o-info">
-            <div class="o-name">在这儿吃</div>
+            <div class="o-name">在这儿吃 · {formatDuration(DINE_IN_EXTRA_HOURS)}</div>
             <div class="o-desc dim">
-              当场吃完，{payload.effectText || "效果立即生效"}；额外花 {DINE_IN_EXTRA_HOURS} 小时，不占背包
+              买好后在店里吃完，合计半小时；{payload.effectText || "效果立即生效"}，不占背包
             </div>
           </div>
         </button>
@@ -61,8 +62,8 @@
         <button class="opt" onclick={() => choose("pack")}>
           <span class="o-icon">🥡</span>
           <div class="o-info">
-            <div class="o-name">打包带走</div>
-            <div class="o-desc dim">放进背包，饿的时候再从背包里拿出来吃</div>
+            <div class="o-name">打包带走 · 即时</div>
+            <div class="o-desc dim">放进背包，之后可随时食用，不消耗游戏时间</div>
           </div>
         </button>
 

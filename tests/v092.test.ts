@@ -5,14 +5,14 @@
 import { describe, it, expect } from "vitest";
 import type { GameState } from "../src/game/types";
 import { createInitialState } from "../src/game/core/state";
-import { canPerform, performAction, getAction } from "../src/game/core/actions";
+import { actionDurationHours, canPerform, performAction, getAction } from "../src/game/core/actions";
 import {
   buyMembership,
   isMembershipActive,
   membershipDaysLeft,
   checkMembershipExpiry,
 } from "../src/game/core/membership";
-import { canCook, missingIngredients, getRecipe, RECIPES } from "../src/game/core/cooking";
+import { canCook, cookFreeform, settlePendingCook, missingIngredients, getRecipe, RECIPES } from "../src/game/core/cooking";
 import { addItem, itemCount } from "../src/game/core/items";
 import {
   canWork,
@@ -122,16 +122,16 @@ describe("v0.92 菜市场生鲜与烹饪", () => {
     expect(getAction("buy_sandwich_market")).toBeUndefined();
     expect(getAction("buy_salad_market")).toBeUndefined();
     expect(getAction("buy_fruit_market")?.handler).toBe("buy_fresh");
-    expect(getAction("buy_vegetable_market")?.handler).toBe("buy_ingredient");
-    expect(getAction("buy_meat_market")?.handler).toBe("buy_ingredient");
+    expect(getAction("buy_cabbage_market")?.handler).toBe("buy_ingredient");
+    expect(getAction("buy_pork_market")?.handler).toBe("buy_ingredient");
   });
 
   it("买蔬菜直接入包，不当场生效", () => {
     const s = freshAt("market");
     const before = s.player.attrs.satiety;
-    const r = performAction(s, "buy_vegetable_market");
+    const r = performAction(s, "buy_cabbage_market");
     expect(r.ok).toBe(true);
-    expect(itemCount(s, "vegetable")).toBe(1);
+    expect(itemCount(s, "cabbage")).toBe(1);
     expect(s.player.attrs.satiety).toBeLessThanOrEqual(before); // 生的，没吃（仅随时间衰减，不上升）
   });
 
@@ -156,18 +156,30 @@ describe("v0.92 菜市场生鲜与烹饪", () => {
     const s = withKitchen(freshAt("home"));
     const r = canCook(s, "dish_veg");
     expect(r.ok).toBe(false);
-    expect(r.reason).toContain("蔬菜");
-    expect(missingIngredients(s, getRecipe("dish_veg")!)).toEqual(["蔬菜 ×1"]);
+    expect(r.reason).toContain("卷心菜");
+    expect(missingIngredients(s, getRecipe("dish_veg")!)).toEqual(["卷心菜 ×1"]);
   });
 
-  it("下厨消耗食材并即时回饱腹", () => {
+  it("旧厨房直做被禁用，工作台可用旧食材做饭并结算饱腹", () => {
     const s = withKitchen(freshAt("home"));
     addItem(s, "vegetable", 1);
     s.player.attrs.satiety = 40;
-    const r = performAction(s, "cook_dish_veg");
-    expect(r.ok).toBe(true);
+    const before = JSON.stringify(s);
+    expect(performAction(s, "cook_dish_veg").ok).toBe(false);
+    expect(JSON.stringify(s)).toBe(before);
+    const cooked = cookFreeform(s, ["vegetable"], []);
+    expect(cooked.recipe?.id).toBe("dish_veg");
+    expect(settlePendingCook(s, "eat").ok).toBe(true);
     expect(itemCount(s, "vegetable")).toBe(0);
     expect(s.player.attrs.satiety).toBeGreaterThan(40);
+    expect(cooked.recipe?.duration).toBe(getRecipe("dish_veg")?.duration);
+  });
+
+  it("界面预告与执行共用菜谱和书目时长", () => {
+    expect(actionDurationHours(getAction("cook_dish_salad")!)).toBe(getRecipe("dish_salad")?.duration);
+    expect(actionDurationHours(getAction("cook_dish_meat")!)).toBe(getRecipe("dish_meat")?.duration);
+    expect(actionDurationHours(getAction("book_sports")!)).toBe(3);
+    expect(actionDurationHours(getAction("book_cooking")!)).toBe(2);
   });
 
   it("厨艺不足时高级菜谱锁定", () => {
@@ -180,7 +192,7 @@ describe("v0.92 菜市场生鲜与烹饪", () => {
   });
 
   it("所有菜谱的食材都是可购买的真实物品", () => {
-    const buyable = new Set(["vegetable", "meat"]);
+    const buyable = new Set(["cabbage", "tomato", "pork", "beef", "rice"]);
     for (const r of RECIPES) {
       for (const id of Object.keys(r.needs)) {
         expect(buyable.has(id), `${r.id} 需要未上架的食材 ${id}`).toBe(true);
@@ -200,6 +212,7 @@ describe("v0.92 便利店堂食与打包", () => {
       "buy_noodles_convenience",
     ]) {
       expect(getAction(id)?.handler, id).toBe("buy_food");
+      expect(getAction(id)?.duration, id).toBe(0);
     }
   });
 
@@ -210,21 +223,30 @@ describe("v0.92 便利店堂食与打包", () => {
     expect(r.ok).toBe(true);
     expect(itemCount(s, "bento")).toBe(0);
     expect(s.player.attrs.satiety).toBeGreaterThan(30);
+    expect(r.result?.duration).toBe(0.5);
+    expect(s.time.hour).toBe(12);
+    expect(s.time.minute).toBe(30);
+    expect(actionDurationHours(getAction("buy_lunch_convenience")!, { dine: "eat" })).toBe(r.result?.duration);
   });
 
-  it("打包：只入背包，饱腹不变", () => {
+  it("打包：即时购买，只入背包，饱腹与时间不变", () => {
     const s = freshAt("convenience_store");
     s.player.attrs.satiety = 30;
     const r = performAction(s, "buy_lunch_convenience", { dine: "pack" });
     expect(r.ok).toBe(true);
     expect(itemCount(s, "bento")).toBe(1);
-    expect(s.player.attrs.satiety).toBeLessThanOrEqual(30); // 打包不进食，饱腹不因吃上升（仅随时间衰减）
+    expect(s.player.attrs.satiety).toBe(30);
+    expect(r.result?.duration).toBe(0);
+    expect(s.time.hour).toBe(12);
+    expect(s.time.minute).toBe(0);
+    expect(actionDurationHours(getAction("buy_lunch_convenience")!, { dine: "pack" })).toBe(r.result?.duration);
   });
 
   it("缺省不传选项时按打包处理（兜底不丢东西）", () => {
     const s = freshAt("convenience_store");
-    performAction(s, "buy_lunch_convenience");
+    const r = performAction(s, "buy_lunch_convenience");
     expect(itemCount(s, "bento")).toBe(1);
+    expect(r.result?.duration).toBe(0);
   });
 
   it("水果摊：可当场吃掉也可带走", () => {
@@ -235,8 +257,11 @@ describe("v0.92 便利店堂食与打包", () => {
     expect(eatState.player.attrs.satiety).toBeGreaterThan(40);
 
     const packState = freshAt("market");
-    performAction(packState, "buy_fruit_market", { dine: "pack" });
+    const packResult = performAction(packState, "buy_fruit_market", { dine: "pack" });
     expect(itemCount(packState, "fruit")).toBe(1);
+    expect(packResult.result?.duration).toBe(0);
+    expect(packState.time.hour).toBe(12);
+    expect(packState.time.minute).toBe(0);
   });
 });
 

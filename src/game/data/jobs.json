@@ -4,8 +4,8 @@
     "name": "外卖骑手（日结）",
     "icon": "🛵",
     "kind": "day",
-    "duration": 12,
-    "desc": "风里雨里跑 12 小时，赚得多耗得狠",
+    "duration": 10,
+    "desc": "风里雨里跑 10 小时，赚得多耗得狠",
     "requirements": {
       "attr": {
         "health": 35,
@@ -36,34 +36,34 @@
     "heavy": true,
     "incomeTiers": {
       "none": {
-        "money": 55,
+        "money": 180,
         "stamina": -55,
         "stress": 16,
         "moneyRange": {
-          "min": 40,
-          "max": 65
+          "min": 165,
+          "max": 180
         },
         "log": "步行跑了一整天外卖，赚了 {money} 元",
         "desc": "步行配送"
       },
       "bicycle": {
-        "money": 75,
+        "money": 180,
         "stamina": -65,
         "stress": 14,
         "moneyRange": {
-          "min": 65,
-          "max": 90
+          "min": 165,
+          "max": 180
         },
         "log": "骑自行车送了一天外卖，赚了 {money} 元",
         "desc": "骑车配送"
       },
       "e_bike": {
-        "money": 105,
+        "money": 180,
         "stamina": -75,
         "stress": 12,
         "moneyRange": {
-          "min": 95,
-          "max": 125
+          "min": 165,
+          "max": 180
         },
         "log": "骑电动车送了一天外卖，赚了 {money} 元",
         "desc": "电动车配送"
@@ -78,8 +78,8 @@
     "name": "快递配送员（日结）",
     "icon": "📦",
     "kind": "day",
-    "duration": 12,
-    "desc": "配送 12 小时，腰酸背痛",
+    "duration": 10,
+    "desc": "配送 10 小时，腰酸背痛",
     "requirements": {
       "attr": {
         "health": 30,
@@ -87,7 +87,7 @@
       }
     },
     "effects": {
-      "money": 95,
+      "money": 165,
       "stamina": -90,
       "stress": 15,
       "log": "配送了一天快递，赚了 {money} 元"
@@ -107,39 +107,39 @@
     "sound": "coin",
     "incomeTiers": {
       "none": {
-        "money": 65,
+        "money": 180,
         "stamina": -85,
         "stress": 15,
         "log": "蹬着腿跑了一天快递，赚了 {money} 元",
         "desc": "步行配送"
       },
       "bicycle": {
-        "money": 90,
+        "money": 180,
         "stamina": -80,
         "stress": 12,
         "log": "骑自行车送了一天快递，赚了 {money} 元",
         "desc": "自行车配送"
       },
       "e_bike": {
-        "money": 105,
+        "money": 180,
         "stamina": -80,
         "stress": 12,
         "log": "骑电动车送了一天快递，赚了 {money} 元",
         "desc": "电动车配送",
         "moneyRange": {
-          "min": 95,
-          "max": 125
+          "min": 165,
+          "max": 180
         }
       },
       "tricycle": {
-        "money": 120,
+        "money": 180,
         "stamina": -75,
         "stress": 10,
         "log": "开着三轮车送了一天快递，赚了 {money} 元",
         "desc": "三轮车配送",
         "moneyRange": {
-          "min": 105,
-          "max": 135
+          "min": 165,
+          "max": 180
         }
       }
     },
@@ -160,13 +160,13 @@
       }
     },
     "effects": {
-      "money": 85,
+      "money": 120,
       "stamina": -60,
       "stress": 8,
       "skills": {
         "service": 1
       },
-      "log": "便利店顶了一天班，赚了 85 元",
+      "log": "便利店顶了一天班，赚了 120 元",
       "health": -1
     },
     "verdicts": [
@@ -187,12 +187,12 @@
   },
   {
     "id": "job_convenience_clerk",
-    "name": "便利店正式店员（固定）",
+    "name": "便利店正式店员",
     "icon": "🏪",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "convenience_store",
     "duration": 8,
-    "desc": "便利店固定店员，需服务技能与技能证书（有店长内推可免证书）",
+    "desc": "便利店正式店员；应聘需满足健康、体力、服务技能和证书要求，内推可免证书，每七天发薪",
     "requirements": {
       "attr": {
         "health": 30,
@@ -204,13 +204,13 @@
       "flag": "item_certificate"
     },
     "effects": {
-      "money": 100,
+      "money": 130,
       "stamina": -55,
       "stress": 8,
       "skills": {
         "service": 1
       },
-      "log": "在便利店上了一天班，赚了 100 元"
+      "log": "在便利店上了一天班，赚了 130 元"
     },
     "verdicts": [
       "理货、收银、冲咖啡，一天没闲着",
@@ -240,10 +240,10 @@
       }
     },
     "effects": {
-      "money": 70,
+      "money": 120,
       "stamina": -55,
       "stress": 5,
-      "log": "在菜场做了半天保洁，赚了 70 元",
+      "log": "在菜场做了半天保洁，赚了 120 元",
       "health": -1
     },
     "verdicts": [
@@ -269,7 +269,7 @@
     "kind": "day",
     "locationId": "farm",
     "duration": 4,
-    "desc": "翻地除草施水肥，干半天日结 45 元",
+    "desc": "翻地除草施水肥，干半天日结 70 元",
     "requirements": {
       "attr": {
         "stamina": 30,
@@ -277,7 +277,7 @@
       }
     },
     "effects": {
-      "money": 45,
+      "money": 70,
       "stamina": -40,
       "stress": -3,
       "mood": 1,
@@ -308,21 +308,21 @@
     "kind": "day",
     "locationId": "pasture",
     "duration": 4,
-    "desc": "给奶牛挤奶、打扫牛棚，半天 50 元",
+    "desc": "给奶牛挤奶、打扫牛棚，半天 75 元",
     "requirements": {
       "attr": {
         "stamina": 25
       }
     },
     "effects": {
-      "money": 50,
+      "money": 75,
       "stamina": -35,
       "stress": -2,
       "mood": 2,
       "skills": {
         "cooking": 1
       },
-      "log": "在牧场挤了半天奶，赚了 50 元"
+      "log": "在牧场挤了半天奶，赚了 75 元"
     },
     "verdicts": [
       "奶牛太温顺了，挤奶还挺解压",
@@ -346,21 +346,21 @@
     "kind": "day",
     "locationId": "orchard",
     "duration": 4,
-    "desc": "摘时令水果、分拣装箱，半天 40 元",
+    "desc": "摘时令水果、分拣装箱，半天 65 元",
     "requirements": {
       "attr": {
         "stamina": 25
       }
     },
     "effects": {
-      "money": 40,
+      "money": 65,
       "stamina": -30,
       "stress": -4,
       "mood": 3,
       "skills": {
         "cooking": 1
       },
-      "log": "在果园摘了半天水果，赚了 40 元"
+      "log": "在果园摘了半天水果，赚了 65 元"
     },
     "verdicts": [
       "爬上爬下摘果子，腿脚还挺利索",
@@ -379,12 +379,12 @@
   },
   {
     "id": "job_cafe_staff",
-    "name": "咖啡厅正式店员（固定）",
+    "name": "咖啡厅正式店员",
     "icon": "🍮",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "cafe",
     "duration": 8,
-    "desc": "固定工作，需服务技能与技能证书",
+    "desc": "咖啡厅正式工作；应聘需满足健康、服务技能和证书要求，内推可免证书，每七天发薪",
     "requirements": {
       "attr": {
         "health": 40
@@ -395,7 +395,7 @@
       "flag": "item_certificate"
     },
     "effects": {
-      "money": 110,
+      "money": 135,
       "stamina": -50,
       "stress": 10,
       "skills": {
@@ -419,12 +419,12 @@
   },
   {
     "id": "job_netbar_admin",
-    "name": "网吧网管（固定）",
+    "name": "网吧网管",
     "icon": "🕹️",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "internet_cafe",
     "duration": 8,
-    "desc": "网吧固定岗：维护机器、做饮品小吃、照看场子，需服务技能与技能证书",
+    "desc": "维护机器、做饮品小吃、照看场子；应聘需满足健康、体力、服务技能和证书要求",
     "requirements": {
       "attr": {
         "health": 30,
@@ -436,7 +436,7 @@
       "flag": "item_certificate"
     },
     "effects": {
-      "money": 95,
+      "money": 130,
       "stamina": -50,
       "stress": 8,
       "skills": {
@@ -459,12 +459,12 @@
   },
   {
     "id": "job_driving_tutor",
-    "name": "驾校助教（固定）",
+    "name": "驾校助教",
     "icon": "🚗",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "driving_school",
     "duration": 8,
-    "desc": "教新学员开车，需驾驶本（驾校上班）",
+    "desc": "在驾校教新学员开车；工作方提供车辆，持驾驶本可增加收入",
     "requirements": {
       "attr": {
         "health": 30
@@ -472,13 +472,13 @@
       "flag": "item_driving_license"
     },
     "effects": {
-      "money": 100,
+      "money": 145,
       "stamina": -40,
       "stress": 5,
       "skills": {
         "driving": 2
       },
-      "log": "在驾校做助教一天，赚了 100 元"
+      "log": "在驾校做助教一天，赚了 145 元"
     },
     "verdicts": [
       "学员把油门当刹车踩，冷汗直冒",
@@ -500,8 +500,8 @@
     "icon": "🏭",
     "kind": "day",
     "locationId": "electronics_factory",
-    "duration": 12,
-    "desc": "电子厂流水线组装，12 小时长班，日结 85 元",
+    "duration": 10,
+    "desc": "电子厂流水线组装，10 小时长班，日结 155 元",
     "requirements": {
       "attr": {
         "health": 40,
@@ -509,13 +509,13 @@
       }
     },
     "effects": {
-      "money": 85,
+      "money": 155,
       "stamina": -75,
       "stress": 12,
       "skills": {
         "operation": 1
       },
-      "log": "在电子厂流水线干了一天，赚了 85 元"
+      "log": "在电子厂流水线干了一天，赚了 155 元"
     },
     "verdicts": [
       "流水线一刻不停，手都麻了",
@@ -528,24 +528,24 @@
     "sound": "cashier",
     "heavy": true,
     "startHour": 8,
-    "endHour": 20,
+    "endHour": 18,
     "punctual": true
   },
   {
     "id": "job_factory_qc",
-    "name": "质检员（周结）",
+    "name": "质检员",
     "icon": "🔍",
-    "kind": "weekly",
+    "kind": "formal",
     "locationId": "electronics_factory",
-    "duration": 8,
-    "desc": "检查出厂产品，周薪 75 元/天，周五发薪",
+    "duration": 10,
+    "desc": "检查出厂产品，10 小时班次 160 元，入职后每 7 天结算一次",
     "requirements": {
       "attr": {
         "intelligence": 30
       }
     },
     "effects": {
-      "money": 75,
+      "money": 160,
       "stamina": -45,
       "stress": 8,
       "skills": {
@@ -563,7 +563,7 @@
     ],
     "sound": "coin",
     "startHour": 8,
-    "endHour": 16,
+    "endHour": 18,
     "punctual": true,
     "restDays": [
       "sat",
@@ -574,17 +574,17 @@
     "id": "job_factory_tech",
     "name": "产线技工（正式工）",
     "icon": "⚙️",
-    "kind": "monthly",
+    "kind": "formal",
     "locationId": "electronics_factory",
-    "duration": 8,
-    "desc": "设备调试维护，月薪 90 元/天，每月 30 号发薪",
+    "duration": 10,
+    "desc": "设备调试维护，10 小时班次 170 元，入职后每七天发薪",
     "requirements": {
       "attr": {
         "intelligence": 40
       }
     },
     "effects": {
-      "money": 90,
+      "money": 170,
       "stamina": -55,
       "stress": 10,
       "skills": {
@@ -602,7 +602,7 @@
     ],
     "sound": "coin",
     "startHour": 8,
-    "endHour": 16,
+    "endHour": 18,
     "punctual": true
   },
   {
@@ -611,8 +611,8 @@
     "icon": "📦",
     "kind": "day",
     "locationId": "logistics_center",
-    "duration": 12,
-    "desc": "分拣快递包裹，12 小时长班，日结 75 元",
+    "duration": 10,
+    "desc": "分拣快递包裹，10 小时长班，日结 155 元",
     "requirements": {
       "attr": {
         "health": 40,
@@ -620,10 +620,10 @@
       }
     },
     "effects": {
-      "money": 75,
+      "money": 155,
       "stamina": -75,
       "stress": 10,
-      "log": "在物流中心分拣了一天快递，赚了 75 元"
+      "log": "在物流中心分拣了一天快递，赚了 155 元"
     },
     "verdicts": [
       "包裹堆成山，扫码扫到手软",
@@ -636,17 +636,17 @@
     "sound": "cashier",
     "heavy": true,
     "startHour": 8,
-    "endHour": 20,
+    "endHour": 18,
     "punctual": true
   },
   {
     "id": "job_loading",
-    "name": "装卸工（周结）",
+    "name": "装卸工",
     "icon": "🏋️",
-    "kind": "weekly",
+    "kind": "formal",
     "locationId": "logistics_center",
-    "duration": 8,
-    "desc": "装卸货车，周薪 65 元/天，周五发薪",
+    "duration": 10,
+    "desc": "装卸货车，10 小时班次 170 元，入职后每 7 天结算一次",
     "requirements": {
       "attr": {
         "health": 50,
@@ -654,7 +654,7 @@
       }
     },
     "effects": {
-      "money": 65,
+      "money": 170,
       "stamina": -70,
       "stress": 12,
       "log": "在物流中心装卸了一天货"
@@ -670,17 +670,17 @@
     "sound": "coin",
     "heavy": true,
     "startHour": 8,
-    "endHour": 16,
+    "endHour": 18,
     "punctual": true
   },
   {
     "id": "job_warehouse",
     "name": "仓储管理员（正式工）",
     "icon": "🗃️",
-    "kind": "monthly",
+    "kind": "formal",
     "locationId": "logistics_center",
-    "duration": 8,
-    "desc": "管理仓库进出库，月薪 80 元/天，每月 30 号发薪",
+    "duration": 10,
+    "desc": "管理仓库进出库，10 小时班次 160 元，入职后每七天发薪",
     "requirements": {
       "attr": {
         "health": 55,
@@ -688,7 +688,7 @@
       }
     },
     "effects": {
-      "money": 80,
+      "money": 160,
       "stamina": -50,
       "stress": 8,
       "skills": {
@@ -706,17 +706,17 @@
     ],
     "sound": "coin",
     "startHour": 8,
-    "endHour": 16,
+    "endHour": 18,
     "punctual": true
   },
   {
     "id": "job_office_assistant",
     "name": "办公室文员（正式工）",
     "icon": "💼",
-    "kind": "monthly",
+    "kind": "formal",
     "locationId": "labor_company",
     "duration": 8,
-    "desc": "劳务公司办公室文员，月薪 100 元/天，每月 30 号发薪",
+    "desc": "劳务公司办公室文员，标准每班 130 元，入职后每七天发薪",
     "requirements": {
       "attr": {
         "intelligence": 50
@@ -724,7 +724,7 @@
       "flag": "item_laptop"
     },
     "effects": {
-      "money": 100,
+      "money": 130,
       "stamina": -35,
       "stress": 10,
       "skills": {
@@ -755,8 +755,8 @@
     "name": "保安（日结）",
     "icon": "🛡️",
     "kind": "day",
-    "duration": 12,
-    "desc": "看工地/小区门岗 12 小时，站着熬一天",
+    "duration": 10,
+    "desc": "看工地/小区门岗 10 小时，站着熬一天",
     "requirements": {
       "attr": {
         "health": 45,
@@ -764,10 +764,10 @@
       }
     },
     "effects": {
-      "money": 75,
+      "money": 150,
       "stamina": -85,
       "stress": 10,
-      "log": "站了一天岗，赚了 75 元"
+      "log": "站了一天岗，赚了 150 元"
     },
     "verdicts": [
       "十二个小时站下来腿都直了",
@@ -782,7 +782,7 @@
     "weight": 8,
     "quota": 2,
     "startHour": 20,
-    "endHour": 8,
+    "endHour": 6,
     "punctual": true,
     "restDays": []
   },
@@ -801,7 +801,7 @@
       }
     },
     "effects": {
-      "money": 40,
+      "money": 130,
       "stamina": -55,
       "stress": 8,
       "log": "发了一天传单，底薪 40 + 提成 {money} 元"
@@ -818,8 +818,8 @@
     "weight": 7,
     "quota": 2,
     "moneyRange": {
-      "min": 60,
-      "max": 110
+      "min": 120,
+      "max": 145
     },
     "startHour": 10,
     "endHour": 18,
@@ -831,7 +831,7 @@
     "icon": "🚖",
     "kind": "day",
     "duration": 10,
-    "desc": "跑网约车 10 小时，收入看运气（需汽车+驾驶本）",
+    "desc": "手机网约车 App 接单；每天最多开一班，持续 10 小时，需驾驶证与自有或租用汽车",
     "requirements": {
       "attr": {
         "health": 45,
@@ -843,10 +843,10 @@
       }
     },
     "effects": {
-      "money": 90,
+      "money": 0,
       "stamina": -65,
       "stress": 12,
-      "log": "跑了十小时网约车，赚了 {money} 元"
+      "log": "完成网约车十小时班次，按实际送达订单结算"
     },
     "verdicts": [
       "接单没停过，流水还行",
@@ -859,10 +859,6 @@
     "sound": "cashier",
     "weight": 5,
     "quota": 1,
-    "moneyRange": {
-      "min": 90,
-      "max": 140
-    },
     "punctual": false,
     "restDays": []
   },
@@ -872,7 +868,7 @@
     "icon": "🚕",
     "kind": "day",
     "duration": 10,
-    "desc": "开出租 10 小时，时好时坏（需汽车+驾驶本）",
+    "desc": "出租车日结班 10 小时，单位提供基础车辆；自有车辆与驾驶本可增收",
     "requirements": {
       "attr": {
         "health": 50,
@@ -884,7 +880,7 @@
       }
     },
     "effects": {
-      "money": 100,
+      "money": 160,
       "stamina": -70,
       "stress": 10,
       "log": "跑了一整天出租，赚了 {money} 元"
@@ -901,20 +897,20 @@
     "weight": 4,
     "quota": 1,
     "moneyRange": {
-      "min": 100,
-      "max": 150
+      "min": 140,
+      "max": 180
     },
     "punctual": false,
     "restDays": []
   },
   {
     "id": "job_waiter_west",
-    "name": "西餐厅服务员（固定）",
+    "name": "西餐厅服务员",
     "icon": "🍽️",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "western_restaurant",
     "duration": 8,
-    "desc": "西餐厅端盘子，服务技能门槛",
+    "desc": "西餐厅服务正式岗；应聘需满足健康、体力和服务技能要求，每七天发薪",
     "requirements": {
       "attr": {
         "health": 40,
@@ -925,13 +921,13 @@
       }
     },
     "effects": {
-      "money": 75,
+      "money": 135,
       "stamina": -50,
       "stress": 8,
       "skills": {
         "service": 1
       },
-      "log": "在西餐厅服务了一天，赚了 75 元"
+      "log": "在西餐厅服务了一天，赚了 135 元"
     },
     "verdicts": [
       "西餐厅的客人讲究，要小心翼翼",
@@ -948,9 +944,9 @@
   },
   {
     "id": "job_waiter_fast",
-    "name": "快餐厅服务员（固定）",
+    "name": "快餐厅服务员",
     "icon": "🍔",
-    "kind": "fixed",
+    "kind": "formal",
     "locationId": "fast_food",
     "duration": 8,
     "desc": "快餐厅点餐收银，上手快",
@@ -964,13 +960,13 @@
       }
     },
     "effects": {
-      "money": 70,
+      "money": 125,
       "stamina": -50,
       "stress": 10,
       "skills": {
         "service": 1
       },
-      "log": "在快餐厅服务了一天，赚了 70 元"
+      "log": "在快餐厅服务了一天，赚了 125 元"
     },
     "verdicts": [
       "点餐高峰期手忙脚乱",
@@ -989,8 +985,8 @@
     "id": "job_training_assistant",
     "name": "培训学校助教",
     "icon": "🎓",
-    "desc": "有培训结业证书就能当助教，帮忙带课、整理教具",
-    "kind": "fixed",
+    "desc": "帮忙带课、整理教具；应聘需持培训结业证书",
+    "kind": "formal",
     "locationId": "training_school",
     "duration": 8,
     "heavy": false,
@@ -1001,10 +997,10 @@
       "flag": "item_training_cert"
     },
     "effects": {
-      "money": 95,
+      "money": 125,
       "stamina": -25,
       "stress": 5,
-      "log": "在培训学校当了一天助教，赚了 95 元"
+      "log": "在培训学校当了一天助教，赚了 125 元"
     },
     "verdicts": [
       "学员都喊你老师，有点飘",
@@ -1020,10 +1016,10 @@
     "id": "job_delivery_fulltime",
     "name": "外卖骑手（全职）",
     "icon": "🛵",
-    "kind": "weekly",
+    "kind": "formal",
     "locationId": "logistics_center",
     "duration": 8,
-    "desc": "正式应聘配送站点，站点提供电动车，周薪 120 元/天，周五发薪，每周六休",
+    "desc": "正式应聘配送站点，站点提供电动车，按完班底薪和订单提成计薪，普通班参考收入约140元，每7天结算一次，每周六休",
     "requirements": {
       "attr": {
         "health": 40,
@@ -1031,7 +1027,7 @@
       }
     },
     "effects": {
-      "money": 120,
+      "money": 140,
       "stamina": -50,
       "stress": 10,
       "skills": {
@@ -1054,5 +1050,417 @@
     "restDays": [
       "sat"
     ]
+  },
+  {
+    "id": "job_school_tutor",
+    "name": "学校辅导/托管",
+    "icon": "🏫",
+    "kind": "formal",
+    "locationId": "school",
+    "duration": 8,
+    "desc": "在学校辅导小学生、照看托管班，周日休息",
+    "requirements": {
+      "attr": {
+        "intelligence": 35
+      },
+      "skill": {
+        "service": 1
+      }
+    },
+    "effects": {
+      "money": 135,
+      "stamina": -35,
+      "stress": 4,
+      "skills": {
+        "service": 1
+      },
+      "log": "在学校完成一天辅导与托管工作，赚了 135 元"
+    },
+    "verdicts": [
+      "孩子们的问题很多，但耐心讲完就都懂了",
+      "托管班秩序井然，老师夸你很会照顾孩子",
+      "批改作业时发现自己也重新复习了一遍基础知识",
+      "放学铃响了，孩子们道别时特别有成就感",
+      "忙碌的一天过去，服务技能又熟练了一点",
+      "家长接走最后一个孩子，今天顺利收工"
+    ],
+    "sound": "cashier",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true,
+    "restDays": [
+      "sun"
+    ],
+    "heavy": false,
+    "careerTrack": "service",
+    "careerTier": "entry"
+  },
+  {
+    "id": "job_boyue_cafe_staff",
+    "name": "泊月区咖啡厅正式店员",
+    "icon": "🍮",
+    "kind": "formal",
+    "locationId": "boyue_cafe",
+    "duration": 8,
+    "desc": "咖啡厅正式工作；应聘需满足健康、服务技能和证书要求，内推可免证书，每七天发薪",
+    "requirements": {
+      "attr": {
+        "health": 40
+      },
+      "skill": {
+        "service": 3
+      },
+      "flag": "item_certificate"
+    },
+    "effects": {
+      "money": 135,
+      "stamina": -50,
+      "stress": 10,
+      "skills": {
+        "service": 1
+      },
+      "log": "在咖啡厅上了一天班"
+    },
+    "verdicts": [
+      "咖啡香里站了一天，腿酸",
+      "客人络绎不绝，忙得脚不沾地",
+      "打奶泡打得手都僵了",
+      "今天学了个新拉花，有点成就感",
+      "碰到个话多的顾客，聊了一下午",
+      "下班前终于闲下来，喝了杯自己拉的咖啡",
+      "被店长夸了两句，心情不错"
+    ],
+    "sound": "cashier",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true
+  },
+  {
+    "id": "job_boyue_convenience_clerk",
+    "name": "泊月区便利店正式店员",
+    "icon": "🏪",
+    "kind": "formal",
+    "locationId": "boyue_convenience_store",
+    "duration": 8,
+    "desc": "便利店正式店员；应聘需满足健康、体力、服务技能和证书要求，内推可免证书，每七天发薪",
+    "requirements": {
+      "attr": {
+        "health": 30,
+        "stamina": 20
+      },
+      "skill": {
+        "service": 2
+      },
+      "flag": "item_certificate"
+    },
+    "effects": {
+      "money": 130,
+      "stamina": -55,
+      "stress": 8,
+      "skills": {
+        "service": 1
+      },
+      "log": "在便利店上了一天班，赚了 130 元"
+    },
+    "verdicts": [
+      "理货、收银、冲咖啡，一天没闲着",
+      "熟客来了聊两句，时间过得快",
+      "夜班看着城市入睡，挺安静",
+      "店长夸你上手快",
+      "今天盘点，眼睛都看花了",
+      "碰到个可爱的小孩，被治愈了",
+      "下班前把店门口扫得干干净净"
+    ],
+    "weight": 30,
+    "sound": "cashier",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true
+  },
+  {
+    "id": "job_boyue_waiter_fast",
+    "name": "泊月区快餐厅服务员",
+    "icon": "🍔",
+    "kind": "formal",
+    "locationId": "boyue_fast_food",
+    "duration": 8,
+    "desc": "快餐厅点餐收银，上手快",
+    "requirements": {
+      "attr": {
+        "health": 40,
+        "stamina": 45
+      },
+      "skill": {
+        "service": 1
+      }
+    },
+    "effects": {
+      "money": 125,
+      "stamina": -50,
+      "stress": 10,
+      "skills": {
+        "service": 1
+      },
+      "log": "在快餐厅服务了一天，赚了 125 元"
+    },
+    "verdicts": [
+      "点餐高峰期手忙脚乱",
+      "薯条机一直没停过",
+      "小孩把可乐打翻了，收拾半天",
+      "收银机对上了账",
+      "今天的人比昨天多",
+      "累但能攒下钱"
+    ],
+    "sound": "cashier",
+    "startHour": 10,
+    "endHour": 18,
+    "punctual": true
+  },
+  {
+    "id": "job_boyue_waiter_west",
+    "name": "泊月区西餐厅服务员",
+    "icon": "🍽️",
+    "kind": "formal",
+    "locationId": "boyue_western_restaurant",
+    "duration": 8,
+    "desc": "西餐厅服务正式岗；应聘需满足健康、体力和服务技能要求，每七天发薪",
+    "requirements": {
+      "attr": {
+        "health": 40,
+        "stamina": 45
+      },
+      "skill": {
+        "service": 2
+      }
+    },
+    "effects": {
+      "money": 135,
+      "stamina": -50,
+      "stress": 8,
+      "skills": {
+        "service": 1
+      },
+      "log": "在西餐厅服务了一天，赚了 135 元"
+    },
+    "verdicts": [
+      "西餐厅的客人讲究，要小心翼翼",
+      "开了几瓶红酒，练了开瓶",
+      "小费制度下收入看运气",
+      "牛排上错了桌，赔了笑脸",
+      "刀叉摆放终于不出错了",
+      "一晚上下来脚底板生疼"
+    ],
+    "sound": "cashier",
+    "startHour": 11,
+    "endHour": 19,
+    "punctual": true
+  },
+  {
+    "id": "job_boyue_netbar_admin",
+    "name": "泊月区网吧网管",
+    "icon": "🕹️",
+    "kind": "formal",
+    "locationId": "boyue_internet_cafe",
+    "duration": 8,
+    "desc": "维护机器、做饮品小吃、照看场子；应聘需满足健康、体力、服务技能和证书要求",
+    "requirements": {
+      "attr": {
+        "health": 30,
+        "stamina": 25
+      },
+      "skill": {
+        "service": 2
+      },
+      "flag": "item_certificate"
+    },
+    "effects": {
+      "money": 130,
+      "stamina": -50,
+      "stress": 8,
+      "skills": {
+        "service": 1
+      },
+      "log": "在网吧当了一天网管"
+    },
+    "verdicts": [
+      "帮客人装了两台游戏，机箱灰真大",
+      "吧台做了十几杯奶茶，手都酸了",
+      "通宵的客人趴了一片，我盯着别出事",
+      "网费充值忙活一天，零钱哗哗响",
+      "维护完机器又擦了台面，累但充实",
+      "有人打游戏上瘾劝不动，只能多照看"
+    ],
+    "sound": "cashier",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true
+  },
+  {
+    "id": "job_boyue_bartender",
+    "name": "夜总会酒保",
+    "icon": "🍸",
+    "kind": "formal",
+    "locationId": "boyue_nightclub",
+    "duration": 8,
+    "desc": "夜总会正式酒保，周一至周五 18:00 至次日 02:00 当班，基础工资 150 元，按配方接待客人，七日结薪。",
+    "requirements": {
+      "attr": {
+        "health": 40
+      },
+      "skill": {
+        "service": 3
+      },
+      "flag": "item_certificate"
+    },
+    "effects": {
+      "money": 150,
+      "stamina": -50,
+      "stress": 10,
+      "skills": {
+        "service": 1
+      },
+      "log": "完成夜总会酒保班次"
+    },
+    "verdicts": [
+      "按配方完成一晚调酒，摇壶的动作渐渐熟练。",
+      "客人络绎不绝，忙得脚不沾地。",
+      "加冰、摇匀、装饰，每一步都做好了。",
+      "收拾好吧台，带着调酒香气下班。",
+      "被领班夸了两句，心情不错。",
+      "你把摇壶收好，擦净吧台，最后一位客人的酒也调得恰到好处。"
+    ],
+    "sound": "cashier",
+    "startHour": 18,
+    "endHour": 2,
+    "punctual": true,
+    "restDays": [
+      "sat",
+      "sun"
+    ]
+  },
+  {
+    "id": "job_commercial_office_assistant",
+    "name": "商务文员（正式工）",
+    "icon": "💼",
+    "kind": "formal",
+    "locationId": "commercial_office",
+    "duration": 8,
+    "desc": "核心商业区企业文员，标准每班 130 元，入职后每七天发薪",
+    "requirements": {
+      "attr": {
+        "intelligence": 50
+      },
+      "flag": "item_laptop"
+    },
+    "effects": {
+      "money": 130,
+      "stamina": -35,
+      "stress": 10,
+      "skills": {
+        "writing": 1,
+        "operation": 1
+      },
+      "log": "在核心商业区写字楼完成了一天文员工作"
+    },
+    "verdicts": [
+      "整理了一整天合同，头大",
+      "帮老板打了两份报表",
+      "文员的工作琐碎但体面",
+      "办公室里吹空调，比工厂强",
+      "老板说下个月可能要你管招聘",
+      "打字打得手指发麻"
+    ],
+    "sound": "coin",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true,
+    "restDays": [
+      "sat",
+      "sun"
+    ]
+  },
+  {
+    "id": "campus_teacher_counselor",
+    "name": "师范学院辅导员",
+    "icon": "🎓",
+    "kind": "formal",
+    "locationId": "campus_teacher_affairs",
+    "duration": 8,
+    "desc": "处理学生咨询与校园事务，工作日09:00—17:00，双休；标准每班160元，每七天发薪",
+    "requirements": {
+      "attr": {
+        "intelligence": 50
+      },
+      "flag": "item_student_pass"
+    },
+    "effects": {
+      "money": 160,
+      "stamina": -28,
+      "stress": 8,
+      "skills": {
+        "service": 0.6,
+        "writing": 0.5
+      },
+      "log": "完成一天辅导员工作"
+    },
+    "verdicts": [
+      "整理好学生事务登记，和同事交接今天的安排",
+      "把学生提出的问题逐一记下，联系对应的老师跟进",
+      "和几名学生聊了聊最近的学习与生活，替他们理清下一步",
+      "把活动名单核对清楚，给校园社团留下了场地安排",
+      "办公室忙了一阵，放学后终于安静下来",
+      "收好本周的材料，提醒同事下周需要继续处理的事情"
+    ],
+    "sound": "coin",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true,
+    "restDays": [
+      "sat",
+      "sun"
+    ],
+    "heavy": false
+  },
+  {
+    "id": "campus_engineering_counselor",
+    "name": "工程学院辅导员",
+    "icon": "🎓",
+    "kind": "formal",
+    "locationId": "campus_engineering_affairs",
+    "duration": 8,
+    "desc": "处理学生咨询与校园事务，工作日09:00—17:00，双休；标准每班160元，每七天发薪",
+    "requirements": {
+      "attr": {
+        "intelligence": 50
+      },
+      "flag": "item_student_pass"
+    },
+    "effects": {
+      "money": 160,
+      "stamina": -28,
+      "stress": 8,
+      "skills": {
+        "service": 0.6,
+        "writing": 0.5
+      },
+      "log": "完成一天辅导员工作"
+    },
+    "verdicts": [
+      "整理好学生事务登记，和同事交接今天的安排",
+      "把学生提出的问题逐一记下，联系对应的老师跟进",
+      "和几名学生聊了聊最近的学习与生活，替他们理清下一步",
+      "把活动名单核对清楚，给校园社团留下了场地安排",
+      "办公室忙了一阵，放学后终于安静下来",
+      "收好本周的材料，提醒同事下周需要继续处理的事情"
+    ],
+    "sound": "coin",
+    "startHour": 9,
+    "endHour": 17,
+    "punctual": true,
+    "restDays": [
+      "sat",
+      "sun"
+    ],
+    "heavy": false
   }
 ]

@@ -1,21 +1,13 @@
 <script lang="ts">
-  // 都市生活 v0.991 — 关系 App（手机第 9 个应用）：NPC 好感列表 / 详情 / 互动
-  // v0.991：恋爱线（约会/表白/分手）暂缓至 1.0，本版本聚焦人际/社交关系；
-  // 人物名陌生人显示「？？？」，建立初步关系后显示占位称呼（真名留待 1.0）。
+  // 关系 App：人物资料与关系记录。旧档已有欠款仍可在此归还。
   import { gameState } from "../stores/gameStore.svelte";
   import { showToast } from "../stores/uiStore.svelte";
   import type { PhoneResult } from "../game/core/phone";
   import { getNpcDef, npcNick } from "../game/core/npcs";
   import { getItem } from "../game/core/items";
+  import { gameDay } from "../game/core/calendar";
   import {
-    callNpc,
-    giftNpc,
-    crashAtNpc,
-    borrowFrom,
     repayLoan,
-    socialActionsAvailable,
-    giftableCount,
-    isGiftable,
     npcDisplayName,
   } from "../game/core/romance";
   import {
@@ -31,40 +23,17 @@
   let { onClose, onResult }: Props = $props();
 
   let selected = $state<string | null>(null);
-  let giftOpen = $state(false);
-  let borrowOpen = $state(false);
-  let borrowAmt = $state(100);
 
   const rels = $derived(
     [...gameState.relationships].sort((a, b) => b.affinity - a.affinity),
   );
   const sel = $derived(selected ? findRelationship(gameState, selected) : undefined);
   const selDef = $derived(selected ? getNpcDef(selected) : undefined);
-  const avail = $derived(selected ? socialActionsAvailable(gameState, selected) : null);
-  const giftable = $derived(giftableCount(gameState));
-
-  /** 背包物品列表（送礼候选：仅消耗品/礼物类，v0.992 过滤掉手机/驾照等功能性物品） */
-  const giftItems = $derived(
-    Object.entries(gameState.inventory)
-      .map(([id, qty]) => ({ id, qty, def: getItem(id) }))
-      .filter((x) => x.qty > 0 && x.def && isGiftable(x.id)),
-  );
 
   function run(fn: () => PhoneResult): void {
     const r = fn();
     onResult(r);
     if (!r.ok && r.reason) showToast(r.reason ?? "操作失败");
-    if (r.ok) {
-      giftOpen = false;
-      borrowOpen = false;
-    }
-  }
-
-  function likeHint(npcId: string, itemId: string): string {
-    const def = getNpcDef(npcId);
-    if (def?.likes?.includes(itemId)) return "  TA喜欢 +3";
-    if (def?.dislikes?.includes(itemId)) return "  TA讨厌 -3";
-    return "";
   }
 </script>
 
@@ -124,42 +93,14 @@
       {/if}
 
       {#if sel?.loan}
+        {@const repayAmount = Math.min(sel.loan.amount, gameState.player.money)}
         <div class="rel-loan">
-          💳 欠款 {sel.loan.amount} 元（已借 {sel.loan.since} 天）
-          <button onclick={() => run(() => repayLoan(gameState, selected!, Math.min(sel!.loan!.amount, gameState.player.money)))}>还清</button>
-        </div>
-      {/if}
-
-      <div class="rel-acts">
-        <button disabled={!avail?.call} onclick={() => run(() => callNpc(gameState, selected!))}>📞 打电话</button>
-        <button disabled={!avail?.gift || giftable <= 0} onclick={() => (giftOpen = !giftOpen)}>🎁 送礼</button>
-        <button disabled={!avail?.crash} onclick={() => run(() => crashAtNpc(gameState, selected!))}>🛏️ 蹭住</button>
-        <button disabled={!avail?.borrow} onclick={() => (borrowOpen = !borrowOpen)}>💸 借钱</button>
-      </div>
-      <!-- v0.991：恋爱线（约会/表白/分手）暂缓，1.0 随剧情模式开放 -->
-
-      {#if giftOpen}
-        <div class="rel-sub">
-          <div class="dim sub-title">选择礼物（共 {giftable} 件可送）：</div>
-          {#if giftItems.length === 0}
-            <p class="dim">背包里没有可送的礼物，先去商店买点日常用品。</p>
-          {:else}
-            {#each giftItems as g}
-              <button class="gift-row" onclick={() => run(() => giftNpc(gameState, selected!, g.id))}>
-                {g.def!.name} ×{g.qty}{likeHint(selected ?? "", g.id)}
-              </button>
-            {/each}
-          {/if}
-        </div>
-      {/if}
-
-      {#if borrowOpen}
-        <div class="rel-sub">
-          <div class="dim sub-title">借款金额：</div>
-          <div class="borrow-row">
-            <input type="number" min="10" max="500" bind:value={borrowAmt} />
-            <button onclick={() => run(() => borrowFrom(gameState, selected!, borrowAmt))}>确认</button>
-          </div>
+          💳 欠款 {sel.loan.amount} 元（已借 {gameDay(gameState.time) - sel.loan.since} 天）
+          <!-- 现金不足时 Math.min 实为部分还款，按钮文案必须如实反映，不能承诺"还清" -->
+          <button
+            disabled={repayAmount <= 0}
+            onclick={() => run(() => repayLoan(gameState, selected!, repayAmount))}
+          >{repayAmount >= sel.loan.amount ? "还清" : `还款 ${Math.max(0, repayAmount)} 元`}</button>
         </div>
       {/if}
 
@@ -294,39 +235,6 @@
     justify-content: space-between;
     gap: 8px;
     margin: 6px 0;
-  }
-  .rel-acts {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-  }
-  .rel-acts button {
-    padding: 8px;
-    font-size: 13px;
-  }
-  .rel-sub {
-    background: var(--panel, #1e2636);
-    border: 1px solid var(--line, #2c3650);
-    border-radius: 10px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .sub-title {
-    font-size: 12px;
-  }
-  .gift-row {
-    text-align: left;
-    font-size: 12px;
-    padding: 6px 8px;
-  }
-  .borrow-row {
-    display: flex;
-    gap: 6px;
-  }
-  .borrow-row input {
-    width: 100px;
   }
   .rel-back {
     background: transparent;

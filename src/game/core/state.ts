@@ -5,7 +5,9 @@
  * 此处仅提供兜底默认值（普通家庭骨架）。
  */
 import type { GameState } from "../types";
+import { createCatDuelState } from './catDuelCollection';
 import { createRng } from "../rng";
+import { createStockMarket } from "./stockMath";
 import { defaultContacts } from "./contacts";
 import { emptyTarotCounters, initialTarot } from "./tarot";
 
@@ -22,8 +24,11 @@ const ZERO_SKILLS = {
 };
 
 export function createInitialState(seed?: number): GameState {
-  return {
-    version: 26,
+  const state:GameState = {
+    version: 38,
+    catDuel: createCatDuelState(),
+    company: null,
+    developmentHistory: { total: 0, byType: {}, migrated: true },
     mode: "normal",
     family: "ordinary",
     allocation: { money: 0, charm: 0, stamina: 0, intelligence: 0, items: 0 },
@@ -56,12 +61,14 @@ export function createInitialState(seed?: number): GameState {
       skills: { ...ZERO_SKILLS },
       money: 500,
       debt: 0,
+      debtStreak: 0,
       stress: 0,
       lowMoodStreak: 0,
       negativeMoneyStreak: 0,
       hungryStreak: 0,
       depressionStreak: 0,
       criticalHealthStreak: 0,
+      hikingStaminaCapBonus: 0,
     },
     living: {
       mode: "gov",
@@ -79,12 +86,24 @@ export function createInitialState(seed?: number): GameState {
       kind: null,
       hiredDay: 0,
       workedDays: 0,
+      firstShiftDay: undefined,
+      nextShiftDay: undefined,
+      nextPayDay: undefined,
+      consecutiveAbsences: 0,
+      periodScheduled: 0,
+      periodAttended: 0,
+      periodBaseWages: 0,
+      periodGameBonus: 0,
       lastWorkDay: 0,
       internDays: {},
       internLastDay: -1,
       projects: {},
       passiveIncome: 0,
+      experience: {},
+      miniGameScoreTotal: 0,
+      miniGameScoreCount: 0,
     },
+    work: { masteryMinutes: {}, settledIds: [], wageRecords: [], sequence: 0 },
     quests: [],
     questsGeneratedDay: -1,
     smsInbox: [],
@@ -92,6 +111,12 @@ export function createInitialState(seed?: number): GameState {
     contacts: defaultContacts(),
     inventory: {
       phone: 1,
+      doc_city_guide: 1,
+      // v1.45 基础穿搭：新档开局直接穿上白背心、青色外套和黑裤子。
+      white_vest: 1,
+      underlayer_white: 1,
+      black_pants: 1,
+      cyan_jacket: 1,
     },
     vehicles: {},
     memberships: {},
@@ -122,12 +147,14 @@ export function createInitialState(seed?: number): GameState {
     report: null,
   },
   phoneSkin: undefined,
-  flags: {},
+  flags: { doc_city_guide_awarded: true, development_economy_v2: true },
     log: [],
     locationId: "home",
     region: "downtown_residential",
     area: "downtown_residential",
-    navStack: [],
+    // 开局就在普通出租屋：导航栈必须包含完整的「城市 → 市区 → 住宅区」路径，
+    // 否则首次打开场景时面包屑会退化成「城市 → 住处」，出门后也无法正确回到二级地图。
+    navStack: ["map", "downtown", "downtown_residential"],
     endingId: null,
     unlockedEndings: [],
     alarmHour: undefined,
@@ -137,14 +164,33 @@ export function createInitialState(seed?: number): GameState {
     economy: { priceIndex: 1, investments: [], ownedLuxury: [], nextInvSeq: 1 },
     tutorial: { done: [], activeStep: 0 },
     pendingTarot: [],
-    equipped: {},
+    equipped: {
+      clothes: "cyan_jacket",
+      underlayer: "underlayer_white",
+      pants: "black_pants",
+    },
     weather: { id: "sunny", lastRollDay: 0 },
     social: { posts: [], unreadMoments: 0 },
     orders: [],
     live: { streaming: false, lastStreamDay: -1, totalFameGain: 0 },
     citizensPool: [],
     pets: [],
+    intercityTicket: undefined,
+    fridge: { tier: null, items: {} },
+    cooking: { unlockedRecipeIds: [], mealQualities: {} },
+    smallPets: [],
+    cityCommissions: {
+      weekIndex: 0,
+      offeredIds: [],
+      activeId: null,
+      cooldownUntilDay: {},
+    },
     catFlags: {},
     ownedAccessories: {},
+    districtServices: { clinicWeek: -1, hikeDay: -1, alcoholCups: 0 },
+    districtLeisure: { nextSessionId: 1, active: null },
+    fishing: {nextId:1,active:null,bucket:[],specimens:{},bestRecords:{},pendingCatch:null},
   };
+  state.economy.stockMarket=createStockMarket(state);
+  return state;
 }

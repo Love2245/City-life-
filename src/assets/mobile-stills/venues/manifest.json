@@ -1,0 +1,5847 @@
+{
+  "version": 1,
+  "width": 4096,
+  "height": 2560,
+  "views": {
+    "store-0-day-closed": {
+      "file": "store-0-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-day-open": {
+      "file": "store-0-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-closed": {
+      "file": "store-0-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-open": {
+      "file": "store-0-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-closed": {
+      "file": "store-1-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-open": {
+      "file": "store-1-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-closed": {
+      "file": "store-1-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-open": {
+      "file": "store-1-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-closed": {
+      "file": "store-2-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-open": {
+      "file": "store-2-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-closed": {
+      "file": "store-2-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-open": {
+      "file": "store-2-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-closed": {
+      "file": "store-3-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-open": {
+      "file": "store-3-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-closed": {
+      "file": "store-3-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-open": {
+      "file": "store-3-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "cafe-0-day-closed": {
+      "file": "cafe-0-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-day-open": {
+      "file": "cafe-0-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-day-lin": {
+      "file": "cafe-0-day-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 2007,
+        "y": 1853,
+        "width": 191,
+        "height": 387
+      }
+    },
+    "cafe-0-day-stool": {
+      "file": "cafe-0-day-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 2035,
+        "y": 2048,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "cafe-0-night-closed": {
+      "file": "cafe-0-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-open": {
+      "file": "cafe-0-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-lin": {
+      "file": "cafe-0-night-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 2007,
+        "y": 1853,
+        "width": 191,
+        "height": 386
+      }
+    },
+    "cafe-0-night-stool": {
+      "file": "cafe-0-night-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 2035,
+        "y": 2048,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "cafe-1-day-closed": {
+      "file": "cafe-1-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-open": {
+      "file": "cafe-1-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-lin": {
+      "file": "cafe-1-day-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 677,
+        "y": 1143,
+        "width": 188,
+        "height": 387
+      }
+    },
+    "cafe-1-day-stool": {
+      "file": "cafe-1-day-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 703,
+        "y": 1337,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "cafe-1-night-closed": {
+      "file": "cafe-1-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-open": {
+      "file": "cafe-1-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-lin": {
+      "file": "cafe-1-night-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 677,
+        "y": 1143,
+        "width": 188,
+        "height": 387
+      }
+    },
+    "cafe-1-night-stool": {
+      "file": "cafe-1-night-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 703,
+        "y": 1337,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "cafe-2-day-closed": {
+      "file": "cafe-2-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-open": {
+      "file": "cafe-2-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-lin": {
+      "file": "cafe-2-day-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 1914,
+        "y": 394,
+        "width": 175,
+        "height": 386
+      }
+    },
+    "cafe-2-day-stool": {
+      "file": "cafe-2-day-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 1970,
+        "y": 589,
+        "width": 90,
+        "height": 177
+      }
+    },
+    "cafe-2-night-closed": {
+      "file": "cafe-2-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-open": {
+      "file": "cafe-2-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-lin": {
+      "file": "cafe-2-night-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 1914,
+        "y": 394,
+        "width": 175,
+        "height": 386
+      }
+    },
+    "cafe-2-night-stool": {
+      "file": "cafe-2-night-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 1970,
+        "y": 589,
+        "width": 90,
+        "height": 177
+      }
+    },
+    "cafe-3-day-closed": {
+      "file": "cafe-3-day-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-open": {
+      "file": "cafe-3-day-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-lin": {
+      "file": "cafe-3-day-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 3271,
+        "y": 1106,
+        "width": 178,
+        "height": 387
+      }
+    },
+    "cafe-3-day-stool": {
+      "file": "cafe-3-day-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 3302,
+        "y": 1300,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "cafe-3-night-closed": {
+      "file": "cafe-3-night-closed.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-open": {
+      "file": "cafe-3-night-open.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-lin": {
+      "file": "cafe-3-night-lin.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 3271,
+        "y": 1106,
+        "width": 178,
+        "height": 387
+      }
+    },
+    "cafe-3-night-stool": {
+      "file": "cafe-3-night-stool.webp",
+      "width": 4096,
+      "height": 2560,
+      "rect": {
+        "x": 3302,
+        "y": 1300,
+        "width": 91,
+        "height": 177
+      }
+    },
+    "store-0-day-closed-rain": {
+      "file": "store-0-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-day-closed-snow": {
+      "file": "store-0-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-day-open-rain": {
+      "file": "store-0-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-day-open-snow": {
+      "file": "store-0-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-closed-rain": {
+      "file": "store-0-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-closed-snow": {
+      "file": "store-0-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575946323252,
+          "y": 1919.2675921622779,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-open-rain": {
+      "file": "store-0-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-0-night-open-snow": {
+      "file": "store-0-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 645.9646624406494,
+          "y": 1088.3203762509952,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1142.5576633565242,
+          "y": 868.225347953643,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1302.236071966098,
+          "y": 1220.3531290793926,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1721.6558362531546,
+          "y": 1034.4620578823049,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2208.8199419427942,
+          "y": 882.1632184578999,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 1783.7570753726027,
+          "y": 2059.4740396004,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2862.4936943543876,
+          "y": 1239.335292434324,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2743.575934323556,
+          "y": 1919.267597480664,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-0-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-closed-rain": {
+      "file": "store-1-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-closed-snow": {
+      "file": "store-1-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-open-rain": {
+      "file": "store-1-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-day-open-snow": {
+      "file": "store-1-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-closed-rain": {
+      "file": "store-1-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-closed-snow": {
+      "file": "store-1-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639926467212,
+          "y": 1611.1068475735538,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-open-rain": {
+      "file": "store-1-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-1-night-open-snow": {
+      "file": "store-1-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 2380.5722007204095,
+          "y": 470.8771079733033,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2761.795110514415,
+          "y": 757.5798422027488,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2225.9122300343083,
+          "y": 892.5099372642563,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2547.8910389819475,
+          "y": 1134.6575168499367,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 2887.212643354693,
+          "y": 1459.5214897072776,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 881.08130857367,
+          "y": 1233.2079672029247,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2034.5009122211648,
+          "y": 1701.7810848331433,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 818.6639834348339,
+          "y": 1611.1068406456561,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-1-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-closed-rain": {
+      "file": "store-2-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-closed-snow": {
+      "file": "store-2-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-open-rain": {
+      "file": "store-2-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-day-open-snow": {
+      "file": "store-2-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-closed-rain": {
+      "file": "store-2-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-closed-snow": {
+      "file": "store-2-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.4240536767475,
+          "y": 499.77922263287167,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-open-rain": {
+      "file": "store-2-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-2-night-open-snow": {
+      "file": "store-2-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 3450.0353375593504,
+          "y": 1472.3344847841017,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 2953.4423366434758,
+          "y": 1692.4295130814537,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 2793.7639280339017,
+          "y": 1425.7846301662753,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 2374.344163746845,
+          "y": 1611.675701363363,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1887.180058057205,
+          "y": 1851.1843645713548,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 2312.242924627397,
+          "y": 712.0576288239965,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 1233.5063056456117,
+          "y": 1223.7481803781418,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1352.424065676443,
+          "y": 499.7792173144856,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-2-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-closed-rain": {
+      "file": "store-3-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-closed-snow": {
+      "file": "store-3-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-open-rain": {
+      "file": "store-3-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-day-open-snow": {
+      "file": "store-3-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-closed-rain": {
+      "file": "store-3-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-closed-snow": {
+      "file": "store-3-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360073532813,
+          "y": 807.9399672215957,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-closed-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-open-rain": {
+      "file": "store-3-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "store-3-night-open-snow": {
+      "file": "store-3-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "fresh",
+          "x": 1715.4277992795928,
+          "y": 2089.777753061793,
+          "visible": true
+        },
+        {
+          "id": "drinks",
+          "x": 1334.204889485588,
+          "y": 1803.0750188323482,
+          "visible": true
+        },
+        {
+          "id": "noodles",
+          "x": 1870.087769965694,
+          "y": 1753.6278219814112,
+          "visible": true
+        },
+        {
+          "id": "seasoning",
+          "x": 1548.1089610180545,
+          "y": 1511.4802423957312,
+          "visible": true
+        },
+        {
+          "id": "checkout",
+          "x": 1208.7873566453095,
+          "y": 1273.826093321977,
+          "visible": true
+        },
+        {
+          "id": "seating",
+          "x": 3214.9186914263323,
+          "y": 1538.3237012214718,
+          "visible": true
+        },
+        {
+          "id": "blindbox",
+          "x": 2061.4990877788377,
+          "y": 761.3023879793224,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3277.3360165651684,
+          "y": 807.9399741494935,
+          "visible": true
+        }
+      ],
+      "hitSrc": "store-3-open-interaction.png",
+      "hitIds": [
+        "fresh",
+        "drinks",
+        "noodles",
+        "seasoning",
+        "checkout",
+        "seating",
+        "blindbox",
+        "door"
+      ]
+    },
+    "cafe-0-day-closed-rain": {
+      "file": "cafe-0-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-day-closed-snow": {
+      "file": "cafe-0-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-day-open-rain": {
+      "file": "cafe-0-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-day-open-snow": {
+      "file": "cafe-0-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-closed-rain": {
+      "file": "cafe-0-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-closed-snow": {
+      "file": "cafe-0-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3418.618074737519,
+          "y": 1482.677829800692,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-open-rain": {
+      "file": "cafe-0-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-0-night-open-snow": {
+      "file": "cafe-0-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1882.0948995400308,
+          "y": 956.2932540066414,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1615.7315203155647,
+          "y": 712.5361857930213,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 798.960971719647,
+          "y": 1518.2883971156732,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 701.4900101730716,
+          "y": 1271.1117306578851,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2080.835384466036,
+          "y": 1981.5818712059786,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 3150.318420087412,
+          "y": 1471.7598921452059,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-0-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-closed-rain": {
+      "file": "cafe-1-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-closed-snow": {
+      "file": "cafe-1-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-open-rain": {
+      "file": "cafe-1-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-day-open-snow": {
+      "file": "cafe-1-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-closed-rain": {
+      "file": "cafe-1-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-closed-snow": {
+      "file": "cafe-1-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1592.268280842749,
+          "y": 1996.4454544011246,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-open-rain": {
+      "file": "cafe-1-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-1-night-open-snow": {
+      "file": "cafe-1-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2658.078937938317,
+          "y": 1205.7254769259268,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2982.3746348129425,
+          "y": 994.5011370071147,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 1791.9969289689163,
+          "y": 673.1103052460494,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 2246.1676807025488,
+          "y": 626.2435491745015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 748.2260822526534,
+          "y": 1270.1142700241323,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 1611.7102848029015,
+          "y": 1845.777914755423,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-1-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-closed-rain": {
+      "file": "cafe-2-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-closed-snow": {
+      "file": "cafe-2-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-open-rain": {
+      "file": "cafe-2-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-day-open-snow": {
+      "file": "cafe-2-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-closed-rain": {
+      "file": "cafe-2-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-closed-snow": {
+      "file": "cafe-2-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 677.3819252624828,
+          "y": 970.832393745437,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-open-rain": {
+      "file": "cafe-2-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-2-night-open-snow": {
+      "file": "cafe-2-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 2213.905100459971,
+          "y": 1641.4905024988332,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 2480.2684796844374,
+          "y": 1761.9592833979023,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 3297.0390282803546,
+          "y": 1230.7639654923928,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 3394.50998982693,
+          "y": 1493.6795675616313,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 2015.1646155339654,
+          "y": 521.7683016504218,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 945.6815799125893,
+          "y": 981.7503314009227,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-2-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-closed-rain": {
+      "file": "cafe-3-day-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-closed-snow": {
+      "file": "cafe-3-day-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-open-rain": {
+      "file": "cafe-3-day-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-day-open-snow": {
+      "file": "cafe-3-day-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-closed-rain": {
+      "file": "cafe-3-night-closed-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-closed-snow": {
+      "file": "cafe-3-night-closed-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2503.731719157254,
+          "y": 457.0647691450026,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-closed-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-open-rain": {
+      "file": "cafe-3-night-open-rain.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    },
+    "cafe-3-night-open-snow": {
+      "file": "cafe-3-night-open-snow.webp",
+      "width": 4096,
+      "height": 2560,
+      "points": [
+        {
+          "id": "counter",
+          "x": 1437.921062061684,
+          "y": 1392.0582795795465,
+          "visible": true
+        },
+        {
+          "id": "coffee",
+          "x": 1113.6253651870588,
+          "y": 1479.994332183808,
+          "visible": true
+        },
+        {
+          "id": "lounge",
+          "x": 2304.003071031085,
+          "y": 2075.9420573620164,
+          "visible": true
+        },
+        {
+          "id": "books",
+          "x": 1849.832319297452,
+          "y": 2138.547749045015,
+          "visible": true
+        },
+        {
+          "id": "lin",
+          "x": 3347.7739177473486,
+          "y": 1233.235902832267,
+          "visible": true
+        },
+        {
+          "id": "door",
+          "x": 2484.2897151971006,
+          "y": 607.7323087907046,
+          "visible": true
+        }
+      ],
+      "hitSrc": "cafe-3-open-interaction.png",
+      "hitIds": [
+        "counter",
+        "coffee",
+        "lounge",
+        "books",
+        "lin",
+        "door"
+      ]
+    }
+  }
+}

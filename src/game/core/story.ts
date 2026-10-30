@@ -361,7 +361,9 @@ export function tickStory(state: GameState): void {
   // 2) 赌鬼日常开销（吃你的、喝你的）
   const gAct = st.activeCards.find((a) => a.cardId === "neutral_gambler_arrives" && a.status === "active");
   if (gAct) {
-    const drain = Math.min(50, state.player.money);
+    // money 允许为负：不钳制下界时负余额会让 drain 变负数，money -= drain 反而加钱，
+    // 构成逃债/刷钱漏洞，且 recordMoney(-drain) 会把收入记进周记。与 deliveryTraffic 同款写法。
+    const drain = Math.min(50, Math.max(0, state.player.money));
     state.player.money -= drain;
     recordMoney(state, -drain); // v1.215 修复（P1-10）：赌鬼开销计入周记支出
     state.player.attrs.mood = Math.max(0, state.player.attrs.mood - 2);

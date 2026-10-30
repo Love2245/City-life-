@@ -1,0 +1,61 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+const root=process.cwd(),out=path.join(root,'docs/npc-context-rewards-20261016');
+const read=file=>JSON.parse(fs.readFileSync(file,'utf8').replace(/^\uFEFF/,''));
+async function sha(file){const h=createHash('sha256');for await(const b of fs.createReadStream(file))h.update(b);return h.digest('hex').toUpperCase();}
+const baseline=read(path.join(out,'before-manifest.json')),oldRelease=baseline.find(r=>r.path==='1.49.0.html');assert.ok(oldRelease);
+assert.equal(await sha(path.join(out,'before/1.49.0.html')),oldRelease.sha256);
+for(const name of ['src/game/data/npcs.json','src/game/data/npcDialogueArt.json','src/game/data/npcDialogueStaging.json','npc对话修正.txt']){
+ const previous=baseline.find(r=>r.path===name);if(previous)assert.equal(await sha(path.join(root,name)),previous.sha256,name);
+}
+const definitions=read(path.join(root,'src/game/data/npcDialogueArt.json')),expected=new Map();
+const libraries=['docs/npc-followup-20261016/library-sync.json','docs/npc-dialogue-repair-20261015/library-sync.json'].flatMap(p=>read(path.join(root,p)).records);
+for(const [id,sheets]of Object.entries(definitions))for(const [variant,sheet]of Object.entries(sheets)){
+ const source=path.join(root,'src/assets/portraits/npc_dialogue',id,sheet.file),digest=await sha(source);assert.equal(digest,sheet.sha256);assert.equal(sheet.frames.length,9);
+ const imported=read(path.join(root,sheet.importReport??`docs/npc-dialogue-repair-20261015/ai-art/${id}/${variant}-import.json`));assert.equal(await sha(imported.source),digest);
+ const record=libraries.find(r=>r.npcId===id&&(r.variant??r.weather)===variant);assert.ok(record);assert.equal(await sha(record.libraryPath),digest);
+ expected.set(digest,{kind:'portrait',id:`${id}/${variant}`,source});
+}
+assert.equal(expected.size,43);
+for(const name of ['computerScreen','computerKeyboard','computerMouse','chairDesk']){
+ const source=path.join(root,`src/assets/home/v1.49/models/${name}.glb`);expected.set(await sha(source),{kind:'model',id:name,source});
+}
+const tests=read(path.join(out,'focused-tests.json'));assert.equal(tests.success,true);assert.equal(tests.numFailedTests,0);assert.equal(tests.testResults.length,25);
+const stale=read(path.join(out,'legacy-npcTalk.json')),previousStale=read(path.join(root,'docs/npc-followup-20261016/baseline-npcTalk.json'));
+const staleNames=data=>data.testResults.filter(s=>s.name.endsWith('npcTalk.test.ts')).flatMap(s=>s.assertionResults.filter(r=>r.status==='failed').map(r=>r.fullName));
+assert.deepEqual(staleNames(stale),staleNames(previousStale));assert.equal(staleNames(stale).length,6);
+assert.match(fs.readFileSync(path.join(out,'check-final.log'),'utf8'),/found 0 errors and 100 warnings/);
+assert.match(fs.readFileSync(path.join(out,'portable-build.log'),'utf8'),/Portable release HTML published/);
+const audit=read(path.join(out,'dialogue-audit.json'));assert.equal(audit.roster.length,12);assert.equal(audit.manuscriptScenes,296);assert.equal(Object.keys(audit.benefits).length,10);
+assert.equal(audit.sources.context,108);assert.equal(audit.preservedHelp.length,27);
+const browser=read(path.join(out,'browser-verification.json'));assert.equal(browser.sourceHarness,true);assert.ok(browser.evidence.length>=8);assert.equal(browser.viewportReset,true);
+for(const name of ['kexi-work-desktop.png','jack-gym-phone-portrait.png','jack-gym-phone-landscape.png','zhao-bun-received.png','chen-apple-inventory.png','kejie-performance-desktop.png'])assert.ok(fs.statSync(path.join(out,name)).size>5000,name);
+const release=path.join(root,'1.49.0.html'),hash=createHash('sha256'),found=new Map();
+const revision='2026.10.16 · 场景闲聊与赠物结算';
+const tokens=new Map([revision,'npc_context_dialogue_day_','dialogueBenefitId','吃了赵刚分给你的一个馒头','兼职中的招呼','组间休息','npc_introduction_m02_complete'].map(t=>[t,false]));
+const prefix=/data:(image\/png|model\/gltf-binary);base64,/g,delimiter=/[^A-Za-z0-9+/=]/g;
+let active=null,carry='',tail=Buffer.alloc(0),bytes=0,glbs=0;
+for await(const chunk of fs.createReadStream(release,{highWaterMark:1024*1024})){
+ hash.update(chunk);bytes+=chunk.length;const window=Buffer.concat([tail,chunk]);for(const [t,seen]of tokens)if(!seen&&window.includes(Buffer.from(t)))tokens.set(t,true);tail=window.subarray(-512);
+ const text=carry+chunk.toString('latin1');carry='';let cursor=0;
+ while(cursor<text.length){
+  if(!active){prefix.lastIndex=cursor;const m=prefix.exec(text);if(!m){carry=text.slice(-64);break;}active={mime:m[1],hash:createHash('sha256'),remainder:''};cursor=prefix.lastIndex;}
+  delimiter.lastIndex=cursor;const end=delimiter.exec(text),part=active.remainder+text.slice(cursor,end?end.index:undefined);
+  if(!end){const complete=part.length-part.length%4;active.hash.update(Buffer.from(part.slice(0,complete),'base64'));active.remainder=part.slice(complete);break;}
+  active.hash.update(Buffer.from(part,'base64'));const digest=active.hash.digest('hex').toUpperCase();if(expected.has(digest))found.set(digest,expected.get(digest));if(active.mime==='model/gltf-binary')glbs++;active=null;cursor=end.index;
+ }
+}
+assert.equal(active,null);assert.equal(glbs,4);for(const [t,seen]of tokens)assert.ok(seen,t);for(const [digest,asset]of expected)assert.ok(found.has(digest),asset.id);
+const digest=hash.digest('hex').toUpperCase();assert.equal(await sha(path.join(root,'dist-portable/index.html')),digest);
+const changes=[];for(const row of baseline){if(row.path==='1.49.0.html')continue;const file=path.join(root,row.path);if(fs.existsSync(file)){const after=await sha(file);if(after!==row.sha256)changes.push({path:row.path,before:row.sha256,after});}}
+const addedFiles=['src/game/data/npcContextDialogues.ts','src/game/data/npcDialogueBenefits.ts','tests/npcContextRewards.test.ts'].map(file=>({path:file}));
+for(const file of addedFiles)file.sha256=await sha(path.join(root,file.path));
+const result={verifiedAt:new Date().toISOString(),version:'1.49.0',revision,release,bytes,sha256:digest,portableBuildIdentical:true,
+ backup:{path:path.join(out,'before/1.49.0.html'),sha256:oldRelease.sha256},manuscriptPreserved:true,normalSchedulesPreserved:true,portraitDefinitionsPreserved:true,
+ content:{newContextScenes:36,activityKinds:18,roster:12,benefitContracts:10,auditedSceneUnits:298,scannedNodes:audit.sources,candidateNodes:audit.candidateNodes,preservedHelpBindings:27},
+ tests:{passed:tests.numPassedTests,failed:tests.numFailedTests,files:tests.testResults.length,check:'0 errors / 100 existing warnings',legacyBaselineFailures:staleNames(stale)},
+ browser,preservedAssets:[...found.values()],changes,addedFiles,
+ limitations:['UI verification uses actual source components and isolated state over HTTP. The final portable artifact is verified by streamed embedded asset hashes and file identity.','No EXE/APK or physical-device build/test.','Six historical npcTalk.test.ts assertions remain stale against the newer twelve-person manuscript; the same failures were reproduced before this update.']};
+fs.writeFileSync(path.join(out,'verification-final.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({bytes,sha256:digest,tests:result.tests,content:result.content,preservedAssets:found.size,changes:changes.map(c=>c.path),addedFiles}));

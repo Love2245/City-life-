@@ -1,6 +1,11 @@
 <!-- v1.20 手机游戏：2048。合成出 2048 即「满分」 -->
 <script lang="ts">
-  let { onPerfect = () => {} }: { onPerfect?: (gameId: string) => void } = $props();
+  import PhoneGameStage from "./PhoneGameStage.svelte";
+  import { onMount } from "svelte";
+  import { miniGameRandom } from "../../../lib/minigameRandom";
+  import { playSound } from "../../../lib/audio";
+  let { onPerfect = () => {}, paused = false }: { onPerfect?: (gameId: string) => void; paused?: boolean } = $props();
+  const random = miniGameRandom();
 
   const SIZE = 4, WIN_TILE = 2048;
   let grid = $state<number[][]>([]);
@@ -21,8 +26,8 @@
       }
     }
     if (empty.length === 0) return;
-    const [r, c] = empty[Math.floor(Math.random() * empty.length)];
-    grid[r][c] = Math.random() < 0.9 ? 2 : 4;
+    const [r, c] = empty[Math.floor(random() * empty.length)];
+    grid[r][c] = random() < 0.9 ? 2 : 4;
   }
 
   function reset(): void {
@@ -32,6 +37,20 @@
     won = false;
     addTile();
     addTile();
+  }
+
+  function onKeydown(event: KeyboardEvent): void {
+    if (paused) return;
+    const directions: Record<string, "up" | "down" | "left" | "right"> = {
+      ArrowUp: "up",
+      ArrowDown: "down",
+      ArrowLeft: "left",
+      ArrowRight: "right",
+    };
+    const direction = directions[event.key];
+    if (!direction) return;
+    event.preventDefault();
+    move(direction);
   }
 
   /** 返回滑动后的行/列结果与得分增量 */
@@ -54,7 +73,7 @@
   }
 
   function move(dir: "up" | "down" | "left" | "right"): void {
-    if (over || won) return;
+    if (paused || over || won) return;
     const before = JSON.stringify(grid);
     let gain = 0;
     const ng = emptyGrid();
@@ -73,6 +92,7 @@
     if (JSON.stringify(ng) === before) return; // 没动
     grid = ng;
     score += gain;
+    if (gain > 0) playSound("coin");
     addTile();
     check();
   }
@@ -80,6 +100,7 @@
   function check(): void {
     if (grid.flat().includes(WIN_TILE)) {
       won = true;
+      playSound("success");
       if (!perfectSent) {
         perfectSent = true;
         onPerfect("2048");
@@ -97,22 +118,19 @@
     }
     over = true;
   }
+
+  onMount(() => reset());
 </script>
 
-<svelte:window onkeydown={(e) => {
-  const k = e.key;
-  if (k === "ArrowUp") move("up");
-  else if (k === "ArrowDown") move("down");
-  else if (k === "ArrowLeft") move("left");
-  else if (k === "ArrowRight") move("right");
-}} />
+<svelte:window onkeydown={onKeydown} />
 
-<div class="g2">
-  <div class="g2-head">
+<div class="g2"><PhoneGameStage title="2048" description="相同数字合并，向2048前进。每次有效移动后会出现一个新数字。">
+ {#snippet hud()}  <div class="g2-head">
     <span>🎯 分数 {score}</span>
-    <button class="g2-btn" onclick={reset}>重新开始</button>
+    <button type="button" class="g2-btn" onclick={reset}>重新开始</button>
   </div>
-  <div class="g2-board">
+{/snippet}
+ {#snippet boardView()}  <div class="g2-board">
     {#each grid as row}
       <div class="g2-row">
         {#each row as v}
@@ -123,83 +141,28 @@
       </div>
     {/each}
   </div>
-  {#if won}
+{/snippet}
+ {#snippet feedback()}  {#if won}
     <div class="g2-msg ok">🎉 合成 2048，满分！</div>
   {:else if over}
     <div class="g2-msg bad">😵 没有空格了，再来一局？</div>
   {:else}
-    <div class="g2-tip dim">方向键 / 下方按钮滑动，合成出 2048 即满分</div>
+    <div class="g2-tip dim">方向键 / 屏幕按钮滑动，合成出 2048 即满分</div>
   {/if}
-  <div class="g2-pad">
-    <button class="g2-btn" onclick={() => move("up")}>↑</button>
+{/snippet}
+ {#snippet controls()}  <div class="g2-pad">
+    <button type="button" class="g2-btn" onclick={() => move("up")}>↑</button>
     <div class="g2-pad-row">
-      <button class="g2-btn" onclick={() => move("left")}>←</button>
-      <button class="g2-btn" onclick={() => move("down")}>↓</button>
-      <button class="g2-btn" onclick={() => move("right")}>→</button>
+      <button type="button" class="g2-btn" onclick={() => move("left")}>←</button>
+      <button type="button" class="g2-btn" onclick={() => move("down")}>↓</button>
+      <button type="button" class="g2-btn" onclick={() => move("right")}>→</button>
     </div>
   </div>
-</div>
+{/snippet}
+</PhoneGameStage></div>
 
 <style>
-  .g2 {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-items: center;
-  }
-  .g2-head {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12.5px;
-    font-weight: 700;
-  }
-  .g2-btn {
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: rgba(255, 209, 102, 0.12);
-    border: 1px solid rgba(255, 209, 102, 0.35);
-    color: var(--accent, #ffd166);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    min-width: 32px;
-    transition: background 0.15s ease, transform 0.15s ease;
-  }
-  .g2-btn:hover {
-    background: rgba(255, 209, 102, 0.24);
-    transform: translateY(-1px);
-  }
-  .g2-board {
-    background: #b78e5e;
-    border-radius: 12px;
-    padding: 6px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
-    max-width: 280px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-  }
-  .g2-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 6px;
-  }
-  .g2-cell {
-    aspect-ratio: 1;
-    background: rgba(255, 255, 255, 0.18);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 800;
-    color: #5a3d1e;
-    transition: transform 0.12s ease, box-shadow 0.2s ease;
-  }
-  .g2-cell.tile-2 { background: #eee4da; }
+.g2{height:100%;min-height:0}.g2-board{display:grid;grid-template-rows:repeat(4,minmax(0,1fr));gap:7px;padding:9px;border:2px solid #b0a07b;border-radius:16px;background:#857654;box-shadow:0 12px 28px #0004}.g2-board .g2-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;min-height:0}.g2-cell{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;border-radius:9px;background:#c0b395;font-size:clamp(18px,10cqw,46px);font-weight:800;color:#4d483e;line-height:1;box-shadow:inset 0 2px #fff2}.g2-msg,.g2-tip{margin:0}  .g2-cell.tile-2 { background: #eee4da; }
   .g2-cell.tile-4 { background: #ede0c8; }
   .g2-cell.tile-8 { background: #f2b179; color: #f9f6f2; }
   .g2-cell.tile-16 { background: #f59563; color: #f9f6f2; }
@@ -208,25 +171,12 @@
   .g2-cell.tile-128 { background: #edcf72; color: #f9f6f2; }
   .g2-cell.tile-256 { background: #edcc61; color: #f9f6f2; }
   .g2-cell.tile-512 { background: #edc850; color: #f9f6f2; }
-  .g2-cell.tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 16px; animation: tile-pop 0.2s ease; }
-  .g2-cell.tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 16px; box-shadow: 0 0 14px rgba(237, 194, 46, 0.7); animation: tile-pop 0.25s ease; }
+  .g2-cell.tile-1024 { background: #edc53f; color: #f9f6f2; font-size:clamp(16px,8cqw,36px); animation: tile-pop 0.2s ease; }
+  .g2-cell.tile-2048 { background: #edc22e; color: #f9f6f2; font-size:clamp(16px,8cqw,36px); box-shadow: 0 0 14px rgba(237, 194, 46, 0.7); animation: tile-pop 0.25s ease; }
   @keyframes tile-pop {
     0% { transform: scale(0.85); }
     60% { transform: scale(1.08); }
     100% { transform: scale(1); }
   }
-  .g2-msg { font-size: 13px; font-weight: 800; }
-  .g2-msg.ok { color: var(--ok, #7bd88f); }
-  .g2-msg.bad { color: var(--danger, #ff6b6b); }
-  .g2-tip { font-size: 11px; text-align: center; }
-  .g2-pad {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .g2-pad-row {
-    display: flex;
-    gap: 6px;
-  }
+
 </style>

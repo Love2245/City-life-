@@ -2,14 +2,16 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import type { GameState } from "../src/game/types";
 import { TAKEOUT_MENU, placeTakeout, claimOrder as claimTakeout } from "../src/game/core/takeout";
-import { SHOP_CATALOG, placeShopOrder, claimOrder as claimShop } from "../src/game/core/shop";
+import { getApp, TAKEOUT_APP_DESCRIPTION } from "../src/game/core/apps";
+import { SHOP_CATALOG, getShopItemPrices, placeShopOrder, claimOrder as claimShop } from "../src/game/core/shop";
 import { canLive, startLive, liveToday } from "../src/game/core/live";
 import { tickForum, postToForum, forumPosts } from "../src/game/core/forum";
 import { tickMoments, momentsPostsOf, createPost } from "../src/game/core/moments";
 import { tickOrders } from "../src/game/core/orders";
 import { allCitizens } from "../src/game/core/citizens";
-import { smsContact, addContact } from "../src/game/core/contacts";
+import { smsContact, addContact, addContactFromNpc } from "../src/game/core/contacts";
 import { gameDay } from "../src/game/core/calendar";
+import { COMMON_MOMENTS, NPC_MOMENTS } from "../src/game/data/npcMoments";
 
 function fresh(): GameState {
   const s = createInitialState();
@@ -20,6 +22,13 @@ function fresh(): GameState {
 }
 
 describe("v1.3 外卖到家", () => {
+  it("统一说明与即时送达、手动领取入包的实际流程一致", () => {
+    expect(getApp("app_takeout")).toBeUndefined();
+    expect(TAKEOUT_APP_DESCRIPTION).toContain("即时送达");
+    expect(TAKEOUT_APP_DESCRIPTION).toContain("付款后可立即领取");
+    expect(TAKEOUT_APP_DESCRIPTION).not.toMatch(/约\s*1\s*小时|跨天到达/);
+  });
+
   it("菜单来自可即食消耗品且非空", () => {
     expect(TAKEOUT_MENU.length).toBeGreaterThan(0);
     expect(TAKEOUT_MENU.every((m) => m.price > 0)).toBe(true);
@@ -33,6 +42,7 @@ describe("v1.3 外卖到家", () => {
     expect(s.player.money).toBe(10000 - item.price);
     expect(s.orders?.length).toBe(1);
     expect(s.orders?.[0].arrived).toBe(true); // eta 0
+    expect(r.text).toContain("即时送达");
   });
 
   it("钱不够下单失败", () => {
@@ -93,41 +103,18 @@ describe("v1.3 网购商城", () => {
   });
 });
 
-describe("v1.3 自媒体直播", () => {
-  it("无笔记本/未安装 App 时不可直播", () => {
+describe("直播暂停开放", () => {
+  it("即使已安装软件与高端电脑也不产生新收益，保留旧收益", () => {
     const s = fresh();
-    expect(canLive(s).ok).toBe(false); // 未装 app_live
-    s.flags["app_live"] = true;
-    expect(canLive(s).ok).toBe(false); // 仍无笔记本
-  });
-
-  it("装 App + 有笔记本可直播，每天限 1 次，给 fame + money", () => {
-    const s = fresh();
-    s.flags["app_live"] = true;
-    s.flags["item_laptop"] = true;
-    expect(canLive(s).ok).toBe(true);
-    const fameBefore = s.player.stats.fame;
-    const moneyBefore = s.player.money;
-    const r = startLive(s);
-    expect(r.ok).toBe(true);
-    expect(s.player.stats.fame).toBeGreaterThan(fameBefore);
-    expect(s.player.money).toBeGreaterThan(moneyBefore);
-    expect(liveToday(s)).toBe(true);
-    // 当天再播被拒
-    const r2 = startLive(s);
-    expect(r2.ok).toBe(false);
-  });
-
-  it("高端笔记本收益系数更高", () => {
-    const low = fresh(); low.flags["app_live"] = true; low.flags["item_laptop"] = true;
-    const high = fresh(); high.flags["app_live"] = true; high.flags["item_laptop_pro"] = true;
-    // 多次采样取均值，避免 rng 偶发
-    let lowSum = 0, highSum = 0;
-    for (let i = 0; i < 30; i++) {
-      const a = fresh(); a.flags["app_live"] = true; a.flags["item_laptop"] = true; startLive(a); lowSum += a.player.stats.fame;
-      const b = fresh(); b.flags["app_live"] = true; b.flags["item_laptop_pro"] = true; startLive(b); highSum += b.player.stats.fame;
-    }
-    expect(highSum / 30).toBeGreaterThan(lowSum / 30);
+    s.flags.app_live = true;
+    s.flags.item_laptop_pro = true;
+    s.live.totalFameGain = 35;
+    const before = JSON.stringify(s.player);
+    expect(canLive(s).ok).toBe(false);
+    expect(startLive(s)).toMatchObject({ ok: false, text: "自媒体直播暂未开放，等待后续开发" });
+    expect(JSON.stringify(s.player)).toBe(before);
+    expect(s.live.totalFameGain).toBe(35);
+    expect(liveToday(s)).toBe(false);
   });
 });
 
@@ -168,13 +155,28 @@ describe("v1.3 网购商城价格（回归：线上应为线下约 9 折，而�
       expect(ratio).toBeLessThan(0.95);
     }
   });
-  it("价格对齐线下实体店（衬衫 800→约 720，名表 10000→约 9000）", () => {
+  it("价格对齐线下实体店（衬衫 199→约 180，名表 10000→约 9000）", () => {
     const shirt = SHOP_CATALOG.find((m) => m.id === "shirt")!;
     const watch = SHOP_CATALOG.find((m) => m.id === "luxury_watch")!;
-    expect(shirt.offline).toBe(800);
-    expect(shirt.price).toBe(720);
+    expect(shirt.offline).toBe(199);
+    expect(shirt.price).toBe(180);
     expect(watch.offline).toBe(10000);
     expect(watch.price).toBe(9000);
+  });
+
+  it("按当前物价倍率缩放展示价与扣款，线上仍约为线下 9 折", () => {
+    const s = fresh();
+    s.economy.priceIndex = 1.25;
+    const prices = getShopItemPrices(s, "shirt")!;
+    expect(prices.offline).toBe(249);
+    expect(prices.price).toBe(225);
+    expect(prices.price / prices.offline).toBeCloseTo(0.9);
+
+    const before = s.player.money;
+    const r = placeShopOrder(s, "shirt");
+    expect(r.ok).toBe(true);
+    expect(s.orders?.[0].price).toBe(prices.price);
+    expect(s.player.money).toBe(before - prices.price);
   });
 });
 
@@ -224,6 +226,16 @@ describe("v1.3b4 朋友圈 vs 论坛严格分家", () => {
     expect(momentsPostsOf(s).some((p) => p.id === fp!.id)).toBe(false);
   });
 
+  it("旧存档里的朋友圈图片占位不再显示，且读取时不改写存档", () => {
+    const s = fresh();
+    const post = createPost(s, { text: "旧动态", category: "daily" });
+    post.image = "【该图片暂时无法查看】";
+
+    const visiblePost = momentsPostsOf(s).find((entry) => entry.id === post.id);
+    expect(visiblePost?.image).toBeUndefined();
+    expect(post.image).toBe("【该图片暂时无法查看】");
+  });
+
   it("tickMoments 仅生成联系人的动态；不混入市民帖", () => {
     const s = fresh();
     // 加一个联系人让其发帖被允许
@@ -234,5 +246,38 @@ describe("v1.3b4 朋友圈 vs 论坛严格分家", () => {
     expect(moments.some((p) => p.author === "self")).toBe(false); // 主角未发帖
     // 随机性：联系人不一定发，但市民帖一定不在 moments 中
     expect(moments.every((p) => p.author === "contact")).toBe(true);
+  });
+});
+
+describe("v1.45 NPC 朋友圈内容与解锁", () => {
+  it("每个 NPC 有10条专属动态，另有20条通用动态，无图片时以纯文字显示", () => {
+    const npcPools = Object.values(NPC_MOMENTS);
+    expect(npcPools).toHaveLength(9);
+    expect(npcPools.every((pool) => pool.length === 10)).toBe(true);
+    expect(COMMON_MOMENTS).toHaveLength(20);
+    expect(npcPools.flat().every((post) => post.image === undefined)).toBe(true);
+  });
+
+  it("高好感联系人按顺序发布专属动态，单条不重复且不生成图片占位", () => {
+    const s = createInitialState(145);
+    expect(addContactFromNpc(s, "npc_lin_xiaoyu")).toBe(true);
+    s.relationships.push({
+      npcId: "npc_lin_xiaoyu",
+      affinity: 70,
+      state: "close_friend",
+      lastInteractionDay: 0,
+    });
+
+    // 专属记录可能已被120条显示上限清出；在整个长时间窗口计数，不能靠重发凑够10条。
+    const published=new Map<string,string>();const templateIds:string[]=[];
+    for (let i = 0; i < 1000; i++) {
+      s.time.day += 1;
+      tickMoments(s, []);
+      for(const post of momentsPostsOf(s).filter(p=>p.npcId==='npc_lin_xiaoyu'&&p.momentSource==='dedicated')){
+        if(!published.has(post.id)){published.set(post.id,post.momentTemplateId!);templateIds.push(post.momentTemplateId!);}
+        expect(post.image).toBeUndefined();
+      }
+    }
+    expect(templateIds).toHaveLength(10);expect(new Set(templateIds).size).toBe(10);
   });
 });

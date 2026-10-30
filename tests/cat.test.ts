@@ -3,9 +3,11 @@ import { createInitialState } from "../src/game/core/state";
 import {
   CATS,
   CAT_PERSONALITIES,
+  MAX_CAT_LEVEL,
   getCatDef,
   allCatDefs,
   computeCatAttrs,
+  gainCatExp,
   randomPersonality,
   adoptCat,
   hasCat,
@@ -53,6 +55,24 @@ describe("v1.4 属性计算", () => {
     expect(bold.def).toBe(Math.round(orange.base.def * 0.95));
   });
 
+  it("等级上限保护属性计算和经验结算", () => {
+    const orange = getCatDef("orange")!;
+    expect(computeCatAttrs(orange, Number.MAX_VALUE, "calm"))
+      .toEqual(computeCatAttrs(orange, MAX_CAT_LEVEL, "calm"));
+
+    const pet = adoptCat(createInitialState(74), "orange")!;
+    pet.level = MAX_CAT_LEVEL - 1;
+    pet.exp = 0;
+    expect(gainCatExp(pet, 1_000_000)).toBe(true);
+    expect(pet.level).toBe(MAX_CAT_LEVEL);
+    expect(pet.exp).toBe(0);
+    expect(Object.values(pet.attrs).every(Number.isFinite)).toBe(true);
+    const cappedAttrs = { ...pet.attrs };
+    expect(gainCatExp(pet, 1_000_000)).toBe(false);
+    expect(pet.level).toBe(MAX_CAT_LEVEL);
+    expect(pet.attrs).toEqual(cappedAttrs);
+  });
+
   it("属性随等级成长（基础 + 成长率 × (等级-1)）", () => {
     const orange = getCatDef("orange")!;
     const lv10 = computeCatAttrs(orange, 10, "calm");
@@ -92,9 +112,11 @@ describe("v1.4 收养与获取", () => {
     expect(s.activePet).toBe(s.pets[0].uid);
   });
 
-  it("v1.32 开局兑换橘猫物品 → applyItem 自动收养并携带", async () => {
+  it("已有长期住房时橘猫物品 → applyItem 收养并携带", async () => {
     const { applyItem } = await import("../src/game/core/items");
     const s = createInitialState(1);
+    s.living.mode = "lease";
+    s.living.lease = { housingId: "rental_apartment", rent: 500, rentGrowthCount: 0 };
     applyItem(s, "cat_orange");
     expect(s.pets).toHaveLength(1);
     expect(s.pets[0].catId).toBe("orange");
@@ -125,6 +147,8 @@ describe("v1.4 收养与获取", () => {
 
   it("达成目标型获取：攒够 50000 元解锁黄金猫（幂等）", () => {
     const s = createInitialState(1);
+    s.living.mode = "lease";
+    s.living.lease = { housingId: "rental_apartment", rent: 500, rentGrowthCount: 0 };
     s.player.money = 60000;
     const pet = checkCatAcquisition(s);
     expect(pet?.catId).toBe("golden");
@@ -136,6 +160,8 @@ describe("v1.4 收养与获取", () => {
 
   it("未达标时不发放黄金猫", () => {
     const s = createInitialState(1);
+    s.living.mode = "lease";
+    s.living.lease = { housingId: "rental_apartment", rent: 500, rentGrowthCount: 0 };
     s.player.money = 10000;
     expect(checkCatAcquisition(s)).toBeNull();
     expect(hasCat(s, "golden")).toBe(false);
@@ -144,6 +170,8 @@ describe("v1.4 收养与获取", () => {
   it("跨天结算触发达成目标型获取（攒够 50000 元 → 黄金猫上门）", async () => {
     const { advanceHours } = await import("../src/game/core/time");
     const s = createInitialState(1);
+    s.living.mode = "lease";
+    s.living.lease = { housingId: "rental_apartment", rent: 500, rentGrowthCount: 0 };
     s.player.money = 60000;
     s.time.hour = 23;
     s.time.minute = 0;

@@ -1,24 +1,34 @@
 #!/usr/bin/env python3
-"""v1.3b3-fix6: 处理 AI 生成的主题过场背景图
+"""v1.42: 处理 AI 生成的主题过场背景图
 - 裁掉底部 5%（马路+水印）
 - 缩放到 1280 宽（保留比例）
-- 转 JPEG 质量 78
-- 生成 base64 字符串并写入 TS 模块（供组件 import，单文件 HTML 内联）
+- 转 WebP 质量 82
+- 输出到 src/assets/transition/themes，供 transitionThemes.ts 以静态 URL 引入
+
+脚本默认以自身所在项目为根目录，也可通过 --base 指定其他 checkout。
 """
-import base64
-import os
+import argparse
+from pathlib import Path
 from PIL import Image
 
-BASE = r"F:\来自E\360MoveData\Users\lijia\Desktop\都市生活\都市生活_v1.3_beta2_源码"
-SRC = os.path.join(BASE, "assets", "transition_bg")
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description="处理过场主题背景并生成兼容资源")
+parser.add_argument(
+    "--base",
+    type=Path,
+    default=PROJECT_ROOT,
+    help="项目根目录（默认根据脚本位置自动推断）",
+)
+args = parser.parse_args()
+BASE = args.base.resolve()
+SRC = BASE / "assets" / "transition_bg"
 
 TARGET_W = 1280
-JPEG_QUALITY = 78
+WEBP_QUALITY = 82
 THEMES = ["city", "industry", "rural", "suburb"]
 
-out = {}
 for t in THEMES:
-    src = os.path.join(SRC, f"{t}.png")
+    src = SRC / f"{t}.png"
     im = Image.open(src).convert("RGB")
     w, h = im.size
     crop_h = int(h * 0.95)  # 裁掉底部 5%（马路+水印）
@@ -26,25 +36,10 @@ for t in THEMES:
     if w > TARGET_W:
         ratio = TARGET_W / w
         im = im.resize((TARGET_W, int(crop_h * ratio)), Image.LANCZOS)
-    out_path = os.path.join(SRC, f"{t}.jpg")
-    im.save(out_path, "JPEG", quality=JPEG_QUALITY, optimize=True)
-    jpg_size = os.path.getsize(out_path)
-    with open(out_path, "rb") as f:
-        b64 = base64.b64encode(f.read()).decode("ascii")
-    out[t] = (jpg_size, len(b64), im.size, b64)
-    print(f"{t}: jpg={jpg_size//1024}KB b64={len(b64)//1024}KB dims={im.size}")
+    out_dir = BASE / "src" / "assets" / "transition" / "themes"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{t}.webp"
+    im.save(out_path, "WEBP", quality=WEBP_QUALITY, method=6)
+    print(f"{t}: webp={out_path.stat().st_size//1024}KB dims={im.size}")
 
-# 写 TS 文件
-lines = [
-    "// v1.3b3-fix6: AI 生成的主题过场背景（base64 内联到单文件 HTML）",
-    "// 每张约 100-300KB JPEG，3-4% base64 增量体积，可接受",
-    "/* eslint-disable */",
-    "export const transitionThemeImages = {",
-]
-for t in THEMES:
-    lines.append(f"  {t}: 'data:image/jpeg;base64,{out[t][3]}',")
-lines.append("};")
-out_ts = os.path.join(BASE, "src", "game", "data", "transitionThemes.ts")
-with open(out_ts, "w", encoding="utf-8") as f:
-    f.write("\n".join(lines))
-print(f"wrote {out_ts} ({os.path.getsize(out_ts)//1024} KB)")
+print(f"wrote {BASE / 'src' / 'assets' / 'transition' / 'themes'}")

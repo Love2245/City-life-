@@ -19,6 +19,7 @@ import { signupTournament } from "../src/game/core/tournament";
 function gotoAmusementPark(): void {
   gameState.time.hour = 12;
   gameState.player.money = 5000;
+  gameState.flags.item_car = true;
   moveTo(gameState, "suburb");
   moveTo(gameState, "suburban_edge");
   const r = moveTo(gameState, "amusement_park");
@@ -81,6 +82,7 @@ describe("v1.33-hotfix 游乐场进入", () => {
     const s = createInitialState(7);
     s.time.hour = 14;
     s.player.money = 5000;
+    s.flags.item_car = true;
     moveTo(s, "suburb");
     moveTo(s, "suburban_edge");
     moveTo(s, "amusement_park");
@@ -95,6 +97,7 @@ describe("v1.33-hotfix 游乐场进入", () => {
     const s = createInitialState(7);
     s.time = { day: 2, month: 8, year: 2026, hour: 14, minute: 0, stayedUp: false };
     s.player.money = 5000;
+    s.flags.item_car = true;
     moveTo(s, "suburb");
     moveTo(s, "suburban_edge");
     moveTo(s, "amusement_park");

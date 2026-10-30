@@ -1,0 +1,395 @@
+{
+  "player": {
+    "heightCm": 176,
+    "head": {
+      "centerX": 495,
+      "top": 24,
+      "height": 214
+    },
+    "faceSpan": 90
+  },
+  "npc_lin_xiaoyu": {
+    "heightCm": 166,
+    "art": {
+      "default": [
+        180,
+        16,
+        169
+      ],
+      "summer": [
+        180,
+        16,
+        180
+      ],
+      "rain": [
+        180,
+        16,
+        159
+      ],
+      "winter": [
+        180,
+        14,
+        157
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 64,
+        "summer": 67,
+        "rain": 60,
+        "winter": 60
+      },
+      "concealed": {}
+    }
+  },
+  "npc_zhao_gang": {
+    "heightCm": 178,
+    "art": {
+      "default": [
+        170,
+        26,
+        133
+      ],
+      "summer": [
+        170,
+        14,
+        138
+      ],
+      "rain": [
+        170,
+        15,
+        128
+      ],
+      "winter": [
+        170,
+        13,
+        139
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 63,
+        "summer": 64,
+        "rain": 60,
+        "winter": 64
+      },
+      "concealed": {}
+    }
+  },
+  "npc_chen_jie": {
+    "heightCm": 162,
+    "art": {
+      "default": [
+        180,
+        22,
+        157
+      ],
+      "winter": [
+        180,
+        27,
+        140
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 73,
+        "winter": 65
+      },
+      "concealed": {}
+    }
+  },
+  "npc_wang_lei": {
+    "heightCm": 170,
+    "art": {
+      "default": [
+        174,
+        26,
+        120
+      ],
+      "summer": [
+        174,
+        40,
+        152
+      ],
+      "rain": [
+        174,
+        27,
+        125
+      ],
+      "winter": [
+        174,
+        28,
+        115
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 62,
+        "summer": 76,
+        "rain": 62,
+        "winter": 60
+      },
+      "concealed": {}
+    }
+  },
+  "npc_netbar_boss": {
+    "heightCm": 180,
+    "art": {
+      "default": [
+        170,
+        17,
+        158
+      ],
+      "winter": [
+        170,
+        16,
+        129
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 70,
+        "winter": 57
+      },
+      "concealed": {}
+    }
+  },
+  "npc_librarian": {
+    "heightCm": 164,
+    "art": {
+      "default": [
+        177,
+        24,
+        146
+      ],
+      "summer": [
+        177,
+        19,
+        165
+      ],
+      "rain": [
+        177,
+        17,
+        146
+      ],
+      "winter": [
+        177,
+        17,
+        145
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 63,
+        "summer": 71,
+        "rain": 62,
+        "winter": 63
+      },
+      "concealed": {}
+    }
+  },
+  "npc_flower_market_owner": {
+    "heightCm": 167,
+    "art": {
+      "default": [
+        180,
+        34,
+        168
+      ],
+      "winter": [
+        180,
+        20,
+        147
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 68,
+        "winter": 61
+      },
+      "concealed": {}
+    }
+  },
+  "npc_snack_street_vendor": {
+    "heightCm": 172,
+    "art": {
+      "default": [
+        181,
+        27,
+        131
+      ],
+      "winter": [
+        181,
+        17,
+        134
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 64,
+        "winter": 66
+      },
+      "concealed": {}
+    }
+  },
+  "npc_suburb_farmer": {
+    "heightCm": 169,
+    "art": {
+      "default": [
+        171,
+        56,
+        162
+      ],
+      "summer": [
+        171,
+        10,
+        145
+      ],
+      "rain": [
+        171,
+        25,
+        182
+      ],
+      "winter": [
+        171,
+        49,
+        159
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 71,
+        "summer": 68,
+        "rain": 79,
+        "winter": 69
+      },
+      "concealed": {}
+    }
+  },
+  "npc_fan_kejie": {
+    "heightCm": 184,
+    "art": {
+      "default": [
+        174,
+        8,
+        154
+      ],
+      "summer": [
+        170,
+        12,
+        148
+      ],
+      "rain": [
+        174,
+        7,
+        154
+      ],
+      "winter": [
+        175,
+        6,
+        154
+      ],
+      "autumn": [
+        172,
+        8,
+        152
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 62,
+        "summer": 64,
+        "rain": 65,
+        "winter": 64,
+        "autumn": 64
+      },
+      "concealed": {
+        "default": 86
+      }
+    }
+  },
+  "npc_jack_fanma": {
+    "heightCm": 190,
+    "art": {
+      "default": [
+        178,
+        15,
+        128
+      ],
+      "summer": [
+        201,
+        15,
+        129
+      ],
+      "rain": [
+        201,
+        15,
+        129
+      ],
+      "winter": [
+        201,
+        15,
+        125
+      ],
+      "autumn": [
+        201,
+        15,
+        129
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 60,
+        "summer": 62,
+        "rain": 62,
+        "winter": 60,
+        "autumn": 62
+      },
+      "concealed": {
+        "default": 105
+      }
+    }
+  },
+  "npc_fan_kexi": {
+    "heightCm": 167,
+    "art": {
+      "default": [
+        184,
+        19,
+        129
+      ],
+      "summer": [
+        183,
+        15,
+        180
+      ],
+      "rain": [
+        210,
+        14,
+        150
+      ],
+      "winter": [
+        210,
+        14,
+        150
+      ],
+      "service": [
+        209,
+        14,
+        150
+      ]
+    },
+    "faceSpan": {
+      "art": {
+        "default": 60,
+        "summer": 72,
+        "rain": 61,
+        "winter": 61,
+        "service": 61
+      },
+      "concealed": {
+        "default": 83
+      }
+    }
+  }
+}

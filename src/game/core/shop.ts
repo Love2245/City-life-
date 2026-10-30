@@ -6,6 +6,7 @@
  */
 import type { GameState } from "../types";
 import { getItem } from "./items";
+import { scaleCost } from "./difficulty";
 import { placeOrder, claimOrder, activeOrders, arrivedOrders } from "./orders";
 
 export interface ShopItem {
@@ -21,14 +22,14 @@ export interface ShopItem {
   cat: "服装" | "电子" | "家具" | "奢侈品";
 }
 
-/** 网购目录：价目对齐线下实体店（shirt 800 / suit 5000 / 羊绒大衣 3000 / 名表 10000 / 名牌包 15000 / 手机 800~5000 / 床品 1500~4000 / 灯 600 / 绿植 1200），线上统一 9 折 */
+/** 网购目录：价目对齐线下实体店（衬衫 199 / 西装 1299 / 羊绒大衣 2999 / 名表 10000 / 名牌包 15000 / 手机 800~5000 / 床品 1500~4000 / 灯 600 / 绿植 1200），线上统一约 9 折 */
 function onlinePrice(offline: number): number {
   return Math.round((offline * 0.9) / 10) * 10;
 }
 
 export const SHOP_CATALOG: ShopItem[] = [
-  { id: "shirt", name: "衬衫", icon: "👔", desc: "干净得体，魅力 +2（可装备）", offline: 800, price: onlinePrice(800), cat: "服装" },
-  { id: "suit", name: "西装", icon: "🤵", desc: "笔挺西装，魅力 +5（可装备）", offline: 5000, price: onlinePrice(5000), cat: "服装" },
+  { id: "shirt", name: "衬衫", icon: "👔", desc: "干净得体，魅力 +2（可装备）", offline: 199, price: onlinePrice(199), cat: "服装" },
+  { id: "suit", name: "西装", icon: "🤵", desc: "笔挺西装，魅力 +5（可装备）", offline: 1299, price: onlinePrice(1299), cat: "服装" },
   { id: "phone_rice", name: "大米手机", icon: "📱", desc: "实惠智能机，通讯更顺手", offline: 800, price: onlinePrice(800), cat: "电子" },
   { id: "phone_flower", name: "花朵手机", icon: "🌸", desc: "高颜值手机，颜值党的选择", offline: 2000, price: onlinePrice(2000), cat: "电子" },
   { id: "phone_fruit", name: "水果手机", icon: "🍎", desc: "旗舰手机，面子与里子兼得", offline: 5000, price: onlinePrice(5000), cat: "电子" },
@@ -36,10 +37,20 @@ export const SHOP_CATALOG: ShopItem[] = [
   { id: "bed_premium", name: "梦幻套装", icon: "✨", desc: "顶级寝具，每晚好梦（可装备）", offline: 4000, price: onlinePrice(4000), cat: "家具" },
   { id: "lamp", name: "暖光灯", icon: "💡", desc: "温馨氛围，心情 +2（家具）", offline: 600, price: onlinePrice(600), cat: "家具" },
   { id: "plant", name: "绿植盆栽", icon: "🪴", desc: "一抹绿意，心情 +3（家具）", offline: 1200, price: onlinePrice(1200), cat: "家具" },
-  { id: "luxury_coat", name: "羊绒大衣", icon: "🧥", desc: "纯羊绒，气质拉满（奢侈品）", offline: 3000, price: onlinePrice(3000), cat: "奢侈品" },
+  { id: "luxury_coat", name: "羊绒大衣", icon: "🧥", desc: "纯羊绒，气质拉满（奢侈品）", offline: 2999, price: onlinePrice(2999), cat: "奢侈品" },
   { id: "luxury_watch", name: "名表", icon: "⌚", desc: "腕间品味，fame +3（奢侈品）", offline: 10000, price: onlinePrice(10000), cat: "奢侈品" },
   { id: "luxury_bag", name: "名牌包", icon: "👜", desc: "出门必备，fame +4（奢侈品）", offline: 15000, price: onlinePrice(15000), cat: "奢侈品" },
 ];
+
+/** 当前物价下的线下参考价与网购价；UI 展示和实际扣款共用同一计算。 */
+export function getShopItemPrices(state: GameState, itemId: string): Pick<ShopItem, "offline" | "price"> | undefined {
+  const item = SHOP_CATALOG.find((candidate) => candidate.id === itemId);
+  if (!item) return undefined;
+  return {
+    offline: scaleCost(state, item.offline),
+    price: scaleCost(state, item.price),
+  };
+}
 
 /** 下单网购 */
 export function placeShopOrder(state: GameState, itemId: string): { ok: boolean; text: string } {
@@ -47,7 +58,9 @@ export function placeShopOrder(state: GameState, itemId: string): { ok: boolean;
   if (!m) return { ok: false, text: "商城没有这件商品" };
   // 防御：万一物品数据缺失
   if (!getItem(itemId)) return { ok: false, text: "商品数据异常" };
-  return placeOrder(state, { kind: "shop", itemId, price: m.price, etaDays: 3 });
+  const prices = getShopItemPrices(state, itemId);
+  if (!prices) return { ok: false, text: "商城没有这件商品" };
+  return placeOrder(state, { kind: "shop", itemId, price: prices.price, etaDays: 3 });
 }
 
 export { claimOrder, activeOrders, arrivedOrders };

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { initWeekly, recordMoney, recordInteraction, recordJob, weeklySettlement } from "../src/game/core/weekly";
-import { sleep } from "../src/game/core/time";
+import { advanceHours, sleep } from "../src/game/core/time";
 import { startStory } from "../src/game/core/story";
 import { applyNewGameSetup } from "../src/game/core/profile";
 import { STORY_DEFAULT_ALLOCATION } from "../src/game/core/story";
@@ -76,7 +76,7 @@ describe("v1.10 周记统计", () => {
     expect(s.weekly.report!.earned).toBe(200);
   });
 
-  it("v1.215 周日多次入睡：编程周入按周只发一次（防刷钱）", () => {
+  it("周日重复结算不重复付款，且编程版税逐周衰减", () => {
     const s = stateOnWeekday(6); // 周日
     s.career.passiveIncome = 200;
     const m0 = s.player.money;
@@ -86,10 +86,12 @@ describe("v1.10 周记统计", () => {
     // 同周日再次结算（如再睡一觉）不再重复发放
     weeklySettlement(s);
     expect(s.player.money).toBe(m1);
-    // 下周日（day+7，weekday 仍为 6）应恢复正常发放
+    // 版税按周衰减，不能永久维持同一笔收入。
+    expect(s.career.passiveIncome).toBe(180);
     s.time.day += 7;
     weeklySettlement(s);
-    expect(s.player.money).toBe(m1 + 200);
+    expect(s.player.money).toBe(m1 + 180);
+    expect(s.career.passiveIncome).toBe(162);
   });
 
   it("非周日结算不动累计", () => {
@@ -118,5 +120,25 @@ describe("v1.10 周记统计", () => {
     sleep(s, 8);
     expect(s.weekly.pending).toBe(true);
     expect(s.weekly.report).not.toBeNull();
+  });
+
+  it("周日熬夜跨到周一时仍按周日结算版税与周报，随后睡觉不重复发放", () => {
+    const s = stateOnWeekday(6);
+    s.time.hour = 22;
+    s.career.passiveIncome = 850;
+    const moneyBefore = s.player.money;
+    recordMoney(s, 125);
+    recordJob(s);
+
+    advanceHours(s, 3); // 周日 22:00 → 周一 01:00，醒着跨日
+
+    expect(s.time.stayedUp).toBe(true);
+    expect(s.player.money).toBe(moneyBefore + 850);
+    expect(s.weekly.pending).toBe(true);
+    expect(s.weekly.report).toMatchObject({ earned: 975, jobsDone: 1 });
+
+    sleep(s, 8);
+    expect(s.player.money).toBe(moneyBefore + 850);
+    expect(s.weekly.report).toMatchObject({ earned: 975, jobsDone: 1 });
   });
 });

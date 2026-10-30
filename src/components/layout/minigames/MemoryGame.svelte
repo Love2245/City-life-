@@ -4,36 +4,44 @@
    * 键盘：数字键 1-8 依次翻开对应卡牌。
    */
   import { onMount } from "svelte";
+  import { miniGameRandom } from "../../../lib/minigameRandom";
+  import { playSound } from "../../../lib/audio";
   import type { MemoryCfg } from "../../../game/core/minigame";
 
-  let { cfg, onFinish }: { cfg: MemoryCfg; onFinish: (ratio: number) => void } = $props();
+  let { cfg, onFinish, paused = false }: { cfg: MemoryCfg; onFinish: (ratio: number) => void; paused?: boolean } = $props();
+  const random = miniGameRandom();
 
   const PAIRS = 4;
-  const icons = cfg.icons.slice(0, PAIRS);
-  const showMs = cfg.showMs ?? 3500;
+  const DEFAULT_ICONS = ["🌙", "🌻", "🍀", "🎈"];
+  const icons = $derived(
+    Array.from({ length: PAIRS }, (_, i) => {
+      const icon = Array.isArray(cfg?.icons) ? cfg.icons[i] : undefined;
+      return typeof icon === "string" && icon.length > 0 ? icon : DEFAULT_ICONS[i];
+    }),
+  );
+  const showMs = $derived(cfg.showMs ?? 3500);
   /** v1.3b2：全局限时（秒）。0 = 不限时（旧行为，配完才结束） */
-  const timeLimit = cfg.timeLimit ?? 0;
+  const timeLimit = $derived(cfg.timeLimit ?? 0);
 
   function shuffled<T>(arr: T[]): T[] {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(random() * (i + 1));
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
   }
 
-  let deck = $state(
-    shuffled([...icons, ...icons].map((icon, i) => ({ icon, uid: i }))).map((c, i) => ({ ...c, idx: i })),
-  );
+  let deck = $state<Array<{ icon: string; uid: number; idx: number }>>([]);
   let flipped = $state<number[]>([]);
   let matchedIdx = $state<number[]>([]);
   let tries = $state(0);
   let memorizing = $state(true);
   let flash = $state(false); // 配错闪烁
   let done = $state(false);
-  let timeLeft = $state(timeLimit);
+  let timeLeft = $state(0);
   let clockId: ReturnType<typeof setInterval> | null = null;
+  let flipResetTimer: ReturnType<typeof setTimeout> | undefined;
 
   /** 时间到：按已配对进度折算得分（每对 1/PAIRS），并扣除失误 */
   function timeUp(): void {
@@ -48,10 +56,13 @@
   }
 
   onMount(() => {
+    deck = shuffled([...icons, ...icons].map((icon, i) => ({ icon, uid: i }))).map((c, i) => ({ ...c, idx: i }));
+    timeLeft = timeLimit;
     const t = setTimeout(() => (memorizing = false), showMs);
     if (timeLimit > 0) {
       clockId = setInterval(() => {
-        if (done) return;
+        // 最小化/暂停期间倒计时必须停：否则玩家看不见的时候时间被耗尽，回来即判负。
+        if (done || paused) return;
         timeLeft--;
         if (timeLeft <= 0) timeUp();
       }, 1000);
@@ -59,6 +70,7 @@
     return () => {
       clearTimeout(t);
       if (clockId) clearInterval(clockId);
+      clearTimeout(flipResetTimer);
     };
   });
 
@@ -70,6 +82,7 @@
       if (deck[a].icon === deck[b].icon) {
         matchedIdx = [...matchedIdx, a, b];
         flipped = [];
+        playSound("success");
         if (matchedIdx.length === deck.length) {
           done = true;
           if (clockId) {
@@ -81,7 +94,9 @@
       } else {
         tries++;
         flash = true;
-        setTimeout(() => {
+        playSound("error");
+        clearTimeout(flipResetTimer);
+        flipResetTimer = setTimeout(() => {
           flipped = [];
           flash = false;
         }, 700);
@@ -109,10 +124,12 @@
     </p>
   {/if}
   <div class="mem-grid" class:flash>
-    {#each deck as card, i}
+    {#each deck as card, i (card.uid)}
       <button
+        type="button"
         class="mem-card"
         class:up={memorizing || flipped.includes(i) || matchedIdx.includes(i)}
+        aria-label={memorizing || flipped.includes(i) || matchedIdx.includes(i) ? `卡牌 ${i + 1}，${card.icon}` : `第 ${i + 1} 张卡牌`}
         onclick={() => flip(i)}
       >
         {memorizing || flipped.includes(i) || matchedIdx.includes(i) ? card.icon : "❓"}

@@ -1,2754 +1,4948 @@
 {
- "difficulty": 0.965,
- "games": {
-  "job_factory_line": {
-   "type": "factory",
-   "title": "流水线装配",
-   "icon": "🏭",
-   "desc": "电子厂流水线：按工单顺序从传送带抓取对应元件组装，错抓/漏抓目标扣血",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "productsToWin": 6,
-   "spawnMs": 850,
-   "recipeMin": 3,
-   "recipeMax": 4,
-   "targetWeight": 0.5,
-   "parts": [
-    {
-     "id": "resistor",
-     "name": "电阻",
-     "icon": "⚡"
+  "difficulty": 0.965,
+  "games": {
+    "steel_shift": {
+      "type": "factory",
+      "workshop": "steel",
+      "title": "钢炉辅助班",
+      "icon": "🔥",
+      "desc": "钢坯轧制 → 四点切割 → 右拖出货，按工序完成一班钢材加工",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "productsToWin": 5,
+      "lives": 3,
+      "spawnMs": 1100,
+      "recipeMin": 4,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "steel_billet",
+          "name": "钢坯",
+          "icon": "🧱"
+        },
+        {
+          "id": "steel_slab",
+          "name": "板坯",
+          "icon": "⬛"
+        }
+      ]
     },
-    {
-     "id": "capacitor",
-     "name": "电容",
-     "icon": "🔵"
+    "aluminum_recycle_shift": {
+      "type": "factory",
+      "workshop": "aluminum",
+      "title": "铝材回收班",
+      "icon": "🪨",
+      "desc": "铝料压制 → 四段修边 → 右拖码放，整理回收铝材并完成加工",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "productsToWin": 5,
+      "lives": 3,
+      "spawnMs": 1100,
+      "recipeMin": 4,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "aluminum_scrap",
+          "name": "边角铝料",
+          "icon": "🪨"
+        },
+        {
+          "id": "aluminum_plate",
+          "name": "铝板料",
+          "icon": "▰"
+        }
+      ]
     },
-    {
-     "id": "chip",
-     "name": "芯片",
-     "icon": "💾"
+    "glass_quality_shift": {
+      "type": "factory",
+      "workshop": "glass",
+      "title": "玻璃质检班",
+      "icon": "🪟",
+      "desc": "玻璃灯检 → 气泡、划痕、裂纹、厚度四区检查 → 右拖合格出货",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "productsToWin": 5,
+      "lives": 3,
+      "spawnMs": 1100,
+      "recipeMin": 4,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "glass_sheet",
+          "name": "透明玻璃",
+          "icon": "🪟"
+        },
+        {
+          "id": "glass_tinted",
+          "name": "有色玻璃",
+          "icon": "🔷"
+        }
+      ]
     },
-    {
-     "id": "pcb",
-     "name": "PCB板",
-     "icon": "📟"
+    "job_factory_line": {
+      "type": "factory",
+      "title": "流水线装配",
+      "icon": "🏭",
+      "desc": "电子厂工位：取板入位、点击完成四点自动焊接，再右滑交付成品",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "productsToWin": 6,
+      "spawnMs": 850,
+      "recipeMin": 3,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "resistor",
+          "name": "电阻",
+          "icon": "⚡"
+        },
+        {
+          "id": "capacitor",
+          "name": "电容",
+          "icon": "🔵"
+        },
+        {
+          "id": "chip",
+          "name": "芯片",
+          "icon": "💾"
+        },
+        {
+          "id": "pcb",
+          "name": "PCB板",
+          "icon": "📟"
+        },
+        {
+          "id": "battery",
+          "name": "电池",
+          "icon": "🔋"
+        },
+        {
+          "id": "led",
+          "name": "LED灯",
+          "icon": "💡"
+        },
+        {
+          "id": "wire",
+          "name": "排线",
+          "icon": "🔌"
+        },
+        {
+          "id": "speaker",
+          "name": "喇叭",
+          "icon": "🔊"
+        }
+      ],
+      "timeLimit": 30
     },
-    {
-     "id": "battery",
-     "name": "电池",
-     "icon": "🔋"
+    "job_sorting": {
+      "type": "factory",
+      "title": "快递分拣",
+      "icon": "📦",
+      "desc": "物流工位：包裹扫码入位、核对四项标签，再右滑归库",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "productsToWin": 6,
+      "spawnMs": 850,
+      "recipeMin": 3,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "normal",
+          "name": "普通件",
+          "icon": "📦"
+        },
+        {
+          "id": "cold",
+          "name": "冷链箱",
+          "icon": "❄️"
+        },
+        {
+          "id": "valuable",
+          "name": "贵重件",
+          "icon": "💎"
+        },
+        {
+          "id": "fragile",
+          "name": "易碎件",
+          "icon": "🥀"
+        },
+        {
+          "id": "file",
+          "name": "文件袋",
+          "icon": "📨"
+        },
+        {
+          "id": "bulk",
+          "name": "大件",
+          "icon": "📬"
+        }
+      ],
+      "timeLimit": 30
     },
-    {
-     "id": "led",
-     "name": "LED灯",
-     "icon": "💡"
+    "job_convenience_day": {
+      "type": "checkout",
+      "title": "收银找零",
+      "icon": "🏪",
+      "desc": "日班收银：把顾客商品逐个扫码，算准应收，按付款输入正确找零",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "customers": 4,
+      "patienceMs": 1.2,
+      "minBasket": 3,
+      "maxBasket": 5,
+      "notes": [
+        1,
+        5,
+        10,
+        20,
+        50,
+        100
+      ],
+      "items": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 2
+        },
+        {
+          "id": "cola",
+          "name": "可乐",
+          "icon": "🥤",
+          "price": 3.5
+        },
+        {
+          "id": "bread",
+          "name": "面包",
+          "icon": "🍞",
+          "price": 5
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 4.5
+        },
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🥔",
+          "price": 6
+        },
+        {
+          "id": "choco",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 8.5
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛",
+          "price": 5.5
+        },
+        {
+          "id": "gum",
+          "name": "口香糖",
+          "icon": "🍬",
+          "price": 2.5
+        },
+        {
+          "id": "riceball",
+          "name": "饭团",
+          "icon": "🍙",
+          "price": 4
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "☕",
+          "price": 7
+        },
+        {
+          "id": "icecream",
+          "name": "冰淇淋",
+          "icon": "🍦",
+          "price": 5
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭",
+          "price": 3
+        }
+      ],
+      "timeLimit": 30
     },
-    {
-     "id": "wire",
-     "name": "排线",
-     "icon": "🔌"
+    "job_convenience_clerk": {
+      "type": "checkout",
+      "title": "便利店收银",
+      "icon": "🏪",
+      "desc": "正式店员上岗：扫码计价、收钱找零一气呵成，耐心掉光顾客会投诉",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "customers": 4,
+      "patienceMs": 1,
+      "minBasket": 3,
+      "maxBasket": 5,
+      "notes": [
+        1,
+        5,
+        10,
+        20,
+        50,
+        100
+      ],
+      "items": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 2
+        },
+        {
+          "id": "cola",
+          "name": "可乐",
+          "icon": "🥤",
+          "price": 3.5
+        },
+        {
+          "id": "bread",
+          "name": "面包",
+          "icon": "🍞",
+          "price": 5
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 4.5
+        },
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🥔",
+          "price": 6
+        },
+        {
+          "id": "choco",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 8.5
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛",
+          "price": 5.5
+        },
+        {
+          "id": "gum",
+          "name": "口香糖",
+          "icon": "🍬",
+          "price": 2.5
+        },
+        {
+          "id": "riceball",
+          "name": "饭团",
+          "icon": "🍙",
+          "price": 4
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "☕",
+          "price": 7
+        },
+        {
+          "id": "icecream",
+          "name": "冰淇淋",
+          "icon": "🍦",
+          "price": 5
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭",
+          "price": 3
+        }
+      ],
+      "timeLimit": 30
     },
-    {
-     "id": "speaker",
-     "name": "喇叭",
-     "icon": "🔊"
+    "job_cafe_staff": {
+      "type": "restaurant",
+      "title": "咖啡师出杯",
+      "icon": "☕",
+      "desc": "备齐原料后开始萃取或泡茶，在金色区间停止，完成拉花或出杯，再配齐小食交付。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "espresso",
+          "name": "浓缩",
+          "icon": "🫘"
+        },
+        {
+          "id": "hot_water",
+          "name": "热水",
+          "icon": "💧"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "foam",
+          "name": "奶泡",
+          "icon": "☁️"
+        },
+        {
+          "id": "caramel",
+          "name": "焦糖",
+          "icon": "🍯"
+        },
+        {
+          "id": "choco",
+          "name": "巧克力",
+          "icon": "🍫"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        },
+        {
+          "id": "tea",
+          "name": "茶汤",
+          "icon": "🍵"
+        }
+      ],
+      "sides": [
+        {
+          "id": "croissant",
+          "name": "可颂",
+          "icon": "🥐",
+          "price": 12
+        },
+        {
+          "id": "cake",
+          "name": "芝士蛋糕",
+          "icon": "🍰",
+          "price": 15
+        },
+        {
+          "id": "cookie",
+          "name": "曲奇",
+          "icon": "🍪",
+          "price": 8
+        }
+      ],
+      "drinks": [
+        {
+          "id": "juice",
+          "name": "鲜榨果汁",
+          "icon": "🧃",
+          "price": 16
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 10,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "latte",
+          "name": "拿铁",
+          "price": 22,
+          "recipe": [
+            "espresso",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "americano",
+          "name": "美式",
+          "price": 18,
+          "recipe": [
+            "espresso",
+            "hot_water"
+          ]
+        },
+        {
+          "id": "cappuccino",
+          "name": "卡布奇诺",
+          "price": 24,
+          "recipe": [
+            "espresso",
+            "foam",
+            "milk"
+          ]
+        },
+        {
+          "id": "caramel_macchiato",
+          "name": "焦糖玛奇朵",
+          "price": 26,
+          "recipe": [
+            "espresso",
+            "caramel",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "mocha",
+          "name": "摩卡",
+          "price": 28,
+          "recipe": [
+            "espresso",
+            "choco",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "iced_tea",
+          "name": "冰红茶",
+          "price": 14,
+          "recipe": [
+            "tea",
+            "ice"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "商务客",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 1
+        },
+        {
+          "name": "学生",
+          "emoji": "🧑‍🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "闺蜜",
+          "emoji": "👯",
+          "patience": 34,
+          "tip": 0.9
+        },
+        {
+          "name": "加班族",
+          "emoji": "🥱",
+          "patience": 22,
+          "tip": 1.1
+        },
+        {
+          "name": "游客",
+          "emoji": "📷",
+          "patience": 32,
+          "tip": 0.8
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_market_cleaner": {
+      "type": "whack",
+      "title": "市场大扫除",
+      "icon": "🧹",
+      "desc": "垃圾从摊位间冒出来，快点清理；别碰摊主的商品",
+      "targets": 28,
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "goodLabel": "垃圾",
+      "goodIcon": "🗑️",
+      "badLabel": "商品",
+      "badIcon": "🍎"
+    },
+    "job_delivery": {
+      "type": "delivery",
+      "title": "外卖配送",
+      "icon": "🛵",
+      "desc": "电动车街区跑单：自由驾驶取餐送餐，可同时接 1–6 单，碰撞会降低餐品品质",
+      "perfectBonusRate": 0.05,
+      "mode": "food",
+      "timeLimit": 90,
+      "targetOrders": 6,
+      "payPerOrder": 22,
+      "maxActive": 6,
+      "pickups": [
+        {
+          "id": "r1",
+          "name": "禾风食堂",
+          "x": 262,
+          "y": 48,
+          "door": {
+            "x": 262,
+            "y": 125
+          },
+          "icon": "🍱",
+          "color": "#f4784d"
+        },
+        {
+          "id": "r2",
+          "name": "晚风小馆",
+          "x": 365,
+          "y": 224,
+          "door": {
+            "x": 440,
+            "y": 245
+          },
+          "icon": "🍜",
+          "color": "#e95e68"
+        },
+        {
+          "id": "r3",
+          "name": "山野咖喱",
+          "x": 860,
+          "y": 420,
+          "door": {
+            "x": 860,
+            "y": 505
+          },
+          "icon": "🍛",
+          "color": "#f29d43"
+        }
+      ],
+      "drops": [
+        {
+          "id": "h1",
+          "name": "枫林公寓 A",
+          "x": 575,
+          "y": 54,
+          "door": {
+            "x": 575,
+            "y": 125
+          },
+          "icon": "🏠",
+          "color": "#588cc9"
+        },
+        {
+          "id": "h2",
+          "name": "晴空公寓 B",
+          "x": 860,
+          "y": 228,
+          "door": {
+            "x": 750,
+            "y": 315
+          },
+          "icon": "🏠",
+          "color": "#836cc7"
+        },
+        {
+          "id": "h3",
+          "name": "云岸公寓 C",
+          "x": 265,
+          "y": 420,
+          "door": {
+            "x": 265,
+            "y": 505
+          },
+          "icon": "🏠",
+          "color": "#4f9f91"
+        },
+        {
+          "id": "h4",
+          "name": "晚霞公寓 D",
+          "x": 585,
+          "y": 420,
+          "door": {
+            "x": 585,
+            "y": 505
+          },
+          "icon": "🏠",
+          "color": "#cf7470"
+        }
+      ]
+    },
+    "job_express": {
+      "type": "delivery",
+      "title": "快递派送",
+      "icon": "🚚",
+      "desc": "三轮车批量派送：同一仓库一次取三件，逐一送达后回仓库领取下一批",
+      "perfectBonusRate": 0.05,
+      "mode": "parcel",
+      "timeLimit": 90,
+      "targetOrders": 6,
+      "payPerOrder": 18,
+      "maxActive": 3,
+      "pickups": [
+        {
+          "id": "w1",
+          "name": "城东驿站",
+          "x": 262,
+          "y": 48,
+          "door": {
+            "x": 262,
+            "y": 125
+          },
+          "icon": "📦",
+          "color": "#4a7fd0"
+        },
+        {
+          "id": "w2",
+          "name": "中转分拣仓",
+          "x": 365,
+          "y": 224,
+          "door": {
+            "x": 440,
+            "y": 245
+          },
+          "icon": "🏭",
+          "color": "#5a6ec4"
+        },
+        {
+          "id": "w3",
+          "name": "前置小仓",
+          "x": 860,
+          "y": 420,
+          "door": {
+            "x": 860,
+            "y": 505
+          },
+          "icon": "🚚",
+          "color": "#3f8fbf"
+        }
+      ],
+      "drops": [
+        {
+          "id": "d1",
+          "name": "云顶写字楼",
+          "x": 575,
+          "y": 54,
+          "door": {
+            "x": 575,
+            "y": 125
+          },
+          "icon": "🏢",
+          "color": "#588cc9"
+        },
+        {
+          "id": "d2",
+          "name": "枫林小区",
+          "x": 860,
+          "y": 228,
+          "door": {
+            "x": 750,
+            "y": 315
+          },
+          "icon": "🏘️",
+          "color": "#836cc7"
+        },
+        {
+          "id": "d3",
+          "name": "第三中学",
+          "x": 265,
+          "y": 420,
+          "door": {
+            "x": 265,
+            "y": 505
+          },
+          "icon": "🏫",
+          "color": "#4f9f91"
+        },
+        {
+          "id": "d4",
+          "name": "街角商铺",
+          "x": 585,
+          "y": 420,
+          "door": {
+            "x": 585,
+            "y": 505
+          },
+          "icon": "🏪",
+          "color": "#cf7470"
+        }
+      ]
+    },
+    "job_loading": {
+      "type": "whack",
+      "title": "装车卸货",
+      "icon": "🚚",
+      "desc": "货物从传送带落下，快点击装车；破损箱别碰",
+      "targets": 28,
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "goodLabel": "好货",
+      "goodIcon": "📦",
+      "badLabel": "破损箱",
+      "badIcon": "💥"
+    },
+    "job_warehouse": {
+      "type": "factory",
+      "title": "仓库拣货",
+      "icon": "🏬",
+      "desc": "物流工位：包裹扫码入位、核对四项标签，再右滑归库",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "productsToWin": 6,
+      "spawnMs": 850,
+      "recipeMin": 3,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "box",
+          "name": "纸箱",
+          "icon": "📦"
+        },
+        {
+          "id": "bag",
+          "name": "编织袋",
+          "icon": "🛍️"
+        },
+        {
+          "id": "bottle",
+          "name": "瓶装",
+          "icon": "🍶"
+        },
+        {
+          "id": "can",
+          "name": "罐装",
+          "icon": "🥫"
+        },
+        {
+          "id": "gift",
+          "name": "礼盒",
+          "icon": "🎁"
+        },
+        {
+          "id": "roll",
+          "name": "卷料",
+          "icon": "🧻"
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_office_assistant": {
+      "type": "quiz",
+      "title": "文件归档",
+      "icon": "🗂️",
+      "desc": "快速判断文件该归档到哪个档案夹",
+      "questions": [
+        {
+          "q": "员工劳动合同 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "差旅报销单 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "会议纪要 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "采购订单 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "保密协议 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "机密档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "供应商报价单 → 放哪里？",
+          "options": [
+            "行政档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "员工请假条 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "年度预算表 → 放哪里？",
+          "options": [
+            "人事档案夹",
+            "财务档案夹"
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 30,
+      "wrongLimit": 2
+    },
+    "job_security": {
+      "type": "sort",
+      "title": "夜间巡逻",
+      "icon": "🚨",
+      "desc": "按路线巡检四处设施，查看现场，判断正常或报告异常。",
+      "order": [
+        "大门",
+        "后门",
+        "停车场",
+        "监控室"
+      ],
+      "items": [
+        {
+          "label": "大门",
+          "icon": "🚪"
+        },
+        {
+          "label": "后门",
+          "icon": "🚪"
+        },
+        {
+          "label": "停车场",
+          "icon": "🅿️"
+        },
+        {
+          "label": "监控室",
+          "icon": "📹"
+        }
+      ],
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05,
+      "rounds": 5
+    },
+    "job_sales": {
+      "type": "quiz",
+      "title": "销售话术",
+      "icon": "💼",
+      "desc": "顾客提问时选出最合适的应答",
+      "questions": [
+        {
+          "q": "顾客嫌贵：\"能不能便宜点？\" → 怎么答？",
+          "options": [
+            "\"我们是最低价了\"",
+            "\"贵有贵的道理，这个材质更耐用\"",
+            "\"那你去别家看看吧\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客犹豫：\"我再考虑考虑\" → 怎么答？",
+          "options": [
+            "\"好的，您慢慢考虑\"并递名片",
+            "\"爱买不买\"",
+            "\"今天不买明天涨价\""
+          ],
+          "answer": 0
+        },
+        {
+          "q": "顾客问功能：\"这个能用多久？\" → 怎么答？",
+          "options": [
+            "\"不知道\"",
+            "\"质保一年，正常用三五年没问题\"",
+            "\"坏了再说\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客要赠品：\"送点什么吧\" → 怎么答？",
+          "options": [
+            "\"不可能\"",
+            "\"今天下单可以送一个小礼品\"",
+            "\"赠品要加钱\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客对比竞品：\"隔壁更便宜\" → 怎么答？",
+          "options": [
+            "\"那您去隔壁买\"",
+            "\"他们便宜但是没售后，我们的服务不一样\"",
+            "\"闭嘴别比价\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客问售后：\"坏了找谁？\" → 怎么答？",
+          "options": [
+            "\"找我也没用\"",
+            "\"凭小票一年内免费修，随时找我\"",
+            "\"坏了再买新的\""
+          ],
+          "answer": 1
+        },
+        {
+          "q": "顾客砍价 8 折：\"能不能八折？\" → 怎么答？",
+          "options": [
+            "\"八折没利润，我给您送个赠品\"",
+            "\"行行行八折就八折\"",
+            "\"不可能\""
+          ],
+          "answer": 0
+        },
+        {
+          "q": "顾客看完要走：\"我再逛逛\" → 怎么答？",
+          "options": [
+            "\"慢走不送\"",
+            "\"好的，需要随时喊我\"并递上名片",
+            "\"别走啊，再聊聊\""
+          ],
+          "answer": 1
+        }
+      ],
+      "timeLimit": 30,
+      "wrongLimit": 2
+    },
+    "job_factory_qc": {
+      "type": "factory",
+      "title": "整机装配",
+      "icon": "🔍",
+      "desc": "电子厂工位：取板入位、点击完成四点自动焊接，再右滑交付成品",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "productsToWin": 6,
+      "spawnMs": 850,
+      "recipeMin": 3,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "mainboard",
+          "name": "主板",
+          "icon": "🟩"
+        },
+        {
+          "id": "chip",
+          "name": "芯片",
+          "icon": "💾"
+        },
+        {
+          "id": "capacitor",
+          "name": "电容",
+          "icon": "🔵"
+        },
+        {
+          "id": "screw",
+          "name": "螺丝",
+          "icon": "🔩"
+        },
+        {
+          "id": "shell",
+          "name": "外壳",
+          "icon": "📦"
+        },
+        {
+          "id": "label",
+          "name": "标签",
+          "icon": "🏷️"
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_factory_tech": {
+      "type": "factory",
+      "title": "设备总装",
+      "icon": "🔧",
+      "desc": "电子厂工位：取板入位、点击完成四点自动焊接，再右滑交付成品",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "productsToWin": 6,
+      "spawnMs": 850,
+      "recipeMin": 3,
+      "recipeMax": 4,
+      "targetWeight": 0.5,
+      "parts": [
+        {
+          "id": "power",
+          "name": "电源模块",
+          "icon": "🔌"
+        },
+        {
+          "id": "ctrl",
+          "name": "控制板",
+          "icon": "🎛️"
+        },
+        {
+          "id": "sensor",
+          "name": "传感器",
+          "icon": "📡"
+        },
+        {
+          "id": "cable",
+          "name": "接线",
+          "icon": "🧵"
+        },
+        {
+          "id": "shell",
+          "name": "外壳",
+          "icon": "📦"
+        },
+        {
+          "id": "light",
+          "name": "指示灯",
+          "icon": "💡"
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_driving_tutor": {
+      "type": "dispatch",
+      "title": "驾校排课",
+      "icon": "🚦",
+      "desc": "驾校助教：把排队的学员分配到合适的训练项目（人数/课时费匹配），满意度与连击加成",
+      "perfectBonusRate": 0.05,
+      "guestsTotal": 8,
+      "spawnMs": 3500,
+      "patienceMax": 120,
+      "labels": {
+        "guest": "学员",
+        "resource": "训练项目"
+      },
+      "guests": [
+        {
+          "typeKey": "newbie",
+          "name": "新手学员",
+          "icon": "🧑",
+          "peopleRange": [
+            1,
+            1
+          ],
+          "budgetRange": [
+            60,
+            100
+          ],
+          "prefType": "reverse",
+          "prefTip": 30
+        },
+        {
+          "typeKey": "retake",
+          "name": "补考学员",
+          "icon": "😅",
+          "peopleRange": [
+            1,
+            1
+          ],
+          "budgetRange": [
+            80,
+            140
+          ],
+          "prefType": "road",
+          "prefTip": 40
+        },
+        {
+          "typeKey": "office",
+          "name": "周末上班族",
+          "icon": "💼",
+          "peopleRange": [
+            1,
+            1
+          ],
+          "budgetRange": [
+            100,
+            160
+          ],
+          "prefType": "sim",
+          "prefTip": 30
+        },
+        {
+          "typeKey": "lady",
+          "name": "稳妥女学员",
+          "icon": "👩",
+          "peopleRange": [
+            1,
+            1
+          ],
+          "budgetRange": [
+            70,
+            120
+          ],
+          "prefType": "side",
+          "prefTip": 30
+        },
+        {
+          "typeKey": "rush",
+          "name": "速成学员",
+          "icon": "🏃",
+          "peopleRange": [
+            1,
+            1
+          ],
+          "budgetRange": [
+            100,
+            180
+          ],
+          "prefType": "night",
+          "prefTip": 50
+        }
+      ],
+      "rooms": [
+        {
+          "type": "reverse",
+          "name": "倒车入库",
+          "icon": "🅿️",
+          "beds": 1,
+          "price": 80
+        },
+        {
+          "type": "side",
+          "name": "侧方停车",
+          "icon": "🚗",
+          "beds": 1,
+          "price": 70
+        },
+        {
+          "type": "slope",
+          "name": "坡道起步",
+          "icon": "⛰️",
+          "beds": 1,
+          "price": 70
+        },
+        {
+          "type": "road",
+          "name": "实际路训",
+          "icon": "🛣️",
+          "beds": 1,
+          "price": 120
+        },
+        {
+          "type": "night",
+          "name": "夜间驾驶",
+          "icon": "🌙",
+          "beds": 1,
+          "price": 100
+        },
+        {
+          "type": "sim",
+          "name": "模拟机",
+          "icon": "🕹️",
+          "beds": 1,
+          "price": 60
+        },
+        {
+          "type": "dual",
+          "name": "双人陪练",
+          "icon": "👥",
+          "beds": 2,
+          "price": 150
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_ride_hailing": {
+      "type": "delivery",
+      "title": "网约车十小时班次",
+      "icon": "🚗",
+      "desc": "汽车接送：一次接一位乘客，下客后才接下一单，超时与碰撞降低满意度和车费",
+      "perfectBonusRate": 0,
+      "mode": "rideshare",
+      "timeLimit": 90,
+      "targetOrders": 5,
+      "payPerOrder": 25,
+      "maxActive": 1,
+      "pickups": [
+        {
+          "id": "p1",
+          "name": "地铁三号口",
+          "x": 262,
+          "y": 48,
+          "door": {
+            "x": 262,
+            "y": 125
+          },
+          "icon": "🚇",
+          "color": "#2fa189"
+        },
+        {
+          "id": "p2",
+          "name": "万象商场门口",
+          "x": 365,
+          "y": 224,
+          "door": {
+            "x": 440,
+            "y": 245
+          },
+          "icon": "🛍️",
+          "color": "#2f8fa1"
+        },
+        {
+          "id": "p3",
+          "name": "机场大巴站",
+          "x": 860,
+          "y": 420,
+          "door": {
+            "x": 860,
+            "y": 505
+          },
+          "icon": "🛫",
+          "color": "#3aa06d"
+        }
+      ],
+      "drops": [
+        {
+          "id": "t1",
+          "name": "高铁南站",
+          "x": 575,
+          "y": 54,
+          "door": {
+            "x": 575,
+            "y": 125
+          },
+          "icon": "🚄",
+          "color": "#588cc9"
+        },
+        {
+          "id": "t2",
+          "name": "科技园西门",
+          "x": 860,
+          "y": 228,
+          "door": {
+            "x": 750,
+            "y": 315
+          },
+          "icon": "🏢",
+          "color": "#836cc7"
+        },
+        {
+          "id": "t3",
+          "name": "老城茶馆",
+          "x": 265,
+          "y": 420,
+          "door": {
+            "x": 265,
+            "y": 505
+          },
+          "icon": "🍵",
+          "color": "#4f9f91"
+        },
+        {
+          "id": "t4",
+          "name": "滨江住宅",
+          "x": 585,
+          "y": 420,
+          "door": {
+            "x": 585,
+            "y": 505
+          },
+          "icon": "🌆",
+          "color": "#cf7470"
+        }
+      ]
+    },
+    "job_taxi": {
+      "type": "delivery",
+      "title": "出租车运营",
+      "icon": "🚕",
+      "desc": "汽车接送：一次接一位乘客，下客后才接下一单，超时与碰撞降低满意度和车费",
+      "perfectBonusRate": 0,
+      "mode": "rideshare",
+      "timeLimit": 90,
+      "targetOrders": 5,
+      "payPerOrder": 24,
+      "maxActive": 1,
+      "pickups": [
+        {
+          "id": "p1",
+          "name": "地铁三号口",
+          "x": 262,
+          "y": 48,
+          "door": {
+            "x": 262,
+            "y": 125
+          },
+          "icon": "🚇",
+          "color": "#2fa189"
+        },
+        {
+          "id": "p2",
+          "name": "万象商场门口",
+          "x": 365,
+          "y": 224,
+          "door": {
+            "x": 440,
+            "y": 245
+          },
+          "icon": "🛍️",
+          "color": "#2f8fa1"
+        },
+        {
+          "id": "p3",
+          "name": "机场大巴站",
+          "x": 860,
+          "y": 420,
+          "door": {
+            "x": 860,
+            "y": 505
+          },
+          "icon": "🛫",
+          "color": "#3aa06d"
+        }
+      ],
+      "drops": [
+        {
+          "id": "t1",
+          "name": "高铁南站",
+          "x": 575,
+          "y": 54,
+          "door": {
+            "x": 575,
+            "y": 125
+          },
+          "icon": "🚄",
+          "color": "#588cc9"
+        },
+        {
+          "id": "t2",
+          "name": "科技园西门",
+          "x": 860,
+          "y": 228,
+          "door": {
+            "x": 750,
+            "y": 315
+          },
+          "icon": "🏢",
+          "color": "#836cc7"
+        },
+        {
+          "id": "t3",
+          "name": "老城茶馆",
+          "x": 265,
+          "y": 420,
+          "door": {
+            "x": 265,
+            "y": 505
+          },
+          "icon": "🍵",
+          "color": "#4f9f91"
+        },
+        {
+          "id": "t4",
+          "name": "滨江住宅",
+          "x": 585,
+          "y": 420,
+          "door": {
+            "x": 585,
+            "y": 505
+          },
+          "icon": "🌆",
+          "color": "#cf7470"
+        }
+      ]
+    },
+    "job_waiter_west": {
+      "type": "restaurant",
+      "title": "西餐上菜",
+      "icon": "🍽️",
+      "desc": "按菜品煎制、煮面或拌沙拉；煎制需要翻面，在金色区间起锅，再点击餐盘逐份摆菜。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "plate",
+          "name": "餐盘",
+          "icon": "🍽️"
+        },
+        {
+          "id": "bread",
+          "name": "面包",
+          "icon": "🥖"
+        },
+        {
+          "id": "soup",
+          "name": "浓汤",
+          "icon": "🥣"
+        },
+        {
+          "id": "salad",
+          "name": "沙拉",
+          "icon": "🥗"
+        },
+        {
+          "id": "steak",
+          "name": "牛排",
+          "icon": "🥩"
+        },
+        {
+          "id": "pasta",
+          "name": "意面",
+          "icon": "🍝"
+        },
+        {
+          "id": "fish",
+          "name": "煎鱼",
+          "icon": "🐟"
+        },
+        {
+          "id": "dessert",
+          "name": "甜点",
+          "icon": "🍰"
+        },
+        {
+          "id": "wine",
+          "name": "红酒",
+          "icon": "🍷"
+        }
+      ],
+      "sides": [
+        {
+          "id": "fries",
+          "name": "薯角",
+          "icon": "🍟",
+          "price": 12
+        },
+        {
+          "id": "mushroom",
+          "name": "蘑菇汤",
+          "icon": "🍄",
+          "price": 14
+        },
+        {
+          "id": "bread_basket",
+          "name": "面包篮",
+          "icon": "🥖",
+          "price": 10
+        }
+      ],
+      "drinks": [
+        {
+          "id": "red_wine",
+          "name": "红酒",
+          "icon": "🍷",
+          "price": 38
+        },
+        {
+          "id": "beer",
+          "name": "啤酒",
+          "icon": "🍺",
+          "price": 18
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 11,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "set_appetizer",
+          "name": "前菜拼盘",
+          "price": 28,
+          "recipe": [
+            "plate",
+            "bread",
+            "salad"
+          ]
+        },
+        {
+          "id": "set_steak",
+          "name": "牛排套餐",
+          "price": 58,
+          "recipe": [
+            "plate",
+            "soup",
+            "steak",
+            "dessert"
+          ]
+        },
+        {
+          "id": "set_pasta",
+          "name": "意面套餐",
+          "price": 42,
+          "recipe": [
+            "plate",
+            "bread",
+            "pasta",
+            "dessert"
+          ]
+        },
+        {
+          "id": "set_fish",
+          "name": "香煎鱼套餐",
+          "price": 48,
+          "recipe": [
+            "plate",
+            "soup",
+            "fish",
+            "wine"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "情侣",
+          "emoji": "💑",
+          "patience": 36,
+          "tip": 1.2
+        },
+        {
+          "name": "商务宴",
+          "emoji": "💼",
+          "patience": 30,
+          "tip": 1.3
+        },
+        {
+          "name": "家庭",
+          "emoji": "👨‍👩‍👧",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "独食客",
+          "emoji": "🧍",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "纪念日",
+          "emoji": "🎂",
+          "patience": 40,
+          "tip": 1.5
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_waiter_fast": {
+      "type": "restaurant",
+      "title": "快餐配餐",
+      "icon": "🍔",
+      "desc": "按订单把汉堡胚、肉饼、蔬菜按顺序叠好，配齐薯条饮料再出餐",
+      "mode": "burger",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "bun_bottom",
+          "name": "下层面包",
+          "icon": "🫓"
+        },
+        {
+          "id": "patty",
+          "name": "肉饼",
+          "icon": "🍖"
+        },
+        {
+          "id": "cheese",
+          "name": "芝士",
+          "icon": "🧀"
+        },
+        {
+          "id": "lettuce",
+          "name": "生菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "tomato",
+          "name": "番茄",
+          "icon": "🍅"
+        },
+        {
+          "id": "bacon",
+          "name": "培根",
+          "icon": "🥓"
+        },
+        {
+          "id": "egg",
+          "name": "煎蛋",
+          "icon": "🍳"
+        },
+        {
+          "id": "bun_top",
+          "name": "上层面包",
+          "icon": "🍞"
+        }
+      ],
+      "sides": [
+        {
+          "id": "fries",
+          "name": "薯条",
+          "icon": "🍟",
+          "price": 8
+        },
+        {
+          "id": "nuggets",
+          "name": "鸡米花",
+          "icon": "🍗",
+          "price": 10
+        },
+        {
+          "id": "rings",
+          "name": "洋葱圈",
+          "icon": "🧅",
+          "price": 9
+        }
+      ],
+      "drinks": [
+        {
+          "id": "orange",
+          "name": "橙汁",
+          "icon": "🧃",
+          "price": 8
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛",
+          "price": 7
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 6,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "burger_classic",
+          "name": "招牌汉堡",
+          "price": 18,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "cheese",
+            "lettuce",
+            "tomato",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_bacon",
+          "name": "培根堡",
+          "price": 22,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "bacon",
+            "cheese",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_veg",
+          "name": "素食堡",
+          "price": 16,
+          "recipe": [
+            "bun_bottom",
+            "lettuce",
+            "tomato",
+            "cheese",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_egg",
+          "name": "煎蛋堡",
+          "price": 20,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "egg",
+            "cheese",
+            "bun_top"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "上班族",
+          "emoji": "💼",
+          "patience": 28,
+          "tip": 0.8
+        },
+        {
+          "name": "学生",
+          "emoji": "👦",
+          "patience": 32,
+          "tip": 0.7
+        },
+        {
+          "name": "带娃家长",
+          "emoji": "👨‍👩‍👦",
+          "patience": 24,
+          "tip": 1
+        },
+        {
+          "name": "赶路人",
+          "emoji": "🏃",
+          "patience": 18,
+          "tip": 0.6
+        },
+        {
+          "name": "吃货",
+          "emoji": "🤤",
+          "patience": 30,
+          "tip": 1.2
+        }
+      ],
+      "timeLimit": 30
+    },
+    "street_perform": {
+      "type": "rhythm",
+      "title": "街头演唱",
+      "icon": "🎤",
+      "desc": "五轨节奏：单键、双键与长按交替，落到判定线时按下。",
+      "tracks": 5,
+      "notes": 48,
+      "intervalMs": 430,
+      "fallMs": 1700,
+      "perfectBonusRate": 0.05,
+      "activity": "singing"
+    },
+    "park_chess": {
+      "type": "chess",
+      "title": "象棋对弈",
+      "icon": "♟️",
+      "desc": "和象棋大爷摆开棋盘杀一盘：点击选中棋子，再点目标格落子。吃掉对方的「将/帅」即获胜！",
+      "winMoney": 20,
+      "drawMoney": 5,
+      "perfectBonusRate": 0
+    },
+    "stall_street_night": {
+      "type": "restaurant",
+      "title": "夜市摆摊",
+      "icon": "🍢",
+      "desc": "肉串双面炭烤，饼与拼盘下煎锅；35% 后翻面或翻炒，65–90% 离火，再刷酱、卷饼或装盒。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "skewer",
+          "name": "竹签",
+          "icon": "🍢"
+        },
+        {
+          "id": "meat",
+          "name": "肉块",
+          "icon": "🥩"
+        },
+        {
+          "id": "veg",
+          "name": "蔬菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭"
+        },
+        {
+          "id": "wrap",
+          "name": "面皮",
+          "icon": "🫓"
+        },
+        {
+          "id": "sauce",
+          "name": "酱料",
+          "icon": "🧂"
+        },
+        {
+          "id": "chili",
+          "name": "辣粉",
+          "icon": "🌶️"
+        },
+        {
+          "id": "box",
+          "name": "纸盒",
+          "icon": "🥡"
+        }
+      ],
+      "sides": [
+        {
+          "id": "corn",
+          "name": "烤玉米",
+          "icon": "🌽",
+          "price": 5
+        },
+        {
+          "id": "gluten",
+          "name": "烤面筋",
+          "icon": "🍡",
+          "price": 6
+        },
+        {
+          "id": "egg",
+          "name": "卤蛋",
+          "icon": "🥚",
+          "price": 3
+        }
+      ],
+      "drinks": [
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        },
+        {
+          "id": "icetea",
+          "name": "冰红茶",
+          "icon": "🧊",
+          "price": 6
+        },
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "skewer_meat",
+          "name": "烤肉串",
+          "price": 9,
+          "recipe": [
+            "skewer",
+            "meat",
+            "sauce"
+          ]
+        },
+        {
+          "id": "skewer_veg",
+          "name": "素菜串",
+          "price": 6,
+          "recipe": [
+            "skewer",
+            "veg",
+            "chili"
+          ]
+        },
+        {
+          "id": "hand_pancake",
+          "name": "手抓饼",
+          "price": 11,
+          "recipe": [
+            "wrap",
+            "sausage",
+            "sauce"
+          ]
+        },
+        {
+          "id": "spicy_box",
+          "name": "麻辣拼盘",
+          "price": 14,
+          "recipe": [
+            "box",
+            "meat",
+            "veg",
+            "chili"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班族",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 0.9
+        },
+        {
+          "name": "夜跑青年",
+          "emoji": "🏃",
+          "patience": 20,
+          "tip": 0.7
+        },
+        {
+          "name": "学生党",
+          "emoji": "👦",
+          "patience": 30,
+          "tip": 0.6
+        },
+        {
+          "name": "撸串老饕",
+          "emoji": "🤤",
+          "patience": 28,
+          "tip": 1.3
+        }
+      ],
+      "stall": true,
+      "stallPerCustomerPay": 9,
+      "stallStaminaCost": 2,
+      "stallHourPerCustomer": 0.5,
+      "stallCustomerCap": 30
+    },
+    "job_farm_hand": {
+      "type": "sequence",
+      "title": "农活流程",
+      "icon": "🌾",
+      "desc": "选择农具，按工序对田垄作业，完成播种与养护。",
+      "steps": [
+        "翻地",
+        "下种",
+        "覆土",
+        "浇水"
+      ],
+      "stepIcons": [
+        "⛏️",
+        "🌱",
+        "🪱",
+        "💧"
+      ],
+      "recipeTable": [
+        {
+          "name": "春播垄",
+          "recipe": [
+            "翻地",
+            "下种",
+            "覆土",
+            "浇水"
+          ]
+        },
+        {
+          "name": "补苗垄",
+          "recipe": [
+            "翻地",
+            "下种",
+            "浇水"
+          ]
+        },
+        {
+          "name": "抗旱垄",
+          "recipe": [
+            "翻地",
+            "浇水",
+            "下种",
+            "覆土"
+          ]
+        }
+      ],
+      "rounds": 5,
+      "shuffleEachRound": true,
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_pasture_milk": {
+      "type": "sequence",
+      "title": "牧场挤奶",
+      "icon": "🐄",
+      "desc": "按规程清洁准备，左右交替挤奶，最后过滤装桶。",
+      "steps": [
+        "安抚奶牛",
+        "清洗乳房",
+        "手工挤奶",
+        "过滤装桶"
+      ],
+      "stepIcons": [
+        "🤚",
+        "🧼",
+        "🥛",
+        "🪣"
+      ],
+      "rounds": 5,
+      "shuffleEachRound": true,
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_orchard_pick": {
+      "type": "whack",
+      "title": "果园采摘",
+      "icon": "🍎",
+      "desc": "等待青果转红再摘，留下虫果，避免误摘未熟果。",
+      "targets": 28,
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "goodLabel": "熟果",
+      "goodIcon": "🍎",
+      "badLabel": "青果",
+      "badIcon": "🍏"
+    },
+    "temple_volunteer": {
+      "type": "sequence",
+      "title": "寺中出坡",
+      "icon": "🧹",
+      "desc": "在寺院分步清扫与整理，按住作业键完成每项工作。",
+      "steps": [
+        "扫落叶",
+        "劈柴",
+        "挑水",
+        "上香"
+      ],
+      "stepIcons": [
+        "🧹",
+        "🪓",
+        "🪣",
+        "🕯️"
+      ],
+      "rounds": 5,
+      "shuffleEachRound": true,
+      "timeLimit": 30,
+      "wrongLimit": 3,
+      "perfectBonusRate": 0.05
+    },
+    "job_training_assistant": {
+      "type": "quiz",
+      "title": "课堂答疑",
+      "icon": "🎓",
+      "desc": "学员举手提问，选出正确的知识点回答，答对越多助教做得越顺",
+      "questions": [
+        {
+          "q": "学员问：函数返回值怎么写？",
+          "options": [
+            "return 值",
+            "output 值",
+            "send 值",
+            "give 值"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：这段代码循环了几次？",
+          "options": [
+            "3 次",
+            "5 次",
+            "7 次",
+            "10 次"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "学员问：数据结构里 FIFO 是什么？",
+          "options": [
+            "队列",
+            "栈",
+            "哈希表",
+            "链表"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：本地文件用什么路径写法？",
+          "options": [
+            "相对路径",
+            "绝对路径",
+            "任意路径",
+            "不需要路径"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：调试第一步应该做什么？",
+          "options": [
+            "看报错信息",
+            "重装系统",
+            "删代码",
+            "重启电脑"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：数组下标从几开始？",
+          "options": [
+            "0",
+            "1",
+            "-1",
+            "随语言不同"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "学员问：改完代码没生效怎么办？",
+          "options": [
+            "先确认保存并刷新",
+            "直接重写",
+            "换电脑",
+            "重装环境"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_school_tutor": {
+      "type": "quiz",
+      "title": "学校辅导答题",
+      "icon": "🏫",
+      "desc": "课后辅导时回答孩子们的问题，耐心讲清楚基础知识",
+      "questions": [
+        {
+          "q": "小朋友问：一年有多少个月？",
+          "options": [
+            "12 个月",
+            "10 个月",
+            "24 个月",
+            "7 个月"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "小朋友问：三角形有几条边？",
+          "options": [
+            "2 条",
+            "3 条",
+            "4 条",
+            "5 条"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "小朋友问：水在标准大气压下多少摄氏度沸腾？",
+          "options": [
+            "50℃",
+            "80℃",
+            "100℃",
+            "120℃"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "小朋友问：下面哪一个是哺乳动物？",
+          "options": [
+            "麻雀",
+            "金鱼",
+            "兔子",
+            "蝴蝶"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "小朋友问：15 + 27 等于多少？",
+          "options": [
+            "32",
+            "42",
+            "52",
+            "62"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "小朋友问：地图上表示方向的常用字母 N 代表什么？",
+          "options": [
+            "南",
+            "北",
+            "东",
+            "西"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "小朋友问：读完一本书后，最好的学习方法是什么？",
+          "options": [
+            "合上书回忆要点",
+            "只看封面",
+            "跳过不懂的地方",
+            "把书立刻藏起来"
+          ],
+          "answer": 0
+        }
+      ],
+      "timeLimit": 30,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05
+    },
+    "job_delivery_fulltime": {
+      "type": "delivery",
+      "title": "全职配送跑单",
+      "icon": "🛵",
+      "desc": "电动车街区跑单：自由驾驶取餐送餐，可同时接 1–6 单，碰撞会降低餐品品质",
+      "perfectBonusRate": 0.05,
+      "mode": "food",
+      "timeLimit": 90,
+      "targetOrders": 6,
+      "payPerOrder": 20,
+      "maxActive": 6,
+      "pickups": [
+        {
+          "id": "r1",
+          "name": "禾风食堂",
+          "x": 262,
+          "y": 48,
+          "door": {
+            "x": 262,
+            "y": 125
+          },
+          "icon": "🍱",
+          "color": "#f4784d"
+        },
+        {
+          "id": "r2",
+          "name": "晚风小馆",
+          "x": 365,
+          "y": 224,
+          "door": {
+            "x": 440,
+            "y": 245
+          },
+          "icon": "🍜",
+          "color": "#e95e68"
+        },
+        {
+          "id": "r3",
+          "name": "山野咖喱",
+          "x": 860,
+          "y": 420,
+          "door": {
+            "x": 860,
+            "y": 505
+          },
+          "icon": "🍛",
+          "color": "#f29d43"
+        }
+      ],
+      "drops": [
+        {
+          "id": "h1",
+          "name": "枫林公寓 A",
+          "x": 575,
+          "y": 54,
+          "door": {
+            "x": 575,
+            "y": 125
+          },
+          "icon": "🏠",
+          "color": "#588cc9"
+        },
+        {
+          "id": "h2",
+          "name": "晴空公寓 B",
+          "x": 860,
+          "y": 228,
+          "door": {
+            "x": 750,
+            "y": 315
+          },
+          "icon": "🏠",
+          "color": "#836cc7"
+        },
+        {
+          "id": "h3",
+          "name": "云岸公寓 C",
+          "x": 265,
+          "y": 420,
+          "door": {
+            "x": 265,
+            "y": 505
+          },
+          "icon": "🏠",
+          "color": "#4f9f91"
+        },
+        {
+          "id": "h4",
+          "name": "晚霞公寓 D",
+          "x": 585,
+          "y": 420,
+          "door": {
+            "x": 585,
+            "y": 505
+          },
+          "icon": "🏠",
+          "color": "#cf7470"
+        }
+      ]
+    },
+    "job_netbar_admin": {
+      "type": "restaurant",
+      "title": "网管饮品吧",
+      "icon": "🕹️",
+      "desc": "按单调配饮品，摇匀或搅拌三次，启动封口机并在金色区间压下封口，配好小食后交付。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "cup",
+          "name": "杯子",
+          "icon": "🥤"
+        },
+        {
+          "id": "tea",
+          "name": "茶底",
+          "icon": "🍵"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "pearl",
+          "name": "珍珠",
+          "icon": "🟤"
+        },
+        {
+          "id": "sugar",
+          "name": "糖浆",
+          "icon": "🍯"
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "🫘"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        }
+      ],
+      "sides": [
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🍟",
+          "price": 6
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 15
+        },
+        {
+          "id": "nuts",
+          "name": "坚果",
+          "icon": "🥜",
+          "price": 8
+        },
+        {
+          "id": "chocolate",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 7
+        }
+      ],
+      "drinks": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        },
+        {
+          "id": "energy",
+          "name": "功能饮料",
+          "icon": "⚡",
+          "price": 8
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "milk_tea",
+          "name": "珍珠奶茶",
+          "price": 12,
+          "recipe": [
+            "cup",
+            "tea",
+            "milk",
+            "pearl"
+          ]
+        },
+        {
+          "id": "coffee_cup",
+          "name": "现磨咖啡",
+          "price": 10,
+          "recipe": [
+            "cup",
+            "coffee",
+            "milk"
+          ]
+        },
+        {
+          "id": "sweet_tea",
+          "name": "蜂蜜茶",
+          "price": 9,
+          "recipe": [
+            "cup",
+            "tea",
+            "sugar"
+          ]
+        },
+        {
+          "id": "iced_coffee",
+          "name": "冰咖啡",
+          "price": 11,
+          "recipe": [
+            "cup",
+            "coffee",
+            "ice",
+            "milk"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "学生党",
+          "emoji": "🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "通宵党",
+          "emoji": "🌙",
+          "patience": 40,
+          "tip": 1
+        },
+        {
+          "name": "开黑队",
+          "emoji": "🎮",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "摸鱼客",
+          "emoji": "😎",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "加班族",
+          "emoji": "💻",
+          "patience": 26,
+          "tip": 1.1
+        }
+      ],
+      "timeLimit": 30
+    },
+    "internet_night_job": {
+      "type": "restaurant",
+      "title": "网管夜班补给",
+      "icon": "🕹️",
+      "desc": "午夜饮品吧：按配方搅拌热饮或摇匀奶茶，控制封杯时机，再配上夜宵完成补给。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "cup",
+          "name": "杯子",
+          "icon": "🥤"
+        },
+        {
+          "id": "tea",
+          "name": "茶底",
+          "icon": "🍵"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "pearl",
+          "name": "珍珠",
+          "icon": "🟤"
+        },
+        {
+          "id": "sugar",
+          "name": "糖浆",
+          "icon": "🍯"
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "🫘"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        }
+      ],
+      "sides": [
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🍟",
+          "price": 6
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 15
+        },
+        {
+          "id": "nuts",
+          "name": "坚果",
+          "icon": "🥜",
+          "price": 8
+        },
+        {
+          "id": "chocolate",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 7
+        }
+      ],
+      "drinks": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        },
+        {
+          "id": "energy",
+          "name": "功能饮料",
+          "icon": "⚡",
+          "price": 8
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "milk_tea",
+          "name": "珍珠奶茶",
+          "price": 12,
+          "recipe": [
+            "cup",
+            "tea",
+            "milk",
+            "pearl"
+          ]
+        },
+        {
+          "id": "coffee_cup",
+          "name": "现磨咖啡",
+          "price": 10,
+          "recipe": [
+            "cup",
+            "coffee",
+            "milk"
+          ]
+        },
+        {
+          "id": "sweet_tea",
+          "name": "蜂蜜茶",
+          "price": 9,
+          "recipe": [
+            "cup",
+            "tea",
+            "sugar"
+          ]
+        },
+        {
+          "id": "iced_coffee",
+          "name": "冰咖啡",
+          "price": 11,
+          "recipe": [
+            "cup",
+            "coffee",
+            "ice",
+            "milk"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "学生党",
+          "emoji": "🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "通宵党",
+          "emoji": "🌙",
+          "patience": 40,
+          "tip": 1
+        },
+        {
+          "name": "开黑队",
+          "emoji": "🎮",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "摸鱼客",
+          "emoji": "😎",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "加班族",
+          "emoji": "💻",
+          "patience": 26,
+          "tip": 1.1
+        }
+      ],
+      "timeLimit": 30
+    },
+    "stall_market_fair": {
+      "type": "restaurant",
+      "title": "周末夜市摆摊",
+      "icon": "🎪",
+      "desc": "周末食集：翻烤肉串、煎饼或翻炒拼盘，及时离火，再完成抹酱与打包，照顾排队顾客。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "skewer",
+          "name": "竹签",
+          "icon": "🍢"
+        },
+        {
+          "id": "meat",
+          "name": "肉块",
+          "icon": "🥩"
+        },
+        {
+          "id": "veg",
+          "name": "蔬菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭"
+        },
+        {
+          "id": "wrap",
+          "name": "面皮",
+          "icon": "🫓"
+        },
+        {
+          "id": "sauce",
+          "name": "酱料",
+          "icon": "🧂"
+        },
+        {
+          "id": "chili",
+          "name": "辣粉",
+          "icon": "🌶️"
+        },
+        {
+          "id": "box",
+          "name": "纸盒",
+          "icon": "🥡"
+        }
+      ],
+      "sides": [
+        {
+          "id": "corn",
+          "name": "烤玉米",
+          "icon": "🌽",
+          "price": 5
+        },
+        {
+          "id": "gluten",
+          "name": "烤面筋",
+          "icon": "🍡",
+          "price": 6
+        },
+        {
+          "id": "egg",
+          "name": "卤蛋",
+          "icon": "🥚",
+          "price": 3
+        }
+      ],
+      "drinks": [
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        },
+        {
+          "id": "icetea",
+          "name": "冰红茶",
+          "icon": "🧊",
+          "price": 6
+        },
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "skewer_meat",
+          "name": "烤肉串",
+          "price": 9,
+          "recipe": [
+            "skewer",
+            "meat",
+            "sauce"
+          ]
+        },
+        {
+          "id": "skewer_veg",
+          "name": "素菜串",
+          "price": 6,
+          "recipe": [
+            "skewer",
+            "veg",
+            "chili"
+          ]
+        },
+        {
+          "id": "hand_pancake",
+          "name": "手抓饼",
+          "price": 11,
+          "recipe": [
+            "wrap",
+            "sausage",
+            "sauce"
+          ]
+        },
+        {
+          "id": "spicy_box",
+          "name": "麻辣拼盘",
+          "price": 14,
+          "recipe": [
+            "box",
+            "meat",
+            "veg",
+            "chili"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班族",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 0.9
+        },
+        {
+          "name": "夜跑青年",
+          "emoji": "🏃",
+          "patience": 20,
+          "tip": 0.7
+        },
+        {
+          "name": "学生党",
+          "emoji": "👦",
+          "patience": 30,
+          "tip": 0.6
+        },
+        {
+          "name": "撸串老饕",
+          "emoji": "🤤",
+          "patience": 28,
+          "tip": 1.3
+        }
+      ],
+      "stall": true,
+      "stallPerCustomerPay": 13.5,
+      "stallStaminaCost": 2,
+      "stallHourPerCustomer": 0.5,
+      "stallCustomerCap": 20
+    },
+    "amusement_bowling": {
+      "type": "bowling",
+      "title": "保龄球馆",
+      "icon": "🎳",
+      "desc": "调整方向、力量和旋转投球，碰撞决定倒瓶，第二球补剩余球瓶。",
+      "attempts": 2,
+      "pinCount": 10,
+      "perfectBonusRate": 0.05,
+      "prize": {
+        "tiers": [
+          {
+            "min": 0.9,
+            "label": "全中大胜",
+            "money": 24,
+            "mood": 4
+          },
+          {
+            "min": 0.7,
+            "label": "漂亮得分",
+            "money": 12,
+            "mood": 3
+          },
+          {
+            "min": 0.4,
+            "label": "小有收获",
+            "money": 5,
+            "mood": 2
+          },
+          {
+            "min": 0.2,
+            "label": "参与奖",
+            "mood": 1
+          }
+        ]
+      }
+    },
+    "amusement_dart": {
+      "type": "darts",
+      "title": "飞镖气球",
+      "icon": "🎯",
+      "desc": "十支飞镖，扎爆普通气球得分；红心气球是摊主的招牌，千万别碰",
+      "darts": 10,
+      "balloons": 10,
+      "heartBalloons": 2,
+      "perfectBonusRate": 0.05,
+      "prize": {
+        "tiers": [
+          {
+            "min": 0.9,
+            "label": "神射手",
+            "money": 20,
+            "mood": 4
+          },
+          {
+            "min": 0.7,
+            "label": "连中好几个",
+            "money": 10,
+            "mood": 3
+          },
+          {
+            "min": 0.4,
+            "label": "扎中一些",
+            "money": 4,
+            "mood": 2
+          },
+          {
+            "min": 0.2,
+            "label": "参与奖",
+            "mood": 1
+          }
+        ]
+      }
+    },
+    "amusement_ringtoss": {
+      "type": "ringtoss",
+      "title": "套圈",
+      "icon": "⭕",
+      "desc": "十个圈，点击目标柱投掷；近处容易套，远处奖品更好",
+      "rings": 10,
+      "targetCount": 6,
+      "perfectBonusRate": 0.05,
+      "prize": {
+        "tiers": [
+          {
+            "min": 0.9,
+            "label": "满载而归",
+            "money": 18,
+            "mood": 4
+          },
+          {
+            "min": 0.7,
+            "label": "套中好几件",
+            "money": 9,
+            "mood": 3
+          },
+          {
+            "min": 0.4,
+            "label": "套中小奖",
+            "money": 3,
+            "mood": 2
+          },
+          {
+            "min": 0.2,
+            "label": "参与奖",
+            "mood": 1
+          }
+        ]
+      }
+    },
+    "stall_dev_food_street": {
+      "type": "restaurant",
+      "title": "周末夜市摆摊",
+      "icon": "🎪",
+      "desc": "周末食集：翻烤肉串、煎饼或翻炒拼盘，及时离火，再完成抹酱与打包，照顾排队顾客。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "skewer",
+          "name": "竹签",
+          "icon": "🍢"
+        },
+        {
+          "id": "meat",
+          "name": "肉块",
+          "icon": "🥩"
+        },
+        {
+          "id": "veg",
+          "name": "蔬菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭"
+        },
+        {
+          "id": "wrap",
+          "name": "面皮",
+          "icon": "🫓"
+        },
+        {
+          "id": "sauce",
+          "name": "酱料",
+          "icon": "🧂"
+        },
+        {
+          "id": "chili",
+          "name": "辣粉",
+          "icon": "🌶️"
+        },
+        {
+          "id": "box",
+          "name": "纸盒",
+          "icon": "🥡"
+        }
+      ],
+      "sides": [
+        {
+          "id": "corn",
+          "name": "烤玉米",
+          "icon": "🌽",
+          "price": 5
+        },
+        {
+          "id": "gluten",
+          "name": "烤面筋",
+          "icon": "🍡",
+          "price": 6
+        },
+        {
+          "id": "egg",
+          "name": "卤蛋",
+          "icon": "🥚",
+          "price": 3
+        }
+      ],
+      "drinks": [
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        },
+        {
+          "id": "icetea",
+          "name": "冰红茶",
+          "icon": "🧊",
+          "price": 6
+        },
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "skewer_meat",
+          "name": "烤肉串",
+          "price": 9,
+          "recipe": [
+            "skewer",
+            "meat",
+            "sauce"
+          ]
+        },
+        {
+          "id": "skewer_veg",
+          "name": "素菜串",
+          "price": 6,
+          "recipe": [
+            "skewer",
+            "veg",
+            "chili"
+          ]
+        },
+        {
+          "id": "hand_pancake",
+          "name": "手抓饼",
+          "price": 11,
+          "recipe": [
+            "wrap",
+            "sausage",
+            "sauce"
+          ]
+        },
+        {
+          "id": "spicy_box",
+          "name": "麻辣拼盘",
+          "price": 14,
+          "recipe": [
+            "box",
+            "meat",
+            "veg",
+            "chili"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班族",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 0.9
+        },
+        {
+          "name": "夜跑青年",
+          "emoji": "🏃",
+          "patience": 20,
+          "tip": 0.7
+        },
+        {
+          "name": "学生党",
+          "emoji": "👦",
+          "patience": 30,
+          "tip": 0.6
+        },
+        {
+          "name": "撸串老饕",
+          "emoji": "🤤",
+          "patience": 28,
+          "tip": 1.3
+        }
+      ],
+      "stall": true,
+      "stallPerCustomerPay": 13.5,
+      "stallStaminaCost": 2,
+      "stallHourPerCustomer": 0.5,
+      "stallCustomerCap": 20
+    },
+    "stall_boyue_food_street": {
+      "type": "restaurant",
+      "title": "周末夜市摆摊",
+      "icon": "🎪",
+      "desc": "周末食集：翻烤肉串、煎饼或翻炒拼盘，及时离火，再完成抹酱与打包，照顾排队顾客。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "skewer",
+          "name": "竹签",
+          "icon": "🍢"
+        },
+        {
+          "id": "meat",
+          "name": "肉块",
+          "icon": "🥩"
+        },
+        {
+          "id": "veg",
+          "name": "蔬菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭"
+        },
+        {
+          "id": "wrap",
+          "name": "面皮",
+          "icon": "🫓"
+        },
+        {
+          "id": "sauce",
+          "name": "酱料",
+          "icon": "🧂"
+        },
+        {
+          "id": "chili",
+          "name": "辣粉",
+          "icon": "🌶️"
+        },
+        {
+          "id": "box",
+          "name": "纸盒",
+          "icon": "🥡"
+        }
+      ],
+      "sides": [
+        {
+          "id": "corn",
+          "name": "烤玉米",
+          "icon": "🌽",
+          "price": 5
+        },
+        {
+          "id": "gluten",
+          "name": "烤面筋",
+          "icon": "🍡",
+          "price": 6
+        },
+        {
+          "id": "egg",
+          "name": "卤蛋",
+          "icon": "🥚",
+          "price": 3
+        }
+      ],
+      "drinks": [
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        },
+        {
+          "id": "icetea",
+          "name": "冰红茶",
+          "icon": "🧊",
+          "price": 6
+        },
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "skewer_meat",
+          "name": "烤肉串",
+          "price": 9,
+          "recipe": [
+            "skewer",
+            "meat",
+            "sauce"
+          ]
+        },
+        {
+          "id": "skewer_veg",
+          "name": "素菜串",
+          "price": 6,
+          "recipe": [
+            "skewer",
+            "veg",
+            "chili"
+          ]
+        },
+        {
+          "id": "hand_pancake",
+          "name": "手抓饼",
+          "price": 11,
+          "recipe": [
+            "wrap",
+            "sausage",
+            "sauce"
+          ]
+        },
+        {
+          "id": "spicy_box",
+          "name": "麻辣拼盘",
+          "price": 14,
+          "recipe": [
+            "box",
+            "meat",
+            "veg",
+            "chili"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班族",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 0.9
+        },
+        {
+          "name": "夜跑青年",
+          "emoji": "🏃",
+          "patience": 20,
+          "tip": 0.7
+        },
+        {
+          "name": "学生党",
+          "emoji": "👦",
+          "patience": 30,
+          "tip": 0.6
+        },
+        {
+          "name": "撸串老饕",
+          "emoji": "🤤",
+          "patience": 28,
+          "tip": 1.3
+        }
+      ],
+      "stall": true,
+      "stallPerCustomerPay": 13.5,
+      "stallStaminaCost": 2,
+      "stallHourPerCustomer": 0.5,
+      "stallCustomerCap": 20
+    },
+    "stall_boyue_snack_street": {
+      "type": "restaurant",
+      "title": "周末夜市摆摊",
+      "icon": "🎪",
+      "desc": "周末食集：翻烤肉串、煎饼或翻炒拼盘，及时离火，再完成抹酱与打包，照顾排队顾客。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "timeLimit": 30,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "skewer",
+          "name": "竹签",
+          "icon": "🍢"
+        },
+        {
+          "id": "meat",
+          "name": "肉块",
+          "icon": "🥩"
+        },
+        {
+          "id": "veg",
+          "name": "蔬菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭"
+        },
+        {
+          "id": "wrap",
+          "name": "面皮",
+          "icon": "🫓"
+        },
+        {
+          "id": "sauce",
+          "name": "酱料",
+          "icon": "🧂"
+        },
+        {
+          "id": "chili",
+          "name": "辣粉",
+          "icon": "🌶️"
+        },
+        {
+          "id": "box",
+          "name": "纸盒",
+          "icon": "🥡"
+        }
+      ],
+      "sides": [
+        {
+          "id": "corn",
+          "name": "烤玉米",
+          "icon": "🌽",
+          "price": 5
+        },
+        {
+          "id": "gluten",
+          "name": "烤面筋",
+          "icon": "🍡",
+          "price": 6
+        },
+        {
+          "id": "egg",
+          "name": "卤蛋",
+          "icon": "🥚",
+          "price": 3
+        }
+      ],
+      "drinks": [
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        },
+        {
+          "id": "icetea",
+          "name": "冰红茶",
+          "icon": "🧊",
+          "price": 6
+        },
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "skewer_meat",
+          "name": "烤肉串",
+          "price": 9,
+          "recipe": [
+            "skewer",
+            "meat",
+            "sauce"
+          ]
+        },
+        {
+          "id": "skewer_veg",
+          "name": "素菜串",
+          "price": 6,
+          "recipe": [
+            "skewer",
+            "veg",
+            "chili"
+          ]
+        },
+        {
+          "id": "hand_pancake",
+          "name": "手抓饼",
+          "price": 11,
+          "recipe": [
+            "wrap",
+            "sausage",
+            "sauce"
+          ]
+        },
+        {
+          "id": "spicy_box",
+          "name": "麻辣拼盘",
+          "price": 14,
+          "recipe": [
+            "box",
+            "meat",
+            "veg",
+            "chili"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班族",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 0.9
+        },
+        {
+          "name": "夜跑青年",
+          "emoji": "🏃",
+          "patience": 20,
+          "tip": 0.7
+        },
+        {
+          "name": "学生党",
+          "emoji": "👦",
+          "patience": 30,
+          "tip": 0.6
+        },
+        {
+          "name": "撸串老饕",
+          "emoji": "🤤",
+          "patience": 28,
+          "tip": 1.3
+        }
+      ],
+      "stall": true,
+      "stallPerCustomerPay": 13.5,
+      "stallStaminaCost": 2,
+      "stallHourPerCustomer": 0.5,
+      "stallCustomerCap": 20
+    },
+    "boyue_internet_night_job": {
+      "type": "restaurant",
+      "title": "网管夜班补给",
+      "icon": "🕹️",
+      "desc": "午夜饮品吧：按配方搅拌热饮或摇匀奶茶，控制封杯时机，再配上夜宵完成补给。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "cup",
+          "name": "杯子",
+          "icon": "🥤"
+        },
+        {
+          "id": "tea",
+          "name": "茶底",
+          "icon": "🍵"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "pearl",
+          "name": "珍珠",
+          "icon": "🟤"
+        },
+        {
+          "id": "sugar",
+          "name": "糖浆",
+          "icon": "🍯"
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "🫘"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        }
+      ],
+      "sides": [
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🍟",
+          "price": 6
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 15
+        },
+        {
+          "id": "nuts",
+          "name": "坚果",
+          "icon": "🥜",
+          "price": 8
+        },
+        {
+          "id": "chocolate",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 7
+        }
+      ],
+      "drinks": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        },
+        {
+          "id": "energy",
+          "name": "功能饮料",
+          "icon": "⚡",
+          "price": 8
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "milk_tea",
+          "name": "珍珠奶茶",
+          "price": 12,
+          "recipe": [
+            "cup",
+            "tea",
+            "milk",
+            "pearl"
+          ]
+        },
+        {
+          "id": "coffee_cup",
+          "name": "现磨咖啡",
+          "price": 10,
+          "recipe": [
+            "cup",
+            "coffee",
+            "milk"
+          ]
+        },
+        {
+          "id": "sweet_tea",
+          "name": "蜂蜜茶",
+          "price": 9,
+          "recipe": [
+            "cup",
+            "tea",
+            "sugar"
+          ]
+        },
+        {
+          "id": "iced_coffee",
+          "name": "冰咖啡",
+          "price": 11,
+          "recipe": [
+            "cup",
+            "coffee",
+            "ice",
+            "milk"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "学生党",
+          "emoji": "🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "通宵党",
+          "emoji": "🌙",
+          "patience": 40,
+          "tip": 1
+        },
+        {
+          "name": "开黑队",
+          "emoji": "🎮",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "摸鱼客",
+          "emoji": "😎",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "加班族",
+          "emoji": "💻",
+          "patience": 26,
+          "tip": 1.1
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_boyue_cafe_staff": {
+      "type": "restaurant",
+      "title": "咖啡师出杯",
+      "icon": "☕",
+      "desc": "备齐原料后开始萃取或泡茶，在金色区间停止，完成拉花或出杯，再配齐小食交付。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "espresso",
+          "name": "浓缩",
+          "icon": "🫘"
+        },
+        {
+          "id": "hot_water",
+          "name": "热水",
+          "icon": "💧"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "foam",
+          "name": "奶泡",
+          "icon": "☁️"
+        },
+        {
+          "id": "caramel",
+          "name": "焦糖",
+          "icon": "🍯"
+        },
+        {
+          "id": "choco",
+          "name": "巧克力",
+          "icon": "🍫"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        },
+        {
+          "id": "tea",
+          "name": "茶汤",
+          "icon": "🍵"
+        }
+      ],
+      "sides": [
+        {
+          "id": "croissant",
+          "name": "可颂",
+          "icon": "🥐",
+          "price": 12
+        },
+        {
+          "id": "cake",
+          "name": "芝士蛋糕",
+          "icon": "🍰",
+          "price": 15
+        },
+        {
+          "id": "cookie",
+          "name": "曲奇",
+          "icon": "🍪",
+          "price": 8
+        }
+      ],
+      "drinks": [
+        {
+          "id": "juice",
+          "name": "鲜榨果汁",
+          "icon": "🧃",
+          "price": 16
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 10,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "latte",
+          "name": "拿铁",
+          "price": 22,
+          "recipe": [
+            "espresso",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "americano",
+          "name": "美式",
+          "price": 18,
+          "recipe": [
+            "espresso",
+            "hot_water"
+          ]
+        },
+        {
+          "id": "cappuccino",
+          "name": "卡布奇诺",
+          "price": 24,
+          "recipe": [
+            "espresso",
+            "foam",
+            "milk"
+          ]
+        },
+        {
+          "id": "caramel_macchiato",
+          "name": "焦糖玛奇朵",
+          "price": 26,
+          "recipe": [
+            "espresso",
+            "caramel",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "mocha",
+          "name": "摩卡",
+          "price": 28,
+          "recipe": [
+            "espresso",
+            "choco",
+            "milk",
+            "foam"
+          ]
+        },
+        {
+          "id": "iced_tea",
+          "name": "冰红茶",
+          "price": 14,
+          "recipe": [
+            "tea",
+            "ice"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "商务客",
+          "emoji": "💼",
+          "patience": 26,
+          "tip": 1
+        },
+        {
+          "name": "学生",
+          "emoji": "🧑‍🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "闺蜜",
+          "emoji": "👯",
+          "patience": 34,
+          "tip": 0.9
+        },
+        {
+          "name": "加班族",
+          "emoji": "🥱",
+          "patience": 22,
+          "tip": 1.1
+        },
+        {
+          "name": "游客",
+          "emoji": "📷",
+          "patience": 32,
+          "tip": 0.8
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_boyue_convenience_clerk": {
+      "type": "checkout",
+      "title": "便利店收银",
+      "icon": "🏪",
+      "desc": "正式店员上岗：扫码计价、收钱找零一气呵成，耐心掉光顾客会投诉",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "customers": 4,
+      "patienceMs": 1,
+      "minBasket": 3,
+      "maxBasket": 5,
+      "notes": [
+        1,
+        5,
+        10,
+        20,
+        50,
+        100
+      ],
+      "items": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 2
+        },
+        {
+          "id": "cola",
+          "name": "可乐",
+          "icon": "🥤",
+          "price": 3.5
+        },
+        {
+          "id": "bread",
+          "name": "面包",
+          "icon": "🍞",
+          "price": 5
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 4.5
+        },
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🥔",
+          "price": 6
+        },
+        {
+          "id": "choco",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 8.5
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛",
+          "price": 5.5
+        },
+        {
+          "id": "gum",
+          "name": "口香糖",
+          "icon": "🍬",
+          "price": 2.5
+        },
+        {
+          "id": "riceball",
+          "name": "饭团",
+          "icon": "🍙",
+          "price": 4
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "☕",
+          "price": 7
+        },
+        {
+          "id": "icecream",
+          "name": "冰淇淋",
+          "icon": "🍦",
+          "price": 5
+        },
+        {
+          "id": "sausage",
+          "name": "香肠",
+          "icon": "🌭",
+          "price": 3
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_boyue_waiter_fast": {
+      "type": "restaurant",
+      "title": "快餐配餐",
+      "icon": "🍔",
+      "desc": "按订单把汉堡胚、肉饼、蔬菜按顺序叠好，配齐薯条饮料再出餐",
+      "mode": "burger",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "bun_bottom",
+          "name": "下层面包",
+          "icon": "🫓"
+        },
+        {
+          "id": "patty",
+          "name": "肉饼",
+          "icon": "🍖"
+        },
+        {
+          "id": "cheese",
+          "name": "芝士",
+          "icon": "🧀"
+        },
+        {
+          "id": "lettuce",
+          "name": "生菜",
+          "icon": "🥬"
+        },
+        {
+          "id": "tomato",
+          "name": "番茄",
+          "icon": "🍅"
+        },
+        {
+          "id": "bacon",
+          "name": "培根",
+          "icon": "🥓"
+        },
+        {
+          "id": "egg",
+          "name": "煎蛋",
+          "icon": "🍳"
+        },
+        {
+          "id": "bun_top",
+          "name": "上层面包",
+          "icon": "🍞"
+        }
+      ],
+      "sides": [
+        {
+          "id": "fries",
+          "name": "薯条",
+          "icon": "🍟",
+          "price": 8
+        },
+        {
+          "id": "nuggets",
+          "name": "鸡米花",
+          "icon": "🍗",
+          "price": 10
+        },
+        {
+          "id": "rings",
+          "name": "洋葱圈",
+          "icon": "🧅",
+          "price": 9
+        }
+      ],
+      "drinks": [
+        {
+          "id": "orange",
+          "name": "橙汁",
+          "icon": "🧃",
+          "price": 8
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛",
+          "price": 7
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 6,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "burger_classic",
+          "name": "招牌汉堡",
+          "price": 18,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "cheese",
+            "lettuce",
+            "tomato",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_bacon",
+          "name": "培根堡",
+          "price": 22,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "bacon",
+            "cheese",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_veg",
+          "name": "素食堡",
+          "price": 16,
+          "recipe": [
+            "bun_bottom",
+            "lettuce",
+            "tomato",
+            "cheese",
+            "bun_top"
+          ]
+        },
+        {
+          "id": "burger_egg",
+          "name": "煎蛋堡",
+          "price": 20,
+          "recipe": [
+            "bun_bottom",
+            "patty",
+            "egg",
+            "cheese",
+            "bun_top"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "上班族",
+          "emoji": "💼",
+          "patience": 28,
+          "tip": 0.8
+        },
+        {
+          "name": "学生",
+          "emoji": "👦",
+          "patience": 32,
+          "tip": 0.7
+        },
+        {
+          "name": "带娃家长",
+          "emoji": "👨‍👩‍👦",
+          "patience": 24,
+          "tip": 1
+        },
+        {
+          "name": "赶路人",
+          "emoji": "🏃",
+          "patience": 18,
+          "tip": 0.6
+        },
+        {
+          "name": "吃货",
+          "emoji": "🤤",
+          "patience": 30,
+          "tip": 1.2
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_boyue_waiter_west": {
+      "type": "restaurant",
+      "title": "西餐上菜",
+      "icon": "🍽️",
+      "desc": "按菜品煎制、煮面或拌沙拉；煎制需要翻面，在金色区间起锅，再点击餐盘逐份摆菜。",
+      "mode": "snack",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "plate",
+          "name": "餐盘",
+          "icon": "🍽️"
+        },
+        {
+          "id": "bread",
+          "name": "面包",
+          "icon": "🥖"
+        },
+        {
+          "id": "soup",
+          "name": "浓汤",
+          "icon": "🥣"
+        },
+        {
+          "id": "salad",
+          "name": "沙拉",
+          "icon": "🥗"
+        },
+        {
+          "id": "steak",
+          "name": "牛排",
+          "icon": "🥩"
+        },
+        {
+          "id": "pasta",
+          "name": "意面",
+          "icon": "🍝"
+        },
+        {
+          "id": "fish",
+          "name": "煎鱼",
+          "icon": "🐟"
+        },
+        {
+          "id": "dessert",
+          "name": "甜点",
+          "icon": "🍰"
+        },
+        {
+          "id": "wine",
+          "name": "红酒",
+          "icon": "🍷"
+        }
+      ],
+      "sides": [
+        {
+          "id": "fries",
+          "name": "薯角",
+          "icon": "🍟",
+          "price": 12
+        },
+        {
+          "id": "mushroom",
+          "name": "蘑菇汤",
+          "icon": "🍄",
+          "price": 14
+        },
+        {
+          "id": "bread_basket",
+          "name": "面包篮",
+          "icon": "🥖",
+          "price": 10
+        }
+      ],
+      "drinks": [
+        {
+          "id": "red_wine",
+          "name": "红酒",
+          "icon": "🍷",
+          "price": 38
+        },
+        {
+          "id": "beer",
+          "name": "啤酒",
+          "icon": "🍺",
+          "price": 18
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 11,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "set_appetizer",
+          "name": "前菜拼盘",
+          "price": 28,
+          "recipe": [
+            "plate",
+            "bread",
+            "salad"
+          ]
+        },
+        {
+          "id": "set_steak",
+          "name": "牛排套餐",
+          "price": 58,
+          "recipe": [
+            "plate",
+            "soup",
+            "steak",
+            "dessert"
+          ]
+        },
+        {
+          "id": "set_pasta",
+          "name": "意面套餐",
+          "price": 42,
+          "recipe": [
+            "plate",
+            "bread",
+            "pasta",
+            "dessert"
+          ]
+        },
+        {
+          "id": "set_fish",
+          "name": "香煎鱼套餐",
+          "price": 48,
+          "recipe": [
+            "plate",
+            "soup",
+            "fish",
+            "wine"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "情侣",
+          "emoji": "💑",
+          "patience": 36,
+          "tip": 1.2
+        },
+        {
+          "name": "商务宴",
+          "emoji": "💼",
+          "patience": 30,
+          "tip": 1.3
+        },
+        {
+          "name": "家庭",
+          "emoji": "👨‍👩‍👧",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "独食客",
+          "emoji": "🧍",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "纪念日",
+          "emoji": "🎂",
+          "patience": 40,
+          "tip": 1.5
+        }
+      ],
+      "timeLimit": 30
+    },
+    "job_boyue_netbar_admin": {
+      "type": "restaurant",
+      "title": "网管饮品吧",
+      "icon": "🕹️",
+      "desc": "按单调配饮品，摇匀或搅拌三次，启动封口机并在金色区间压下封口，配好小食后交付。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "ingredients": [
+        {
+          "id": "cup",
+          "name": "杯子",
+          "icon": "🥤"
+        },
+        {
+          "id": "tea",
+          "name": "茶底",
+          "icon": "🍵"
+        },
+        {
+          "id": "milk",
+          "name": "牛奶",
+          "icon": "🥛"
+        },
+        {
+          "id": "pearl",
+          "name": "珍珠",
+          "icon": "🟤"
+        },
+        {
+          "id": "sugar",
+          "name": "糖浆",
+          "icon": "🍯"
+        },
+        {
+          "id": "coffee",
+          "name": "咖啡",
+          "icon": "🫘"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        }
+      ],
+      "sides": [
+        {
+          "id": "chips",
+          "name": "薯片",
+          "icon": "🍟",
+          "price": 6
+        },
+        {
+          "id": "noodle",
+          "name": "泡面",
+          "icon": "🍜",
+          "price": 15
+        },
+        {
+          "id": "nuts",
+          "name": "坚果",
+          "icon": "🥜",
+          "price": 8
+        },
+        {
+          "id": "chocolate",
+          "name": "巧克力",
+          "icon": "🍫",
+          "price": 7
+        }
+      ],
+      "drinks": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        },
+        {
+          "id": "energy",
+          "name": "功能饮料",
+          "icon": "⚡",
+          "price": 8
+        },
+        {
+          "id": "soda",
+          "name": "碳酸饮料",
+          "icon": "🥤",
+          "price": 5,
+          "group": "soda"
+        }
+      ],
+      "recipes": [
+        {
+          "id": "milk_tea",
+          "name": "珍珠奶茶",
+          "price": 12,
+          "recipe": [
+            "cup",
+            "tea",
+            "milk",
+            "pearl"
+          ]
+        },
+        {
+          "id": "coffee_cup",
+          "name": "现磨咖啡",
+          "price": 10,
+          "recipe": [
+            "cup",
+            "coffee",
+            "milk"
+          ]
+        },
+        {
+          "id": "sweet_tea",
+          "name": "蜂蜜茶",
+          "price": 9,
+          "recipe": [
+            "cup",
+            "tea",
+            "sugar"
+          ]
+        },
+        {
+          "id": "iced_coffee",
+          "name": "冰咖啡",
+          "price": 11,
+          "recipe": [
+            "cup",
+            "coffee",
+            "ice",
+            "milk"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "学生党",
+          "emoji": "🎓",
+          "patience": 30,
+          "tip": 0.7
+        },
+        {
+          "name": "通宵党",
+          "emoji": "🌙",
+          "patience": 40,
+          "tip": 1
+        },
+        {
+          "name": "开黑队",
+          "emoji": "🎮",
+          "patience": 28,
+          "tip": 0.9
+        },
+        {
+          "name": "摸鱼客",
+          "emoji": "😎",
+          "patience": 34,
+          "tip": 0.8
+        },
+        {
+          "name": "加班族",
+          "emoji": "💻",
+          "patience": 26,
+          "tip": 1.1
+        }
+      ],
+      "timeLimit": 30
+    },
+    "boyue_lounge_singing": {
+      "type": "rhythm",
+      "title": "清吧驻唱演唱",
+      "icon": "🎤",
+      "desc": "五轨节奏：单键、双键与长按交替，落到判定线时按下。",
+      "tracks": 5,
+      "notes": 48,
+      "intervalMs": 430,
+      "fallMs": 1700,
+      "perfectBonusRate": 0.05,
+      "activity": "singing"
+    },
+    "job_boyue_bartender": {
+      "type": "restaurant",
+      "title": "夜总会调酒",
+      "icon": "🍸",
+      "desc": "按客人酒单备齐原料，调配与摇匀饮品，完成出杯并配齐小食。",
+      "mode": "cup",
+      "perfectBonusRate": 0.05,
+      "lives": 3,
+      "totalCustomers": 5,
+      "spawnMs": 4200,
+      "maxWaiting": 3,
+      "timeLimit": 30,
+      "ingredients": [
+        {
+          "id": "cup",
+          "name": "酒杯",
+          "icon": "🍸"
+        },
+        {
+          "id": "beer",
+          "name": "啤酒",
+          "icon": "🍺"
+        },
+        {
+          "id": "gin",
+          "name": "金酒",
+          "icon": "🍾"
+        },
+        {
+          "id": "tonic",
+          "name": "汤力水",
+          "icon": "💧"
+        },
+        {
+          "id": "lime",
+          "name": "青柠",
+          "icon": "🍋"
+        },
+        {
+          "id": "syrup",
+          "name": "糖浆",
+          "icon": "🍯"
+        },
+        {
+          "id": "wine",
+          "name": "红酒",
+          "icon": "🍷"
+        },
+        {
+          "id": "whisky",
+          "name": "威士忌",
+          "icon": "🥃"
+        },
+        {
+          "id": "cognac",
+          "name": "干邑",
+          "icon": "🍾"
+        },
+        {
+          "id": "ice",
+          "name": "冰块",
+          "icon": "🧊"
+        }
+      ],
+      "sides": [
+        {
+          "id": "nuts",
+          "name": "坚果",
+          "icon": "🥜",
+          "price": 8
+        }
+      ],
+      "drinks": [
+        {
+          "id": "water",
+          "name": "矿泉水",
+          "icon": "💧",
+          "price": 3
+        }
+      ],
+      "recipes": [
+        {
+          "id": "cocktail_25",
+          "name": "清爽啤酒",
+          "price": 25,
+          "recipe": [
+            "cup",
+            "beer"
+          ]
+        },
+        {
+          "id": "cocktail_60",
+          "name": "青柠高球",
+          "price": 60,
+          "recipe": [
+            "cup",
+            "gin",
+            "tonic",
+            "lime",
+            "ice"
+          ]
+        },
+        {
+          "id": "cocktail_120",
+          "name": "月夜鸡尾酒",
+          "price": 120,
+          "recipe": [
+            "cup",
+            "gin",
+            "syrup",
+            "lime",
+            "ice"
+          ]
+        },
+        {
+          "id": "cocktail_300",
+          "name": "珍藏红酒",
+          "price": 300,
+          "recipe": [
+            "cup",
+            "wine"
+          ]
+        },
+        {
+          "id": "cocktail_800",
+          "name": "年份威士忌",
+          "price": 800,
+          "recipe": [
+            "cup",
+            "whisky",
+            "ice"
+          ]
+        },
+        {
+          "id": "cocktail_1500",
+          "name": "典藏干邑",
+          "price": 1500,
+          "recipe": [
+            "cup",
+            "cognac"
+          ]
+        }
+      ],
+      "customerTypes": [
+        {
+          "name": "下班客",
+          "emoji": "💼",
+          "patience": 30,
+          "tip": 1
+        },
+        {
+          "name": "音乐客",
+          "emoji": "🎵",
+          "patience": 32,
+          "tip": 1
+        },
+        {
+          "name": "聚会客",
+          "emoji": "🥂",
+          "patience": 26,
+          "tip": 1.1
+        }
+      ]
+    },
+    "market_help_stand": {
+      "type": "quiz",
+      "theme": "market",
+      "title": "集市摊位结算",
+      "icon": "🧺",
+      "desc": "核对重量、单价与找零，完成本班全部顾客后按准确率结算。",
+      "timeLimit": 32,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05,
+      "questions": [
+        {
+          "q": "苹果 8 元/斤，买 2.5 斤，应收多少？",
+          "options": [
+            "16 元",
+            "20 元",
+            "24 元",
+            "18 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "菜钱 17 元，顾客付了 50 元，应找多少？",
+          "options": [
+            "23 元",
+            "33 元",
+            "37 元",
+            "43 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "鸡蛋每盒 12 元，买三盒优惠 3 元，应收多少？",
+          "options": [
+            "33 元",
+            "36 元",
+            "30 元",
+            "39 元"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "一袋米 48 元，两袋送上门运费 6 元，合计？",
+          "options": [
+            "96 元",
+            "90 元",
+            "102 元",
+            "54 元"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "总价 35 元，顾客给了 20 元和 10 元，还差多少？",
+          "options": [
+            "5 元",
+            "15 元",
+            "10 元",
+            "无需补款"
+          ],
+          "answer": 0
+        },
+        {
+          "q": "昨日的草莓已发霉，应该怎样处理？",
+          "options": [
+            "混进新货",
+            "降价出售",
+            "移出货架，记录报损",
+            "只去掉发霉部分"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "电子秤上放着 0.2 斤空袋，装菜后显示 1.7 斤，菜净重？",
+          "options": [
+            "1.9 斤",
+            "1.5 斤",
+            "1.7 斤",
+            "0.2 斤"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "15 元的商品九折促销，应该收多少？",
+          "options": [
+            "14 元",
+            "12 元",
+            "13.5 元",
+            "15 元"
+          ],
+          "answer": 2
+        }
+      ]
+    },
+    "bus_station_gig": {
+      "type": "quiz",
+      "theme": "station",
+      "title": "车站票务核对",
+      "icon": "🎫",
+      "desc": "核对班次、时刻与票款，按本班总任务数评分，未完成的票务也计入成绩。",
+      "timeLimit": 34,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05,
+      "questions": [
+        {
+          "q": "去北站的 08:35 班次在 2 号站台，票面写南站 08:35。应怎样做？",
+          "options": [
+            "放行",
+            "引导到北站车上",
+            "确认目的地，前往南站对应站台",
+            "让旅客自行猜测"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "成人票 18 元，儿童半价，一大一小合计多少？",
+          "options": [
+            "18 元",
+            "27 元",
+            "36 元",
+            "9 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "两张票共 46 元，支付 100 元，应找多少？",
+          "options": [
+            "64 元",
+            "54 元",
+            "56 元",
+            "44 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "09:40 发车，提前 5 分钟停止检票，最晚几点检票？",
+          "options": [
+            "09:45",
+            "09:40",
+            "09:35",
+            "09:30"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "车票日期是明天，旅客要求乘今天的车，应怎样做？",
+          "options": [
+            "直接放行",
+            "引导到售票窗口按规则改签",
+            "把日期涂掉",
+            "要求购买同一班次再退款"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "08:50 发车、行程 75 分钟，预计几点到达？",
+          "options": [
+            "09:25",
+            "10:15",
+            "10:05",
+            "09:50"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "旅客把背包忘在候车椅上，应该怎样处理？",
+          "options": [
+            "私自打开",
+            "扔进垃圾桶",
+            "交由服务台登记失物",
+            "交给路过的人"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "末班车已停运，有人问能否排队买票，应怎样做？",
+          "options": [
+            "照常收钱",
+            "说明停运并提供下一班或其他交通信息",
+            "让他在站台等",
+            "出票后不解释"
+          ],
+          "answer": 1
+        }
+      ]
+    },
+    "development_bus_station_gig": {
+      "type": "quiz",
+      "theme": "station",
+      "title": "大学城车站票务核对",
+      "icon": "🎫",
+      "desc": "核对班次、时刻与票款，按本班总任务数评分，未完成的票务也计入成绩。",
+      "timeLimit": 34,
+      "wrongLimit": 2,
+      "perfectBonusRate": 0.05,
+      "questions": [
+        {
+          "q": "去北站的 08:35 班次在 2 号站台，票面写南站 08:35。应怎样做？",
+          "options": [
+            "放行",
+            "引导到北站车上",
+            "确认目的地，前往南站对应站台",
+            "让旅客自行猜测"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "成人票 18 元，儿童半价，一大一小合计多少？",
+          "options": [
+            "18 元",
+            "27 元",
+            "36 元",
+            "9 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "两张票共 46 元，支付 100 元，应找多少？",
+          "options": [
+            "64 元",
+            "54 元",
+            "56 元",
+            "44 元"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "09:40 发车，提前 5 分钟停止检票，最晚几点检票？",
+          "options": [
+            "09:45",
+            "09:40",
+            "09:35",
+            "09:30"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "车票日期是明天，旅客要求乘今天的车，应怎样做？",
+          "options": [
+            "直接放行",
+            "引导到售票窗口按规则改签",
+            "把日期涂掉",
+            "要求购买同一班次再退款"
+          ],
+          "answer": 1
+        },
+        {
+          "q": "08:50 发车、行程 75 分钟，预计几点到达？",
+          "options": [
+            "09:25",
+            "10:15",
+            "10:05",
+            "09:50"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "旅客把背包忘在候车椅上，应该怎样处理？",
+          "options": [
+            "私自打开",
+            "扔进垃圾桶",
+            "交由服务台登记失物",
+            "交给路过的人"
+          ],
+          "answer": 2
+        },
+        {
+          "q": "末班车已停运，有人问能否排队买票，应怎样做？",
+          "options": [
+            "照常收钱",
+            "说明停运并提供下一班或其他交通信息",
+            "让他在站台等",
+            "出票后不解释"
+          ],
+          "answer": 1
+        }
+      ]
     }
-   ],
-   "timeLimit": 30
-  },
-  "job_sorting": {
-   "type": "factory",
-   "title": "快递分拣",
-   "icon": "📦",
-   "desc": "物流分拣线：按分拣工单顺序从传送带抓取对应包裹入格口，错抓/漏抓目标扣血",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "productsToWin": 6,
-   "spawnMs": 850,
-   "recipeMin": 3,
-   "recipeMax": 4,
-   "targetWeight": 0.5,
-   "parts": [
-    {
-     "id": "normal",
-     "name": "普通件",
-     "icon": "📦"
-    },
-    {
-     "id": "cold",
-     "name": "冷链箱",
-     "icon": "❄️"
-    },
-    {
-     "id": "valuable",
-     "name": "贵重件",
-     "icon": "💎"
-    },
-    {
-     "id": "fragile",
-     "name": "易碎件",
-     "icon": "🥀"
-    },
-    {
-     "id": "file",
-     "name": "文件袋",
-     "icon": "📨"
-    },
-    {
-     "id": "bulk",
-     "name": "大件",
-     "icon": "📬"
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_convenience_day": {
-   "type": "checkout",
-   "title": "收银找零",
-   "icon": "🏪",
-   "desc": "日班收银：把顾客商品逐个扫码，算准应收，按付款输入正确找零",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "customers": 4,
-   "patienceMs": 1.2,
-   "minBasket": 3,
-   "maxBasket": 5,
-   "notes": [
-    1,
-    5,
-    10,
-    20,
-    50,
-    100
-   ],
-   "items": [
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 2.0
-    },
-    {
-     "id": "cola",
-     "name": "可乐",
-     "icon": "🥤",
-     "price": 3.5
-    },
-    {
-     "id": "bread",
-     "name": "面包",
-     "icon": "🍞",
-     "price": 5.0
-    },
-    {
-     "id": "noodle",
-     "name": "泡面",
-     "icon": "🍜",
-     "price": 4.5
-    },
-    {
-     "id": "chips",
-     "name": "薯片",
-     "icon": "🥔",
-     "price": 6.0
-    },
-    {
-     "id": "choco",
-     "name": "巧克力",
-     "icon": "🍫",
-     "price": 8.5
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛",
-     "price": 5.5
-    },
-    {
-     "id": "gum",
-     "name": "口香糖",
-     "icon": "🍬",
-     "price": 2.5
-    },
-    {
-     "id": "riceball",
-     "name": "饭团",
-     "icon": "🍙",
-     "price": 4.0
-    },
-    {
-     "id": "coffee",
-     "name": "咖啡",
-     "icon": "☕",
-     "price": 7.0
-    },
-    {
-     "id": "icecream",
-     "name": "冰淇淋",
-     "icon": "🍦",
-     "price": 5.0
-    },
-    {
-     "id": "sausage",
-     "name": "香肠",
-     "icon": "🌭",
-     "price": 3.0
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_convenience_clerk": {
-   "type": "checkout",
-   "title": "便利店收银",
-   "icon": "🏪",
-   "desc": "正式店员上岗：扫码计价、收钱找零一气呵成，耐心掉光顾客会投诉",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "customers": 4,
-   "patienceMs": 1.0,
-   "minBasket": 3,
-   "maxBasket": 5,
-   "notes": [
-    1,
-    5,
-    10,
-    20,
-    50,
-    100
-   ],
-   "items": [
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 2.0
-    },
-    {
-     "id": "cola",
-     "name": "可乐",
-     "icon": "🥤",
-     "price": 3.5
-    },
-    {
-     "id": "bread",
-     "name": "面包",
-     "icon": "🍞",
-     "price": 5.0
-    },
-    {
-     "id": "noodle",
-     "name": "泡面",
-     "icon": "🍜",
-     "price": 4.5
-    },
-    {
-     "id": "chips",
-     "name": "薯片",
-     "icon": "🥔",
-     "price": 6.0
-    },
-    {
-     "id": "choco",
-     "name": "巧克力",
-     "icon": "🍫",
-     "price": 8.5
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛",
-     "price": 5.5
-    },
-    {
-     "id": "gum",
-     "name": "口香糖",
-     "icon": "🍬",
-     "price": 2.5
-    },
-    {
-     "id": "riceball",
-     "name": "饭团",
-     "icon": "🍙",
-     "price": 4.0
-    },
-    {
-     "id": "coffee",
-     "name": "咖啡",
-     "icon": "☕",
-     "price": 7.0
-    },
-    {
-     "id": "icecream",
-     "name": "冰淇淋",
-     "icon": "🍦",
-     "price": 5.0
-    },
-    {
-     "id": "sausage",
-     "name": "香肠",
-     "icon": "🌭",
-     "price": 3.0
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_cafe_staff": {
-   "type": "restaurant",
-   "title": "咖啡师出杯",
-   "icon": "☕",
-   "desc": "看订单按配方顺序萃取浓缩、加奶加泡，配可颂或果汁再出杯",
-   "mode": "cup",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "espresso",
-     "name": "浓缩",
-     "icon": "🫘"
-    },
-    {
-     "id": "hot_water",
-     "name": "热水",
-     "icon": "💧"
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛"
-    },
-    {
-     "id": "foam",
-     "name": "奶泡",
-     "icon": "☁️"
-    },
-    {
-     "id": "caramel",
-     "name": "焦糖",
-     "icon": "🍯"
-    },
-    {
-     "id": "choco",
-     "name": "巧克力",
-     "icon": "🍫"
-    },
-    {
-     "id": "ice",
-     "name": "冰块",
-     "icon": "🧊"
-    },
-    {
-     "id": "tea",
-     "name": "茶汤",
-     "icon": "🍵"
-    }
-   ],
-   "sides": [
-    {
-     "id": "croissant",
-     "name": "可颂",
-     "icon": "🥐",
-     "price": 12
-    },
-    {
-     "id": "cake",
-     "name": "芝士蛋糕",
-     "icon": "🍰",
-     "price": 15
-    },
-    {
-     "id": "cookie",
-     "name": "曲奇",
-     "icon": "🍪",
-     "price": 8
-    }
-   ],
-   "drinks": [
-    {
-     "id": "juice",
-     "name": "鲜榨果汁",
-     "icon": "🧃",
-     "price": 16
-    },
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 10,
-     "group": "soda"
-    }
-   ],
-   "recipes": [
-    {
-     "id": "latte",
-     "name": "拿铁",
-     "price": 22,
-     "recipe": [
-      "espresso",
-      "milk",
-      "foam"
-     ]
-    },
-    {
-     "id": "americano",
-     "name": "美式",
-     "price": 18,
-     "recipe": [
-      "espresso",
-      "hot_water"
-     ]
-    },
-    {
-     "id": "cappuccino",
-     "name": "卡布奇诺",
-     "price": 24,
-     "recipe": [
-      "espresso",
-      "foam",
-      "milk"
-     ]
-    },
-    {
-     "id": "caramel_macchiato",
-     "name": "焦糖玛奇朵",
-     "price": 26,
-     "recipe": [
-      "espresso",
-      "caramel",
-      "milk",
-      "foam"
-     ]
-    },
-    {
-     "id": "mocha",
-     "name": "摩卡",
-     "price": 28,
-     "recipe": [
-      "espresso",
-      "choco",
-      "milk",
-      "foam"
-     ]
-    },
-    {
-     "id": "iced_tea",
-     "name": "冰红茶",
-     "price": 14,
-     "recipe": [
-      "tea",
-      "ice"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "商务客",
-     "emoji": "💼",
-     "patience": 26,
-     "tip": 1.0
-    },
-    {
-     "name": "学生",
-     "emoji": "🧑‍🎓",
-     "patience": 30,
-     "tip": 0.7
-    },
-    {
-     "name": "闺蜜",
-     "emoji": "👯",
-     "patience": 34,
-     "tip": 0.9
-    },
-    {
-     "name": "加班族",
-     "emoji": "🥱",
-     "patience": 22,
-     "tip": 1.1
-    },
-    {
-     "name": "游客",
-     "emoji": "📷",
-     "patience": 32,
-     "tip": 0.8
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_market_cleaner": {
-   "type": "whack",
-   "title": "市场大扫除",
-   "icon": "🧹",
-   "desc": "垃圾从摊位间冒出来，快点清理；别碰摊主的商品",
-   "targets": 28,
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "goodLabel": "垃圾",
-   "goodIcon": "🗑️",
-   "badLabel": "商品",
-   "badIcon": "🍎"
-  },
-  "job_delivery": {
-   "type": "delivery",
-   "title": "外卖配送",
-   "icon": "🛵",
-   "desc": "点地图上的餐厅取餐、再点住户送达；系统自动骑行导航，30 秒内尽量多送单",
-   "perfectBonusRate": 0.05,
-   "mode": "food",
-   "timeLimit": 30,
-   "targetOrders": 5,
-   "payPerOrder": 22,
-   "maxActive": 3,
-   "pickups": [
-    {
-     "id": "r1",
-     "name": "禾风食堂",
-     "x": 262,
-     "y": 48,
-     "door": {
-      "x": 262,
-      "y": 125
-     },
-     "icon": "🍱",
-     "color": "#f4784d"
-    },
-    {
-     "id": "r2",
-     "name": "晚风小馆",
-     "x": 365,
-     "y": 224,
-     "door": {
-      "x": 440,
-      "y": 245
-     },
-     "icon": "🍜",
-     "color": "#e95e68"
-    },
-    {
-     "id": "r3",
-     "name": "山野咖喱",
-     "x": 860,
-     "y": 420,
-     "door": {
-      "x": 860,
-      "y": 505
-     },
-     "icon": "🍛",
-     "color": "#f29d43"
-    }
-   ],
-   "drops": [
-    {
-     "id": "h1",
-     "name": "枫林公寓 A",
-     "x": 575,
-     "y": 54,
-     "door": {
-      "x": 575,
-      "y": 125
-     },
-     "icon": "🏠",
-     "color": "#588cc9"
-    },
-    {
-     "id": "h2",
-     "name": "晴空公寓 B",
-     "x": 860,
-     "y": 228,
-     "door": {
-      "x": 750,
-      "y": 315
-     },
-     "icon": "🏠",
-     "color": "#836cc7"
-    },
-    {
-     "id": "h3",
-     "name": "云岸公寓 C",
-     "x": 265,
-     "y": 420,
-     "door": {
-      "x": 265,
-      "y": 505
-     },
-     "icon": "🏠",
-     "color": "#4f9f91"
-    },
-    {
-     "id": "h4",
-     "name": "晚霞公寓 D",
-     "x": 585,
-     "y": 420,
-     "door": {
-      "x": 585,
-      "y": 505
-     },
-     "icon": "🏠",
-     "color": "#cf7470"
-    }
-   ]
-  },
-  "job_express": {
-   "type": "delivery",
-   "title": "快递派送",
-   "icon": "🚚",
-   "desc": "先到驿站/中转仓取件，再按地址派送；同时最多压 3 个运单",
-   "perfectBonusRate": 0.05,
-   "mode": "parcel",
-   "timeLimit": 30,
-   "targetOrders": 5,
-   "payPerOrder": 18,
-   "maxActive": 3,
-   "pickups": [
-    {
-     "id": "w1",
-     "name": "城东驿站",
-     "x": 262,
-     "y": 48,
-     "door": {
-      "x": 262,
-      "y": 125
-     },
-     "icon": "📦",
-     "color": "#4a7fd0"
-    },
-    {
-     "id": "w2",
-     "name": "中转分拣仓",
-     "x": 365,
-     "y": 224,
-     "door": {
-      "x": 440,
-      "y": 245
-     },
-     "icon": "🏭",
-     "color": "#5a6ec4"
-    },
-    {
-     "id": "w3",
-     "name": "前置小仓",
-     "x": 860,
-     "y": 420,
-     "door": {
-      "x": 860,
-      "y": 505
-     },
-     "icon": "🚚",
-     "color": "#3f8fbf"
-    }
-   ],
-   "drops": [
-    {
-     "id": "d1",
-     "name": "云顶写字楼",
-     "x": 575,
-     "y": 54,
-     "door": {
-      "x": 575,
-      "y": 125
-     },
-     "icon": "🏢",
-     "color": "#588cc9"
-    },
-    {
-     "id": "d2",
-     "name": "枫林小区",
-     "x": 860,
-     "y": 228,
-     "door": {
-      "x": 750,
-      "y": 315
-     },
-     "icon": "🏘️",
-     "color": "#836cc7"
-    },
-    {
-     "id": "d3",
-     "name": "第三中学",
-     "x": 265,
-     "y": 420,
-     "door": {
-      "x": 265,
-      "y": 505
-     },
-     "icon": "🏫",
-     "color": "#4f9f91"
-    },
-    {
-     "id": "d4",
-     "name": "街角商铺",
-     "x": 585,
-     "y": 420,
-     "door": {
-      "x": 585,
-      "y": 505
-     },
-     "icon": "🏪",
-     "color": "#cf7470"
-    }
-   ]
-  },
-  "job_loading": {
-   "type": "whack",
-   "title": "装车卸货",
-   "icon": "🚚",
-   "desc": "货物从传送带落下，快点击装车；破损箱别碰",
-   "targets": 28,
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "goodLabel": "好货",
-   "goodIcon": "📦",
-   "badLabel": "破损箱",
-   "badIcon": "💥"
-  },
-  "job_warehouse": {
-   "type": "factory",
-   "title": "仓库拣货",
-   "icon": "🏬",
-   "desc": "仓储拣货线：按拣货单顺序从传送带抓取对应货品码放，错抓/漏抓目标扣血",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "productsToWin": 6,
-   "spawnMs": 850,
-   "recipeMin": 3,
-   "recipeMax": 4,
-   "targetWeight": 0.5,
-   "parts": [
-    {
-     "id": "box",
-     "name": "纸箱",
-     "icon": "📦"
-    },
-    {
-     "id": "bag",
-     "name": "编织袋",
-     "icon": "🛍️"
-    },
-    {
-     "id": "bottle",
-     "name": "瓶装",
-     "icon": "🍶"
-    },
-    {
-     "id": "can",
-     "name": "罐装",
-     "icon": "🥫"
-    },
-    {
-     "id": "gift",
-     "name": "礼盒",
-     "icon": "🎁"
-    },
-    {
-     "id": "roll",
-     "name": "卷料",
-     "icon": "🧻"
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_office_assistant": {
-   "type": "quiz",
-   "title": "文件归档",
-   "icon": "🗂️",
-   "desc": "快速判断文件该归档到哪个档案夹",
-   "questions": [
-    {
-     "q": "员工劳动合同 → 放哪里？",
-     "options": [
-      "人事档案夹",
-      "财务档案夹"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "差旅报销单 → 放哪里？",
-     "options": [
-      "人事档案夹",
-      "财务档案夹"
-     ],
-     "answer": 1
-    },
-    {
-     "q": "会议纪要 → 放哪里？",
-     "options": [
-      "行政档案夹",
-      "财务档案夹"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "采购订单 → 放哪里？",
-     "options": [
-      "行政档案夹",
-      "财务档案夹"
-     ],
-     "answer": 1
-    },
-    {
-     "q": "保密协议 → 放哪里？",
-     "options": [
-      "人事档案夹",
-      "机密档案夹"
-     ],
-     "answer": 1
-    },
-    {
-     "q": "供应商报价单 → 放哪里？",
-     "options": [
-      "行政档案夹",
-      "财务档案夹"
-     ],
-     "answer": 1
-    },
-    {
-     "q": "员工请假条 → 放哪里？",
-     "options": [
-      "人事档案夹",
-      "财务档案夹"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "年度预算表 → 放哪里？",
-     "options": [
-      "人事档案夹",
-      "财务档案夹"
-     ],
-     "answer": 1
-    }
-   ],
-   "timeLimit": 30,
-   "wrongLimit": 2
-  },
-  "job_security": {
-   "type": "sort",
-   "title": "夜间巡逻",
-   "icon": "🚨",
-   "desc": "按巡逻路线依次打卡 4 个点位",
-   "order": [
-    "大门",
-    "后门",
-    "停车场",
-    "监控室"
-   ],
-   "items": [
-    {
-     "label": "大门",
-     "icon": "🚪"
-    },
-    {
-     "label": "后门",
-     "icon": "🚪"
-    },
-    {
-     "label": "停车场",
-     "icon": "🅿️"
-    },
-    {
-     "label": "监控室",
-     "icon": "📹"
-    }
-   ],
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "perfectBonusRate": 0.05,
-   "rounds": 5
-  },
-  "job_sales": {
-   "type": "quiz",
-   "title": "销售话术",
-   "icon": "💼",
-   "desc": "顾客提问时选出最合适的应答",
-   "questions": [
-    {
-     "q": "顾客嫌贵：\"能不能便宜点？\" → 怎么答？",
-     "options": [
-      "\"我们是最低价了\"",
-      "\"贵有贵的道理，这个材质更耐用\"",
-      "\"那你去别家看看吧\""
-     ],
-     "answer": 1
-    },
-    {
-     "q": "顾客犹豫：\"我再考虑考虑\" → 怎么答？",
-     "options": [
-      "\"好的，您慢慢考虑\"并递名片",
-      "\"爱买不买\"",
-      "\"今天不买明天涨价\""
-     ],
-     "answer": 0
-    },
-    {
-     "q": "顾客问功能：\"这个能用多久？\" → 怎么答？",
-     "options": [
-      "\"不知道\"",
-      "\"质保一年，正常用三五年没问题\"",
-      "\"坏了再说\""
-     ],
-     "answer": 1
-    },
-    {
-     "q": "顾客要赠品：\"送点什么吧\" → 怎么答？",
-     "options": [
-      "\"不可能\"",
-      "\"今天下单可以送一个小礼品\"",
-      "\"赠品要加钱\""
-     ],
-     "answer": 1
-    },
-    {
-     "q": "顾客对比竞品：\"隔壁更便宜\" → 怎么答？",
-     "options": [
-      "\"那您去隔壁买\"",
-      "\"他们便宜但是没售后，我们的服务不一样\"",
-      "\"闭嘴别比价\""
-     ],
-     "answer": 1
-    },
-    {
-     "q": "顾客问售后：\"坏了找谁？\" → 怎么答？",
-     "options": [
-      "\"找我也没用\"",
-      "\"凭小票一年内免费修，随时找我\"",
-      "\"坏了再买新的\""
-     ],
-     "answer": 1
-    },
-    {
-     "q": "顾客砍价 8 折：\"能不能八折？\" → 怎么答？",
-     "options": [
-      "\"八折没利润，我给您送个赠品\"",
-      "\"行行行八折就八折\"",
-      "\"不可能\""
-     ],
-     "answer": 0
-    },
-    {
-     "q": "顾客看完要走：\"我再逛逛\" → 怎么答？",
-     "options": [
-      "\"慢走不送\"",
-      "\"好的，需要随时喊我\"并递上名片",
-      "\"别走啊，再聊聊\""
-     ],
-     "answer": 1
-    }
-   ],
-   "timeLimit": 30,
-   "wrongLimit": 2
-  },
-  "job_factory_qc": {
-   "type": "factory",
-   "title": "整机装配",
-   "icon": "🔍",
-   "desc": "质检装配线：按装配顺序从传送带抓取主板、芯片、螺丝、外壳等零件，装错扣血",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "productsToWin": 6,
-   "spawnMs": 850,
-   "recipeMin": 3,
-   "recipeMax": 4,
-   "targetWeight": 0.5,
-   "parts": [
-    {
-     "id": "mainboard",
-     "name": "主板",
-     "icon": "🟩"
-    },
-    {
-     "id": "chip",
-     "name": "芯片",
-     "icon": "💾"
-    },
-    {
-     "id": "capacitor",
-     "name": "电容",
-     "icon": "🔵"
-    },
-    {
-     "id": "screw",
-     "name": "螺丝",
-     "icon": "🔩"
-    },
-    {
-     "id": "shell",
-     "name": "外壳",
-     "icon": "📦"
-    },
-    {
-     "id": "label",
-     "name": "标签",
-     "icon": "🏷️"
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_factory_tech": {
-   "type": "factory",
-   "title": "设备总装",
-   "icon": "🔧",
-   "desc": "设备总装线：按工单顺序从传送带抓取电源、控制板、传感器、接线等模块装好",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "productsToWin": 6,
-   "spawnMs": 850,
-   "recipeMin": 3,
-   "recipeMax": 4,
-   "targetWeight": 0.5,
-   "parts": [
-    {
-     "id": "power",
-     "name": "电源模块",
-     "icon": "🔌"
-    },
-    {
-     "id": "ctrl",
-     "name": "控制板",
-     "icon": "🎛️"
-    },
-    {
-     "id": "sensor",
-     "name": "传感器",
-     "icon": "📡"
-    },
-    {
-     "id": "cable",
-     "name": "接线",
-     "icon": "🧵"
-    },
-    {
-     "id": "shell",
-     "name": "外壳",
-     "icon": "📦"
-    },
-    {
-     "id": "light",
-     "name": "指示灯",
-     "icon": "💡"
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_driving_tutor": {
-   "type": "dispatch",
-   "title": "驾校排课",
-   "icon": "🚦",
-   "desc": "驾校助教：把排队的学员分配到合适的训练项目（人数/课时费匹配），满意度与连击加成",
-   "perfectBonusRate": 0.05,
-   "guestsTotal": 8,
-   "spawnMs": 3500,
-   "patienceMax": 120,
-   "labels": {
-    "guest": "学员",
-    "resource": "训练项目"
-   },
-   "guests": [
-    {
-     "typeKey": "newbie",
-     "name": "新手学员",
-     "icon": "🧑",
-     "peopleRange": [
-      1,
-      1
-     ],
-     "budgetRange": [
-      60,
-      100
-     ],
-     "prefType": "reverse",
-     "prefTip": 30
-    },
-    {
-     "typeKey": "retake",
-     "name": "补考学员",
-     "icon": "😅",
-     "peopleRange": [
-      1,
-      1
-     ],
-     "budgetRange": [
-      80,
-      140
-     ],
-     "prefType": "road",
-     "prefTip": 40
-    },
-    {
-     "typeKey": "office",
-     "name": "周末上班族",
-     "icon": "💼",
-     "peopleRange": [
-      1,
-      1
-     ],
-     "budgetRange": [
-      100,
-      160
-     ],
-     "prefType": "sim",
-     "prefTip": 30
-    },
-    {
-     "typeKey": "lady",
-     "name": "稳妥女学员",
-     "icon": "👩",
-     "peopleRange": [
-      1,
-      1
-     ],
-     "budgetRange": [
-      70,
-      120
-     ],
-     "prefType": "side",
-     "prefTip": 30
-    },
-    {
-     "typeKey": "rush",
-     "name": "速成学员",
-     "icon": "🏃",
-     "peopleRange": [
-      1,
-      1
-     ],
-     "budgetRange": [
-      100,
-      180
-     ],
-     "prefType": "night",
-     "prefTip": 50
-    }
-   ],
-   "rooms": [
-    {
-     "type": "reverse",
-     "name": "倒车入库",
-     "icon": "🅿️",
-     "beds": 1,
-     "price": 80
-    },
-    {
-     "type": "side",
-     "name": "侧方停车",
-     "icon": "🚗",
-     "beds": 1,
-     "price": 70
-    },
-    {
-     "type": "slope",
-     "name": "坡道起步",
-     "icon": "⛰️",
-     "beds": 1,
-     "price": 70
-    },
-    {
-     "type": "road",
-     "name": "实际路训",
-     "icon": "🛣️",
-     "beds": 1,
-     "price": 120
-    },
-    {
-     "type": "night",
-     "name": "夜间驾驶",
-     "icon": "🌙",
-     "beds": 1,
-     "price": 100
-    },
-    {
-     "type": "sim",
-     "name": "模拟机",
-     "icon": "🕹️",
-     "beds": 1,
-     "price": 60
-    },
-    {
-     "type": "dual",
-     "name": "双人陪练",
-     "icon": "👥",
-     "beds": 2,
-     "price": 150
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_ride_hailing": {
-   "type": "delivery",
-   "title": "网约车接单",
-   "icon": "🚗",
-   "desc": "接单后到上车点接客、再送到目的地；同时最多 3 个行程",
-   "perfectBonusRate": 0.05,
-   "mode": "rideshare",
-   "timeLimit": 30,
-   "targetOrders": 5,
-   "payPerOrder": 26,
-   "maxActive": 3,
-   "pickups": [
-    {
-     "id": "p1",
-     "name": "地铁三号口",
-     "x": 262,
-     "y": 48,
-     "door": {
-      "x": 262,
-      "y": 125
-     },
-     "icon": "🚇",
-     "color": "#2fa189"
-    },
-    {
-     "id": "p2",
-     "name": "万象商场门口",
-     "x": 365,
-     "y": 224,
-     "door": {
-      "x": 440,
-      "y": 245
-     },
-     "icon": "🛍️",
-     "color": "#2f8fa1"
-    },
-    {
-     "id": "p3",
-     "name": "机场大巴站",
-     "x": 860,
-     "y": 420,
-     "door": {
-      "x": 860,
-      "y": 505
-     },
-     "icon": "🛫",
-     "color": "#3aa06d"
-    }
-   ],
-   "drops": [
-    {
-     "id": "t1",
-     "name": "高铁南站",
-     "x": 575,
-     "y": 54,
-     "door": {
-      "x": 575,
-      "y": 125
-     },
-     "icon": "🚄",
-     "color": "#588cc9"
-    },
-    {
-     "id": "t2",
-     "name": "科技园西门",
-     "x": 860,
-     "y": 228,
-     "door": {
-      "x": 750,
-      "y": 315
-     },
-     "icon": "🏢",
-     "color": "#836cc7"
-    },
-    {
-     "id": "t3",
-     "name": "老城茶馆",
-     "x": 265,
-     "y": 420,
-     "door": {
-      "x": 265,
-      "y": 505
-     },
-     "icon": "🍵",
-     "color": "#4f9f91"
-    },
-    {
-     "id": "t4",
-     "name": "滨江住宅",
-     "x": 585,
-     "y": 420,
-     "door": {
-      "x": 585,
-      "y": 505
-     },
-     "icon": "🌆",
-     "color": "#cf7470"
-    }
-   ]
-  },
-  "job_taxi": {
-   "type": "delivery",
-   "title": "出租车运营",
-   "icon": "🚕",
-   "desc": "街边扬招 + 平台派单：到上车点接客再送达，30 秒内跑满 5 趟",
-   "perfectBonusRate": 0.05,
-   "mode": "rideshare",
-   "timeLimit": 30,
-   "targetOrders": 5,
-   "payPerOrder": 24,
-   "maxActive": 3,
-   "pickups": [
-    {
-     "id": "p1",
-     "name": "地铁三号口",
-     "x": 262,
-     "y": 48,
-     "door": {
-      "x": 262,
-      "y": 125
-     },
-     "icon": "🚇",
-     "color": "#2fa189"
-    },
-    {
-     "id": "p2",
-     "name": "万象商场门口",
-     "x": 365,
-     "y": 224,
-     "door": {
-      "x": 440,
-      "y": 245
-     },
-     "icon": "🛍️",
-     "color": "#2f8fa1"
-    },
-    {
-     "id": "p3",
-     "name": "机场大巴站",
-     "x": 860,
-     "y": 420,
-     "door": {
-      "x": 860,
-      "y": 505
-     },
-     "icon": "🛫",
-     "color": "#3aa06d"
-    }
-   ],
-   "drops": [
-    {
-     "id": "t1",
-     "name": "高铁南站",
-     "x": 575,
-     "y": 54,
-     "door": {
-      "x": 575,
-      "y": 125
-     },
-     "icon": "🚄",
-     "color": "#588cc9"
-    },
-    {
-     "id": "t2",
-     "name": "科技园西门",
-     "x": 860,
-     "y": 228,
-     "door": {
-      "x": 750,
-      "y": 315
-     },
-     "icon": "🏢",
-     "color": "#836cc7"
-    },
-    {
-     "id": "t3",
-     "name": "老城茶馆",
-     "x": 265,
-     "y": 420,
-     "door": {
-      "x": 265,
-      "y": 505
-     },
-     "icon": "🍵",
-     "color": "#4f9f91"
-    },
-    {
-     "id": "t4",
-     "name": "滨江住宅",
-     "x": 585,
-     "y": 420,
-     "door": {
-      "x": 585,
-      "y": 505
-     },
-     "icon": "🌆",
-     "color": "#cf7470"
-    }
-   ]
-  },
-  "job_waiter_west": {
-   "type": "restaurant",
-   "title": "西餐上菜",
-   "icon": "🍽️",
-   "desc": "按摆盘顺序上齐前菜、主菜与甜点，配好酒水再端上桌",
-   "mode": "snack",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "plate",
-     "name": "餐盘",
-     "icon": "🍽️"
-    },
-    {
-     "id": "bread",
-     "name": "面包",
-     "icon": "🥖"
-    },
-    {
-     "id": "soup",
-     "name": "浓汤",
-     "icon": "🥣"
-    },
-    {
-     "id": "salad",
-     "name": "沙拉",
-     "icon": "🥗"
-    },
-    {
-     "id": "steak",
-     "name": "牛排",
-     "icon": "🥩"
-    },
-    {
-     "id": "pasta",
-     "name": "意面",
-     "icon": "🍝"
-    },
-    {
-     "id": "fish",
-     "name": "煎鱼",
-     "icon": "🐟"
-    },
-    {
-     "id": "dessert",
-     "name": "甜点",
-     "icon": "🍰"
-    },
-    {
-     "id": "wine",
-     "name": "红酒",
-     "icon": "🍷"
-    }
-   ],
-   "sides": [
-    {
-     "id": "fries",
-     "name": "薯角",
-     "icon": "🍟",
-     "price": 12
-    },
-    {
-     "id": "mushroom",
-     "name": "蘑菇汤",
-     "icon": "🍄",
-     "price": 14
-    },
-    {
-     "id": "bread_basket",
-     "name": "面包篮",
-     "icon": "🥖",
-     "price": 10
-    }
-   ],
-   "drinks": [
-    {
-     "id": "red_wine",
-     "name": "红酒",
-     "icon": "🍷",
-     "price": 38
-    },
-    {
-     "id": "beer",
-     "name": "啤酒",
-     "icon": "🍺",
-     "price": 18
-    },
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 11,
-     "group": "soda"
-    }
-   ],
-   "recipes": [
-    {
-     "id": "set_appetizer",
-     "name": "前菜拼盘",
-     "price": 28,
-     "recipe": [
-      "plate",
-      "bread",
-      "salad"
-     ]
-    },
-    {
-     "id": "set_steak",
-     "name": "牛排套餐",
-     "price": 58,
-     "recipe": [
-      "plate",
-      "soup",
-      "steak",
-      "dessert"
-     ]
-    },
-    {
-     "id": "set_pasta",
-     "name": "意面套餐",
-     "price": 42,
-     "recipe": [
-      "plate",
-      "bread",
-      "pasta",
-      "dessert"
-     ]
-    },
-    {
-     "id": "set_fish",
-     "name": "香煎鱼套餐",
-     "price": 48,
-     "recipe": [
-      "plate",
-      "soup",
-      "fish",
-      "wine"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "情侣",
-     "emoji": "💑",
-     "patience": 36,
-     "tip": 1.2
-    },
-    {
-     "name": "商务宴",
-     "emoji": "💼",
-     "patience": 30,
-     "tip": 1.3
-    },
-    {
-     "name": "家庭",
-     "emoji": "👨‍👩‍👧",
-     "patience": 28,
-     "tip": 0.9
-    },
-    {
-     "name": "独食客",
-     "emoji": "🧍",
-     "patience": 34,
-     "tip": 0.8
-    },
-    {
-     "name": "纪念日",
-     "emoji": "🎂",
-     "patience": 40,
-     "tip": 1.5
-    }
-   ],
-   "timeLimit": 30
-  },
-  "job_waiter_fast": {
-   "type": "restaurant",
-   "title": "快餐配餐",
-   "icon": "🍔",
-   "desc": "按订单把汉堡胚、肉饼、蔬菜按顺序叠好，配齐薯条饮料再出餐",
-   "mode": "burger",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "bun_bottom",
-     "name": "下层面包",
-     "icon": "🫓"
-    },
-    {
-     "id": "patty",
-     "name": "肉饼",
-     "icon": "🍖"
-    },
-    {
-     "id": "cheese",
-     "name": "芝士",
-     "icon": "🧀"
-    },
-    {
-     "id": "lettuce",
-     "name": "生菜",
-     "icon": "🥬"
-    },
-    {
-     "id": "tomato",
-     "name": "番茄",
-     "icon": "🍅"
-    },
-    {
-     "id": "bacon",
-     "name": "培根",
-     "icon": "🥓"
-    },
-    {
-     "id": "egg",
-     "name": "煎蛋",
-     "icon": "🍳"
-    },
-    {
-     "id": "bun_top",
-     "name": "上层面包",
-     "icon": "🍞"
-    }
-   ],
-   "sides": [
-    {
-     "id": "fries",
-     "name": "薯条",
-     "icon": "🍟",
-     "price": 8
-    },
-    {
-     "id": "nuggets",
-     "name": "鸡米花",
-     "icon": "🍗",
-     "price": 10
-    },
-    {
-     "id": "rings",
-     "name": "洋葱圈",
-     "icon": "🧅",
-     "price": 9
-    }
-   ],
-   "drinks": [
-    {
-     "id": "orange",
-     "name": "橙汁",
-     "icon": "🧃",
-     "price": 8
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛",
-     "price": 7
-    },
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 6,
-     "group": "soda"
-    }
-   ],
-   "recipes": [
-    {
-     "id": "burger_classic",
-     "name": "招牌汉堡",
-     "price": 18,
-     "recipe": [
-      "bun_bottom",
-      "patty",
-      "cheese",
-      "lettuce",
-      "tomato",
-      "bun_top"
-     ]
-    },
-    {
-     "id": "burger_bacon",
-     "name": "培根堡",
-     "price": 22,
-     "recipe": [
-      "bun_bottom",
-      "patty",
-      "bacon",
-      "cheese",
-      "bun_top"
-     ]
-    },
-    {
-     "id": "burger_veg",
-     "name": "素食堡",
-     "price": 16,
-     "recipe": [
-      "bun_bottom",
-      "lettuce",
-      "tomato",
-      "cheese",
-      "bun_top"
-     ]
-    },
-    {
-     "id": "burger_egg",
-     "name": "煎蛋堡",
-     "price": 20,
-     "recipe": [
-      "bun_bottom",
-      "patty",
-      "egg",
-      "cheese",
-      "bun_top"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "上班族",
-     "emoji": "💼",
-     "patience": 28,
-     "tip": 0.8
-    },
-    {
-     "name": "学生",
-     "emoji": "👦",
-     "patience": 32,
-     "tip": 0.7
-    },
-    {
-     "name": "带娃家长",
-     "emoji": "👨‍👩‍👦",
-     "patience": 24,
-     "tip": 1.0
-    },
-    {
-     "name": "赶路人",
-     "emoji": "🏃",
-     "patience": 18,
-     "tip": 0.6
-    },
-    {
-     "name": "吃货",
-     "emoji": "🤤",
-     "patience": 30,
-     "tip": 1.2
-    }
-   ],
-   "timeLimit": 30
-  },
-  "exercise_gym": {
-   "type": "rhythm",
-   "title": "健身节拍",
-   "icon": "🏋️",
-   "desc": "跟着节奏敲击：音符落到判定线时按下 1/2/3 键（或点击对应轨道）",
-   "tracks": 3,
-   "notes": 20,
-   "intervalMs": 300,
-   "fallMs": 1800,
-   "perfectBonusRate": 0.05
-  },
-  "exercise_home_equip": {
-   "type": "rhythm",
-   "title": "居家训练",
-   "icon": "🏋️",
-   "desc": "家用器材训练：跟上节拍（1/2 键）",
-   "tracks": 2,
-   "notes": 20,
-   "intervalMs": 460,
-   "fallMs": 1900,
-   "perfectBonusRate": 0.05
-  },
-  "street_perform": {
-   "type": "rhythm",
-   "title": "街头演唱",
-   "icon": "🎤",
-   "desc": "跟着旋律打节拍：音符落到判定线时按下 1/2/3 键，唱得准打赏多",
-   "tracks": 3,
-   "notes": 20,
-   "intervalMs": 460,
-   "fallMs": 2000,
-   "perfectBonusRate": 0.05
-  },
-  "park_chess": {
-   "type": "chess",
-   "title": "象棋对弈",
-   "icon": "♟️",
-   "desc": "和象棋大爷摆开棋盘杀一盘：点击选中棋子，再点目标格落子。吃掉对方的「将/帅」即获胜！",
-   "winMoney": 20,
-   "drawMoney": 5,
-   "perfectBonusRate": 0
-  },
-  "stall_street_night": {
-   "type": "restaurant",
-   "title": "夜市摆摊",
-   "icon": "🍢",
-   "desc": "夜市小吃摊：按小票配方顺序串好/装好，再配上小食饮料出餐",
-   "mode": "snack",
-   "perfectBonusRate": 0.05,
-   "timeLimit": 30,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "skewer",
-     "name": "竹签",
-     "icon": "🍢"
-    },
-    {
-     "id": "meat",
-     "name": "肉块",
-     "icon": "🥩"
-    },
-    {
-     "id": "veg",
-     "name": "蔬菜",
-     "icon": "🥬"
-    },
-    {
-     "id": "sausage",
-     "name": "香肠",
-     "icon": "🌭"
-    },
-    {
-     "id": "wrap",
-     "name": "面皮",
-     "icon": "🫓"
-    },
-    {
-     "id": "sauce",
-     "name": "酱料",
-     "icon": "🧂"
-    },
-    {
-     "id": "chili",
-     "name": "辣粉",
-     "icon": "🌶️"
-    },
-    {
-     "id": "box",
-     "name": "纸盒",
-     "icon": "🥡"
-    }
-   ],
-   "sides": [
-    {
-     "id": "corn",
-     "name": "烤玉米",
-     "icon": "🌽",
-     "price": 5
-    },
-    {
-     "id": "gluten",
-     "name": "烤面筋",
-     "icon": "🍡",
-     "price": 6
-    },
-    {
-     "id": "egg",
-     "name": "卤蛋",
-     "icon": "🥚",
-     "price": 3
-    }
-   ],
-   "drinks": [
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 5,
-     "group": "soda"
-    },
-    {
-     "id": "icetea",
-     "name": "冰红茶",
-     "icon": "🧊",
-     "price": 6
-    },
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 3
-    }
-   ],
-   "recipes": [
-    {
-     "id": "skewer_meat",
-     "name": "烤肉串",
-     "price": 9,
-     "recipe": [
-      "skewer",
-      "meat",
-      "sauce"
-     ]
-    },
-    {
-     "id": "skewer_veg",
-     "name": "素菜串",
-     "price": 6,
-     "recipe": [
-      "skewer",
-      "veg",
-      "chili"
-     ]
-    },
-    {
-     "id": "hand_pancake",
-     "name": "手抓饼",
-     "price": 11,
-     "recipe": [
-      "wrap",
-      "sausage",
-      "sauce"
-     ]
-    },
-    {
-     "id": "spicy_box",
-     "name": "麻辣拼盘",
-     "price": 14,
-     "recipe": [
-      "box",
-      "meat",
-      "veg",
-      "chili"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "下班族",
-     "emoji": "💼",
-     "patience": 26,
-     "tip": 0.9
-    },
-    {
-     "name": "夜跑青年",
-     "emoji": "🏃",
-     "patience": 20,
-     "tip": 0.7
-    },
-    {
-     "name": "学生党",
-     "emoji": "👦",
-     "patience": 30,
-     "tip": 0.6
-    },
-    {
-     "name": "撸串老饕",
-     "emoji": "🤤",
-     "patience": 28,
-     "tip": 1.3
-    }
-   ],
-   "stall": true,
-   "stallPerCustomerPay": 9,
-   "stallStaminaCost": 2,
-   "stallHourPerCustomer": 0.5,
-   "stallCustomerCap": 30
-  },
-  "job_farm_hand": {
-   "type": "sequence",
-   "title": "农活流程",
-   "icon": "🌾",
-   "desc": "王大伯交代的活儿：按农时顺序干（共 3 垄，每垄按钮顺序打乱）",
-   "steps": [
-    "翻地",
-    "下种",
-    "覆土",
-    "浇水"
-   ],
-   "stepIcons": [
-    "⛏️",
-    "🌱",
-    "🪱",
-    "💧"
-   ],
-   "recipeTable": [
-    {
-     "name": "春播垄",
-     "recipe": [
-      "翻地",
-      "下种",
-      "覆土",
-      "浇水"
-     ]
-    },
-    {
-     "name": "补苗垄",
-     "recipe": [
-      "翻地",
-      "下种",
-      "浇水"
-     ]
-    },
-    {
-     "name": "抗旱垄",
-     "recipe": [
-      "翻地",
-      "浇水",
-      "下种",
-      "覆土"
-     ]
-    }
-   ],
-   "rounds": 5,
-   "shuffleEachRound": true,
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "perfectBonusRate": 0.05
-  },
-  "job_pasture_milk": {
-   "type": "sequence",
-   "title": "牧场挤奶",
-   "icon": "🐄",
-   "desc": "李婶盯着呢：按规程伺候好每头奶牛（共 3 头，顺序不能乱）",
-   "steps": [
-    "安抚奶牛",
-    "清洗乳房",
-    "手工挤奶",
-    "过滤装桶"
-   ],
-   "stepIcons": [
-    "🤚",
-    "🧼",
-    "🥛",
-    "🪣"
-   ],
-   "rounds": 5,
-   "shuffleEachRound": true,
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "perfectBonusRate": 0.05
-  },
-  "job_orchard_pick": {
-   "type": "whack",
-   "title": "果园采摘",
-   "icon": "🍎",
-   "desc": "熟透的果子冒出来就摘；青果和虫果碰了要扣钱",
-   "targets": 28,
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "goodLabel": "熟果",
-   "goodIcon": "🍎",
-   "badLabel": "青果",
-   "badIcon": "🍏"
-  },
-  "temple_volunteer": {
-   "type": "sequence",
-   "title": "寺中出坡",
-   "icon": "🧹",
-   "desc": "知客僧安排的出坡功课：按次第做完（共 2 轮，心要静、手要稳）",
-   "steps": [
-    "扫落叶",
-    "劈柴",
-    "挑水",
-    "上香"
-   ],
-   "stepIcons": [
-    "🧹",
-    "🪓",
-    "🪣",
-    "🕯️"
-   ],
-   "rounds": 5,
-   "shuffleEachRound": true,
-   "timeLimit": 30,
-   "wrongLimit": 3,
-   "perfectBonusRate": 0.05
-  },
-  "job_training_assistant": {
-   "type": "quiz",
-   "title": "课堂答疑",
-   "icon": "🎓",
-   "desc": "学员举手提问，选出正确的知识点回答，答对越多助教做得越顺",
-   "questions": [
-    {
-     "q": "学员问：函数返回值怎么写？",
-     "options": [
-      "return 值",
-      "output 值",
-      "send 值",
-      "give 值"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "学员问：这段代码循环了几次？",
-     "options": [
-      "3 次",
-      "5 次",
-      "7 次",
-      "10 次"
-     ],
-     "answer": 1
-    },
-    {
-     "q": "学员问：数据结构里 FIFO 是什么？",
-     "options": [
-      "队列",
-      "栈",
-      "哈希表",
-      "链表"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "学员问：本地文件用什么路径写法？",
-     "options": [
-      "相对路径",
-      "绝对路径",
-      "任意路径",
-      "不需要路径"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "学员问：调试第一步应该做什么？",
-     "options": [
-      "看报错信息",
-      "重装系统",
-      "删代码",
-      "重启电脑"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "学员问：数组下标从几开始？",
-     "options": [
-      "0",
-      "1",
-      "-1",
-      "随语言不同"
-     ],
-     "answer": 0
-    },
-    {
-     "q": "学员问：改完代码没生效怎么办？",
-     "options": [
-      "先确认保存并刷新",
-      "直接重写",
-      "换电脑",
-      "重装环境"
-     ],
-     "answer": 0
-    }
-   ],
-   "timeLimit": 30,
-   "wrongLimit": 2,
-   "perfectBonusRate": 0.05
-  },
-  "job_delivery_fulltime": {
-   "type": "delivery",
-   "title": "全职配送跑单",
-   "icon": "🛵",
-   "desc": "全职骑手一次可压 3 单：先集中取餐再顺路派送，30 秒内完成 6 单为满分",
-   "perfectBonusRate": 0.05,
-   "mode": "food",
-   "timeLimit": 30,
-   "targetOrders": 6,
-   "payPerOrder": 20,
-   "maxActive": 3,
-   "pickups": [
-    {
-     "id": "r1",
-     "name": "禾风食堂",
-     "x": 262,
-     "y": 48,
-     "door": {
-      "x": 262,
-      "y": 125
-     },
-     "icon": "🍱",
-     "color": "#f4784d"
-    },
-    {
-     "id": "r2",
-     "name": "晚风小馆",
-     "x": 365,
-     "y": 224,
-     "door": {
-      "x": 440,
-      "y": 245
-     },
-     "icon": "🍜",
-     "color": "#e95e68"
-    },
-    {
-     "id": "r3",
-     "name": "山野咖喱",
-     "x": 860,
-     "y": 420,
-     "door": {
-      "x": 860,
-      "y": 505
-     },
-     "icon": "🍛",
-     "color": "#f29d43"
-    }
-   ],
-   "drops": [
-    {
-     "id": "h1",
-     "name": "枫林公寓 A",
-     "x": 575,
-     "y": 54,
-     "door": {
-      "x": 575,
-      "y": 125
-     },
-     "icon": "🏠",
-     "color": "#588cc9"
-    },
-    {
-     "id": "h2",
-     "name": "晴空公寓 B",
-     "x": 860,
-     "y": 228,
-     "door": {
-      "x": 750,
-      "y": 315
-     },
-     "icon": "🏠",
-     "color": "#836cc7"
-    },
-    {
-     "id": "h3",
-     "name": "云岸公寓 C",
-     "x": 265,
-     "y": 420,
-     "door": {
-      "x": 265,
-      "y": 505
-     },
-     "icon": "🏠",
-     "color": "#4f9f91"
-    },
-    {
-     "id": "h4",
-     "name": "晚霞公寓 D",
-     "x": 585,
-     "y": 420,
-     "door": {
-      "x": 585,
-      "y": 505
-     },
-     "icon": "🏠",
-     "color": "#cf7470"
-    }
-   ]
-  },
-  "job_netbar_admin": {
-   "type": "restaurant",
-   "title": "网管饮品吧",
-   "icon": "🕹️",
-   "desc": "网吧吧台：按单做珍珠奶茶、现磨咖啡，配薯片泡面，送水送饮",
-   "mode": "cup",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "cup",
-     "name": "杯子",
-     "icon": "🥤"
-    },
-    {
-     "id": "tea",
-     "name": "茶底",
-     "icon": "🍵"
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛"
-    },
-    {
-     "id": "pearl",
-     "name": "珍珠",
-     "icon": "🟤"
-    },
-    {
-     "id": "sugar",
-     "name": "糖浆",
-     "icon": "🍯"
-    },
-    {
-     "id": "coffee",
-     "name": "咖啡",
-     "icon": "🫘"
-    },
-    {
-     "id": "ice",
-     "name": "冰块",
-     "icon": "🧊"
-    }
-   ],
-   "sides": [
-    {
-     "id": "chips",
-     "name": "薯片",
-     "icon": "🍟",
-     "price": 6
-    },
-    {
-     "id": "noodle",
-     "name": "泡面",
-     "icon": "🍜",
-     "price": 15
-    },
-    {
-     "id": "nuts",
-     "name": "坚果",
-     "icon": "🥜",
-     "price": 8
-    },
-    {
-     "id": "chocolate",
-     "name": "巧克力",
-     "icon": "🍫",
-     "price": 7
-    }
-   ],
-   "drinks": [
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 3
-    },
-    {
-     "id": "energy",
-     "name": "功能饮料",
-     "icon": "⚡",
-     "price": 8
-    },
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 5,
-     "group": "soda"
-    }
-   ],
-   "recipes": [
-    {
-     "id": "milk_tea",
-     "name": "珍珠奶茶",
-     "price": 12,
-     "recipe": [
-      "cup",
-      "tea",
-      "milk",
-      "pearl"
-     ]
-    },
-    {
-     "id": "coffee_cup",
-     "name": "现磨咖啡",
-     "price": 10,
-     "recipe": [
-      "cup",
-      "coffee",
-      "milk"
-     ]
-    },
-    {
-     "id": "sweet_tea",
-     "name": "蜂蜜茶",
-     "price": 9,
-     "recipe": [
-      "cup",
-      "tea",
-      "sugar"
-     ]
-    },
-    {
-     "id": "iced_coffee",
-     "name": "冰咖啡",
-     "price": 11,
-     "recipe": [
-      "cup",
-      "coffee",
-      "ice",
-      "milk"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "学生党",
-     "emoji": "🎓",
-     "patience": 30,
-     "tip": 0.7
-    },
-    {
-     "name": "通宵党",
-     "emoji": "🌙",
-     "patience": 40,
-     "tip": 1.0
-    },
-    {
-     "name": "开黑队",
-     "emoji": "🎮",
-     "patience": 28,
-     "tip": 0.9
-    },
-    {
-     "name": "摸鱼客",
-     "emoji": "😎",
-     "patience": 34,
-     "tip": 0.8
-    },
-    {
-     "name": "加班族",
-     "emoji": "💻",
-     "patience": 26,
-     "tip": 1.1
-    }
-   ],
-   "timeLimit": 30
-  },
-  "internet_night_job": {
-   "type": "restaurant",
-   "title": "网管饮品吧",
-   "icon": "🕹️",
-   "desc": "网吧饮品吧台（与固定网管同一套玩法）：按配方顺序出杯，再配小食饮料",
-   "mode": "cup",
-   "perfectBonusRate": 0.05,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "cup",
-     "name": "杯子",
-     "icon": "🥤"
-    },
-    {
-     "id": "tea",
-     "name": "茶底",
-     "icon": "🍵"
-    },
-    {
-     "id": "milk",
-     "name": "牛奶",
-     "icon": "🥛"
-    },
-    {
-     "id": "pearl",
-     "name": "珍珠",
-     "icon": "🟤"
-    },
-    {
-     "id": "sugar",
-     "name": "糖浆",
-     "icon": "🍯"
-    },
-    {
-     "id": "coffee",
-     "name": "咖啡",
-     "icon": "🫘"
-    },
-    {
-     "id": "ice",
-     "name": "冰块",
-     "icon": "🧊"
-    }
-   ],
-   "sides": [
-    {
-     "id": "chips",
-     "name": "薯片",
-     "icon": "🍟",
-     "price": 6
-    },
-    {
-     "id": "noodle",
-     "name": "泡面",
-     "icon": "🍜",
-     "price": 15
-    },
-    {
-     "id": "nuts",
-     "name": "坚果",
-     "icon": "🥜",
-     "price": 8
-    },
-    {
-     "id": "chocolate",
-     "name": "巧克力",
-     "icon": "🍫",
-     "price": 7
-    }
-   ],
-   "drinks": [
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 3
-    },
-    {
-     "id": "energy",
-     "name": "功能饮料",
-     "icon": "⚡",
-     "price": 8
-    },
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 5,
-     "group": "soda"
-    }
-   ],
-   "recipes": [
-    {
-     "id": "milk_tea",
-     "name": "珍珠奶茶",
-     "price": 12,
-     "recipe": [
-      "cup",
-      "tea",
-      "milk",
-      "pearl"
-     ]
-    },
-    {
-     "id": "coffee_cup",
-     "name": "现磨咖啡",
-     "price": 10,
-     "recipe": [
-      "cup",
-      "coffee",
-      "milk"
-     ]
-    },
-    {
-     "id": "sweet_tea",
-     "name": "蜂蜜茶",
-     "price": 9,
-     "recipe": [
-      "cup",
-      "tea",
-      "sugar"
-     ]
-    },
-    {
-     "id": "iced_coffee",
-     "name": "冰咖啡",
-     "price": 11,
-     "recipe": [
-      "cup",
-      "coffee",
-      "ice",
-      "milk"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "学生党",
-     "emoji": "🎓",
-     "patience": 30,
-     "tip": 0.7
-    },
-    {
-     "name": "通宵党",
-     "emoji": "🌙",
-     "patience": 40,
-     "tip": 1.0
-    },
-    {
-     "name": "开黑队",
-     "emoji": "🎮",
-     "patience": 28,
-     "tip": 0.9
-    },
-    {
-     "name": "摸鱼客",
-     "emoji": "😎",
-     "patience": 34,
-     "tip": 0.8
-    },
-    {
-     "name": "加班族",
-     "emoji": "💻",
-     "patience": 26,
-     "tip": 1.1
-    }
-   ],
-   "timeLimit": 30
-  },
-  "stall_market_fair": {
-   "type": "restaurant",
-   "title": "周末夜市摆摊",
-   "icon": "🎪",
-   "desc": "周末夜市摆摊：人流量大，售价是平日的 1.5 倍，多劳多得",
-   "mode": "snack",
-   "perfectBonusRate": 0.05,
-   "timeLimit": 30,
-   "lives": 3,
-   "totalCustomers": 5,
-   "spawnMs": 4200,
-   "maxWaiting": 3,
-   "ingredients": [
-    {
-     "id": "skewer",
-     "name": "竹签",
-     "icon": "🍢"
-    },
-    {
-     "id": "meat",
-     "name": "肉块",
-     "icon": "🥩"
-    },
-    {
-     "id": "veg",
-     "name": "蔬菜",
-     "icon": "🥬"
-    },
-    {
-     "id": "sausage",
-     "name": "香肠",
-     "icon": "🌭"
-    },
-    {
-     "id": "wrap",
-     "name": "面皮",
-     "icon": "🫓"
-    },
-    {
-     "id": "sauce",
-     "name": "酱料",
-     "icon": "🧂"
-    },
-    {
-     "id": "chili",
-     "name": "辣粉",
-     "icon": "🌶️"
-    },
-    {
-     "id": "box",
-     "name": "纸盒",
-     "icon": "🥡"
-    }
-   ],
-   "sides": [
-    {
-     "id": "corn",
-     "name": "烤玉米",
-     "icon": "🌽",
-     "price": 5
-    },
-    {
-     "id": "gluten",
-     "name": "烤面筋",
-     "icon": "🍡",
-     "price": 6
-    },
-    {
-     "id": "egg",
-     "name": "卤蛋",
-     "icon": "🥚",
-     "price": 3
-    }
-   ],
-   "drinks": [
-    {
-     "id": "soda",
-     "name": "碳酸饮料",
-     "icon": "🥤",
-     "price": 5,
-     "group": "soda"
-    },
-    {
-     "id": "icetea",
-     "name": "冰红茶",
-     "icon": "🧊",
-     "price": 6
-    },
-    {
-     "id": "water",
-     "name": "矿泉水",
-     "icon": "💧",
-     "price": 3
-    }
-   ],
-   "recipes": [
-    {
-     "id": "skewer_meat",
-     "name": "烤肉串",
-     "price": 9,
-     "recipe": [
-      "skewer",
-      "meat",
-      "sauce"
-     ]
-    },
-    {
-     "id": "skewer_veg",
-     "name": "素菜串",
-     "price": 6,
-     "recipe": [
-      "skewer",
-      "veg",
-      "chili"
-     ]
-    },
-    {
-     "id": "hand_pancake",
-     "name": "手抓饼",
-     "price": 11,
-     "recipe": [
-      "wrap",
-      "sausage",
-      "sauce"
-     ]
-    },
-    {
-     "id": "spicy_box",
-     "name": "麻辣拼盘",
-     "price": 14,
-     "recipe": [
-      "box",
-      "meat",
-      "veg",
-      "chili"
-     ]
-    }
-   ],
-   "customerTypes": [
-    {
-     "name": "下班族",
-     "emoji": "💼",
-     "patience": 26,
-     "tip": 0.9
-    },
-    {
-     "name": "夜跑青年",
-     "emoji": "🏃",
-     "patience": 20,
-     "tip": 0.7
-    },
-    {
-     "name": "学生党",
-     "emoji": "👦",
-     "patience": 30,
-     "tip": 0.6
-    },
-    {
-     "name": "撸串老饕",
-     "emoji": "🤤",
-     "patience": 28,
-     "tip": 1.3
-    }
-   ],
-   "stall": true,
-   "stallPerCustomerPay": 13.5,
-   "stallStaminaCost": 2,
-   "stallHourPerCustomer": 0.5,
-   "stallCustomerCap": 20
   }
- }
 }

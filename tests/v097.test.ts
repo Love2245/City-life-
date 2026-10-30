@@ -1,13 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
-import { weekdayOf, weekdayLabel, isWeekend, WEEKDAY_LABEL } from "../src/game/core/calendar";
-import { isRestDay, getJobDef, performJob } from "../src/game/core/jobs";
+import { gameDay, weekdayOf, weekdayLabel, isWeekend, WEEKDAY_LABEL } from "../src/game/core/calendar";
+import { applyForJob, completeWork, isRestDay, getJobDef, performJob } from "../src/game/core/jobs";
+import { getWorkShift } from "../src/game/core/career";
 import { checkEventConditions, EVENTS } from "../src/game/core/events";
 import { getLocation } from "../src/game/core/actions";
 import { hasFacility, currentRegion, getEffectiveLodging, getLodging } from "../src/game/core/housing";
 import { maybeReceiveSms, replySms, unreadSmsCount, markSmsRead, SMS_SCENARIOS } from "../src/game/core/phone";
 import { migrateSave, SAVE_VERSION } from "../src/game/core/migrate";
 import { getMiniGameConfig } from "../src/game/core/minigame";
+import { grantTempleStay } from "../src/game/core/residence";
+import { isRestDayFor } from "../src/game/core/quests";
+import { isWorkRestDay } from "../src/game/core/workSchedule";
 
 describe("v0.97 星期制度", () => {
   it("2026-08-01 = 周六，次日周日，再日周一", () => {
@@ -37,14 +41,26 @@ describe("v0.97 星期制度", () => {
     expect(isRestDay(s, getJobDef("job_office_assistant")!)).toBe(true); // 双休岗周日休
   });
 
-  it("performJob：日结工周六可上班，双休正式工周六被拦（提示休息）", () => {
+  it("休息日配置支持周一等工作日，并在排班、行动与待办中保持一致", () => {
+    const state = createInitialState();
+    state.time = { ...state.time, year: 2026, month: 8, day: 3 }; // 周一
+    const mondayOff = { ...getJobDef("job_waiter_west")!, restDays: ["mon"] };
+    expect(isRestDay(state, mondayOff)).toBe(true);
+    expect(isWorkRestDay(mondayOff, gameDay(state.time))).toBe(true);
+    expect(isRestDayFor(mondayOff, state.time)).toBe(true);
+  });
+
+  it("现场日结工周六可直接开工；双休正式工录用后周六无班", () => {
     const s = createInitialState();
     s.time = { ...s.time, year: 2026, month: 8, day: 1, hour: 9 }; // 周六
     s.player.attrs.stamina = 90;
     s.player.attrs.health = 90;
     s.player.attrs.satiety = 90;
+    s.locationId = "electronics_factory";
     const r = performJob(s, "job_factory_line"); // 日结工
-    expect(r.ok).toBe(true);
+    expect(r.ok, r.reason).toBe(true);
+    expect(r.session?.source).toBe("site");
+    expect(completeWork(s, r.session!.id, 0).ok).toBe(true);
     // 双休正式工（文员）周六休息
     const s2 = createInitialState();
     s2.time = { ...s2.time, year: 2026, month: 8, day: 1, hour: 10 };
@@ -53,9 +69,12 @@ describe("v0.97 星期制度", () => {
     s2.player.attrs.stamina = 90;
     s2.player.attrs.health = 90;
     s2.player.attrs.satiety = 90;
+    s2.locationId = "office";
+    expect(applyForJob(s2, getJobDef("job_office_assistant")!).ok).toBe(true);
+    expect(getWorkShift(s2).phase).toBe("rest");
     const r2 = performJob(s2, "job_office_assistant");
     expect(r2.ok).toBe(false);
-    expect(r2.reason).toContain("休息");
+    expect(r2.session).toBeUndefined();
   });
 });
 
@@ -91,7 +110,7 @@ describe("v0.97 政府住房与定位统一", () => {
     expect(gov.moodBonus).toBe(minsu.moodBonus);
   });
 
-  it("出门定位：酒店/出租屋→市中心；民宿/政府住房/青旅/露宿→住宅区", () => {
+  it("出门定位：酒店/出租屋/公寓→市中心；民宿/政府住房/露宿→住宅区；青旅→火车站；寺庙→城市边缘", () => {
     const s = createInitialState();
     // gov
     expect(currentRegion(s)).toBe("downtown_residential");
@@ -101,15 +120,19 @@ describe("v0.97 政府住房与定位统一", () => {
     // 民宿
     s.living.nightly = { lodgingId: "minsu" };
     expect(currentRegion(s)).toBe("downtown_residential");
-    // 出租屋（月租）
+    // 普通出租屋（月租，归入住宅区）
     s.living = { mode: "lease", govDaysLeft: 0, nightly: null, lease: { housingId: "old_apartment", rent: 800, rentGrowthCount: 0 } };
-    expect(currentRegion(s)).toBe("downtown_center");
+    expect(currentRegion(s)).toBe("downtown_residential");
     // 出租公寓
     s.living.lease = { housingId: "rental_apartment", rent: 1200, rentGrowthCount: 0 };
     expect(currentRegion(s)).toBe("downtown_center");
-    // 青旅
+    // 青旅：v1.43 起就近火车站（老城区），不再跟着住宅区
     s.living = { mode: "nightly", govDaysLeft: 0, nightly: { lodgingId: "hostel" }, lease: null };
-    expect(currentRegion(s)).toBe("downtown_residential");
+    expect(currentRegion(s)).toBe("downtown_station");
+    // 寺庙禅房：郊区城市边缘
+    s.living.nightly = { lodgingId: "temple" };
+    grantTempleStay(s);
+    expect(currentRegion(s)).toBe("suburban_edge");
   });
 });
 
@@ -134,18 +157,16 @@ describe("v0.97 短信系统", () => {
 
   it("每天至多一条短信；回复后有效果并标记已读", () => {
     const s = createInitialState(3);
-    const m1 = maybeReceiveSms(s);
-    const day = s.flags["sms_lastDay"];
+    let m1: ReturnType<typeof maybeReceiveSms> = null;
+    for (let i = 0; i < 20 && !m1; i++) m1 = maybeReceiveSms(s);
+    expect(m1).not.toBeNull();
     const m2 = maybeReceiveSms(s); // 同一天不再收到
     expect(m2).toBeNull();
     if (m1) {
-      const before = s.player.money;
       const r = replySms(s, s.smsInbox[0].id, 0);
       expect(r.ok).toBe(true);
       expect(s.smsInbox[0].replied).toBe(true);
       expect(unreadSmsCount(s)).toBe(0);
-      void before;
-      void day;
     }
   });
 

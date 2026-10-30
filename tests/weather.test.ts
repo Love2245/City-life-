@@ -3,6 +3,7 @@ import { createInitialState } from "../src/game/core/state";
 import { rollWeather, currentWeather, holidayOf, todayIsHoliday, WEATHER_LABEL } from "../src/game/core/weather";
 import { seasonOf, SEASON_LABEL } from "../src/game/core/calendar";
 import { advanceHours, sleepSettlement } from "../src/game/core/time";
+import { selectLodging } from "../src/game/core/housing";
 import { travelHours } from "../src/game/core/actions";
 import { getLocation } from "../src/game/core/actions";
 import { checkEventConditions, EVENTS } from "../src/game/core/events";
@@ -73,6 +74,20 @@ describe("v0.95 季节/天气系统", () => {
     s.weather = { id: "coldwave", lastRollDay: 0 };
     sleepSettlement(s, { stayedUp: false, hours: 8 });
     expect(s.player.money).toBe(1000 - Math.round(150 * 1.3)); // 195
+  });
+
+  it("寒潮选择住宿按加价后的实际金额校验现金", () => {
+    const s = createInitialState();
+    s.living = { mode: "nightly", govDaysLeft: 0, nightly: { lodgingId: "atm" }, lease: null };
+    s.weather = { id: "coldwave", lastRollDay: 0 };
+    s.player.money = 194;
+    expect(selectLodging(s, "hotel")).toBe(false);
+    expect(s.living.nightly?.lodgingId).toBe("atm");
+
+    s.player.money = 195;
+    expect(selectLodging(s, "hotel")).toBe(true);
+    sleepSettlement(s, { stayedUp: false, hours: 8 });
+    expect(s.player.money).toBe(0);
   });
 
   it("寒潮对产权房（own）无影响", () => {

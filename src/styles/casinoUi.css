@@ -1,0 +1,98 @@
+/* The casino keeps the scene HUD in the lobby and uses a shared felt surface at the table. */
+:root .casino-lobby .casino-balance { background:var(--grad-panel);border-color:var(--border);box-shadow:var(--shadow-card);border-radius:var(--radius-md); }
+:root .casino-lobby .casino-balance strong { color:var(--accent); }
+:root .casino-lobby .casino-balance>span,:root .casino-lobby .casino-balance small { color:var(--text-dim); }
+:root .casino-lobby .casino-lobby-grid { grid-template-columns:1.25fr 1fr 1fr;align-items:stretch; }
+:root .casino-lobby .casino-lobby-card { background:var(--grad-panel);border-color:var(--border);border-radius:var(--radius-md);padding:18px;gap:10px;transition:transform .2s,border-color .2s; }
+:root .casino-lobby .casino-lobby-card:hover { border-color:var(--accent);transform:translateY(-2px); }
+:root .casino-lobby .casino-lobby-card .lobby-icon { display:grid;place-items:center;width:43px;height:43px;border:1px solid var(--border);border-radius:12px;background:var(--bg-soft);color:var(--accent);font:26px Georgia; }
+:root .casino-lobby .casino-lobby-card p,:root .casino-lobby .casino-lobby-card label { color:var(--text-dim); }
+:root .casino-lobby .casino-lobby-card>button { margin-top:auto; }
+:root .casino-lobby .casino-lobby-card .gold-button { background:var(--accent);color:var(--accent-ink); }
+.casino-backdrop:root .casino-backdrop { background:radial-gradient(ellipse at 38% 45%,#274c40 0,#152f2a 44%,#0c1b1c 85%); }
+:root .casino-backdrop:before { content:"";position:absolute;inset:12px;border:1px solid #e5d6aa13;pointer-events:none;border-radius:8px; }
+:root .casino-backdrop .casino-menu { padding:24px 36px 18px; }
+:root .casino-backdrop .casino-menu-head { padding:0 0 17px; }
+:root .casino-backdrop .casino-menu-head h2 { font-family:"Noto Serif SC","Songti SC",Georgia,serif;font-size:26px;letter-spacing:2px;color:#eddbaf; }
+:root .casino-backdrop .casino-menu-head small { color:#99b1a4;font-size:10px;letter-spacing:2px; }
+:root .casino-backdrop .casino-head-right>span { padding:9px 15px;border:1px solid #c3a46c33;border-radius:25px;background:#102b27;font-variant-numeric:tabular-nums; }
+:root .casino-backdrop .casino-head-right button { width:40px;height:40px;transition:background .2s,transform .2s; }
+:root .casino-backdrop .casino-head-right button:hover { background:#e6cca020;transform:rotate(90deg); }
+:root .casino-backdrop .room-grid { gap:24px;width:min(980px,100%); }
+:root .casino-backdrop .room-card { position:relative;overflow:hidden;min-height:300px;background:linear-gradient(145deg,#274638,#152f29 55%,#102322);box-shadow:0 25px 45px #0003;transition:transform .25s,border-color .25s,box-shadow .25s;border-color:#bea47266;padding:35px; }
+:root .casino-backdrop .room-card.competition { background:linear-gradient(145deg,#3d3030,#2b2828 55%,#172526); }
+:root .casino-backdrop .room-card:after { content:"♣";position:absolute;right:16px;top:-45px;font:300px Georgia;color:#b1c99c0a;transform:rotate(-18deg);pointer-events:none; }
+:root .casino-backdrop .room-card.competition:after { content:"♦";color:#d2b0880c; }
+:root .casino-backdrop .room-card:hover { transform:translateY(-5px);border-color:#e5ce99;box-shadow:0 30px 55px #0005; }
+:root .casino-backdrop .room-card b { display:flex;justify-content:space-between;width:100%;border-top:1px solid #ddc9952b;padding-top:17px; }
+:root .casino-backdrop .casino-category-row { margin:14px auto 18px;width:min(1080px,100%); }
+:root .casino-backdrop .casino-category-row nav { gap:7px;padding:4px;border:1px solid #c5d3be22;border-radius:32px;background:#091e1b88;width:max-content;justify-self:center; }
+:root .casino-backdrop .casino-category-row nav button { background:transparent;border:0;padding:9px 24px;transition:background .2s,color .2s; }
+:root .casino-backdrop .casino-category-row nav button.active { background:linear-gradient(120deg,#eed9a3,#c6ac78);color:#24362b;box-shadow:0 3px 12px #0003; }
+:root .casino-backdrop .casino-game-layout { flex:1;min-height:0;display:grid;grid-template-columns:minmax(260px,.8fr) minmax(380px,1fr);gap:45px;align-items:center;width:min(1080px,100%);margin:0 auto; }
+:root .casino-backdrop .casino-game-content { width:auto;max-height:100%;box-sizing:border-box;overflow:auto;margin:0;padding:24px 26px;border:1px solid #dbcd9c30;border-radius:18px;background:linear-gradient(140deg,#19362eaa,#0b201dce);box-shadow:0 20px 45px #0002;scrollbar-width:thin;scrollbar-color:#a98e5444 transparent; }
+:root .casino-backdrop .casino-game-heading>span { width:48px;height:48px;border-radius:13px;font-size:28px;background:#bea36c15; }
+:root .casino-backdrop .casino-game-heading h3 { font-family:"Noto Serif SC","Songti SC",Georgia,serif;font-size:25px;letter-spacing:1px; }
+:root .casino-backdrop .casino-game-form>p { margin:12px 0 8px;font-size:12px;color:#b5c6b8; }
+:root .casino-backdrop .casino-game-content details { margin:6px 0 12px; }
+:root .casino-backdrop .casino-game-content details summary { min-height:32px;font-size:10px; }
+:root .casino-backdrop .casino-wager { margin-top:18px; }
+:root .casino-backdrop .casino-wager input { font-size:18px;font-variant-numeric:tabular-nums;border-color:#c4b38944;background:#071d19; }
+:root .casino-backdrop .wager-presets button { display:flex;align-items:center;justify-content:center;gap:7px;background:#102a23;min-height:43px;transition:border-color .2s,background .2s,transform .15s; }
+:root .casino-backdrop .wager-presets button.selected { background:#bfa46620;border-color:#d2b982;color:#f3da9d; }
+:root .casino-backdrop .wager-presets button:hover { border-color:#d2b982;transform:translateY(-2px); }
+:root .casino-backdrop .preset-chip { font-size:17px;color:#c6ab6c; }
+:root .casino-backdrop .game-picker button { border-radius:7px;font-size:11px;min-height:37px;padding:8px 13px;transition:background .2s; }
+:root .casino-backdrop .game-picker button.active { background:#d5bd8733;color:#f2d8a0;border-color:#d3b978; }
+:root .casino-backdrop .casino-game-footer { margin-top:20px;gap:10px; }
+:root .casino-backdrop .casino-game-footer .gold-button { background:linear-gradient(120deg,#e8d299,#c2a46c);min-height:47px;color:#243229;font-size:12px;box-shadow:0 4px 14px #0002;transition:filter .2s,transform .15s; }
+:root .casino-backdrop .casino-game-footer .gold-button:hover:not(:disabled) { filter:brightness(1.08);transform:translateY(-2px); }
+:root .casino-backdrop .casino-game-footer .back-button { width:27%;font-size:11px; }
+:root .casino-backdrop .casino-pager { font-size:10px;color:#739083;padding:12px 0 0; }
+.casino-preview { position:relative;align-self:stretch;display:flex;align-items:center;justify-content:center;min-height:250px;isolation:isolate; }
+.preview-orbit { position:absolute;width:270px;height:270px;max-width:95%;border-radius:50%;border:1px solid #c2cdb620;box-shadow:0 0 0 30px #c2cdb603,0 0 0 31px #c2cdb60a; }
+.preview-card { position:absolute;width:125px;height:178px;border-radius:10px;border:1px solid #e0cf9b;box-shadow:0 18px 28px #0005; }
+.preview-card.back-card { background:repeating-linear-gradient(45deg,#23483c 0 3px,#31574a 3px 6px);display:grid;place-items:center;color:#cbb685;font:38px Georgia;transform:translate(-38px,-20px) rotate(-16deg);outline:5px solid #cfccb4;outline-offset:-7px; }
+.preview-card.face-card { background:linear-gradient(125deg,#fff9e6,#e9e1cc);color:#26392f;transform:translate(35px,5px) rotate(12deg);display:grid;place-items:center; }
+.preview-card.face-card small { position:absolute;left:12px;top:10px;font:700 22px Georgia;text-align:center; }
+.preview-card.face-card>span { font:70px Georgia; }
+.preview-caption { position:absolute;bottom:35px;display:flex;flex-direction:column;gap:9px;text-align:center;color:#a7c0ad; }
+.preview-caption small { font-size:10px;letter-spacing:4px;color:#6f9280; }
+.preview-caption strong { font:500 16px "Songti SC",Georgia,serif;letter-spacing:1px; }
+.preview-slots { width:250px;padding:18px 16px;border:2px solid #baa06c;border-radius:20px;background:linear-gradient(135deg,#3a3329,#162b22);box-shadow:0 18px 30px #0004;transform:rotate(-7deg); }
+.preview-slots>small { display:block;text-align:center;letter-spacing:4px;font:14px Georgia;color:#e7cd91;margin-bottom:15px; }
+.preview-slots>div { display:flex;gap:7px;padding:7px;background:#0e1b16;border-radius:9px; }
+.preview-slots span { flex:1;display:grid;place-items:center;background:linear-gradient(#c9c3ab,#f7f0da,#c9c3ab);border-radius:5px;font:700 65px Georgia;color:#9b3e42; }
+.preview-wheel { width:235px;aspect-ratio:1;border:12px solid #a58a55;border-radius:50%;background:repeating-conic-gradient(#903b46 0deg 10deg,#152b27 10deg 20deg);box-shadow:0 18px 35px #0005,0 0 0 3px #504b33;display:grid;place-items:center;transform:rotate(-12deg); }
+.preview-wheel>b { display:grid;place-items:center;width:145px;aspect-ratio:1;border:5px solid #baa276;border-radius:50%;background:#1e3b2e;color:#c9b078;font:45px Georgia; }
+.preview-wheel>span { position:absolute;top:10px;color:#ffebba;font:15px Georgia; }
+:root .leisure-dialog.card-mode.leisure-dialog { background:radial-gradient(ellipse at 50% 43%,#32684e,#1b4939 55%,#12312a 95%);box-shadow:inset 0 0 0 7px #131e18,inset 0 0 0 9px #917a463d,inset 0 0 120px #011b1566; }
+:root .leisure-dialog.card-mode>header { padding:12px 28px;background:#0b2724d9; }
+.table-eyebrow { font-size:9px;letter-spacing:2px;color:#89a796; }
+:root .leisure-dialog.card-mode h2 { margin-top:5px;font-family:"Noto Serif SC","Songti SC",Georgia,serif;font-size:20px;letter-spacing:2px; }
+.table-header-right { display:flex;align-items:center;gap:20px; }
+.table-wallet { font-size:17px;color:#ead29a;font-variant-numeric:tabular-nums; }
+.table-wallet small { font-size:10px;margin-left:7px;color:#93b29e; }
+:root .leisure-dialog.card-mode .dialog-body { padding-top:16px; }
+:root .leisure-dialog.card-mode .round-footer { width:min(760px,100%);border-color:#bfcea222; }
+:root .leisure-dialog.card-mode .settle { background:linear-gradient(110deg,#ebd39a,#bda06b);box-shadow:0 4px 12px #0003; }
+@media(max-width:800px) { :root .casino-lobby .casino-lobby-grid{grid-template-columns:1fr}:root .casino-lobby .casino-lobby-card{padding:14px}:root .casino-backdrop .casino-game-layout{grid-template-columns:1fr;gap:0;max-width:600px}.casino-preview{display:none}:root .casino-backdrop .casino-menu{padding:18px}:root .casino-backdrop .casino-game-content{padding:20px}:root .casino-backdrop .casino-menu-head h2{font-size:22px}:root .casino-backdrop .room-card{min-height:200px;padding:23px}:root .casino-backdrop .room-grid{gap:12px}:root .casino-backdrop .casino-game-footer{flex-direction:row}:root .casino-backdrop .casino-game-footer .back-button{width:30%}:root .casino-backdrop .casino-category-row nav button{padding:8px 15px}:root .casino-backdrop .casino-head-right>span{padding:8px 10px;font-size:11px}:root .casino-backdrop .room-card:after{font-size:220px} }
+@media(max-width:440px){:root .casino-backdrop .casino-menu{padding:15px 12px}:root .casino-backdrop .casino-game-content{padding:17px 15px}:root .casino-backdrop .casino-menu-head h2{font-size:19px}:root .casino-backdrop .casino-category-row{margin:11px auto}:root .casino-backdrop .casino-category-row nav{padding:3px}:root .casino-backdrop .casino-category-row nav button{padding:7px 10px}:root .casino-backdrop .casino-head-right{gap:7px}:root .casino-backdrop .casino-head-right>span{padding:7px 8px}:root .casino-backdrop .casino-head-right button{width:34px;height:34px}:root .casino-backdrop .casino-game-heading h3{font-size:23px}:root .casino-backdrop .casino-game-footer .gold-button{font-size:11px}:root .leisure-dialog.card-mode>header{padding:12px 17px}.table-wallet{font-size:14px}.table-header-right{gap:12px} }
+@media(max-height:500px) and (min-width:600px){:root .casino-backdrop .casino-menu{padding:10px 23px 8px}:root .casino-backdrop .casino-menu-head{padding-bottom:8px}:root .casino-backdrop .casino-menu-head h2{font-size:19px;margin-top:2px}:root .casino-backdrop .casino-menu-head small{font-size:9px}:root .casino-backdrop .casino-head-right button{width:33px;height:33px}:root .casino-backdrop .casino-category-row{margin:7px auto}:root .casino-backdrop .casino-category-row nav button{min-height:30px;padding:6px 18px}:root .casino-backdrop .casino-category-row>button{height:32px;width:32px}:root .casino-backdrop .casino-game-layout{grid-template-columns:230px minmax(300px,1fr);gap:28px;max-width:970px}.casino-preview{display:flex;min-height:160px}.preview-orbit{width:170px;height:170px}.preview-card{width:86px;height:120px}.preview-card.face-card small{font-size:15px}.preview-card.face-card>span{font-size:45px}.preview-caption{bottom:5px}.preview-caption strong{font-size:12px}.preview-caption small{font-size:8px}.preview-slots{width:180px;padding:13px 10px}.preview-slots span{font-size:45px}.preview-wheel{width:145px;border-width:8px}.preview-wheel>b{width:88px;font-size:30px}:root .casino-backdrop .casino-game-content{padding:12px 17px}:root .casino-backdrop .casino-game-heading>span{height:36px;width:36px;font-size:22px}:root .casino-backdrop .casino-game-heading h3{font-size:20px}:root .casino-backdrop .casino-game-form>p{font-size:11px;margin:7px 0}:root .casino-backdrop .casino-game-content details{margin:3px 0}:root .casino-backdrop .casino-game-content details summary{min-height:25px}:root .casino-backdrop .game-picker{margin:6px 0}:root .casino-backdrop .game-picker button{min-height:31px}:root .casino-backdrop .casino-wager{margin:9px 0 7px}:root .casino-backdrop .casino-wager input{min-height:32px;font-size:15px}:root .casino-backdrop .wager-presets button{min-height:33px}:root .casino-backdrop .casino-game-footer{margin-top:10px}:root .casino-backdrop .casino-game-footer .gold-button,:root .casino-backdrop .casino-game-footer .back-button{min-height:36px}:root .casino-backdrop .choice-row{margin:9px 0}:root .casino-backdrop .choice-row button{min-height:33px}:root .casino-backdrop .casino-pager{display:none}:root .casino-backdrop .casino-lead{margin:8px 0;font-size:11px}:root .casino-backdrop .room-grid{grid-template-columns:1fr 1fr;gap:17px}:root .casino-backdrop .room-card{min-height:190px;padding:20px;gap:8px}:root .casino-backdrop .room-card strong{font-size:23px}:root .casino-backdrop .room-card b{padding-top:9px;font-size:12px}:root .leisure-dialog.card-mode>header{padding:7px 20px}:root .leisure-dialog.card-mode h2{font-size:16px;margin-top:2px}.table-eyebrow{font-size:8px}:root .leisure-dialog.card-mode .dialog-body{padding-top:7px}.table-wallet{font-size:14px} }
+@media(prefers-reduced-motion:reduce){:root .casino-backdrop *,:root .casino-lobby *{animation:none!important;transition:none!important} }
+
+:root .casino-backdrop .casino-game-content{display:flex;flex-direction:column;overflow:hidden}
+:root .casino-backdrop .casino-game-form{flex:1 1 auto;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:#a98e5444 transparent}
+:root .casino-backdrop .casino-game-footer{flex-shrink:0}
+
+/* Keep the entry action outside the scrolling form, even on short landscape screens. */
+:root .casino-backdrop .casino-menu { height:100%;min-height:0;overflow:hidden; }
+:root .casino-backdrop :is(.casino-menu-head,.casino-category-row,.casino-lead,.casino-pager) { flex-shrink:0; }
+:root .casino-backdrop .casino-game-layout { grid-template-rows:minmax(0,1fr);align-items:stretch;min-height:0; }
+:root .casino-backdrop .casino-game-content { min-width:0;min-height:0;max-height:none; }
+:root .casino-backdrop .casino-game-form { overscroll-behavior:contain;touch-action:pan-y;padding-right:5px; }
+:root .casino-backdrop .casino-game-footer { gap:10px;padding-top:10px;margin-top:8px;border-top:1px solid #dbcd9c30; }
+:root .casino-backdrop .casino-game-footer :is(.gold-button,.back-button) { min-width:0;min-height:44px;white-space:normal; }
+:root .casino-backdrop .room-grid { min-height:0;overflow:auto;overscroll-behavior:contain; }
+@media(max-height:500px) { :root .casino-backdrop .casino-game-layout { grid-template-columns:minmax(0,1fr);gap:0;max-width:900px; } :root .casino-backdrop .casino-preview { display:none; } }
+:root .leisure-dialog.card-mode.leisure-dialog { height:100%;min-height:0;max-height:100%; }

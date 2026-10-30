@@ -15,7 +15,8 @@
  */
 import type { GameState, Post, CitizenAuthor, MomentCategory } from "../types";
 import { gameDay } from "./calendar";
-import { socialOf } from "./moments";
+import { MAX_POST_COMMENTS, MAX_POST_REACTIONS, prependSocialPost, socialOf } from "./moments";
+import { chance, randomInt } from "../rng";
 
 let forumSeq = 0;
 function nextForumId(): string {
@@ -45,7 +46,7 @@ export const FORUM_BARS: ForumBarDef[] = [
 
 /** 市民城市资讯帖模板（按吧归属，文本自然表达语境，无显式提示） */
 const FORUM_TEMPLATES: Array<{ text: string; category: MomentCategory; hint: string }> = [
-  { text: "郊区跳蚤市场这周末开张，摆摊货车能淘到便宜家电，路过的可以去逛逛。", category: "daily", hint: "suburb" },
+  { text: "紫羊区跳蚤市场这周末开张，摆摊货车能淘到便宜家电，路过的可以去逛逛。", category: "daily", hint: "suburb" },
   { text: "市中心新开的那家咖啡馆环境挺安静，适合带电脑去办公，咖啡也不贵。", category: "daily", hint: "cafe" },
   { text: "教堂周日弥撒后有一次教友聚餐，氛围很好，欢迎新朋友一起来。", category: "fun", hint: "religion" },
   { text: "社区义工小队长期招人，周末两小时，帮忙搬搬东西陪陪老人，记录还能入档案。", category: "fun", hint: "volunteer" },
@@ -63,7 +64,7 @@ const FORUM_TEMPLATES: Array<{ text: string; category: MomentCategory; hint: str
   { text: "深夜emo：加班到十一点，末班公交上全是和我一样眼神空空的打工人。", category: "daily", hint: "forum" },
   { text: "今天在公园捡到一只受伤的鸽子，送去宠物医院花了小两百，值不值兄弟们说句公道话。", category: "fun", hint: "forum" },
   { text: "跳蚤市场避雷指南：喊价先对半砍，老板涨红脸说明砍对了，笑呵呵你就砍少了。", category: "fun", hint: "suburb" },
-  { text: "安利郊区跳蚤市场一个修表大爷，二十年手艺，我的老表起死回生只要三十块。", category: "daily", hint: "suburb" },
+  { text: "安利紫羊区跳蚤市场一个修表大爷，二十年手艺，我的老表起死回生只要三十块。", category: "daily", hint: "suburb" },
   { text: "咖啡馆社恐自救指南：坐角落戴耳机，店员就懂了不会来搭话，亲测有效。", category: "fun", hint: "cafe" },
   { text: "谁把咖啡馆靠窗的位置占了三小时？就一杯美式，我等了四十分钟（微笑）。", category: "fun", hint: "cafe" },
   { text: "教堂唱诗班招人，不要求功底，只要你敢开口，周三晚上有试唱。", category: "fun", hint: "religion" },
@@ -72,6 +73,14 @@ const FORUM_TEMPLATES: Array<{ text: string; category: MomentCategory; hint: str
   { text: "房租又涨了两百，房东说是市场价，市场价是谁定的？在线等，挺急的。", category: "daily", hint: "rent" },
   { text: "早高峰地铁实测：晚出门十分钟，多挤两班车，赖床的代价是惨痛的。", category: "fun", hint: "forum" },
   { text: "楼下便利店的关东煮涨价一块钱，老板说是萝卜涨价了，萝卜做错了什么。", category: "fun", hint: "forum" },
+  { text: "市中心图书馆七点就开门了，早起找个靠窗位，安静到能听见翻书声。", category: "daily", hint: "forum" },
+  { text: "人民医院现在可以线上取号，记得提前看科室当天的出诊时间，省得白跑。", category: "daily", hint: "forum" },
+  { text: "老城区晚高峰别走桥东边，公交和送货车挤在一起，步行反而更快。", category: "fun", hint: "forum" },
+  { text: "市中心周末集市的手作摊位换到河边了，带孩子去逛比商场舒服。", category: "daily", hint: "forum" },
+  { text: "有人在咖啡馆落下一本编程入门，已经交给店员保管，失主可以去前台问问。", category: "fun", hint: "cafe" },
+  { text: "房屋中介提醒：签租约前把维修责任写清楚，口头承诺后面很难说。", category: "daily", hint: "rent" },
+  { text: "公园东门新装了饮水点，跑步记得带空杯，晚上九点后灯光会调暗。", category: "daily", hint: "forum" },
+  { text: "跳蚤市场淘到一盏旧台灯，换根灯泡就能用，三十块钱很值。", category: "fun", hint: "suburb" },
 ];
 
 /**
@@ -82,10 +91,10 @@ const FORUM_TEMPLATES: Array<{ text: string; category: MomentCategory; hint: str
 const CITIZEN_DAILY_TEMPLATES: Array<{ text: string; category: MomentCategory; hint: string }> = [
   { text: "{name}：今天试着做了番茄牛腩，炖了两个小时，隔壁都闻着香味了。", category: "daily", hint: "forum" },
   { text: "{name}：我家猫主子今天又把我的袜子叼到沙发底下了，拿它没办法。", category: "fun", hint: "forum" },
-  { text: "{name}：周末带娃去了趟郊区公园，放风筝跑了满头汗，孩子笑得开心。", category: "daily", hint: "forum" },
+  { text: "{name}：周末带娃去了趟紫羊区公园，放风筝跑了满头汗，孩子笑得开心。", category: "daily", hint: "forum" },
   { text: "{name}：傍晚溜达去教堂后头的小广场，大爷大妈跳广场舞，挺热闹。", category: "daily", hint: "religion" },
   { text: "{name}：周末去做了回义工，帮独居老人换了灯泡，临走还塞给我俩橘子。", category: "fun", hint: "volunteer" },
-  { text: "{name}：听说郊区跳蚤市场有辆九成新的二手自行车，准备明天去瞧瞧。", category: "fun", hint: "suburb" },
+  { text: "{name}：听说紫羊区跳蚤市场有辆九成新的二手自行车，准备明天去瞧瞧。", category: "fun", hint: "suburb" },
   { text: "{name}：常去的那家咖啡馆今日特调是海盐焦糖，甜得刚好，强烈安利。", category: "daily", hint: "cafe" },
   { text: "{name}：今晚炖了排骨汤，香味飘满屋，一个人喝完一整锅，满足。", category: "daily", hint: "forum" },
   { text: "{name}：狗子今天学会握手了，奖励了根肉干，摇尾巴摇到起飞。", category: "fun", hint: "forum" },
@@ -137,27 +146,60 @@ const FORUM_COMMENTS: string[] = [
   "路过留个爪，回头再看。",
 ];
 
+/** v1.42 跟帖按正文语境挑选，避免“所有帖子都回复同一句省流”。 */
+const RELATED_COMMENTS: Array<{ keys: string[]; replies: string[] }> = [
+  { keys: ["咖啡馆", "咖啡", "拿铁", "美式"], replies: ["哪家店呀？环境和插座方便吗？", "第二杯半价我也去蹲一个，感谢分享。", "靠窗位确实抢手，建议早点去。"] },
+  { keys: ["租房", "房租", "房东", "合租", "转租", "租约", "中介"], replies: ["签之前拍照留证，退租时真的有用。", "这个地段的价格最近确实在涨。", "谢谢提醒，正好准备去看房。"] },
+  { keys: ["跳蚤", "二手", "砍价", "旧书", "台灯"], replies: ["砍价先从一半喊起，老板不松口再慢慢加。", "这摊我也逛过，东西多但要仔细挑。", "三十块淘到能用的，已经赚到了。"] },
+  { keys: ["教堂", "弥撒", "义卖", "志愿", "义工", "捡垃圾"], replies: ["周末一起去吗？我可以带手套和垃圾袋。", "做完记得在社区登记时长，后面能换券。", "这种活动人不多，氛围反而很舒服。"] },
+  { keys: ["猫", "狗", "鸽子", "宠物", "肉干"], replies: ["先带去医院看看，毛孩子难受不会说。", "太可爱了，记得给它留点水。", "我家那只也爱把袜子叼走，简直一模一样。"] },
+  { keys: ["菜", "食谱", "番茄", "排骨", "麻辣烫", "关东煮", "曲奇"], replies: ["看饿了，火候和调味比例能分享一下吗？", "这道我也做过，最后撒点葱花更香。", "下次多发几张成品图，云吃饭也满足。"] },
+  { keys: ["地铁", "公交", "通勤", "加班", "图书馆", "医院", "早高峰"], replies: ["收藏了，明早照这个路线走。", "高峰期确实是体力活，提前半小时最稳。", "线上取号和早开门的提醒都很实用。"] },
+];
+
+function commentsForPost(post: Post): string[] {
+  const hit = RELATED_COMMENTS.find(({ keys }) => keys.some((key) => post.text.includes(key)));
+  if (hit) return hit.replies;
+  if (post.forumBar === "rent") return RELATED_COMMENTS[1].replies;
+  if (post.forumBar === "suburb") return RELATED_COMMENTS[2].replies;
+  if (post.forumBar === "cafe") return RELATED_COMMENTS[0].replies;
+  if (post.forumBar === "religion" || post.forumBar === "volunteer") return RELATED_COMMENTS[3].replies;
+  return FORUM_COMMENTS;
+}
+
+function templateAlreadyUsed(posts: Post[], template: { text: string }): boolean {
+  const suffix = template.text.replace("{name}", "");
+  return posts.some((post) => {
+    if (template.text.includes("{name}")) return post.text.endsWith(suffix);
+    return post.text === template.text;
+  });
+}
+
 /** v1.3b9 给论坛帖随机挂点赞 + 0~3 条市民跟帖（盖楼感） */
-function attachForumBuzz(post: Post, citizens: CitizenAuthor[], today: number): void {
-  const likes = Math.floor(Math.random() * 8);
+function attachForumBuzz(state: GameState, post: Post, citizens: CitizenAuthor[], today: number): void {
+  const likes = randomInt(state.rng, 0, 7);
   for (let i = 0; i < likes; i++) {
+    if (post.reactions.length >= MAX_POST_REACTIONS) post.reactions.shift();
     post.reactions.push({ reactor: `seed_${post.id}_${i}`, icon: "👍", kind: "like" });
   }
-  const commentCount = Math.floor(Math.random() * 4); // 0~3
+  const commentCount = randomInt(state.rng, 0, 3); // 0~3
+  const commentPool = commentsForPost(post);
+  if (commentPool.length === 0) return;
   const used = new Set<number>();
-  for (let i = 0; i < commentCount; i++) {
-    let idx = Math.floor(Math.random() * FORUM_COMMENTS.length);
-    while (used.has(idx)) idx = (idx + 1) % FORUM_COMMENTS.length;
+  for (let i = 0; i < Math.min(commentCount, commentPool.length); i++) {
+    let idx = randomInt(state.rng, 0, commentPool.length - 1);
+    while (used.has(idx)) idx = (idx + 1) % commentPool.length;
     used.add(idx);
     const c = citizens.length
-      ? citizens[Math.floor(Math.random() * citizens.length)]
+      ? citizens[randomInt(state.rng, 0, citizens.length - 1)]
       : { id: "city", name: "热心市民", avatar: "🙂" };
+    if (post.comments.length >= MAX_POST_COMMENTS) post.comments.shift();
     post.comments.push({
       id: `${post.id}_c${i}`,
       authorId: c.id,
       authorName: c.netName ?? c.name,
       authorIcon: c.netAvatar ?? c.avatar,
-      text: FORUM_COMMENTS[idx],
+      text: commentPool[idx],
       day: today,
     });
   }
@@ -170,14 +212,17 @@ export function tickForum(state: GameState, citizens: CitizenAuthor[]): void {
   const postedToday = social.posts.some((p) => p.hint === "forum" && p.day === today && p.author === "citizen");
   if (postedToday) return;
 
-  const count = 1 + Math.floor(Math.random() * 2); // 1~2
+  const count = randomInt(state.rng, 1, 2); // 1~2
   for (let i = 0; i < count; i++) {
-    const useCitizenDaily = Math.random() < 0.6;
-    const t = useCitizenDaily
-      ? CITIZEN_DAILY_TEMPLATES[Math.floor(Math.random() * CITIZEN_DAILY_TEMPLATES.length)]
-      : FORUM_TEMPLATES[Math.floor(Math.random() * FORUM_TEMPLATES.length)];
+    const useCitizenDaily = chance(state.rng, 0.6);
+    const preferred = useCitizenDaily ? CITIZEN_DAILY_TEMPLATES : FORUM_TEMPLATES;
+    const fallback = useCitizenDaily ? FORUM_TEMPLATES : CITIZEN_DAILY_TEMPLATES;
+    const available = preferred.filter((template) => !templateAlreadyUsed(social.posts, template));
+    const pool = available.length > 0 ? available : fallback.filter((template) => !templateAlreadyUsed(social.posts, template));
+    const source = pool.length > 0 ? pool : [...preferred, ...fallback];
+    const t = source[randomInt(state.rng, 0, source.length - 1)];
     const author = citizens.length
-      ? citizens[Math.floor(Math.random() * citizens.length)]
+      ? citizens[randomInt(state.rng, 0, citizens.length - 1)]
       : { id: "city", name: "市民", avatar: "🏙️" };
     // v1.3b7 论坛显示网名 + 网络头像（若市民配置了 netName/netAvatar）
     const authorName = (author as { netName?: string }).netName ?? author.name;
@@ -198,8 +243,8 @@ export function tickForum(state: GameState, citizens: CitizenAuthor[]): void {
       comments: [],
       selfLiked: false,
     };
-    attachForumBuzz(post, citizens, today); // v1.3b9 点赞 + 跟帖盖楼
-    social.posts.unshift(post);
+    attachForumBuzz(state, post, citizens, today); // v1.3b9 点赞 + 跟帖盖楼
+    prependSocialPost(state, post);
   }
 }
 
@@ -215,10 +260,15 @@ export function seedForum(state: GameState, citizens: CitizenAuthor[]): void {
   if (social.posts.some((p) => p.hint === "forum")) return;
   const today = gameDay(state.time);
   const pool = [...FORUM_TEMPLATES, ...CITIZEN_DAILY_TEMPLATES];
-  const picked = [...pool].sort(() => Math.random() - 0.5).slice(0, 6);
+  const shuffled = [...pool];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = randomInt(state.rng, 0, i);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const picked = shuffled.slice(0, 6);
   for (const t of picked) {
     const author = citizens.length
-      ? citizens[Math.floor(Math.random() * citizens.length)]
+      ? citizens[randomInt(state.rng, 0, citizens.length - 1)]
       : { id: "city", name: "市民", avatar: "🏙️" };
     const authorName = author.netName ?? author.name;
     const authorIcon = author.netAvatar ?? author.avatar;
@@ -239,8 +289,8 @@ export function seedForum(state: GameState, citizens: CitizenAuthor[]): void {
       selfLiked: false,
     };
     // v1.3b9 随机点赞 + 跟帖（热议榜开局即有排序内容）
-    attachForumBuzz(post, citizens, today);
-    social.posts.unshift(post);
+    attachForumBuzz(state, post, citizens, today);
+    prependSocialPost(state, post);
   }
 }
 
@@ -262,7 +312,7 @@ export function postToForum(state: GameState, text: string, category: MomentCate
     comments: [],
     selfLiked: false,
   };
-  socialOf(state).posts.unshift(post);
+  prependSocialPost(state, post);
   return post;
 }
 

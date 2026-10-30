@@ -5,7 +5,7 @@
  * 开局额外力量 / 开局额外格挡 / 最大 HP 提升 / 额外抽牌。
  * 获取途径：宠物用品店高价购买；猫咪争霸赛冠军按档位掉落不同品质饰品。
  */
-import type { CatAccessoryDef, CatAccessoryEffect, GameState, PetState } from "../types";
+import type { CatAccessoryDef, CatAccessoryEffect, CatAccessoryQuality, GameState, PetState } from "../types";
 import { randomInt } from "../rng";
 import { recordMoney } from "./weekly";
 import catAccessoriesData from "../data/catAccessories.json";
@@ -51,6 +51,7 @@ export function buyAccessory(state: GameState, id: string): { ok: boolean; reaso
 export function equipAccessory(state: GameState, petUid: string, id: string): { ok: boolean; reason?: string } {
   const pet = state.pets.find((p) => p.uid === petUid);
   if (!pet) return { ok: false, reason: "找不到这只猫咪" };
+  if (pet.fostered) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能佩戴饰品` };
   if (!hasAccessory(state, id)) return { ok: false, reason: "还没有这件饰品" };
   pet.accessory = id;
   return { ok: true };
@@ -60,6 +61,7 @@ export function equipAccessory(state: GameState, petUid: string, id: string): { 
 export function unequipAccessory(state: GameState, petUid: string): { ok: boolean; reason?: string } {
   const pet = state.pets.find((p) => p.uid === petUid);
   if (!pet) return { ok: false, reason: "找不到这只猫咪" };
+  if (pet.fostered) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能更换饰品` };
   pet.accessory = undefined;
   return { ok: true };
 }
@@ -75,7 +77,7 @@ export function equippedAccessoryEffect(pet: PetState | undefined): CatAccessory
  * 返回饰品 id（rank===1 冠军保证掉落，品质按档位权重随机）。
  */
 export function rollAccessoryForTier(state: GameState, tierId: string): string {
-  const weights: Array<[number, number, number, number]> = {
+  const weights: Record<string, [number, number, number, number]> = {
     tournament_primary: [0.6, 0.4, 0, 0],
     tournament_mid: [0.2, 0.6, 0.2, 0],
     tournament_advanced: [0, 0.3, 0.6, 0.1],

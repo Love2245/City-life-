@@ -1,3 +1,4 @@
+import { deckCheck, deckOf, ensureCatDuel, collectionDefId } from './catDuelCollection';
 /**
  * v1.33 P4 喵喵对决赛 + 耄耋之王：报名 / 门票 / 赛程 / 名次计算（纯逻辑层，可单测）。
  * - 论坛报名：自动扣门票费（20/50/100 三档）→ 背包固定刷新一张门票
@@ -18,9 +19,9 @@ import { pushLog } from "../engine";
 import { addItem, removeItem } from "./items";
 import { recordMoney } from "./weekly";
 import { getAccessoryDef, rollAccessoryForTier, ACC_QUALITY_LABEL } from "./catAccessory";
-import { gameDay, weekdayOf } from "./calendar";
+import { gameDay, weekdayOf, fromLinearDay, START_EPOCH } from "./calendar";
 import { randomInt } from "../rng";
-import { activePetOf, catDowned } from "./catCare";
+import { activePetOf } from "./catCare";
 import { allOpponents, getBossDef, getTournamentDef, startBattle } from "./catBattle";
 
 /* ------------------------------------------------------------------ *
@@ -79,7 +80,13 @@ export function tournamentLive(state: GameState): boolean {
   const entry = state.catTournament?.entry;
   if (!entry || entry.settled) return false;
   if (entry.started) return true;
-  return matchdayStarted(state);
+  return gameDay(state.time) === scheduledMatchDay(entry) && matchdayStarted(state);
+}
+
+/** Tickets remain usable from 14:00 until the end of their scheduled Sunday. */
+export function scheduledMatchDay(entry: CatTournamentEntry): number {
+  const signupWeekday = weekdayOf(fromLinearDay(START_EPOCH + entry.signupDay));
+  return entry.signupDay + (6 - signupWeekday + 7) % 7;
 }
 
 /* ------------------------------------------------------------------ *
@@ -105,24 +112,17 @@ export function buildOpponentQueue(state: GameState, tierId: string): string[] {
   if (!t) return [];
   const picked: string[] = [];
   const tiers: CatOpponentTier[] = ["normal", "intermediate", "boss"];
-  const total = totalPoolCount(t);
   for (const tier of tiers) {
     const count = t.pools[tier] ?? 0;
     if (count <= 0) continue;
     const candidates = allOpponents().filter((o) => o.tier === tier);
-    for (const o of shuffle(candidates, state.rng)) {
-      if (picked.length >= total || picked.includes(o.id)) continue;
+    for (const o of shuffle(candidates, state.rng).slice(0, count)) {
       picked.push(o.id);
-      if (picked.length >= total) break;
     }
   }
   const queue = shuffle(picked, state.rng); // 池内对手顺序随机
   if (t.ultimate) queue.push(getBossDef().id); // 终极赛圆头猫咪固定殿后
   return queue;
-}
-
-function totalPoolCount(t: CatTournamentDef): number {
-  return (t.pools.normal ?? 0) + (t.pools.intermediate ?? 0) + (t.pools.boss ?? 0);
 }
 
 /* ------------------------------------------------------------------ *
@@ -139,7 +139,6 @@ export function signupCheck(state: GameState, tierId: string): { ok: boolean; re
   }
   const pet = activePetOf(state);
   if (!pet) return { ok: false, reason: "先领养并携带一只猫咪再来报名" };
-  if (catDowned(pet)) return { ok: false, reason: "「" + pet.name + "」生命值归零倒下了，先带它去宠物医院治疗" };
   if (pet.injured) return { ok: false, reason: "「" + pet.name + "」还受着伤，先带它去宠物医院治疗" };
   if (pet.level < (t.minLevel ?? 1)) {
     return { ok: false, reason: `需要猫咪等级 ≥ ${t.minLevel}（当前 Lv.${pet.level}）` };
@@ -157,6 +156,7 @@ export function signupCheck(state: GameState, tierId: string): { ok: boolean; re
  * 论坛报名：扣门票费 → 发门票物品 → 生成对手队列 → 写入 catTournament.entry。
  */
 export function signupTournament(state: GameState, tierId: string): { ok: boolean; reason?: string } {
+  expireTicketIfMissed(state);
   const t = getTournamentDef(tierId);
   if (!t) return { ok: false, reason: "未知赛事" };
   const check = signupCheck(state, tierId);
@@ -181,21 +181,20 @@ export function signupTournament(state: GameState, tierId: string): { ok: boolea
   state.catTournament.entry = entry;
 
   const days = daysUntilMatchday(state);
-  const startText = days === 0 ? "今天 14:00 开赛" : `${days} 天后（周日 14:00）开赛`;
+  const startText = (days === 0 ? "今天 14:00 开赛" : `${days} 天后（周日 14:00）开赛`) + "，当日结束前可入场";
   pushLog(state, "🎟️", `已报名「${t.name}」，扣报名费 ${t.fee} 元，门票已放入背包（${startText}）`);
   return { ok: true };
 }
 
-/** 门票是否可作废（开赛已过且未开赛 → 缺席作废）。调用方在开赛时确认。 */
+/** 比赛日结束仍未参赛时作废；时间推进、报名和赛场入口使用同一规则。 */
 export function expireTicketIfMissed(state: GameState): void {
   const entry = state.catTournament?.entry;
   if (!entry || entry.settled || entry.started) return;
-  // 已过周日 14:00 仍未开赛，且报名发生在更早的日子（当天报名的仍可开赛）→ 作废不退款
-  if (matchdayStarted(state) && entry.signupDay < gameDay(state.time)) {
+  if (gameDay(state.time) > scheduledMatchDay(entry)) {
     entry.settled = true;
     const t = getTournamentDef(entry.tierId);
     removeItem(state, TICKET_ITEMS[entry.tierId], 1);
-    pushLog(state, "🎟️", `未在开赛时到场，「${t?.name ?? "赛事"}」门票作废（不退款）`);
+    pushLog(state, "🎟️", `比赛日已结束，「${t?.name ?? "赛事"}」门票作废（不退款）`);
   }
 }
 
@@ -212,18 +211,26 @@ export function currentOpponentId(state: GameState): string | undefined {
 }
 
 /**
- * 在游乐场赛场开启赛事（到场即开赛，优先于缺席作废）：
- * 门票是否作废由其它入口（如论坛/移动）调用 expireTicketIfMissed 判定，
- * 玩家来到赛场按下「开赛」即视为到场，直接消耗门票开赛。
+ * 在报名对应的周日 14:00 至当天结束之间开启赛事。
+ * 入口先校验过期，避免旧门票被用于下一周赛事。
  */
 export function startTournament(state: GameState): { ok: boolean; reason?: string } {
+  const pet=activePetOf(state);
+  if(!pet)return {ok:false,reason:'请先携带参赛猫咪'};
+  if(state.catBattle)return {ok:false,reason:'请先完成并结算当前对决'};
+  if(pet.injured||pet.sick)return {ok:false,reason:'请先治疗参赛猫咪的伤病'};
+  const legal=deckCheck(state,deckOf(state,pet.uid));if(!legal.ok)return legal;
+  if(state.catDuel?.offer)return {ok:false,reason:'请先领取或跳过上次选牌奖励'};
+  expireTicketIfMissed(state);
   const entry = state.catTournament?.entry;
   if (!entry || entry.settled) return { ok: false, reason: "当前没有待开赛的赛事报名" };
-  if (!matchdayStarted(state)) {
+  if (gameDay(state.time) !== scheduledMatchDay(entry) || !matchdayStarted(state)) {
     const days = daysUntilMatchday(state);
     return { ok: false, reason: days === 0 ? "开赛时间为周日 14:00" : `距开赛还有 ${days} 天（周日 14:00）` };
   }
   if (entry.started) return { ok: true };
+  const collection=ensureCatDuel(state).collection;
+  entry.lockedDeck={petUid:pet.uid,cards:deckOf(state,pet.uid).map(uid=>({uid,defId:collectionDefId(collection.find(c=>c.uid===uid)!)}))};
   entry.started = true;
   entry.roundIndex = 0;
   removeItem(state, TICKET_ITEMS[entry.tierId], 1);
@@ -236,6 +243,7 @@ export function startTournament(state: GameState): { ok: boolean; reason?: strin
 export function startNextTournamentBattle(state: GameState): { ok: boolean; reason?: string } {
   const entry = state.catTournament?.entry;
   if (!entry || entry.settled || !entry.started) return { ok: false, reason: "赛事尚未开赛或已结束" };
+  if (state.catBattle && !state.catBattle.finished) return { ok: false, reason: "当前赛事对决尚未结束" };
   const oppId = currentOpponentId(state);
   if (!oppId) return { ok: false, reason: "没有下一场对手" };
   return startBattle(state, oppId, entry.tierId);
@@ -284,6 +292,11 @@ export function finalizeTournament(state: GameState, rank: number): void {
   }
   if (rank === 1) {
     state.catFlags[`tournament_${entry.tierId}`] = true;
+    if (entry.tierId === "tournament_primary" && !state.flags.doc_cat_award_awarded) {
+      addItem(state, "doc_cat_award");
+      state.flags.doc_cat_award_awarded = true;
+      pushLog(state, "🏆", "第一次夺得初级赛冠军，喵喵奖状已收入背包");
+    }
     if (entry.tierId === "tournament_advanced") {
       if (state.catTournament) state.catTournament.ultimateUnlocked = true;
       pushLog(state, "👑", "赢得大师杯冠军！「终极耄耋对决」已解锁！");
@@ -320,7 +333,7 @@ export function ticketStatusText(state: GameState): string {
   const days = daysUntilMatchday(state);
   if (entry.settled) return "已结束";
   if (entry.started) return "进行中";
-  if (days === 0) return "今天 14:00 开赛";
+  if (days === 0) return state.time.hour >= MATCH_HOUR ? "比赛进行中，今日结束前可入场" : "今天 14:00 开赛，今日结束前可入场";
   return `距开赛还有 ${days} 天`;
 }
 
@@ -330,7 +343,7 @@ export function ticketStatusText(state: GameState): string {
 
 /**
  * 在游乐场赛场按下「进入赛场」：未开赛且已到开赛时刻则开赛，随即开战。
- * 到场即优先（不触发缺席作废——缺席作废由论坛入口判定），玩家来到赛场即可开赛。
+ * 过期报名按统一赛程作废，已开赛的赛事可继续推进。
  */
 export function enterTournamentArena(state: GameState): { ok: boolean; reason?: string; battleStarted?: boolean } {
   const entry = state.catTournament?.entry;

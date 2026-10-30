@@ -277,7 +277,7 @@ describe("v1.0 剧情模式：终局评级", () => {
     expect(s.flags["story_ending_story_citizen"]).toBe(true);
   });
 
-  it("checkEnding 接住故事结局 flag；普通模式不受影响", () => {
+  it("checkEnding 接住故事结局 flag；普通模式好结局只解锁图鉴", () => {
     const s = storyState("repay_debt");
     s.story.goalFund = 20000;
     s.story.conscience = 1;
@@ -287,9 +287,12 @@ describe("v1.0 剧情模式：终局评级", () => {
     expect(e?.id).toBe("ending_story_home");
     expect(s.endingId).toBe("ending_story_home");
 
+    // v1.44：普通模式好结局（财务自由）不再结束游戏，仅解锁图鉴
     const n = createInitialState();
     n.player.money = 100000;
-    expect(checkEnding(n)?.id).toBe("ending_rich"); // 普通模式仍走旧结局
+    expect(checkEnding(n)).toBeNull();
+    expect(n.endingId).toBeNull();
+    expect(n.unlockedEndings).toContain("ending_rich");
   });
 });
 

@@ -2,14 +2,457 @@
  "version": 1,
  "pointCost": 2,
  "items": [
+ {
+  "id": "boyue_lounge_beer_coupon",
+  "name": "清吧啤酒券",
+  "icon": "🎟️",
+  "desc": "范柯杰送的泊月夜市清吧啤酒券。到清吧可换一杯清爽啤酒，不必消费，也不影响认识杰克。",
+  "cost": 0,
+  "startOffer": false,
+  "tags": ["卡券"]
+ },
+ {
+  "id": "olive_overshirt",
+  "name": "橄榄绿衬衫夹克",
+  "icon": "👔",
+  "desc": "双胸袋与厚棉斜纹，炭灰内搭适合日常与出门。",
+  "slot": "clothes",
+  "cost": 118,
+  "shopPrice": 118,
+  "outfitLayer": "olive_overshirt",
+  "occasion": [
+   "daily",
+   "casual",
+   "work"
+  ],
+  "startOffer": false
+ },
+ {
+  "id": "navy_hoodie",
+  "name": "藏青连帽卫衣",
+  "icon": "👕",
+  "desc": "柔软卫衣、低调抽绳和袋鼠口袋，休息时也能自在。",
+  "slot": "clothes",
+  "cost": 98,
+  "shopPrice": 98,
+  "outfitLayer": "navy_hoodie",
+  "occasion": [
+   "daily",
+   "casual"
+  ],
+  "startOffer": false
+ },
+ {
+  "id": "sand_chinos",
+  "name": "沙色休闲长裤",
+  "icon": "👖",
+  "desc": "舒适棉斜纹与自然裤线，适合衬衫、卫衣和日常上班。",
+  "slot": "pants",
+  "cost": 78,
+  "shopPrice": 78,
+  "outfitLayer": "sand_chinos",
+  "occasion": [
+   "daily",
+   "casual",
+   "work"
+  ],
+  "startOffer": false
+ },
+  {
+   "id": "doc_city_guide",
+   "name": "都市便民指南",
+   "icon": "🏙️",
+   "desc": "市政府为新居民编写的生活服务手册。可以在背包中逐页阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "bible_old_testament",
+   "name": "思高圣经·旧约",
+   "icon": "📖",
+   "desc": "思高圣经上册，收录旧约各卷。可以在背包中逐页阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "bible_new_testament",
+   "name": "思高圣经·新约",
+   "icon": "📖",
+   "desc": "思高圣经下册，收录新约各卷。可以在背包中逐页阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_church_gospel_box",
+   "name": "福音小盒·今日摘录",
+   "icon": "📜",
+   "desc": "每日从思高圣经新约抽取一段原文；当日内容会收入文书并可在背包阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_crucifix",
+   "name": "苦像纪念品",
+   "icon": "✝️",
+   "desc": "洗礼时收到的苦像纪念品，可在背包中展开欣赏。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_mary",
+   "name": "圣母玛利亚纪念卡",
+   "icon": "🌹",
+   "desc": "蓝色披风与象牙白衣袍中的圣母玛利亚，双手合拢。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_peter",
+   "name": "圣伯多禄纪念卡",
+   "icon": "🗝️",
+   "desc": "金色披风中的圣伯多禄，手持两把钥匙。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_andrew",
+   "name": "圣安德肋纪念卡",
+   "icon": "✝️",
+   "desc": "青色衣袍中的圣安德肋，身旁有斜十字架。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_james_zebedee",
+   "name": "圣雅各伯（载伯德之子）纪念卡",
+   "icon": "🐚",
+   "desc": "朝圣装束中的圣雅各伯，佩戴贝壳并持手杖。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_john",
+   "name": "圣若望纪念卡",
+   "icon": "🕊️",
+   "desc": "红色衣袍中的年轻圣若望，手持福音书。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_philip",
+   "name": "圣斐理伯纪念卡",
+   "icon": "📜",
+   "desc": "橄榄色衣袍中的圣斐理伯，手持木十字架。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_bartholomew",
+   "name": "圣巴尔多禄茂纪念卡",
+   "icon": "🌿",
+   "desc": "绿色衣袍中的圣巴尔多禄茂，手持经卷。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_thomas",
+   "name": "圣多默纪念卡",
+   "icon": "🕯️",
+   "desc": "棕红色衣袍中的圣多默，手持木工角尺。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_matthew",
+   "name": "圣玛窦纪念卡",
+   "icon": "📖",
+   "desc": "紫色衣袍中的圣玛窦，手持书卷与羽毛笔。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_james_alphaeus",
+   "name": "圣雅各伯（阿尔斐之子）纪念卡",
+   "icon": "🌾",
+   "desc": "浅金色衣袍中的圣雅各伯，手持小经卷。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_jude_thaddeus",
+   "name": "圣犹达（达陡）纪念卡",
+   "icon": "🤍",
+   "desc": "蓝绿色衣袍中的圣犹达（达陡），胸前佩戴纪念章；并非依斯加略犹达。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "church_card_simon_zealot",
+   "name": "圣西满（热忱者）纪念卡",
+   "icon": "🪔",
+   "desc": "暗红衣袍中的圣西满，手持经书。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_guanyin",
+   "name": "水月观音菩萨画像",
+   "icon": "🪷",
+   "desc": "第一次在寺庙做义工时收到的画像。可以在背包中展开欣赏。",
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_temple_sutra_booklet",
+   "name": "晨读经文抄本",
+   "icon": "📕",
+   "desc": "旧版结缘院晨读选页，仅为旧存档保留，可在书架中阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_sutra_amita",
+   "name": "《佛说阿弥陀经》",
+   "icon": "📖",
+   "desc": "结缘院赠阅的经文，可在书架中阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_sutra_diamond",
+   "name": "《金刚般若波罗蜜经》",
+   "icon": "📖",
+   "desc": "结缘院赠阅的经文，可在书架中阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_sutra_heart",
+   "name": "《般若波罗蜜多心经》",
+   "icon": "📖",
+   "desc": "结缘院赠阅的经文，可在书架中阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_temple_prayer_leaflet",
+   "name": "结缘院静心手册",
+   "icon": "📘",
+   "desc": "介绍寺院礼仪与静心练习的随身手册，可在书架中阅读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "temple_wrist_mala",
+   "name": "素木腕珠",
+   "icon": "📿",
+   "desc": "结缘院赠予的素木念珠，留作随身纪念。",
+   "consumable": false,
+   "tags": [
+    "礼物"
+   ]
+  },
+  {
+   "id": "doc_temple_art_print",
+   "name": "山门水墨画印",
+   "icon": "🖼️",
+   "desc": "结缘院赠予的小幅山水画印，可在书架中展开欣赏。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_temple_deer_king_art",
+   "name": "鹿王本生图",
+   "icon": "🦌",
+   "desc": "结缘院赠予的本生故事画印，可在书架中展开欣赏。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_temple_guide_bodhisattva_art",
+   "name": "引路菩萨图",
+   "icon": "🪷",
+   "desc": "结缘院赠予的菩萨画印，可在书架中展开欣赏。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_temple_maha_vairocana_art",
+   "name": "大日如来图",
+   "icon": "☀️",
+   "desc": "结缘院赠予的如来画印，可在书架中展开欣赏。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_cat_award",
+   "name": "喵喵对决初级赛冠军奖状",
+   "icon": "🏆",
+   "desc": "第一次夺得喵喵对决初级赛冠军的纪念。",
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "doc_employee_award",
+   "name": "优秀员工奖状",
+   "icon": "📜",
+   "desc": "连续四周按时全勤的纪念奖状。",
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_sports",
+   "name": "运动指南",
+   "icon": "📘",
+   "desc": "图解热身与运动姿势，适合在练习前翻翻。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_health",
+   "name": "健康指南",
+   "icon": "📗",
+   "desc": "关于饮食、作息与日常保养的小册子。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_cooking",
+   "name": "烹饪食谱",
+   "icon": "📕",
+   "desc": "从家常小炒到热汤，书页上还留着前人的笔记。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_philosophy",
+   "name": "哲学总集",
+   "icon": "📜",
+   "desc": "几位哲学家的文章与访谈，适合安静地慢慢读。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_charm",
+   "name": "精致人生",
+   "icon": "📙",
+   "desc": "衣着、谈吐与待人接物，藏在日常的小细节里。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_programming",
+   "name": "编程入门",
+   "icon": "💻",
+   "desc": "从最基础的代码讲起，配有简单的练习。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_design",
+   "name": "设计美学书",
+   "icon": "🎨",
+   "desc": "翻开色彩、构图与字体的案例，看看设计师的想法。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_operation",
+   "name": "运营操作",
+   "icon": "📊",
+   "desc": "关于店铺与内容运营的经验，写得很实在。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
+  {
+   "id": "book_stall_tips",
+   "name": "摆摊小技巧",
+   "icon": "🛒",
+   "desc": "收录老摊主们的经验，从备料到招呼客人。",
+   "consumable": false,
+   "tags": [
+    "书籍与文书"
+   ]
+  },
   {
    "id": "driving_license",
    "name": "驾驶本",
    "icon": "🚗",
-   "desc": "提前考好的驾照，解锁驾驶类岗位",
+   "desc": "驾驶资格证明。工作无需持证入职；相关岗位持证可获得额外报酬，租购汽车仍需驾驶本",
    "cost": 2,
    "tags": [
-    "解锁驾驶类岗位"
+    "驾驶岗位收入加成"
    ],
    "effects": {
     "flags": {
@@ -60,7 +503,7 @@
    "id": "laptop",
    "name": "老旧笔记本",
    "icon": "💻",
-   "desc": "二手老笔记本，跑代码卡卡的，做开发项目略有提升",
+   "desc": "二手老笔记本，可进行编程和设计开发，设备效率为基础1倍",
    "cost": 2,
    "tags": [
     "学习/工作"
@@ -78,7 +521,7 @@
     "intelligence": 2
    },
    "facilityBonus": {
-    "dev": 1.2
+      "dev": 1
    },
    "slot": "tool"
   },
@@ -86,10 +529,10 @@
    "id": "certificate",
    "name": "技能证书",
    "icon": "📜",
-   "desc": "持证在手，走哪儿都有底气",
+   "desc": "技能证书可提高相关岗位收入；正式工作无需持证即可应聘入职",
    "cost": 2,
    "tags": [
-    "解锁卡证书岗位"
+    "相关岗位收入加成"
    ],
    "effects": {
     "flags": {
@@ -107,6 +550,17 @@
    "bonus": {
     "fame": 2
    }
+  },
+  {
+   "id": "training_certificate",
+   "name": "培训学校结业证书",
+   "icon": "📜",
+   "desc": "完成培训课程后获得的正式凭证；证书等级和下一阶段课程进度显示在培训学校。",
+   "tags": [
+    "证照卡券",
+    "培训结业"
+   ],
+   "startOffer": false
   },
   {
    "id": "item_manuscript",
@@ -155,14 +609,15 @@
    "id": "medicine",
    "name": "感冒药",
    "icon": "💊",
-   "desc": "治感冒发烧，恢复 15 点健康",
+   "desc": "治疗感冒和生病，恢复 25 点健康",
    "cost": 0,
    "consumable": true,
    "useEffects": {
     "health": 25,
     "log": "吃了片感冒药，感觉好些了",
     "cureStatuses": [
-     "sick"
+     "sick",
+     "cold"
     ]
    },
    "startOffer": false
@@ -185,7 +640,7 @@
    "name": "泡面",
    "icon": "🍜",
    "desc": "方便面，+35 饱腹 -3 心情（需热水，便利店/住处食用）",
-   "cost": 12,
+   "cost": 4,
    "consumable": true,
    "useEffects": {
     "satiety": 26,
@@ -199,11 +654,21 @@
    "startOffer": false
   },
   {
+   "id": "mint_candy",
+   "name": "薄荷糖",
+   "icon": "🍬",
+   "desc": "林小雨分来的独立包装薄荷糖，吃后少量垫肚子、提提心情（+2 饱腹 +1 心情）",
+   "cost": 1,
+   "consumable": true,
+   "useEffects": {"satiety": 2, "mood": 1, "log": "吃了林小雨分来的薄荷糖，嘴里凉丝丝的"},
+   "startOffer": false
+  },
+  {
    "id": "fruit",
    "name": "水果",
    "icon": "🍎",
    "desc": "新鲜水果，解馋补维生素，但只能垫垫肚子（+8 饱腹 +5 健康 +4 心情）",
-   "cost": 8,
+   "cost": 5,
    "consumable": true,
    "useEffects": {
     "satiety": 8,
@@ -221,7 +686,7 @@
    "name": "沙拉",
    "icon": "🥗",
    "desc": "蔬菜沙拉，+20 饱腹 +3 心情（便利店有售，也可在厨房自制）",
-   "cost": 16,
+   "cost": 10,
    "consumable": true,
    "useEffects": {
     "satiety": 18,
@@ -239,7 +704,7 @@
    "name": "盒饭",
    "icon": "🍱",
    "desc": "便利店盒饭，+34 饱腹",
-   "cost": 20,
+   "cost": 12,
    "consumable": true,
    "useEffects": {
     "satiety": 34,
@@ -255,12 +720,12 @@
    "id": "drink",
    "name": "饮料",
    "icon": "🧋",
-   "desc": "冰镇饮料，+10 饱腹 +3 心情",
+   "desc": "饮用后 +4 饱腹、+10 体力、+3 心情。购买后收进背包，不会即时使用。",
    "cost": 5,
    "consumable": true,
    "useEffects": {
     "satiety": 4,
-    "stamina": 15,
+    "stamina": 10,
     "mood": 3,
     "log": "喝了瓶饮料，精神了点"
    },
@@ -285,7 +750,7 @@
    "id": "car",
    "name": "汽车",
    "icon": "🚗",
-   "desc": "开局自带一辆代步车，解锁网约车/出租车类岗位，出行更有底气",
+   "desc": "开局自带一辆代步车，通勤更方便；自有汽车可提高相关工作报酬",
    "cost": 0,
    "keyDisplay": "汽车钥匙",
    "effects": {
@@ -303,14 +768,14 @@
    "id": "cat_orange",
    "name": "橘猫",
    "icon": "🐱",
-   "desc": "开局收养一只橘猫，直接开始猫咪养成（携带外出触发专属事件）",
+   "desc": "有了稳定住所后再收养橘猫，开始猫咪养成（携带外出触发专属事件）",
    "cost": 0,
    "consumable": false,
    "cat": "orange",
    "tags": [
     "猫咪"
    ],
-   "startOffer": true,
+   "startOffer": false,
    "startCost": 3
   },
   {
@@ -321,6 +786,7 @@
    "cost": 0,
    "consumable": false,
    "raw": true,
+   "cookingCategory": "vegetable",
    "tags": [
     "生鲜食材",
     "需烹饪"
@@ -335,6 +801,7 @@
    "cost": 0,
    "consumable": false,
    "raw": true,
+   "cookingCategory": "meat",
    "tags": [
     "生鲜食材",
     "需烹饪"
@@ -346,7 +813,7 @@
    "name": "三明治",
    "icon": "🥪",
    "desc": "便利店三明治，+28 饱腹，开袋即食",
-   "cost": 14,
+   "cost": 8,
    "consumable": true,
    "useEffects": {
     "satiety": 22,
@@ -381,6 +848,15 @@
    "desc": "纯羊绒大衣，穿出去倍儿有面子（奢侈品）",
    "cost": 0,
    "luxury": true,
+   "slot": "clothes",
+   "shopPrice": 2999,
+   "outfitLayer": "luxury_coat",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily"
+   ],
    "effects": {
     "mood": 6,
     "log": "入手一件羊绒大衣，气质都不一样了",
@@ -388,7 +864,8 @@
    },
    "keyDisplay": "羊绒大衣",
    "tags": [
-    "奢侈品"
+    "奢侈品",
+    "服装"
    ],
    "startOffer": false
   },
@@ -396,7 +873,7 @@
    "id": "luxury_watch",
    "name": "名表",
    "icon": "⌚",
-   "desc": "瑞士名表，男人/女人的顶级配饰（奢侈品）",
+   "desc": "瑞士名表，男人/女人的顶级配饰（奢侈品）；随身持有可提升面试、约会场合适配度",
    "cost": 0,
    "luxury": true,
    "effects": {
@@ -406,6 +883,10 @@
     "fame": 5
    },
    "keyDisplay": "名表",
+   "occasion": [
+    "interview",
+    "date"
+   ],
    "tags": [
     "奢侈品"
    ],
@@ -415,7 +896,7 @@
    "id": "luxury_bag",
    "name": "名牌包",
    "icon": "👜",
-   "desc": "限量款名牌包，身份与品位的象征（奢侈品）",
+   "desc": "限量款名牌包，身份与品位的象征（奢侈品）；随身持有可提升面试、约会场合适配度",
    "cost": 0,
    "luxury": true,
    "effects": {
@@ -425,6 +906,10 @@
     "fame": 8
    },
    "keyDisplay": "名牌包",
+   "occasion": [
+    "interview",
+    "date"
+   ],
    "tags": [
     "奢侈品"
    ],
@@ -437,12 +922,21 @@
    "desc": "干净得体的衬衫，穿上后魅力 +2（可装备）",
    "cost": 0,
    "slot": "clothes",
+   "shopPrice": 199,
+   "outfitLayer": "shirt",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily"
+   ],
    "bonus": {
     "charm": 2
    },
    "tags": [
     "装备",
-    "魅力 +2"
+    "魅力 +2",
+    "服装"
    ],
    "startOffer": false
   },
@@ -453,12 +947,598 @@
    "desc": "笔挺的西装，穿上后魅力 +5（可装备）",
    "cost": 0,
    "slot": "clothes",
+   "shopPrice": 1299,
+   "outfitLayer": "suit",
+   "occasion": [
+    "interview",
+    "work",
+    "date"
+   ],
    "bonus": {
     "charm": 5
    },
    "tags": [
     "装备",
-    "魅力 +5"
+    "魅力 +5",
+    "服装"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "pinstripe_shirt",
+   "name": "棕色细条纹衬衫",
+   "icon": "👔",
+   "desc": "深棕色细条纹衬衫，宽松复古，穿上后魅力 +2。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 199,
+   "outfitLayer": "pinstripe_shirt",
+   "occasion": [
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "bonus": {
+    "charm": 2
+   },
+   "tags": [
+    "装备",
+    "魅力 +2",
+    "服装",
+    "复古休闲"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "taupe_double_suit",
+   "name": "灰卡其双排扣西装",
+   "icon": "🤵",
+   "desc": "灰卡其色双排扣西装，剪裁挺括，穿上后魅力 +6。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 1599,
+   "outfitLayer": "taupe_double_suit",
+   "occasion": [
+    "interview",
+    "work",
+    "date"
+   ],
+   "bonus": {
+    "charm": 6
+   },
+   "tags": [
+    "装备",
+    "魅力 +6",
+    "服装",
+    "正式"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "cable_knit_sweater",
+   "name": "深棕麻花针织衫",
+   "icon": "🧶",
+   "desc": "厚实柔软的深棕麻花针织衫，适合秋冬日常，穿上后魅力 +2。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 299,
+   "outfitLayer": "cable_knit_sweater",
+   "occasion": [
+    "date",
+    "daily",
+    "casual"
+   ],
+   "bonus": {
+    "charm": 2
+   },
+   "tags": [
+    "装备",
+    "魅力 +2",
+    "服装",
+    "秋冬"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "cream_relaxed_shirt",
+   "name": "米白宽松衬衫",
+   "icon": "👔",
+   "desc": "柔和的米白色宽松衬衫，简洁耐看，穿上后魅力 +2。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 179,
+   "outfitLayer": "cream_relaxed_shirt",
+   "occasion": [
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "bonus": {
+    "charm": 2
+   },
+   "tags": [
+    "装备",
+    "魅力 +2",
+    "服装",
+    "简约"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "plain_white_tee",
+   "name": "纯白 T 恤",
+   "icon": "👕",
+   "desc": "纯白圆领短袖，干净百搭的日常基础款。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 59,
+   "outfitLayer": "plain_white_tee",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "纯色",
+    "基础款"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "plain_black_tee",
+   "name": "纯黑 T 恤",
+   "icon": "👕",
+   "desc": "纯黑圆领短袖，轻便耐穿。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 59,
+   "outfitLayer": "plain_black_tee",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "纯色",
+    "基础款"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "plain_gray_tee",
+   "name": "纯灰 T 恤",
+   "icon": "👕",
+   "desc": "纯灰圆领短袖，柔软舒适。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 59,
+   "outfitLayer": "plain_gray_tee",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "纯色",
+    "基础款"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "plain_gray_pants",
+   "name": "纯灰直筒裤",
+   "icon": "👖",
+   "desc": "没有花纹的灰色直筒长裤，适合日常穿着。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 129,
+   "outfitLayer": "plain_gray_pants",
+   "occasion": [
+    "work",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "纯色",
+    "基础款"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "white_vest",
+   "name": "白色背心",
+   "icon": "👕",
+   "desc": "简单清爽的基础背心，默认衣柜服装。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 0,
+   "outfitLayer": "white_vest",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "基础穿搭"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "cyan_jacket",
+   "name": "青色外套",
+   "icon": "🧥",
+   "desc": "你原本就有的青色外套，轻便耐穿。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 0,
+   "outfitLayer": "cyan_jacket",
+   "occasion": [
+    "daily",
+    "casual",
+    "work"
+   ],
+   "tags": [
+    "服装",
+    "初始衣柜"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "factory_uniform",
+   "name": "电子厂工服",
+   "icon": "🏭",
+   "desc": "电子厂登记时发放的深色工服，耐磨、利落，不在商店出售。",
+   "cost": 0,
+   "slot": "clothes",
+   "outfitLayer": "factory_uniform",
+   "occasion": [
+    "work"
+   ],
+   "tags": [
+    "服装",
+    "工作奖励",
+    "电子厂"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "farm_workwear",
+   "name": "农务工装",
+   "icon": "🌾",
+   "desc": "在农场、牧场和果园帮工后得到的耐脏工装，适合户外劳作。",
+   "cost": 0,
+   "slot": "clothes",
+   "outfitLayer": "farm_workwear",
+   "occasion": [
+    "work",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "工作奖励",
+    "农村"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "service_apron",
+   "name": "服务围裙",
+   "icon": "☕",
+   "desc": "在餐饮服务岗位做熟后得到的简洁围裙，穿上后魅力 +1。",
+   "cost": 0,
+   "slot": "clothes",
+   "outfitLayer": "service_apron",
+   "occasion": [
+    "work"
+   ],
+   "bonus": {
+    "charm": 1
+   },
+   "tags": [
+    "服装",
+    "工作奖励",
+    "服务工作",
+    "魅力 +1"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "delivery_vest",
+   "name": "配送马甲",
+   "icon": "📦",
+   "desc": "物流中心熟练工会收到的轻便配送马甲，穿上后体质 +1。",
+   "cost": 0,
+   "slot": "clothes",
+   "outfitLayer": "delivery_vest",
+   "occasion": [
+    "work",
+    "casual"
+   ],
+   "bonus": {
+    "fitness": 1
+   },
+   "tags": [
+    "服装",
+    "工作奖励",
+    "物流",
+    "体质 +1"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "underlayer_white",
+   "name": "白色内搭",
+   "icon": "👚",
+   "desc": "简洁的白色内搭，可与任意外衣叠穿。",
+   "cost": 0,
+   "slot": "underlayer",
+   "shopPrice": 0,
+   "outfitLayer": "underlayer_white",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "内搭",
+    "基础穿搭"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "underlayer_black",
+   "name": "黑色内搭",
+   "icon": "👚",
+   "desc": "低调耐看的黑色内搭，可与任意外衣叠穿。",
+   "cost": 0,
+   "slot": "underlayer",
+   "shopPrice": 0,
+   "outfitLayer": "underlayer_black",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "内搭",
+    "颜色变体"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "underlayer_gray",
+   "name": "灰色内搭",
+   "icon": "👚",
+   "desc": "柔和中性的灰色内搭，可与任意外衣叠穿。",
+   "cost": 0,
+   "slot": "underlayer",
+   "shopPrice": 0,
+   "outfitLayer": "underlayer_gray",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "内搭",
+    "颜色变体"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "blue_collared_shirt",
+   "name": "浅蓝衬衫",
+   "icon": "👔",
+   "desc": "低调清爽的浅蓝色衬衫，可作为针织衫的领口内搭。",
+   "cost": 0,
+   "slot": "underlayer",
+   "shopPrice": 169,
+   "outfitLayer": "blue_collared_shirt",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily"
+   ],
+   "tags": [
+    "服装",
+    "内搭",
+    "简约"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "black_pants",
+   "name": "黑色裤子",
+   "icon": "👖",
+   "desc": "耐穿百搭的黑色长裤，默认基础裤装。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 0,
+   "outfitLayer": "black_pants",
+   "occasion": [
+    "interview",
+    "work",
+    "date",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "基础穿搭"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "baseball_cap",
+   "name": "棒球帽",
+   "icon": "🧢",
+   "desc": "轻松休闲的棒球帽，出门时很方便。",
+   "cost": 0,
+   "slot": "hat",
+   "shopPrice": 79,
+   "outfitLayer": "baseball_cap",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "帽子"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "knit_cap",
+   "name": "针织帽",
+   "icon": "🧶",
+   "desc": "柔软保暖的针织帽，适合天气转凉时戴。",
+   "cost": 0,
+   "slot": "hat",
+   "shopPrice": 99,
+   "outfitLayer": "knit_cap",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "帽子"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "jeans",
+   "name": "牛仔裤",
+   "icon": "👖",
+   "desc": "经典耐穿的深色牛仔裤，适合日常活动。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 199,
+   "outfitLayer": "jeans",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "裤子"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "khaki_pants",
+   "name": "卡其裤",
+   "icon": "👖",
+   "desc": "颜色温和的卡其长裤，正式和休闲都能搭。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 179,
+   "outfitLayer": "khaki_pants",
+   "occasion": [
+    "work",
+    "daily",
+    "casual",
+    "date"
+   ],
+   "tags": [
+    "服装",
+    "裤子"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "brown_wide_trousers",
+   "name": "深棕宽腿裤",
+   "icon": "👖",
+   "desc": "深棕色宽松长裤，和复古衬衫或针织衫都很搭。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 229,
+   "outfitLayer": "brown_wide_trousers",
+   "occasion": [
+    "date",
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "裤子",
+    "复古休闲"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "taupe_suit_trousers",
+   "name": "灰卡其西裤",
+   "icon": "👖",
+   "desc": "与灰卡其双排扣西装配套的修身西裤。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 399,
+   "outfitLayer": "taupe_suit_trousers",
+   "occasion": [
+    "interview",
+    "work",
+    "date"
+   ],
+   "tags": [
+    "服装",
+    "裤子",
+    "正式"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "charcoal_relaxed_jeans",
+   "name": "深灰宽松牛仔裤",
+   "icon": "👖",
+   "desc": "深炭灰色宽松牛仔裤，适合日常休闲穿搭。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 229,
+   "outfitLayer": "charcoal_relaxed_jeans",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "裤子",
+    "休闲"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "sage_wide_trousers",
+   "name": "灰绿阔腿裤",
+   "icon": "👖",
+   "desc": "柔和灰绿色阔腿裤，轻松利落，适合春夏日常。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 229,
+   "outfitLayer": "sage_wide_trousers",
+   "occasion": [
+    "daily",
+    "casual",
+    "date"
+   ],
+   "tags": [
+    "服装",
+    "裤子",
+    "简约"
    ],
    "startOffer": false
   },
@@ -578,6 +1658,7 @@
    "tags": [
     "农产"
    ],
+   "cookingCategory": "vegetable",
    "cost": 8
   },
   {
@@ -594,6 +1675,7 @@
    "tags": [
     "农产"
    ],
+   "cookingCategory": "egg",
    "cost": 6
   },
   {
@@ -610,6 +1692,7 @@
    "tags": [
     "农产"
    ],
+   "cookingCategory": "milk",
    "cost": 7
   },
   {
@@ -668,7 +1751,7 @@
    "icon": "🛌",
    "slot": "furniture",
    "tier": "high",
-   "desc": "梦幻级床品，一觉到天亮，恢复效率翻倍",
+   "desc": "舒适床品，休息恢复效率提高 40%",
    "cost": 6,
    "consumable": false,
    "facilityBonus": {
@@ -681,10 +1764,10 @@
   },
   {
    "id": "laptop_pro",
-   "name": "高端电竞本",
-   "icon": "💻",
+   "name": "高级游戏台式电脑",
+   "icon": "🖥️",
    "tier": "high",
-   "desc": "顶配电竞本，开发效率拉满",
+   "desc": "高性能游戏台式电脑，带独立机箱与侧透风扇，开发和游戏都更顺畅",
    "cost": 5,
    "consumable": false,
    "facilityBonus": {
@@ -806,9 +1889,9 @@
   },
   {
    "id": "laptop_mid",
-   "name": "办公笔记本",
-   "icon": "💻",
-   "desc": "主流办公本，做开发项目效率明显提升",
+   "name": "办公台式电脑",
+   "icon": "🖥️",
+   "desc": "配有显示器、键盘和鼠标的办公电脑，做开发项目效率明显提升",
    "cost": 4,
    "slot": "tool",
    "facilityBonus": {
@@ -821,7 +1904,7 @@
     "flags": {
      "item_laptop_mid": true
     },
-    "log": "有了一台办公笔记本"
+     "log": "有了一台办公台式电脑"
    },
    "unlocks": {},
    "startOffer": false,
@@ -990,6 +2073,730 @@
    "tags": [
     "食物"
    ]
+  },
+  {
+   "id": "market_flower",
+   "name": "鲜花花束",
+   "icon": "💐",
+   "desc": "花鸟市场周末摊位买到的鲜花（使用后心情 +5）",
+   "consumable": true,
+   "useEffects": {
+    "mood": 5,
+    "log": "把鲜花插在房间里，心情变好了"
+   },
+   "tags": [
+    "生活用品"
+   ]
+  },
+  {
+   "id": "snack_skewer",
+   "name": "烤串",
+   "icon": "🍢",
+   "desc": "小吃街现烤的香喷喷烤串（饱腹 +18，心情 +3）",
+   "consumable": true,
+   "useEffects": {
+    "satiety": 18,
+    "mood": 3,
+    "log": "吃了一把烤串，烟火气十足",
+    "cureStatuses": [
+     "hungry"
+    ]
+   },
+   "tags": [
+    "食物"
+   ]
+  },
+  {
+   "id": "snack_noodles",
+   "name": "炒面",
+   "icon": "🍝",
+   "desc": "锅气十足的街头炒面（饱腹 +28，心情 +2）",
+   "consumable": true,
+   "useEffects": {
+    "satiety": 28,
+    "mood": 2,
+    "log": "吃了一份炒面，热乎乎的很满足",
+    "cureStatuses": [
+     "hungry"
+    ]
+   },
+   "tags": [
+    "食物"
+   ]
+  },
+  {
+   "id": "snack_tofu",
+   "name": "臭豆腐",
+   "icon": "🧈",
+   "desc": "闻着冲，吃着香的臭豆腐（饱腹 +12，心情 +4）",
+   "consumable": true,
+   "useEffects": {
+    "satiety": 12,
+    "mood": 4,
+    "log": "吃了一份臭豆腐，香得有点上头",
+    "cureStatuses": [
+     "hungry"
+    ]
+   },
+   "tags": [
+    "食物"
+   ]
+  },
+  {
+   "id": "tomato",
+   "name": "番茄",
+   "icon": "🍅",
+   "desc": "酸甜多汁的番茄，适合炒蛋或炖肉。",
+   "cost": 4,
+   "raw": true,
+   "cookingCategory": "tomato",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "cabbage",
+   "name": "卷心菜",
+   "icon": "🥬",
+   "desc": "脆甜卷心菜，炒肉和焖饭都很合适。",
+   "cost": 5,
+   "raw": true,
+   "cookingCategory": "cabbage",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "potato",
+   "name": "土豆",
+   "icon": "🥔",
+   "desc": "耐储存的土豆，炖肉时吸满汤汁。",
+   "cost": 3,
+   "raw": true,
+   "cookingCategory": "potato",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "carrot",
+   "name": "胡萝卜",
+   "icon": "🥕",
+   "desc": "清甜胡萝卜，为家常菜添一抹亮色。",
+   "cost": 3,
+   "raw": true,
+   "cookingCategory": "carrot",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "onion",
+   "name": "洋葱",
+   "icon": "🧅",
+   "desc": "炒热后甜香四溢的洋葱。",
+   "cost": 3,
+   "raw": true,
+   "cookingCategory": "onion",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "mushroom",
+   "name": "蘑菇",
+   "icon": "🍄",
+   "desc": "鲜味十足的蘑菇，和鸡蛋很搭。",
+   "cost": 6,
+   "raw": true,
+   "cookingCategory": "mushroom",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "pork",
+   "name": "猪肉",
+   "icon": "🥩",
+   "desc": "新鲜猪肉片，家常炒菜的主力肉类。",
+   "cost": 12,
+   "raw": true,
+   "cookingCategory": "pork",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "chicken",
+   "name": "鸡肉",
+   "icon": "🍗",
+   "desc": "鲜嫩鸡肉，炒菜焖饭都很方便。",
+   "cost": 11,
+   "raw": true,
+   "cookingCategory": "chicken",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "beef",
+   "name": "牛肉",
+   "icon": "🥩",
+   "desc": "筋道牛肉，适合土豆烧牛肉等慢炖菜。",
+   "cost": 18,
+   "raw": true,
+   "cookingCategory": "beef",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "egg",
+   "name": "鸡蛋",
+   "icon": "🥚",
+   "desc": "普通鸡蛋，炒饭、布丁和家常炒菜的万能食材。",
+   "cost": 2,
+   "raw": true,
+   "cookingCategory": "egg",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "milk",
+   "name": "牛奶",
+   "icon": "🥛",
+   "desc": "鲜牛奶，甜点和米粥都少不了。",
+   "cost": 5,
+   "raw": true,
+   "cookingCategory": "milk",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "rice",
+   "name": "大米",
+   "icon": "🍚",
+   "desc": "一人份大米，焖饭和蛋炒饭的基础。",
+   "cost": 4,
+   "raw": true,
+   "cookingCategory": "rice",
+   "tags": [
+    "生鲜食材",
+    "需烹饪"
+   ]
+  },
+  {
+   "id": "salt",
+   "name": "盐",
+   "icon": "🧂",
+   "desc": "基础调味料，每次烹饪消耗一份。",
+   "cost": 1,
+   "cookingCategory": "seasoning",
+   "tags": [
+    "调料"
+   ]
+  },
+  {
+   "id": "sugar",
+   "name": "糖",
+   "icon": "🍬",
+   "desc": "甜味调料，蛋挞和甜牛奶米粥需要它。",
+   "cost": 1,
+   "cookingCategory": "seasoning",
+   "tags": [
+    "调料"
+   ]
+  },
+  {
+   "id": "soy_sauce",
+   "name": "酱油",
+   "icon": "🫙",
+   "desc": "提鲜上色的家常酱油。",
+   "cost": 2,
+   "cookingCategory": "seasoning",
+   "tags": [
+    "调料"
+   ]
+  },
+  {
+   "id": "chili_powder",
+   "name": "辣椒粉",
+   "icon": "🌶️",
+   "desc": "为菜肴增加香辣风味。",
+   "cost": 2,
+   "cookingCategory": "seasoning",
+   "tags": [
+    "调料"
+   ]
+  },
+  {
+   "id": "salad_dressing",
+   "name": "沙拉酱",
+   "icon": "🥣",
+   "desc": "清爽微甜的沙拉酱。",
+   "cost": 3,
+   "cookingCategory": "seasoning",
+   "tags": [
+    "调料"
+   ]
+  },
+  {
+   "id": "fridge_small",
+   "name": "小冰箱",
+   "icon": "🧊",
+   "desc": "20 格容量，适合刚开始独立生活的厨房。",
+   "cost": 300,
+   "slot": "appliance",
+   "fridgeTier": "small",
+   "tags": [
+    "家电",
+    "冰箱"
+   ]
+  },
+  {
+   "id": "fridge_medium",
+   "name": "中冰箱",
+   "icon": "🧊",
+   "desc": "40 格容量，升级时只需补差价。",
+   "cost": 700,
+   "slot": "appliance",
+   "fridgeTier": "medium",
+   "tags": [
+    "家电",
+    "冰箱"
+   ]
+  },
+  {
+   "id": "fridge_large",
+   "name": "大冰箱",
+   "icon": "🧊",
+   "desc": "100 格容量，囤货和批量做菜都够用。",
+   "cost": 1200,
+   "slot": "appliance",
+   "fridgeTier": "large",
+   "tags": [
+    "家电",
+    "冰箱"
+   ]
+  },
+  {
+   "id": "lin_xiaoyu_sketchbook",
+   "name": "林小雨的速写本",
+   "icon": "📓",
+   "desc": "用了一半的速写本，空白页仍很多。林小雨说不用还。",
+   "tags": [
+    "纪念物",
+    "设计",
+    "NPC赠礼"
+   ]
+  },
+  {
+   "id": "energy_drink",
+   "name": "能量饮料",
+   "icon": "⚡",
+   "desc": "饮用后 +4 饱腹、+20 体力、+3 心情。购买后收进背包，不会即时使用。",
+   "cost": 25,
+   "consumable": true,
+   "useEffects": {
+    "satiety": 4,
+    "stamina": 20,
+    "mood": 3,
+    "log": "喝了一瓶能量饮料，精神了些"
+   },
+   "startOffer": false,
+   "shopPrice": 25
+  },
+  {
+   "id": "football_jersey",
+   "name": "足球球衣",
+   "icon": "⚽",
+   "desc": "足球球衣，99 元，可装备，魅力 +1。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 99,
+   "outfitLayer": "football_jersey",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "bonus": {
+    "charm": 1
+   },
+   "tags": [
+    "服装",
+    "运动"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "basketball_jersey",
+   "name": "篮球球衣",
+   "icon": "🏀",
+   "desc": "篮球球衣，89 元，可装备，魅力 +1。",
+   "cost": 0,
+   "slot": "clothes",
+   "shopPrice": 89,
+   "outfitLayer": "basketball_jersey",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "bonus": {
+    "charm": 1
+   },
+   "tags": [
+    "服装",
+    "运动"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "sports_shorts",
+   "name": "运动短裤",
+   "icon": "🩳",
+   "desc": "运动短裤，69 元，可装备，无额外属性加成。",
+   "cost": 0,
+   "slot": "pants",
+   "shopPrice": 69,
+   "outfitLayer": "sports_shorts",
+   "occasion": [
+    "daily",
+    "casual"
+   ],
+   "tags": [
+    "服装",
+    "运动"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "plush_bear",
+   "name": "小熊玩偶",
+   "icon": "🧸",
+   "desc": "从抓娃娃机获得的小熊玩偶，可保留在背包中收藏。",
+   "cost": 0,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "收藏",
+    "玩偶"
+   ]
+  },
+  {
+   "id": "plush_rabbit",
+   "name": "兔子玩偶",
+   "icon": "🐰",
+   "desc": "从抓娃娃机获得的兔子玩偶，可保留在背包中收藏。",
+   "cost": 0,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "收藏",
+    "玩偶"
+   ]
+  },
+  {
+   "id": "plush_cat",
+   "name": "猫咪玩偶",
+   "icon": "🐱",
+   "desc": "从抓娃娃机获得的猫咪玩偶，可保留在背包中收藏。",
+   "cost": 0,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "收藏",
+    "玩偶"
+   ]
+  },
+  {
+   "id": "plush_panda",
+   "name": "熊猫玩偶",
+   "icon": "🐼",
+   "desc": "从抓娃娃机获得的熊猫玩偶，可保留在背包中收藏。",
+   "cost": 0,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "收藏",
+    "玩偶"
+   ]
+  },
+  {
+   "id": "plush_dinosaur",
+   "name": "恐龙玩偶",
+   "icon": "🦕",
+   "desc": "从抓娃娃机获得的恐龙玩偶，可保留在背包中收藏。",
+   "cost": 0,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "收藏",
+    "玩偶"
+   ]
+  },
+  {
+   "id": "fishing_rod",
+   "name": "鱼竿",
+   "icon": "🎣",
+   "desc": "鱼竿，80 元，供珍宝湖水库钓鱼使用。",
+   "cost": 0,
+   "shopPrice": 80,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "钓鱼"
+   ]
+  },
+  {
+   "id": "fishing_bait",
+   "name": "鱼饵",
+   "icon": "🪱",
+   "desc": "珍宝湖垂钓用鱼饵，20 元一桶，共 25 份；每竿消耗 1 份。",
+   "cost": 0,
+   "shopPrice": 20,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "钓鱼"
+   ]
+  },
+  {
+   "id": "fishing_bucket",
+   "name": "鱼桶",
+   "icon": "🪣",
+   "desc": "鱼桶，25 元，供珍宝湖水库钓鱼使用。",
+   "cost": 0,
+   "shopPrice": 25,
+   "consumable": false,
+   "startOffer": false,
+   "tags": [
+    "钓鱼"
+   ]
+  },
+  {
+   "id": "fish_specimen_crucian",
+   "name": "鲫鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_carp",
+   "name": "鲤鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_grass",
+   "name": "草鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_silver",
+   "name": "鲢鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_bream",
+   "name": "鳊鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_snakehead",
+   "name": "黑鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_bass",
+   "name": "鲈鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_mandarin",
+   "name": "鳜鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_catfish",
+   "name": "鲶鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_yellow_catfish",
+   "name": "黄颡鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_tilapia",
+   "name": "罗非鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "fish_specimen_bighead",
+   "name": "鳙鱼标本",
+   "icon": "🐟",
+   "desc": "垂钓留下的纪念，留住那次与湖水相遇的时光。",
+   "tags": [
+    "鱼类标本"
+   ]
+  },
+  {
+   "id": "home_wall_ivory",
+   "name": "暖白素色墙纸",
+   "icon": "▧",
+   "desc": "在家中更换墙面花色，买下后可以反复使用。",
+   "cost": 0,
+   "homeSurface": "wall",
+   "tags": [
+    "墙纸",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_wall_sage",
+   "name": "浅绿细纹墙纸",
+   "icon": "▧",
+   "desc": "在家中更换墙面花色，买下后可以反复使用。",
+   "cost": 0,
+   "homeSurface": "wall",
+   "tags": [
+    "墙纸",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_wall_blue",
+   "name": "雾蓝织纹墙纸",
+   "icon": "▧",
+   "desc": "在家中更换墙面花色，买下后可以反复使用。",
+   "cost": 0,
+   "homeSurface": "wall",
+   "tags": [
+    "墙纸",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_wall_linen",
+   "name": "米杏亚麻墙纸",
+   "icon": "▧",
+   "desc": "在家中更换墙面花色，买下后可以反复使用。",
+   "cost": 0,
+   "homeSurface": "wall",
+   "tags": [
+    "墙纸",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_floor_oak",
+   "name": "浅橡木地板贴",
+   "icon": "▤",
+   "desc": "铺在起居地面的材料，买下后可以反复更换；湿区保留防水地面。",
+   "cost": 0,
+   "homeSurface": "floor",
+   "tags": [
+    "地面铺装",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_floor_walnut",
+   "name": "胡桃木地板贴",
+   "icon": "▤",
+   "desc": "铺在起居地面的材料，买下后可以反复更换；湿区保留防水地面。",
+   "cost": 0,
+   "homeSurface": "floor",
+   "tags": [
+    "地面铺装",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_floor_stone",
+   "name": "暖灰拼接地垫",
+   "icon": "▤",
+   "desc": "铺在起居地面的材料，买下后可以反复更换；湿区保留防水地面。",
+   "cost": 0,
+   "homeSurface": "floor",
+   "tags": [
+    "地面铺装",
+    "家居装修"
+   ],
+   "startOffer": false
+  },
+  {
+   "id": "home_floor_woven",
+   "name": "亚麻编织地垫",
+   "icon": "▤",
+   "desc": "铺在起居地面的材料，买下后可以反复更换；湿区保留防水地面。",
+   "cost": 0,
+   "homeSurface": "floor",
+   "tags": [
+    "地面铺装",
+    "家居装修"
+   ],
+   "startOffer": false
   }
  ]
 }

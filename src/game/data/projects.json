@@ -3,9 +3,9 @@
   "id": "indie_game",
   "name": "独立游戏开发",
   "icon": "🎮",
-  "desc": "利用业余时间开发一款像素风独立游戏，上线后获得每周固定版税",
+  "desc": "利用业余时间开发一款像素风独立游戏，上线后获得逐周减少的版税",
   "category": "programming",
-  "repeatable": true,
+  "repeatable": false,
   "skill": {
    "programming": 3
   },
@@ -20,7 +20,7 @@
   "reward": {
    "fame": 10,
    "mood": 8,
-   "log": "独立游戏正式上线！Steam 好评如潮，从此每周都有固定版税入账"
+   "log": "独立游戏正式上线！Steam 好评如潮，接下来几周会陆续收到版税"
   },
   "verdicts": [
    "又修了一个 bug，离发布近了一步",
@@ -35,11 +35,11 @@
   "id": "mobile_app",
   "name": "开发手机 App",
   "icon": "📱",
-  "desc": "做一个工具类 App，上架应用商店赚每周广告分成",
+  "desc": "做一个工具类 App，上架应用商店获得逐周减少的广告分成",
   "category": "programming",
-  "repeatable": true,
+  "repeatable": false,
   "skill": {
-   "programming": 5
+   "programming": 3
   },
   "progressPerAction": 7,
   "maxProgress": 100,
@@ -52,7 +52,7 @@
   "reward": {
    "fame": 12,
    "mood": 8,
-   "log": "App 上架应用商店！下载量稳步上涨，广告分成每周自动到账"
+   "log": "App 上架应用商店！开始收到广告分成，后续收入会逐周减少"
   },
   "verdicts": [
    "调了一天 UI，终于像样了",
@@ -64,17 +64,31 @@
   ]
  },
  {
+  "id": "personal_programming_order",
+  "name": "编程委托短单",
+  "icon": "💼",
+  "desc": "承接工具与网页功能开发，40点工作量交付后收取850元委托款，不计入版税；已签约订单按原价结算",
+  "category": "programming",
+  "repeatable": true,
+  "contractFee": 850,
+  "skill": { "programming": 3 },
+  "progressPerAction": 5,
+  "maxProgress": 40,
+  "effects": {},
+  "reward": { "mood": 2, "log": "编程委托验收通过，客户支付项目款" }
+ },
+ {
   "id": "home_design",
   "name": "居家设计",
   "icon": "🛋️",
-  "desc": "接居家设计的单子，按电脑档次推进设计进度，完成后按设计等级拿一次性奖金",
+  "desc": "接20点工作量的个人设计短单，交付后按设计等级收取300、450或600元设计费",
   "category": "design",
   "repeatable": true,
   "skill": {
    "design": 3
   },
   "progressPerAction": 10,
-  "maxProgress": 100,
+  "maxProgress": 20,
   "effects": {
    "stamina": -10,
    "stress": 3,
@@ -101,7 +115,7 @@
   "desc": "晚上在街边摆个小吃摊，生意好了能比打工强",
   "category": "business",
   "repeatable": true,
-  "perActionIncome": 0,
+ "perActionIncome": 30,
   "needs": {
    "vegetable": 1,
    "meat": 1
@@ -139,7 +153,7 @@
   "desc": "在周末集市支个摊，人流量大，收入比街边摆摊更高",
   "category": "business",
   "repeatable": true,
-  "perActionIncome": 0,
+ "perActionIncome": 55,
   "needs": {
    "farm_vegetable": 1,
    "farm_egg": 1
@@ -168,6 +182,44 @@
    "收摊时数钱，比街边多不少",
    "老顾客专程来集市找你",
    "和集市管理处混熟了，摊位费都省了点"
+  ]
+ },
+ {
+  "id": "snack_stall",
+  "name": "小吃街摆摊",
+  "icon": "🍢",
+  "desc": "在老城区小吃街支摊营业，客流比普通街边更旺，适合把手艺变成收入",
+  "category": "business",
+  "repeatable": true,
+ "perActionIncome": 45,
+  "needs": {
+   "vegetable": 1,
+   "meat": 1
+  },
+  "skill": {
+   "cooking": 2
+  },
+  "progressPerAction": 8,
+  "maxProgress": 100,
+  "effects": {
+   "stamina": -8,
+   "money": 0,
+   "stress": 3,
+   "log": "在小吃街收摊算账：客流旺，收入比普通街边摆摊更高"
+  },
+  "reward": {
+   "money": 0,
+   "fame": 14,
+   "mood": 12,
+   "log": "小吃街的摊位渐渐有了名气，回头客越来越多"
+  },
+  "verdicts": [
+   "小吃街人声鼎沸，摊前很快排起了队",
+   "炒锅一响，香味把路人都吸引了过来",
+   "隔壁摊主夸你的手艺，客人也吃得很开心",
+   "忙到脚不沾地，但数钱时觉得一切都值了",
+   "老城的烟火气让摊位生意越来越稳",
+   "今天的招牌小吃卖得特别快，明天还想早点出摊"
   ]
  }
 ]

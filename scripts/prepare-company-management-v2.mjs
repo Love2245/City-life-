@@ -1,0 +1,21 @@
+import { readdirSync, readFileSync, copyFileSync, mkdirSync, statSync, writeFileSync, existsSync, createReadStream } from 'node:fs';
+import { resolve, join, relative, dirname } from 'node:path';
+import { createHash } from 'node:crypto';
+import assert from 'node:assert/strict';
+const root=resolve(import.meta.dirname,'..'),audit=join(root,'docs/company-management-v2-1497-20261025');
+const walk=p=>readdirSync(p,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(join(p,e.name)):[join(p,e.name)]);
+const normal=p=>p.replaceAll('\\','/');
+mkdirSync(join(audit,'before'),{recursive:true});
+const manifest=join(audit,'before-sha256.json');
+assert(!existsSync(manifest),'Backup already exists; never overwrite the baseline');
+const paths=[...walk(join(root,'src')).filter(p=>!normal(relative(root,p)).startsWith('src/assets/')),...walk(join(root,'scripts')),...walk(join(root,'tests')),
+  ...['package.json','vite.config.ts','vite.portable.config.ts','1.49.7.sha256','源码副本说明_1.497.md','docs/创业系统_1.497_玩法与数值.md'].map(p=>join(root,p))];
+const rows=paths.map(p=>{const path=normal(relative(root,p)),dest=join(audit,'before',path);mkdirSync(dirname(dest),{recursive:true});copyFileSync(p,dest);return{path,bytes:statSync(p).size,sha256:createHash('sha256').update(readFileSync(p)).digest('hex')};});
+writeFileSync(manifest,JSON.stringify(rows,null,2));
+const portable=join(root,'1.49.7.html'),archive=join(root,'待清理文件/便携版历史/1.49.7_统一开发与公司简化_20261025.html');
+mkdirSync(dirname(archive),{recursive:true});
+assert(!existsSync(archive),'Portable history target already exists');copyFileSync(portable,archive);
+const hash=createHash('sha256');for await(const data of createReadStream(archive,{highWaterMark:8*1024*1024}))hash.update(data);
+const sha256=hash.digest('hex');assert.equal(sha256,'5784fc1a21fd6e2e034efb3e583dc468ec800044df2190e68c8b238094c3f911');
+writeFileSync(join(audit,'previous-portable.json'),JSON.stringify({path:archive,bytes:statSync(archive).size,sha256},null,2));
+console.log(JSON.stringify({root,audit,backedUp:rows.length,previousPortable:sha256}));

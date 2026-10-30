@@ -121,10 +121,7 @@ describe("起步装备（v0.935）", () => {
     );
   });
 
-  it("v1.32 开局橘猫：3 点起步装备，带 cat 字段", () => {
-    const orange = START_ITEMS.find((i) => i.id === "cat_orange");
-    expect(orange).toBeDefined();
-    expect(startCostOf(orange)).toBe(3);
-    expect(orange!.cat).toBe("orange");
+  it("橘猫不再作为无稳定住所时的开局装备提供", () => {
+    expect(START_ITEMS.some((item) => item.id === "cat_orange")).toBe(false);
   });
 });

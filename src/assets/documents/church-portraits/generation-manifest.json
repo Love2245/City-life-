@@ -1,0 +1,66 @@
+{
+  "method": "built-in imagegen",
+  "mode": "generate",
+  "assets": [
+    {
+      "file": "mary.png",
+      "prompt": "Create a finished devotional portrait illustration of the Virgin Mary for a collectible card in a Chinese life-simulation game. Single adult woman, gentle serene face, natural Levantine features, blue mantle over ivory robe, hands folded, subtle gold halo, waist-up, centered, entire head and hands visible. Classical sacred oil-painting style, fine painterly brushwork, warm parchment and muted gold backdrop, tasteful ornate thin gold frame. Portrait composition, no letters, no words, no title, no emoji, no symbols replacing the person. This is an original artistic depiction, not a historical photograph. Opaque background.",
+      "description": "蓝色披风与象牙白衣袍中的圣母玛利亚，双手合拢。"
+    },
+    {
+      "file": "peter.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Peter, older Levantine man with curly gray hair and short gray beard, ochre mantle, two antique keys held in his hands. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "金色披风中的圣伯多禄，手持两把钥匙。"
+    },
+    {
+      "file": "andrew.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Andrew, mature Levantine man with long gray beard and wavy hair, muted teal robe, a small wooden diagonal X cross beside his shoulder. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "青色衣袍中的圣安德肋，身旁有斜十字架。"
+    },
+    {
+      "file": "james_zebedee.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint James the Greater, son of Zebedee, adult Levantine pilgrim with dark beard, earthy brown cloak, scallop shell clasp and pilgrim staff. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "朝圣装束中的圣雅各伯，佩戴贝壳并持手杖。"
+    },
+    {
+      "file": "john.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint John the Apostle, young adult Levantine man with shoulder-length brown hair, clean-shaven, burgundy mantle and ivory tunic, holding a closed gospel manuscript. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "红色衣袍中的年轻圣若望，手持福音书。"
+    },
+    {
+      "file": "philip.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Philip the Apostle, middle-aged Levantine man with short brown beard, olive-colored mantle, holding a small upright wooden cross. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "橄榄色衣袍中的圣斐理伯，手持木十字架。"
+    },
+    {
+      "file": "bartholomew.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Bartholomew the Apostle, mature Levantine man with thick dark beard and curly hair, forest green mantle, holding a rolled scripture manuscript, peaceful nonviolent portrayal. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "绿色衣袍中的圣巴尔多禄茂，手持经卷。"
+    },
+    {
+      "file": "thomas.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Thomas the Apostle, adult Levantine man with dark short beard, warm brown and rust robe, holding a small carpenter square. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "棕红色衣袍中的圣多默，手持木工角尺。"
+    },
+    {
+      "file": "matthew.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Matthew the Apostle, adult Levantine man with graying beard, plum-purple mantle, holding an open manuscript and a quill. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "紫色衣袍中的圣玛窦，手持书卷与羽毛笔。"
+    },
+    {
+      "file": "james_alphaeus.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint James the Less, son of Alphaeus, mature Levantine man with brown hair and trimmed dark beard, pale gold mantle, holding a small scroll, distinct face from the Greater. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "浅金色衣袍中的圣雅各伯，手持小经卷。"
+    },
+    {
+      "file": "jude_thaddeus.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Jude Thaddeus, NOT Judas Iscariot, mature Levantine man with curly dark beard, blue-green mantle, a small devotional medallion at his chest, serene kind expression. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "蓝绿色衣袍中的圣犹达（达陡），胸前佩戴纪念章；并非依斯加略犹达。"
+    },
+    {
+      "file": "simon_zealot.png",
+      "prompt": "Create one finished sacred devotional portrait illustration for a collectible card in a Chinese life-simulation game. Subject: Saint Simon the Zealot, older Levantine man with long white beard, muted maroon mantle, holding a closed scripture book. Waist-up, centered, entire head and hands visible, natural individual facial features, subtle circular gold halo. Classical sacred oil painting, finely detailed painterly brushwork, muted warm palette, parchment and old gold background, tasteful ornate thin gold frame. Portrait composition consistent across the collection. The person must dominate the image, never just a symbol or cover. No text, no letters, no title, no emoji. Original artistic interpretation, not claimed to be a historical likeness. Opaque background.",
+      "description": "暗红衣袍中的圣西满，手持经书。"
+    }
+  ]
+}

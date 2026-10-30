@@ -4,20 +4,22 @@
    * ------------------------------------------------------------------
    * 在家「使用笔记本」进入：全屏桌面，含
    *  - 设置（系统）
-   *  - 手机除电话外的所有 App（Moments / 外卖 / 网购 / 直播等）
-   *  - 笔记本专属 App（论坛博客、编程/设计工作台）
+   *  - 四个电脑内置应用，以及电脑商城安装的软件
+   *  - 与手机共用消息、购物订单等功能数据，安装状态独立
    * 窗口化呈现，可关闭回到桌面。
    */
   import { uiState, showToast } from "../../stores/uiStore.svelte";
-  import { gameState } from "../../stores/gameStore.svelte";
+  import { gameState,markSessionDirty } from "../../stores/gameStore.svelte";
   import { formatMoney } from "../../lib/format";
   import { playSound } from "../../lib/audio";
+  import {computerClicks} from '../../lib/computerClicks';
   import { createPost, toggleSelfLike, commentOnPost, simulateReactionsFor } from "../../game/core/moments";
   import { allCitizens } from "../../game/core/citizens";
   import { TAKEOUT_MENU, placeTakeout, claimOrder as claimTakeoutOrder, arrivedOrders as arrivedTakeout, activeOrders as activeTakeout } from "../../game/core/takeout";
-  import { SHOP_CATALOG, placeShopOrder, claimOrder as claimShopOrder, arrivedOrders as arrivedShop, activeOrders as activeShop } from "../../game/core/shop";
+  import ShoppingWorkspace from "../ShoppingWorkspace.svelte";
   import { canLive, startLive, liveToday } from "../../game/core/live";
-  import { forumPosts, postToForum, seedForum } from "../../game/core/forum";
+  import { forumPosts, seedForum } from "../../game/core/forum";
+  import { submitForumComposer } from "../../game/core/forumComposer";
   import { allTournaments, getTournamentDef, tournamentCleared } from "../../game/core/catBattle";
   import {
     signupCheck,
@@ -28,58 +30,36 @@
   } from "../../game/core/tournament";
   import { activePetOf } from "../../game/core/catCare";
   import { momentsPostsOf } from "../../game/core/moments";
-  import { gameDay } from "../../game/core/calendar";
-  import { MARKET_APPS } from "../../game/core/apps";
-  import { workOnProject, projectProgress, isProjectDone, PROJECTS, laptopTier, checkProjectRequirements } from "../../game/core/projects";
-  import { advanceTime } from "../../game/engine";
-  import { getContact, smsContact, callContact } from "../../game/core/contacts";
-  import {
-    buyInvestment, sellInvestment,
-    investProductById,
-  } from "../../game/core/invest";
+  import { LAPTOP_MARKET_APPS, TAKEOUT_APP_DESCRIPTION, getLaptopApp, installedLaptopApps, isLaptopAppInstalled, installLaptopApp, type LaptopAppId } from "../../game/core/apps";
+import { workOnProject, startNextProgrammingProject, projectProgress, isProjectDone, PROJECTS, PROGRAMMING_PASSIVE_CAP, laptopTier, hasLaptop, personalDevelopmentPreview,personalDevelopmentRewardQuote, startNetbarSession, NETBAR_HOURLY_FEE, NETBAR_MIN_HOURS,netbarSessionRemainingMinutes,netbarDevelopmentTopUpCost,topUpNetbarForDevelopment } from "../../game/core/projects";
+import {COMPANY_COMPUTERS,COMPANY_WORK_SHIFTS} from '../../game/core/companyConfig';
+import { companyOverview } from '../../game/core/companyOverview';
+import {developmentWorkBudget} from '../../game/core/developmentWork';
+import CompanyPanel from './CompanyPanel.svelte';
+import {overlayPortal} from '../../lib/overlayPortal';
+  import { moveTo } from "../../game/core/actions";
+import { getContact, smsContact, callContact, contactSmsTopics } from "../../game/core/contacts";
+import { contactIdFromConversationId, formatSmsTimestamp } from "../../game/core/sms";
+  import { socialThreadsOf } from "../../game/core/socialInbox";
+  import ShunshunhuaWorkspace from "../ShunshunhuaWorkspace.svelte";
   import type { SmsMessage } from "../../game/types";
   import { replySms, markSmsRead } from "../../game/core/phone";
 
-  /** 桌面图标：所有图标均可点击进入对应程序（含新增软件商城 / 微信） */
-  type LaptopAppId =
-    | "settings"
-    | "moments"
-    | "takeout"
-    | "shop"
-    | "live"
-    | "forum"
-    | "dev"
-    | "store"
-    | "wechat"
-    | "invest";
+  // 网吧桌面保持打开时，机时到期也必须立即下机，不能靠已打开的窗口绕过机时。
+  // 机时有效性由 projects.ts 按当前时间推导（hasLaptop → onNetbarMachine），这里只做
+  // 「强制收 modal」的反应式兜底。一次性哨兵按上机日去重：modal 栈被异步改动时不会重复弹 toast。
+  let netbarExpiryNoticeDay: number | null = null;
+  $effect(() => {
+    if (uiState.modal !== "laptop" || !gameState.flags["netbar_session"] || hasLaptop(gameState)) return;
+    uiState.modal = null;
+    const sessionDay = typeof gameState.flags["netbar_session_day"] === "number" ? gameState.flags["netbar_session_day"] : -1;
+    if (netbarExpiryNoticeDay === sessionDay) return;
+    netbarExpiryNoticeDay = sessionDay;
+    showToast(gameState.locationId === "internet_cafe" ? "网吧机时已用完，已自动下机" : "已离开网吧，机位权限失效");
+  });
 
-  /** 桌面图标清单：干净网格（左上 2 列对齐，真实可点，无装饰废图标） */
-  /** 桌面图标：规整网格（3 列顺序排布），不再用绝对 top/left 避免错位/重叠 */
-
-  const DESKTOP_ICONS: ReadonlyArray<{ id: LaptopAppId; name: string; icon: string }> = [
-    { id: "settings", name: "设置", icon: "⚙️" },
-    { id: "wechat", name: "微信", icon: "💬" },
-    { id: "moments", name: "朋友圈", icon: "🌈" },
-    { id: "forum", name: "城市论坛", icon: "📢" },
-    { id: "store", name: "软件商城", icon: "🛍️" },
-    { id: "dev", name: "编程/设计", icon: "💻" },
-    { id: "shop", name: "网购商城", icon: "🛒" },
-    { id: "takeout", name: "外卖到家", icon: "🍔" },
-    { id: "live", name: "自媒体直播", icon: "📡" },
-    { id: "invest", name: "投资理财", icon: "💰" },
-  ];
-  /** 任务栏钉住的固定应用 + 当前打开的应用（Win11 居中任务栏） */
-  const TASKBAR_PINNED: ReadonlyArray<{ id: LaptopAppId | "home"; icon: string; name: string }> = [
-    { id: "home", icon: "🏠", name: "主页" },
-    { id: "settings", icon: "⚙️", name: "设置" },
-    { id: "wechat", icon: "💬", name: "微信" },
-    { id: "moments", icon: "🌈", name: "朋友圈" },
-    { id: "takeout", icon: "🍔", name: "外卖" },
-    { id: "shop", icon: "🛒", name: "商城" },
-    { id: "live", icon: "📡", name: "直播" },
-    { id: "forum", icon: "📢", name: "论坛" },
-    { id: "dev", icon: "💻", name: "编程" },
-  ];
+  /** 桌面和任务栏共用电脑注册表，每个已安装应用只生成一个入口。 */
+  const laptopIcons = $derived(installedLaptopApps(gameState));
 
   /** 当前打开的窗口（null = 桌面） */
   let openApp = $state<LaptopAppId | null>(null);
@@ -92,37 +72,15 @@
   /** v1.3 开关：自己发帖功能（与手机端一致，暂时关闭） */
   const SELF_POST_ENABLED = false;
 
-  /** v1.3b6 PC 端投资：仅展示 + 买入/赎回定期存款（按月计息，标准死期利率 1.55% 年化） */
-  let investDraft = $state("");
-  /** 现有存款：只过滤 productId === "deposit" 的笔 */
-  const investDeposits = $derived(
-    gameState.economy.investments
-      .map((inv) => ({ inv, prod: investProductById(inv.productId) }))
-      .filter((x) => x.prod?.id === "deposit"),
-  );
-  const investTotalValue = $derived(
-    investDeposits.reduce((s, x) => s + x.inv.value, 0),
-  );
-  function onBuyDeposit(): void {
-    // v1.3b7 修复：<input type="number"> bind:value 绑定为 number，.trim() 抛 TypeError 导致存入无反应
-    const raw = typeof investDraft === "number" ? investDraft : String(investDraft ?? "").trim();
-    const amount = Number(raw);
-    if (!Number.isFinite(amount) || amount <= 0) { showToast("金额须为正数"); return; }
-    const r = buyInvestment(gameState, "deposit", amount);
-    if (!r.ok) { showToast(r.reason ?? "存入失败"); return; }
-    showToast(`已存入定期存款 ${formatMoney(Math.round(amount))} 元`);
-    investDraft = "";
-  }
-  function onRedeemDeposit(id: string): void {
-    const r = sellInvestment(gameState, id);
-    if (!r.ok) { showToast(r.reason ?? "支取失败"); return; }
-    showToast("已支取，现金已到账");
-  }
-
   /** v1.3b4 朋友圈仅显示自己与联系人的动态；论坛/市民帖由 forumPosts 独占 */
   const momentsFeed = $derived(momentsPostsOf(gameState));
 
   function open(id: LaptopAppId): void {
+    if (!isLaptopAppInstalled(gameState, id)) {
+      openApp = "store";
+      showToast(`请先在电脑软件商城安装「${getLaptopApp(id)?.name ?? id}」`);
+      return;
+    }
     // v1.3b8 开局种子帖：首次打开论坛时补种（幂等），保证第一天就有帖子可看
     if (id === "forum") seedForum(gameState, allCitizens());
     // v1.33 P4d 打开论坛时结算缺席作废（过了周日 14:00 未到赛场 → 门票作废）
@@ -143,7 +101,7 @@
     if (!text) { showToast("说点什么吧"); return; }
     createPost(gameState, { text, category: momentCat });
     momentDraft = "";
-    showToast("🌈 已发布到 Moments");
+    showToast("🌈 已发布到朋友圈");
   }
   function likeMoment(postId: string): void {
     toggleSelfLike(gameState, postId);
@@ -166,8 +124,8 @@
 
   /** v1.3 外卖（笔记本端） */
   const laptopTakeoutMenu = TAKEOUT_MENU;
-  const laptopTakeoutPending = $derived(activeTakeout(gameState));
-  const laptopTakeoutReady = $derived(arrivedTakeout(gameState));
+  const laptopTakeoutPending = $derived(activeTakeout(gameState).filter((order) => order.kind === "takeout"));
+  const laptopTakeoutReady = $derived(arrivedTakeout(gameState).filter((order) => order.kind === "takeout"));
   function laptopOrderTakeout(itemId: string): void {
     const r = placeTakeout(gameState, itemId); showToast(r.text);
   }
@@ -175,84 +133,75 @@
     const r = claimTakeoutOrder(gameState, orderId); showToast(r.text);
   }
 
-  /** v1.3 网购（笔记本端） */
-  const laptopShopCatalog = SHOP_CATALOG;
-  const laptopShopPending = $derived(activeShop(gameState));
-  const laptopShopReady = $derived(arrivedShop(gameState));
-  function laptopOrderShop(itemId: string): void {
-    const r = placeShopOrder(gameState, itemId); showToast(r.text);
-  }
-  function laptopReceiveShop(orderId: string): void {
-    const r = claimShopOrder(gameState, orderId); showToast(r.text);
-  }
-
-  /** v1.3 直播（笔记本端） */
-  const laptopLiveReady = $derived(canLive(gameState));
+  /** 直播始终检查当前电脑安装状态，手机是否安装不影响这里。 */
+  const laptopLiveReady = $derived(canLive(gameState, "laptop"));
   const laptopLiveDone = $derived(liveToday(gameState));
   function laptopGoLive(): void {
-    const r = startLive(gameState); showToast(r.text);
+    const r = startLive(gameState, "laptop"); showToast(r.text);
+  }
+  function laptopLiveComputer(): void {
+    if (gameState.locationId === "internet_cafe") {
+      const result = startNetbarSession(gameState);
+      showToast(result.ok ? "上机成功，可以开始直播" : (result.reason ?? "暂时无法上机"));
+      return;
+    }
+    const result = moveTo(gameState, "internet_cafe");
+    if (!result.ok) { showToast(result.reason ?? "暂时无法前往网吧"); return; }
+    uiState.modal = null;
+    showToast("已到网吧，请选择「上网吧上机」，付费开通机位后再打开直播");
   }
 
-  /** v1.3b5 笔记本软件商城：与手机应用市场共用 MARKET_APPS，下载即同步 flag（手机/电脑通用） */
-  const laptopStoreApps = MARKET_APPS;
-  function laptopInstallApp(flag: string, name: string): void {
-    // v1.3b7 修复：电脑下载软件写入 laptop_* flags（不再与手机 app_* 混用 → 不再"装进手机"）
-    gameState.flags[`laptop_${flag}`] = true;
-    showToast(`✅ 已安装：${name}（已放到电脑桌面）`);
+  const laptopStoreApps = LAPTOP_MARKET_APPS;
+  function laptopInstallOrOpen(id: LaptopAppId): void {
+    const result = installLaptopApp(gameState, id);
+    if (!result.ok) { showToast(result.text); return; }
+    if (result.alreadyInstalled) { open(id); return; }
+    showToast(result.text);
     playSound("coin");
   }
-  /** 电脑端已下载的 App → 桌面图标（仅映射笔记本有对应窗口的应用；外卖接单/游戏类属手机端不映射） */
-  const LAPTOP_DOWNLOAD_MAP: Record<string, { id: LaptopAppId; name: string; icon: string }> = {
-    app_takeout: { id: "takeout", name: "外卖到家", icon: "🍔" },
-    app_shop: { id: "shop", name: "网购商城", icon: "🛒" },
-    app_live: { id: "live", name: "自媒体直播", icon: "📡" },
-  };
-  const laptopDownloadedIcons = $derived(
-    Object.entries(LAPTOP_DOWNLOAD_MAP)
-      .filter(([flag]) => gameState.flags[`laptop_${flag}`])
-      .map(([, v]) => v),
-  );
 
   /** v1.3b5 微信（PC 端）：与手机通信 App 共用 gameState.smsInbox，两端同步 */
   let wechatThread = $state<string | null>(null);
-  /** 会话列表：按联系人聚合 out+in 消息 */
-  const wechatThreads = $derived.by(() => {
-    const map = new Map<string, { key: string; name: string; icon: string; msgs: SmsMessage[] }>();
-    for (const m of gameState.smsInbox) {
-      // v1.3b8 修复会话分裂（与手机端一致）：无 contactId 的历史消息按 sender 名字回退解析为联系人 id
-      const key = m.contactId ?? gameState.contacts.find((c) => c.name === m.sender)?.id ?? m.sender;
-      let t = map.get(key);
-      if (!t) { t = { key, name: m.sender, icon: m.senderIcon, msgs: [] }; map.set(key, t); }
-      t.msgs.push(m);
-    }
-    return [...map.values()].map((t) => {
-      const sorted = [...t.msgs].sort((a, b) => a.day - b.day);
-      const unread = sorted.filter((m) => !m.replied && !m.read && m.dir === "in").length;
-      return { key: t.key, name: t.name, icon: t.icon, msgs: sorted, last: sorted[sorted.length - 1], unread };
-    }).sort((a, b) => b.last.day - a.last.day);
-  });
+  let wechatTab = $state<"chat" | "contacts" | "services" | "requests">("chat");
+  let chatQuery = $state("");
+  let composerOpen = $state(false);
+  let forumComposerOpen = $state(false);
+  let wcMsgsEl = $state<HTMLDivElement | null>(null);
+  /** 和手机共用按稳定收件人 identity 聚合的会话列表。 */
+  const wechatThreads = $derived(socialThreadsOf(gameState));
+  const visibleThreads = $derived(wechatThreads.filter(t => t.channel === wechatTab &&
+    (!chatQuery.trim() || `${t.name} ${t.preview}`.toLocaleLowerCase().includes(chatQuery.trim().toLocaleLowerCase()))));
+  const visibleContacts = $derived(gameState.contacts.filter(c =>
+    !chatQuery.trim() || `${c.name} ${c.title}`.toLocaleLowerCase().includes(chatQuery.trim().toLocaleLowerCase())));
+  const messageRequests = $derived(wechatThreads.filter(t => t.channel === "requests"));
   /** 当前会话的完整消息流 */
   const wechatCurrent = $derived(
     wechatThread
       ? wechatThreads.find((t) => t.key === wechatThread)?.msgs ?? []
       : [],
   );
-  /**
-   * v1.3b6 微信回复：三选项按钮替代文本输入框。
-   * tone: positive/消极、neutral/平淡、消极/retreatful。
-   * 玩家按态度回复 → 主角按语气发开场白 → NPC 自动回信。
-   */
-  function wechatReply(tone: "positive" | "neutral" | "negative"): void {
+  $effect(() => {
+    if (openApp !== "wechat" || !wechatThread) return;
+    for (const message of wechatCurrent) {
+      if (message.dir === "in" && !message.read && !message.replied) markSmsRead(gameState, message.id);
+    }
+  });
+  $effect(() => {
+    void wechatCurrent.length;
+    void wechatThread;
+    if (wcMsgsEl) wcMsgsEl.scrollTop = wcMsgsEl.scrollHeight;
+  });
+  function wechatReply(topicId: string): void {
     if (!wechatThread) return;
-    const c = getContact(gameState, wechatThread);
+    const c = threadContact;
     if (!c) { showToast("联系人不存在"); return; }
-    const r = smsContact(gameState, c.id, tone);
+    const r = smsContact(gameState, c.id, topicId);
     if (r.ok) showToast(r.text);
     else showToast(r.reason ?? r.text ?? "消息发送失败");
   }
   function wechatCall(): void {
     if (!wechatThread) return;
-    const c = getContact(gameState, wechatThread);
+    const c = threadContact;
     if (!c) return;
     const r = callContact(gameState, c.id);
     showToast(r.text);
@@ -265,12 +214,7 @@
    * 选中后施加效果并得到对方回应；v1.3b5 微信化重构时此入口被遗漏。
    */
   function isScenarioSms(m: SmsMessage): boolean {
-    return (
-      m.dir === "in" &&
-      (m.id.startsWith("sms_") || m.id.startsWith("junk_") || m.id.startsWith("sys_")) &&
-      !!m.options &&
-      m.options.length > 0
-    );
+    return m.dir === "in" && !m.replied && Array.isArray(m.options) && m.options.length > 0;
   }
   const TONE_LABEL: Record<string, string> = { warm: "友好", neutral: "平淡", cold: "消极" };
   function replyScenarioSms(m: SmsMessage, optionIndex: number): void {
@@ -280,8 +224,10 @@
   }
   /** v1.39 打开会话：把该会话内所有未回复消息标记为已读（通知可消除） */
   function openThread(key: string): void {
-    wechatThread = key;
-    const t = wechatThreads.find((x) => x.key === key);
+    const contact = getContact(gameState, key);
+    wechatThread = contact ? `contact:${contact.id}` : key;
+    composerOpen = false;
+    const t = wechatThreads.find((x) => x.key === wechatThread);
     if (t) for (const m of t.msgs) markSmsRead(gameState, m.id);
   }
   /** v1.39 全部已读：清空所有未读角标 */
@@ -293,8 +239,13 @@
   function hasPendingScenario(msgs: SmsMessage[]): boolean {
     return msgs.some((m) => isScenarioSms(m) && !m.replied);
   }
-  /** 当前会话对应的联系人；奶奶/朋友/老同学等场景发送人不是联系人 */
-  const threadContact = $derived(getContact(gameState, wechatThread ?? ""));
+  /** 两端使用同一联系人身份及具体话题。 */
+  const threadContact = $derived.by(() => {
+    const contactId = contactIdFromConversationId(wechatThread) ?? wechatThread ?? "";
+    return getContact(gameState, contactId)
+      ?? gameState.contacts.find((candidate) => candidate.npcId && wechatThread === `npc:${candidate.npcId}`);
+  });
+  const threadTopics = $derived(threadContact ? contactSmsTopics(gameState, threadContact) : []);
 
   /** v1.3b5 论坛（贴吧风）：3 列布局 + 排序/分类/吧切换 */
   const laptopForumFeed = $derived(forumPosts(gameState));
@@ -343,9 +294,15 @@
       .slice(0, 8);
   }
   function laptopPostForum(): void {
-    const t = laptopForumDraft.trim();
-    if (!t) { showToast("说点什么吧"); return; }
-    postToForum(gameState, t, laptopForumCat);
+    const result = submitForumComposer(gameState, laptopForumDraft, laptopForumCat);
+    if (result.kind === "empty") { showToast("说点什么吧"); return; }
+    if (result.kind === "expired") { showToast("这个兑换码已过期或已兑换"); return; }
+    if (result.kind === "unavailable") { showToast("兑换记录暂时无法保存，请检查存储空间后重试"); return; }
+    if (result.kind === "redeemed") {
+      laptopForumDraft = "";
+      showToast(result.itemName?`🎁 兑换成功，已获得${result.itemName}`:`🎁 兑换成功，获得 ${formatMoney(result.amount)} 元`);
+      return;
+    }
     laptopForumDraft = "";
     showToast("💬 已发布到城市论坛");
   }
@@ -377,12 +334,19 @@
   /** v1.3 编程/设计工作台：列出编程与设计类创业项目，可逐项推进（接真实 workOnProject 逻辑） */
   const laptopTierLabel = $derived((() => {
     const t = laptopTier(gameState);
-    return t === "high" ? "电竞本（效率 ×1.8）" : t === "mid" ? "办公本（效率 ×1.35）" : t === "low" ? "老旧笔记本（效率 ×1.0）" : "无笔记本";
+    return t==='none'?'未配备电脑':COMPANY_COMPUTERS[t].name+'（效率 ×'+COMPANY_COMPUTERS[t].efficiency+'）';
   })());
+  let devHours=$state(8);
+  let devContinuous=$state(false),showCompany=$state(false);
+  const devBudget=$derived(developmentWorkBudget(gameState));
   /** 笔记本工作台展示的创业项目：编程类 + 设计类 */
   const devProjects = $derived(
     PROJECTS.filter((p) => p.category === "programming" || p.category === "design"),
   );
+  const weeklyRoyaltyTotal = $derived.by(() => {
+    const amount = gameState.career.passiveIncome ?? 0;
+    return Number.isFinite(amount) ? Math.max(0, amount) : 0;
+  });
   function devProjProgress(id: string): number {
     return projectProgress(gameState, id);
   }
@@ -391,38 +355,25 @@
   }
   /** 项目门槛未达时给出禁用原因（空串 = 可推进） */
   function devBlockReason(id: string): string {
-    const proj = PROJECTS.find((x) => x.id === id);
-    if (!proj) return "";
-    const check = checkProjectRequirements(gameState, proj);
+    const check = personalDevelopmentPreview(gameState,id,devHours,devContinuous);
     return check.ok ? "" : (check.reason ?? "");
   }
-  /** v1.3b8 编程/设计每日限一次：flag 记录上次推进的游戏天（跨天自动解锁） */
-  const DEV_WORK_FLAG = "dev_work_day";
-  const devWorkedToday = $derived(Number(gameState.flags[DEV_WORK_FLAG] ?? -9999) === gameDay(gameState.time));
   function laptopWorkProject(projectId: string): void {
-    // v1.3b8 修复"连续点击几秒钟搓完软件"：每天只能推进一次
-    if (devWorkedToday) {
-      showToast("今天已经肝过一轮了，休息一下，明天再来");
-      return;
-    }
-    const r = workOnProject(gameState, projectId);
+    const r = workOnProject(gameState, projectId,{hours:devHours,continuous:devContinuous});
     if (!r.ok) { showToast(r.reason ?? "推进失败"); return; }
-    // 在 advanceTime 之前记录（advanceTime 可能跨天，跨天后即新的一天可再次推进）
-    gameState.flags[DEV_WORK_FLAG] = gameDay(gameState.time);
-    // v1.3b7 推进一晚真正消耗约 3 小时（与文案一致）
-    advanceTime(gameState, 3);
+    markSessionDirty();
     if (r.completed) {
       showToast(`✅ ${PROJECTS.find((p) => p.id === projectId)?.name ?? "项目"} 完成！`);
       playSound("success");
     } else {
       const p = PROJECTS.find((x) => x.id === projectId);
-      showToast(`💻 ${p?.name ?? "项目"} 推进 +${devProjProgress(projectId)}%`);
+      showToast(`💻 ${p?.name ?? "项目"} · 实际工作${Math.round((r.elapsedHours??0)*60)}分钟，当前${devProjProgress(projectId).toFixed(2)} / ${p?.maxProgress??100}点`);
       playSound("computer");
     }
   }
 </script>
 
-<div class="laptop-desktop">
+<div class="laptop-desktop" data-scene-render-cover use:computerClicks>
   <!-- 桌面背景（Win11 蓝调壁纸渐变） -->
   <div class="desktop-bg">
     <div class="desktop-glow g1"></div>
@@ -430,23 +381,27 @@
     <div class="desktop-glow g3"></div>
   </div>
 
-  <!-- 桌面图标：规整栅格，全部可点击进入对应程序（含电脑商城下载的 App） -->
+  <!-- 桌面图标：规整栅格，包含已安装应用和关机入口 -->
   <div class="desktop-icons">
-    {#each DESKTOP_ICONS as icon (icon.id)}
-      <button class="desk-icon" onclick={() => open(icon.id)}>
+    {#each laptopIcons as icon (icon.id)}
+      <button class="desk-icon" data-app-id={icon.id} onclick={() => open(icon.id)}>
         <span class="gi-emoji" style="font-size:40px;line-height:1">{icon.icon}</span>
         <span class="di-label">{icon.name}</span>
       </button>
     {/each}
-    {#each laptopDownloadedIcons as icon (icon.id)}
-      <button class="desk-icon" onclick={() => open(icon.id)}>
-        <span class="gi-emoji" style="font-size:40px;line-height:1">{icon.icon}</span>
-        <span class="di-label">{icon.name}</span>
-      </button>
-    {/each}
+    <button
+      class="desk-icon power-icon"
+      data-action="shutdown"
+      aria-label="关机"
+      title="关机"
+      onclick={closeLaptop}
+    >
+      <span class="gi-emoji" aria-hidden="true" style="font-size:40px;line-height:1">⏻</span>
+      <span class="di-label">关机</span>
+    </button>
   </div>
 
-  <!-- 底部居中任务栏（Win11 风：开始 + 钉住 + 运行中 + 系统托盘 + 时钟） -->
+  <!-- 底部居中任务栏（Win11 风：开始 + 钉住 + 系统托盘 + 时钟） -->
   <div class="taskbar">
     <div class="tb-cluster tb-left">
       <!-- 开始按钮（点击回到桌面 = 关闭所有窗口） -->
@@ -454,26 +409,18 @@
     </div>
 
     <div class="tb-cluster tb-pinned">
-      {#each TASKBAR_PINNED as p}
+      {#each laptopIcons as p (p.id)}
         <button
           class="tb-pin"
+          data-app-id={p.id}
           class:on={openApp === p.id}
-          onclick={() => (p.id === "home" ? (openApp = null) : open(p.id))}
+          onclick={() => open(p.id)}
           title={p.name}
         >
           <span class="gi-emoji" style="font-size:22px;line-height:1">{p.icon}</span>
           {#if openApp === p.id}<span class="tb-pin-indicator"></span>{/if}
         </button>
       {/each}
-    </div>
-
-    <div class="tb-cluster tb-running">
-      {#if openApp}
-        <div class="tb-run">
-          <span class="tb-run-icon">{DESKTOP_ICONS.find((i) => i.id === openApp)?.icon ?? "🪟"}</span>
-          <span class="tb-run-name">{DESKTOP_ICONS.find((i) => i.id === openApp)?.name ?? openApp}</span>
-        </div>
-      {/if}
     </div>
 
     <div class="tb-cluster tb-right">
@@ -484,7 +431,6 @@
         <span class="tb-time">{String(gameState.time.hour).padStart(2, "0")}:{String(gameState.time.minute).padStart(2, "0")}</span>
         <span class="tb-date">{gameState.time.month}/{gameState.time.day}</span>
       </div>
-      <button class="tb-close" onclick={closeLaptop} title="合上笔记本">⏻</button>
     </div>
   </div>
 
@@ -495,7 +441,6 @@
       <div class="win-body">
         <p class="dim">笔记本系统设置（与手机设置同步）。</p>
         <div class="set-row"><span>玻璃强度</span><span class="dim">{uiState.mapGlass}</span></div>
-        <div class="set-row"><span>过场动画</span><span class="dim">{uiState.sceneTransition ? "开" : "关"}</span></div>
       </div>
     </div>
   {:else if openApp === "moments"}
@@ -533,8 +478,13 @@
               <div class="tl-main">
                 <div class="tl-name">{post.authorName ?? (post.author === "self" ? "我" : "联系人")}</div>
                 <div class="tl-text">{post.text}</div>
+                {#if post.image}
+                  <div class="tl-image-placeholder">{post.image}</div>
+                {/if}
                 <div class="tl-foot">
                   <span class="tl-day">第 {post.day} 天</span>
+                  <span class="tl-category">{post.category === "fun" ? "趣事" : post.category === "task" ? "里程碑" : "日常"}</span>
+                  {#if post.momentSource === "dedicated"}<span class="tl-source">生活记录</span>{/if}
                   <button class="tl-like" class:liked={post.selfLiked} onclick={() => likeMoment(post.id)}>👍 {post.reactions.length + (post.selfLiked ? 1 : 0)}</button>
                   <button class="tl-cmt" onclick={() => (expandedPost = expandedPost === post.id ? null : post.id)}>💬 {post.comments.length}</button>
                   {#if post.author === "self"}<button class="tl-sim" onclick={() => simulateMyPostReactions(post.id)}>✨ 模拟</button>{/if}
@@ -552,45 +502,63 @@
       </div>
     </div>
   {:else if openApp === "dev"}
-    <div class="win wide">
+    <div class="win wide dev-win">
       <div class="win-bar"><span>💻 编程 / 设计工作台</span><button class="win-x" onclick={closeWindow}>✕</button></div>
       <div class="win-body scroll">
-        <p class="dim" style="margin:0 0 12px">当前设备：{laptopTierLabel}。编程类作品完成后转为每周版税，设计类交付即结算奖金。</p>
+        {#if gameState.company?.status==='closed'}<section class="royalty-panel" aria-label="已停业公司档案"><h3>{gameState.company.name} · 已停业</h3><p>可以继续个人接单与开发。旧公司资产和作品版税保留在公司账户中。</p><button class="dev-btn" onclick={()=>showCompany=true}>公司资产管理</button></section>{/if}
+        {#if gameState.company&&gameState.company.status!=='closed'}
+          {@const overview = companyOverview(gameState)!}
+          <section class="royalty-panel" aria-label="公司开发概况"><h3>{gameState.company.name}</h3><p>作品与版税权益已统一并入公司。公司位于<b>{overview.stage.name}</b>，请到主角办公桌前参与开发或管理人员。</p><p>公司账户 {(gameState.company.balanceCents / 100).toFixed(2)} 元 · 周版税 {(gameState.company.royaltyCents / 100).toFixed(2)} / {overview.stage.cap} 元</p><p>团队 {overview.people} 人 · 累计交付 {gameState.developmentHistory?.total ?? 0} 件 · {overview.stopped ? '欠款停工' : '正常经营'}</p>{#each ['programming','design'] as lane}{@const project = lane === 'design' ? gameState.company.design : gameState.company.programming}<p>{lane === 'design' ? '设计' : '编程'}：{project ? `${project.topic} · 已推进 ${project.progress.toFixed(2)} 工作量` : '等待立项'}</p>{/each}</section>
+        {:else}
+        <div class="personal-dev-workflow"><div class="personal-dev-options">
+        <p class="dim" style="margin:0 0 12px">当前设备：{laptopTierLabel}。自研编程作品积累版税，编程委托与设计短单交付收款。</p>
+        <section class="dev-shift-panel" aria-label="个人开发工时"><h3>计划最多工作多久</h3><div class="dev-shift-options">{#each COMPANY_WORK_SHIFTS as shift}<button aria-label={'个人最多工作'+shift.hours+'小时'} aria-pressed={devHours===shift.hours} onclick={()=>devHours=shift.hours}><b>最多{shift.hours}小时</b><span>{shift.hours===4?'短段安排':shift.hours===8?'正常一天':'含加班'}</span></button>{/each}</div><p>今日已工作 {(devBudget.usedMinutes/60).toFixed(1)} / 12小时，可分段、切换编程和设计。</p><small>前8小时正常消耗，之后最多4小时算加班；收尾按实际分钟扣时间和体力。</small><label class="dev-continuous"><input type="checkbox" bind:checked={devContinuous}/>短单交付后继续同类接单</label></section>
+        <details class="royalty-panel" aria-label="编程项目每周版税">
+          <summary>当前每周累计版税 <strong>{formatMoney(weeklyRoyaltyTotal)} 元</strong> · 新作品上限 {PROGRAMMING_PASSIVE_CAP} 元</summary>
+          <p>作品每周结算一次版税，随后逐周减少。完成后可开始下一部作品。</p>
+          <p class="royalty-cap">历史权益保留，新作品上限{PROGRAMMING_PASSIVE_CAP}元／周。旧作品已产生的收入完整到账；已签约的在途作品按原报价交付。达到新上限后，新作品暂停增加版税，现金委托和设计仍可收款。</p>
+        </details>
+        </div><div class="personal-dev-projects">
         {#each devProjects as p (p.id)}
           {@const prog = devProjProgress(p.id)}
           {@const done = devProjDone(p.id)}
+          {@const quote = personalDevelopmentPreview(gameState,p.id,devHours,devContinuous)}
+          {@const rewardQuote = personalDevelopmentRewardQuote(gameState,p.id)}
           <div class="dev-card">
             <div class="dev-head">
               <span class="gi-emoji" style="font-size:26px;line-height:1">{p.icon}</span>
               <div class="dev-meta">
                 <div class="dev-name">{p.name}</div>
-                <div class="dev-desc dim">{p.category === "design" ? "设计单（一次性奖金）" : "编程作品（周版税）"}</div>
+                <div class="dev-desc dim">{p.contractFee!=null?`编程委托 · 交付¥${rewardQuote.contractFee}${rewardQuote.legacy?'（原签约价）':''}`:p.category === "design" ? "20点设计短单 · 交付¥300—600" : `自研编程作品 · 基础周版税¥${rewardQuote.royalty}${rewardQuote.legacy?'（原作品权益）':''}`}</div>
               </div>
             </div>
             <div class="dev-bar-wrap">
-              <div class="dev-bar"><div class="dev-fill" style="width:{prog}%"></div></div>
-              <span class="dev-pct">{done ? "✅ 已完成" : `${prog}%`}</span>
+              <div class="dev-bar"><div class="dev-fill" style="width:{Math.min(100,prog/(p.maxProgress??100)*100)}%"></div></div>
+              <span class="dev-pct">{done ? "✅ 已完成" : `${(prog/(p.maxProgress??100)*100).toFixed(1)}%`}</span>
             </div>
             {#if done}
-              <p class="dim" style="margin:6px 0 0">已完成，可继续下一部 / 下一单。</p>
+              <button class="dev-btn" onclick={() => { const result = startNextProgrammingProject(gameState, p.id); if (!result.ok) showToast(result.reason ?? '暂时无法开始'); }}>开始下一部</button>
             {:else if devBlockReason(p.id)}
               {@const why = devBlockReason(p.id)}
               <button class="dev-btn" disabled title={why}>🔒 {why}</button>
+              {#if (quote.needsNetbarMinutes??0)>netbarSessionRemainingMinutes(gameState)}<button class="dev-btn" onclick={()=>{const r=topUpNetbarForDevelopment(gameState,quote.needsNetbarMinutes!/60);if(r.ok)markSessionDirty();showToast(r.ok?'已按实际工作时间补足机时':r.reason??'暂时无法办理');}}>补足{quote.needsNetbarMinutes}分钟机时 · ¥{netbarDevelopmentTopUpCost(gameState,quote.needsNetbarMinutes!/60)}</button>{/if}
             {:else}
-              <button class="dev-btn" onclick={() => laptopWorkProject(p.id)}>▶ 推进一晚（约 3 小时）</button>
+              <small class="dev-preview">预计{quote.minutes}分钟 · 推进 {(quote.points??0).toFixed(2)} 点 / 总量{p.maxProgress??100}点<br/>体力−{Number(quote.costs?.stamina.toFixed(2))} · 健康−{Number(quote.costs?.health.toFixed(2))} · 心情−{Number(quote.costs?.mood.toFixed(2))} · 压力+{Number(quote.costs?.stress.toFixed(2))}</small><button class="dev-btn" onclick={() => laptopWorkProject(p.id)}>开始开发 · 最多{devHours}小时</button>
             {/if}
           </div>
         {/each}
+        </div></div>
+        {/if}
       </div>
     </div>
   {:else if openApp === "forum"}
     <div class="win tieba">
-      <div class="win-bar"><span>💬 城市论坛 · 贴吧</span><button class="win-x" onclick={closeWindow}>✕</button></div>
+      <div class="win-bar"><span>💬 城市论坛 · 本地生活</span><button class="win-x" onclick={closeWindow}>✕</button></div>
       <div class="tieba-body">
-        <!-- LEFT：我喜欢的吧 + 我关注 -->
+        <!-- LEFT：常逛版块 + 关注话题 -->
         <aside class="tieba-side tieba-left">
           <section class="tieba-section">
-            <div class="tieba-section-title">我喜欢的吧</div>
+            <div class="tieba-section-title">常逛版块</div>
             {#each FORUM_BARS as b}
               <div class="tieba-bar" class:active={laptopForumBar === b.id} onclick={() => (laptopForumBar = b.id)}>
                 <span class="gi-emoji" style="font-size:18px;line-height:1">{b.icon}</span>
@@ -600,10 +568,10 @@
             {/each}
           </section>
           <section class="tieba-section">
-            <div class="tieba-section-title">我关注的话题</div>
+            <div class="tieba-section-title">关注话题</div>
             <div class="tieba-bar"><span class="bar-icon">📰</span><span class="bar-name">城市新闻</span></div>
-            <div class="tieba-bar"><span class="bar-icon">🏷️</span><span class="bar-name">二手交易</span></div>
-            <div class="tieba-bar"><span class="bar-icon">🤝</span><span class="bar-name">志愿服务</span></div>
+            <div class="tieba-bar"><span class="bar-icon">🏷️</span><span class="bar-name">二手闲置</span></div>
+            <div class="tieba-bar"><span class="bar-icon">🤝</span><span class="bar-name">同城互助</span></div>
           </section>
         </aside>
 
@@ -685,9 +653,11 @@
           <div class="tieba-composer">
             <div class="tieba-composer-head">
               <span class="tieba-composer-icon">🧑</span>
-              <span class="tieba-composer-label">在 <b>{currentBar().name}</b> 发帖</span>
+              <span class="tieba-composer-label">在 <b>{currentBar().name}</b> 分享一件事</span>
+              <button class="forum-compose-toggle" aria-expanded={forumComposerOpen} onclick={()=>forumComposerOpen=!forumComposerOpen}>{forumComposerOpen?'收起发帖':'写帖子'}</button>
             </div>
-            <textarea class="tieba-input" placeholder="说说城市里的新鲜事…" bind:value={laptopForumDraft} rows="2"></textarea>
+            <div class="forum-compose-content" class:open={forumComposerOpen}>
+            <textarea class="tieba-input" placeholder="分享一件城市里的新鲜事…" bind:value={laptopForumDraft} rows="2"></textarea>
             <div class="tieba-tools">
               <div class="seg small">
                 <button class="seg-btn" class:on={laptopForumCat === "daily"} onclick={() => (laptopForumCat = "daily")}>日常</button>
@@ -696,19 +666,20 @@
               </div>
               <button class="tieba-pub" onclick={laptopPostForum}>发布</button>
             </div>
+            </div>
           </div>
           <!-- 排序 tabs -->
           <div class="tieba-tabs">
-            <button class="tieba-tab" class:on={laptopForumSort === "latest"} onclick={() => (laptopForumSort = "latest")}>最新</button>
-            <button class="tieba-tab" class:on={laptopForumSort === "hot"} onclick={() => (laptopForumSort = "hot")}>热议</button>
+                <button class="tieba-tab" class:on={laptopForumSort === "latest"} onclick={() => (laptopForumSort = "latest")}>最新发布</button>
+            <button class="tieba-tab" class:on={laptopForumSort === "hot"} onclick={() => (laptopForumSort = "hot")}>正在热议</button>
             <span class="tieba-count dim">共 {laptopForumFeed.length} 帖</span>
           </div>
           <!-- 帖子流 -->
           {#if sortedForum().length === 0}
             <div class="tieba-empty">
               <div class="te-icon">💬</div>
-              <div class="te-title">该吧还没有帖</div>
-              <div class="te-sub">来发第一帖吧。</div>
+              <div class="te-title">这里还没有帖子</div>
+              <div class="te-sub">来看看大家最近在聊什么吧。</div>
             </div>
           {:else}
             <div class="tieba-feed">
@@ -747,7 +718,7 @@
         <!-- RIGHT：热议榜 -->
         <aside class="tieba-side tieba-right">
           <section class="tieba-section">
-            <div class="tieba-section-title">24 小时热议榜</div>
+            <div class="tieba-section-title">24 小时热议</div>
             {#if hotForum().length === 0}
               <p class="dim tieba-empty-mini">暂无热议</p>
             {:else}
@@ -763,8 +734,8 @@
             {/if}
           </section>
           <section class="tieba-section">
-            <div class="tieba-section-title">最新动态</div>
-            <div class="tieba-mini dim">每日 {laptopForumFeed.length > 12 ? "12+" : laptopForumFeed.length} 条新帖</div>
+            <div class="tieba-section-title">本地动态</div>
+            <div class="tieba-mini dim">今天更新 {laptopForumFeed.length > 12 ? "12+" : laptopForumFeed.length} 条帖子</div>
           </section>
         </aside>
       </div>
@@ -779,7 +750,7 @@
             <div class="set-row"><span><span class="gi-emoji" style="font-size:18px;line-height:1">{o.icon}</span> {o.name}</span><button class="mini-btn" onclick={() => laptopReceiveTakeout(o.id)}>领取</button></div>
           {/each}
         {/if}
-        <p class="dim">在线点餐，约 1 小时送达（跨天到达）。</p>
+        <p class="dim">{TAKEOUT_APP_DESCRIPTION}</p>
         {#each laptopTakeoutMenu as m (m.id)}
           <div class="set-row"><span><span class="gi-emoji" style="font-size:18px;line-height:1">{m.icon}</span> {m.name}<br><span class="dim" style="font-size:10px">{m.desc}</span></span><button class="mini-btn" onclick={() => laptopOrderTakeout(m.id)}>{formatMoney(m.price)}</button></div>
         {/each}
@@ -789,26 +760,7 @@
   {:else if openApp === "shop"}
     <div class="win wide">
       <div class="win-bar"><span>🛒 网购商城</span><button class="win-x" onclick={closeWindow}>✕</button></div>
-      <div class="win-body scroll">
-        {#if laptopShopReady.length > 0}
-          <div class="set-row"><span>待领取</span></div>
-          {#each laptopShopReady as o (o.id)}
-            <div class="set-row"><span><span class="gi-emoji" style="font-size:18px;line-height:1">{o.icon}</span> {o.name}</span><button class="mini-btn" onclick={() => laptopReceiveShop(o.id)}>领取</button></div>
-          {/each}
-        {/if}
-        <p class="dim" style="margin:6px 0 10px">线上购买，价格比实体店低约 1 成，3 天快递配送。</p>
-        {#each laptopShopCatalog as m (m.id)}
-          <div class="shop-row">
-            <span class="gi-emoji" style="font-size:22px;line-height:1">{m.icon}</span>
-            <div class="shop-info">
-              <div class="shop-name">{m.name}<span class="shop-cat dim"> · {m.cat}</span></div>
-              <div class="shop-price"><span class="shop-now">{formatMoney(m.price)}</span></div>
-            </div>
-            <button class="mini-btn" onclick={() => laptopOrderShop(m.id)}>下单</button>
-          </div>
-        {/each}
-        {#if laptopShopPending.length > 0}<p class="dim">配送中：{laptopShopPending.map((o) => o.name).join("、")}</p>{/if}
-      </div>
+      <div class="win-body scroll"><ShoppingWorkspace state={gameState} onMessage={showToast} /></div>
     </div>
   {:else if openApp === "live"}
     <div class="win">
@@ -816,10 +768,17 @@
       <div class="win-body">
         {#if !laptopLiveReady.ok}
           <p class="dim">{laptopLiveReady.reason}</p>
+          {#if laptopLiveReady.missing === "installation"}
+            <button class="mini-btn" onclick={() => open("store")}>打开电脑软件商城</button>
+          {:else if laptopLiveReady.missing === "computer"}
+            <button class="mini-btn" onclick={laptopLiveComputer}>
+              {gameState.locationId === "internet_cafe" ? `上机（¥${NETBAR_HOURLY_FEE * NETBAR_MIN_HOURS} / ${NETBAR_MIN_HOURS} 小时）` : "前往网吧"}
+            </button>
+          {/if}
         {:else}
           <p class="dim">直播才艺赚影响力与打赏，每天限 1 次。</p>
           <div class="set-row"><span>累计影响力</span><span>{gameState.player.stats.fame}</span></div>
-          <div class="set-row"><span>累计直播 fame</span><span>{gameState.live?.totalFameGain ?? 0}</span></div>
+          <div class="set-row"><span>累计直播名气</span><span>{gameState.live?.totalFameGain ?? 0}</span></div>
           <button class="mini-btn" disabled={laptopLiveDone} onclick={laptopGoLive}>{laptopLiveDone ? "今日已直播" : "开始直播"}</button>
         {/if}
       </div>
@@ -836,87 +795,55 @@
               <div class="shop-name">{m.name}</div>
               <div class="shop-cat dim">{m.desc}</div>
             </div>
-            {#if gameState.flags[`laptop_${m.flag}`]}
-              <span class="referral-badge">✓ 已安装</span>
-            {:else}
-              <button class="mini-btn" onclick={() => laptopInstallApp(m.flag, m.name)}>下载</button>
-            {/if}
+            <button class="mini-btn" onclick={() => laptopInstallOrOpen(m.id)}>
+              {isLaptopAppInstalled(gameState, m.id) ? "打开" : "安装"}
+            </button>
           </div>
         {/each}
       </div>
     </div>
   {:else if openApp === "invest"}
-    <!-- v1.3b6 PC 端投资理财：仅定期存款（标准死期利率 1.55% 年化，按月结息） -->
-    <div class="win invest-win">
-      <div class="win-bar">
-        <span>💰 投资理财</span>
-        <button class="tb-close" onclick={() => (openApp = null)}>✕</button>
-      </div>
-      <div class="win-body scroll invest-body">
-        <div class="iv-summary">
-          <div class="iv-label dim">现金</div>
-          <div class="iv-cash">{formatMoney(gameState.player.money)}</div>
-          <div class="iv-label dim">定期存款本金（年化 1.55%，每月 1 号按月结息）</div>
-          <div class="iv-dep">{formatMoney(investTotalValue)}</div>
-        </div>
-
-        <div class="iv-card">
-          <div class="h2">🏦 存入定期存款</div>
-          <p class="dim">稳赚不赔：每月 1 号按月息 0.13% 计息（年化 1.55%，参照 2024 标准死期利率）。最低 100 元起存。</p>
-          <div class="iv-input-row">
-            <input type="number" min="0" placeholder="存入金额（元）" bind:value={investDraft} />
-            <button class="btn btn-pri" onclick={onBuyDeposit}>存入</button>
-          </div>
-        </div>
-
-        <div class="iv-card">
-          <div class="h2">📋 现有存款</div>
-          {#if investDeposits.length === 0}
-            <p class="dim">暂无定期存款</p>
-          {:else}
-            {#each investDeposits as { inv, prod } (inv.id)}
-              <div class="iv-row">
-                <div class="iv-row-top">
-                  <span>{prod?.icon ?? "💼"} {prod?.name ?? inv.productId}</span>
-                  <span class="dim">本金 {formatMoney(inv.principal)}</span>
-                </div>
-                <div class="iv-row-bot">
-                  <span>当前 {formatMoney(inv.value)}</span>
-                  <span class="tag {inv.value >= inv.principal ? 'gain' : 'cost'}">
-                    {inv.value >= inv.principal ? '+' : ''}{formatMoney(inv.value - inv.principal)}
-                  </span>
-                  <button class="btn btn-sm" onclick={() => onRedeemDeposit(inv.id)}>支取</button>
-                </div>
-              </div>
-            {/each}
-          {/if}
-        </div>
-
-        <p class="dim iv-foot">注：本页仅展示定期存款。基金/股票暂未上线。</p>
-      </div>
-    </div>
+    <div class="win stock-win"><ShunshunhuaWorkspace onclose={closeWindow}/></div>
   {:else if openApp === "wechat"}
     <!-- v1.3b5 微信（PC 端）：会话列表 + 聊天窗，与手机通信同步 -->
     <div class="win wechat-win">
-      <div class="win-bar"><span>💬 微信</span><button class="win-x" onclick={closeWindow}>✕</button></div>
+      <div class="win-bar"><span>💬 通信</span><button class="win-x" aria-label="关闭通信窗口" onclick={closeWindow}>✕</button></div>
       <div class="wechat-body">
         <!-- 左侧会话列表 -->
         <aside class="wechat-list">
           <div class="wechat-list-head">
-            <span>会话</span>
+            <span>消息</span>
             {#if wechatThreads.some((t) => t.unread > 0)}
               <button class="read-all-btn" onclick={markAllRead}>全部已读</button>
             {/if}
           </div>
-          {#if wechatThreads.length === 0}
-            <p class="dim" style="padding:20px 12px;color:#999;font-size:12px">暂无会话，去联系人里发条消息吧。</p>
+          <nav class="social-tabs" aria-label="通信分类">
+            <button class:on={wechatTab === "chat"} onclick={() => { wechatTab = "chat"; chatQuery = ""; }}>聊天</button>
+            <button class:on={wechatTab === "contacts"} onclick={() => { wechatTab = "contacts"; chatQuery = ""; }}>通讯录</button>
+            <button class:on={wechatTab === "services"} onclick={() => { wechatTab = "services"; chatQuery = ""; }}>通知</button>
+          </nav>
+          <input class="social-search" type="search" bind:value={chatQuery} aria-label="搜索会话或联系人" placeholder="搜索" />
+          {#if wechatTab === "chat" && messageRequests.length}
+            <button class="request-inbox" onclick={() => { wechatTab = "requests"; chatQuery = ""; }}>消息请求 <span>{messageRequests.reduce((n,t) => n + t.unread, 0) || messageRequests.length} ›</span></button>
+          {:else if wechatTab === "requests"}
+            <button class="request-inbox" onclick={() => { wechatTab = "chat"; chatQuery = ""; }}>‹ 返回聊天</button>
+          {/if}
+          {#if wechatTab === "contacts"}
+            {#each visibleContacts as contact (contact.id)}
+              <button class="wc-item" disabled={!contact.canSms && !contact.canCall} onclick={() => openThread(contact.id)}>
+                <span class="wc-avatar">{contact.avatar}</span><div class="wc-main"><div class="wc-name">{contact.name}</div><div class="wc-prev">{contact.title}</div></div>
+              </button>
+            {/each}
+            {#if !visibleContacts.length}<p class="wc-list-empty">没有找到联系人。</p>{/if}
+          {:else if visibleThreads.length === 0}
+            <p class="wc-list-empty">{chatQuery ? "没有找到会话。" : "暂无消息，到通讯录聊一聊吧。"}</p>
           {:else}
-            {#each wechatThreads as th (th.key)}
+            {#each visibleThreads as th (th.key)}
               <button class="wc-item" class:on={wechatThread === th.key} onclick={() => openThread(th.key)}>
                 <span class="gi-emoji" style="font-size:30px;line-height:1">{th.icon}</span>
                 <div class="wc-main">
                   <div class="wc-name">{th.name}</div>
-                  <div class="wc-prev dim">{th.last.replied ? (th.last.replyText ?? "已读") : th.last.text}</div>
+                  <div class="wc-prev">{th.pending ? "待回应 · " : ""}{th.preview}</div>
                 </div>
                 {#if th.unread > 0}<span class="wc-badge">{th.unread}</span>{/if}
               </button>
@@ -932,12 +859,12 @@
             </div>
           {:else}
             {@const peer = wechatThreads.find((t) => t.key === wechatThread)}
-            <div class="wc-chat-head">{peer?.name}</div>
-            <div class="wc-msgs scroll">
+            <div class="wc-chat-head">{peer?.name ?? threadContact?.name}<small>{threadContact?.title ?? (peer?.channel === "services" ? "服务通知" : "消息请求")}</small></div>
+            <div class="wc-msgs scroll" bind:this={wcMsgsEl}>
               {#each wechatCurrent as m (m.id)}
                 {#if m.dir === "out"}
                   <div class="wc-row me">
-                    <div class="wc-bubble me">{(m.replyText && m.replied) ? m.replyText : m.text}</div>
+                    <div class="wc-bubble me">{(m.replyText && m.replied) ? m.replyText : m.text}<small class="wc-time">{formatSmsTimestamp(m.sentAt, m.day, m.timestampEstimated)}</small></div>
                     <span class="wc-av">🙂</span>
                   </div>
                 {:else}
@@ -945,6 +872,7 @@
                     <span class="wc-av">{m.senderIcon}</span>
                     <div class="wc-bubble them">
                       {m.text}
+                      <small class="wc-time">{formatSmsTimestamp(m.sentAt, m.day, m.timestampEstimated)}</small>
                     </div>
                   </div>
                   <!-- v1.3b8b 场景短信的三档回复按钮（友好/平淡/消极），恢复前代交互 -->
@@ -963,14 +891,13 @@
             </div>
             <div class="wc-reply">
               {#if threadContact && !hasPendingScenario(wechatCurrent)}
-                <button class="wc-call" title="语音通话" onclick={wechatCall}>📞</button>
-                <div class="wc-tone-row" role="group" aria-label="回复态度">
-                  <button class="wc-tone pos" onclick={() => wechatReply("positive")}>😊 积极</button>
-                  <button class="wc-tone neu" onclick={() => wechatReply("neutral")}>😐 平淡</button>
-                  <button class="wc-tone neg" onclick={() => wechatReply("negative")}>😔 消极</button>
-                </div>
+                {#if threadContact.canCall}<button class="wc-call" title="语音通话" aria-label="语音通话" onclick={wechatCall}>📞</button>{/if}
+                {#if threadContact.canSms}
+                  <button class="composer-toggle" onclick={() => composerOpen = !composerOpen}>{composerOpen ? "收起话题" : "选择话题，聊一聊…"}</button>
+                  {#if composerOpen}<div class="wc-topic-row" role="group" aria-label="聊天话题">{#each threadTopics as topic}<button class="wc-topic" onclick={() => wechatReply(topic.id)}>{topic.label}</button>{/each}</div>{/if}
+                {/if}
               {:else if !threadContact}
-                <div class="wc-noncontact">💬 {peer?.name ?? "对方"}不是常用联系人，点击上方短信的回复按钮继续对话</div>
+                <div class="wc-noncontact">{hasPendingScenario(wechatCurrent) ? "选择消息旁的话题回复。" : peer?.channel === "services" ? "服务通知，仅供查看。" : "保留会话，等待新的消息。"}</div>
               {/if}
             </div>
           {/if}
@@ -980,7 +907,12 @@
   {/if}
 </div>
 
+{#if showCompany&&gameState.company}<div class="laptop-company-overlay hud-scope" use:overlayPortal><CompanyPanel onClose={()=>showCompany=false}/></div>{/if}
+
 <style>
+  .laptop-company-overlay{position:fixed;inset:0;z-index:1650;display:flex;align-items:center;justify-content:center;padding:max(8px,var(--sai-top,0px)) max(8px,var(--sai-right,0px)) max(8px,var(--sai-bottom,0px)) max(8px,var(--sai-left,0px));background:#08151faa;box-sizing:border-box}
+  .dev-continuous{display:flex;align-items:center;gap:8px;min-height:44px;font-size:12px;margin-top:6px;cursor:pointer}.dev-continuous input{width:18px;height:18px;accent-color:var(--accent)}
+  .win.stock-win{inset:8px 8px 58px;left:8px;top:8px;transform:none;width:auto;max-width:none;max-height:none;background:#111820;}
   .laptop-desktop {
     /* 全屏覆盖层：钉成深色柔光玻璃，不随昼夜主题翻转（与手机 .phone 同理） */
     --bg-deep: #10131f;
@@ -1023,7 +955,8 @@
     z-index: 1;
     display: grid; grid-template-columns: repeat(3, 84px); grid-auto-rows: 88px;
     gap: 4px;
-    pointer-events: none;
+    max-height: calc(100% - 72px); overflow-y: auto;
+    overscroll-behavior: contain; scrollbar-width: thin;
   }
   .desk-icon {
     pointer-events: auto;
@@ -1040,6 +973,8 @@
     border-color: rgba(255, 255, 255, 0.18);
   }
   .desk-icon:active:not(:disabled) { transform: scale(0.97); }
+  .desk-icon.power-icon .gi-emoji { color: #ffb0b0; text-shadow: 0 1px 5px rgba(120, 20, 35, 0.8); }
+  .desk-icon.power-icon:hover:not(:disabled) { background: rgba(255, 90, 90, 0.2); border-color: rgba(255, 170, 170, 0.42); }
   .di-glyph { font-size: 30px; line-height: 1; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)); }
   .di-label {
     font-size: 10.5px; line-height: 1.2; text-align: center;
@@ -1052,7 +987,7 @@
   .taskbar {
     position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
     height: 50px;
-    display: flex; align-items: center; justify-content: space-between;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
     padding: 0 8px;
     background: rgba(20, 25, 45, 0.62);
     backdrop-filter: blur(28px) saturate(1.2);
@@ -1063,8 +998,10 @@
   .tb-cluster { display: flex; align-items: center; gap: 4px; }
   .tb-left { padding-right: 4px; }
   .tb-right { padding-left: 4px; gap: 2px; }
-  .tb-pinned { flex: 0 1 auto; justify-content: center; }
-  .tb-running { flex: 0 1 auto; padding-left: 6px; }
+  .tb-left { grid-column: 1; justify-self: start; }
+  .tb-pinned { grid-column: 2; justify-self: center; min-width: 0; max-width: calc(100vw - 300px); overflow-x: auto; scrollbar-width: thin; }
+  .tb-pinned .tb-pin { flex-shrink: 0; }
+  .tb-right { grid-column: 3; justify-self: end; }
   .tb-start {
     width: 40px; height: 36px;
     background: transparent; border: 1px solid transparent; border-radius: 6px;
@@ -1089,20 +1026,6 @@
     width: 4px; height: 4px; border-radius: 50%;
     background: var(--accent, #0084ff);
   }
-  /* 运行中的应用预览 */
-  .tb-run {
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 11.5px;
-    color: #eef1ff;
-    max-width: 140px;
-  }
-  .tb-run-icon { font-size: 14px; }
-  .tb-run-name {
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
   /* 系统托盘图标 */
   .tb-ico { font-size: 13px; padding: 4px 6px; border-radius: 4px; cursor: default; }
   .tb-ico:hover { background: rgba(255, 255, 255, 0.08); }
@@ -1116,21 +1039,15 @@
   .tb-clock:hover { background: rgba(255, 255, 255, 0.08); }
   .tb-time { font-size: 12.5px; font-variant-numeric: tabular-nums; }
   .tb-date { font-size: 10.5px; opacity: 0.85; }
-  .tb-close {
-    background: rgba(255, 90, 90, 0.16); border: 1px solid rgba(255, 90, 90, 0.35);
-    color: #ff9a9a; border-radius: 6px; padding: 5px 9px; cursor: pointer; font-size: 13px;
-    margin-left: 4px;
-  }
-  .tb-close:hover { background: rgba(255, 90, 90, 0.28); }
   .win {
     position: absolute; z-index: 3; top: 24px; left: 50%; transform: translateX(-50%);
     width: 420px; max-height: calc(100% - 88px);
-    background: var(--glass-2); border: 1px solid var(--stroke-2); border-radius: 14px;
+    background: color-mix(in srgb, var(--glass-2) 92%, #f6f8fc 8%); border: 1px solid var(--stroke-2); border-radius: 10px;
     display: flex; flex-direction: column; overflow: hidden;
-    box-shadow: var(--lift-lg), inset 0 0 0 1px var(--stroke);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34), 0 2px 8px rgba(0, 0, 0, 0.18), inset 0 0 0 1px var(--stroke);
     backdrop-filter: blur(18px) saturate(1.1);
   }
-  .win.wide { width: 520px; }
+  .win.wide { width: 620px; max-width: calc(100% - 24px); }
   .win-bar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 16px; background: var(--glass); color: var(--text-main); font-size: 13px; font-weight: 700;
@@ -1140,6 +1057,7 @@
   .win-x:hover { background: var(--tint); color: var(--text-main); }
   .win-body { padding: 16px; overflow-y: auto; color: var(--text-main); font-size: 13px; }
   .win-body.scroll { max-height: calc(100vh - 180px); }
+  @supports (height: 100dvh) { .win-body.scroll { max-height: calc(100dvh - 180px); } }
   /* v1.3b9 滚轮适配：电脑端各软件窗口统一细滚动条 */
   .win-body.scroll {
     overscroll-behavior: contain;
@@ -1150,6 +1068,13 @@
   .win-body.scroll::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--text-main) 22%, transparent); border-radius: 999px; }
   .win-body.scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--text-main) 38%, transparent); }
   .win-body.scroll::-webkit-scrollbar-track { background: transparent; }
+  @media (max-width: 850px) {
+    .tb-pinned { max-width: calc(100vw - 185px); }
+    .tb-right .tb-ico { display: none; }
+    .win { top: 8px; max-height: calc(100% - 64px); }
+    .win-body.scroll { max-height: calc(100vh - 120px); }
+    @supports (height: 100dvh) { .win-body.scroll { max-height: calc(100dvh - 120px); } }
+  }
   .set-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--stroke); font-size: 12.5px; }
   .dim { color: var(--text-dim); }
   .mini-btn {
@@ -1187,6 +1112,9 @@
   .moment-comment-input input { flex: 1; background: color-mix(in srgb, var(--bg-deep) 60%, transparent); border: 1px solid var(--stroke); border-radius: 8px; color: var(--text-main); padding: 5px 8px; font-size: 12px; }
   /* v1.3 编程/设计工作台卡片 */
   .dev-card { background: var(--glass); border: 1px solid var(--stroke); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .royalty-panel { margin: 0 0 12px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--accent) 9%, var(--glass)); color: var(--text-main); }
+  .royalty-panel p { margin: 7px 0 0; font-size: 11.5px; line-height: 1.5; }
+  .royalty-panel .royalty-cap { color: var(--text-dim); }
   .dev-head { display: flex; align-items: center; gap: 10px; }
   .dev-icon { font-size: 24px; }
   .dev-name { font-size: 13px; font-weight: 600; color: var(--text-main); }
@@ -1200,6 +1128,16 @@
   .dev-btn:disabled { opacity: 0.55; cursor: not-allowed; background: var(--stroke); border-color: var(--stroke-2); }
   .dev-btn:disabled:hover { background: var(--stroke); }
   .dev-btn:active { transform: scale(0.98); }
+  .dev-shift-panel{padding:14px;margin-bottom:14px;border:1px solid var(--stroke-2);border-radius:12px;background:var(--glass)}
+  .dev-shift-panel h3{margin:0 0 10px;font-size:14px}.dev-shift-panel p{font-size:12px;margin:10px 0}.dev-shift-panel small,.dev-preview{display:block;color:var(--text-dim);font-size:11px;line-height:1.6}
+  .dev-shift-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.dev-shift-options button{font:inherit;min-height:48px;padding:7px;border:1px solid var(--stroke-2);border-radius:8px;background:var(--tint);color:var(--text-main);cursor:pointer}.dev-shift-options button[aria-pressed=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}.dev-shift-options span{display:block;font-size:10px;margin-top:3px}
+  .dev-win .royalty-panel summary{cursor:pointer;font-size:12px;line-height:1.7;min-height:24px}.dev-win .royalty-panel summary strong{color:var(--accent)}
+  .dev-win,.dev-win .win-body{background:var(--bg-card,#182033)}
+  .personal-dev-workflow{display:grid;grid-template-columns:minmax(200px,.85fr) minmax(0,1.15fr);gap:14px;align-items:start}.personal-dev-options{position:sticky;top:0}
+  @media(max-width:650px){.personal-dev-workflow{grid-template-columns:1fr}.personal-dev-options{position:static}}
+  :global(:root[data-game-mode="mobile"]) .dev-win .dev-shift-panel h3,:global(:root[data-game-mode="mobile"]) .dev-win .dev-name{font-size:var(--m-fs-md,16px)}
+  :global(:root[data-game-mode="mobile"]) .dev-win .dev-shift-options button,:global(:root[data-game-mode="mobile"]) .dev-win .dev-btn{font-size:var(--m-fs-sm,14px);min-height:var(--m-tap,44px)}
+  :global(:root[data-game-mode="mobile"]) .dev-win .dev-shift-panel p,:global(:root[data-game-mode="mobile"]) .dev-win .dev-shift-panel small,:global(:root[data-game-mode="mobile"]) .dev-win .dev-shift-options span,:global(:root[data-game-mode="mobile"]) .dev-win .dev-preview,:global(:root[data-game-mode="mobile"]) .dev-win .royalty-panel summary,:global(:root[data-game-mode="mobile"]) .dev-win .dev-pct{font-size:var(--m-fs-xs,12px)}
   /* v1.3 网购商城行 */
   .shop-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: var(--glass); border: 1px solid var(--stroke); margin-bottom: 8px; }
   .shop-icon { font-size: 22px; flex-shrink: 0; }
@@ -1214,7 +1152,9 @@
   /* ===== v1.3b4 论坛贴吧风（3 列布局 + 浅色主题） ===== */
   .win.tieba {
     width: 760px; max-width: calc(100% - 64px);
-    max-height: calc(100% - 80px);
+    height: calc(100% - 56px);
+    min-height: 0;
+    max-height: 780px;
     background: #ffffff; color: #1a1a1a;
     border: 1px solid #d8dbe0;
     border-radius: 8px;
@@ -1228,14 +1168,14 @@
   .win.tieba .win-x { color: #555; }
   .tieba-body {
     display: flex; flex-direction: row;
-    width: 100%; height: calc(100% - 41px);
+    width: 100%; height: auto; flex: 1 1 auto; min-height: 0;
     background: #ffffff;
   }
   .tieba-side {
     background: #f5f6f8;
     border-right: 1px solid #e6e8eb;
     padding: 12px 10px;
-    overflow-y: auto;
+    overflow-y: auto; touch-action: pan-y; -webkit-overflow-scrolling: touch;
     flex-shrink: 0;
     /* v1.3b9 滚轮适配 */
     overscroll-behavior: contain;
@@ -1273,7 +1213,7 @@
 
   /* CENTER */
   .tieba-center {
-    flex: 1; min-width: 0;
+    flex: 1; min-width: 0; min-height: 0;
     display: flex; flex-direction: column;
     overflow: hidden;
     background: #ffffff;
@@ -1340,11 +1280,12 @@
   .tieba-count { margin-left: auto; font-size: 11px; }
   /* feed */
   .tieba-feed {
-    flex: 1; overflow-y: auto;
+    touch-action: pan-y;
+    flex: 1; min-height: 0; overflow-y: auto;
     padding: 0 4px 12px 4px;
     /* v1.3b9 滚轮适配：独立滚动区 + 平滑滚动 + 淡色细滚动条 */
     overscroll-behavior: contain;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
   }
@@ -1502,8 +1443,20 @@
   .tl-main { flex: 1; min-width: 0; }
   .tl-name { font-size: 14px; font-weight: 600; color: #576b95; margin-bottom: 3px; }
   .tl-text { font-size: 14px; line-height: 1.55; color: #1a1a1a; white-space: pre-wrap; word-break: break-word; }
+  .tl-image-placeholder {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px dashed #c8ccd2;
+    border-radius: 4px;
+    background: #f7f8fa;
+    color: #8a9098;
+    font-size: 12px;
+  }
   .tl-foot { display: flex; align-items: center; gap: 14px; margin-top: 8px; }
   .tl-day { font-size: 11px; color: #b2b6bb; }
+  .tl-category, .tl-source { font-size: 11px; color: #9aa0a8; }
+  .tl-source { color: #6e9bc7; }
   .tl-like, .tl-cmt, .tl-sim {
     background: transparent; border: none; color: #576b95; cursor: pointer;
     font-size: 12px; padding: 2px 4px; border-radius: 4px;
@@ -1517,26 +1470,6 @@
   .tl-comment-input input { flex: 1; border: 1px solid #d8dbe0; border-radius: 4px; padding: 5px 8px; font-size: 12px; }
 
   /* ===== v1.3b6 PC 投资（仅定期存款，月计息） ===== */
-  .win.invest-win {
-    width: 520px; max-width: calc(100% - 48px);
-    height: 560px; max-height: calc(100% - 88px);
-    background: var(--glass-2); color: var(--text-main);
-  }
-  .iv-summary {
-    padding: 16px;
-    background: linear-gradient(180deg, var(--glass), transparent);
-    border-bottom: 1px solid var(--stroke);
-  }
-  .iv-summary .iv-cash { font-size: 22px; font-weight: 700; margin: 4px 0 12px; }
-  .iv-summary .iv-dep { font-size: 18px; font-weight: 700; color: #4caf82; margin-top: 4px; }
-  .iv-card { padding: 14px 16px; border-bottom: 1px solid var(--stroke); }
-  .iv-input-row { display: flex; gap: 8px; margin-top: 10px; }
-  .iv-input-row input { flex: 1; min-width: 0; padding: 9px 10px; border: 1px solid var(--stroke); border-radius: 6px; font-size: 14px; background: var(--bg-deep); color: var(--text-main); }
-  .iv-row { padding: 10px 0; border-bottom: 1px dashed var(--stroke); display: flex; flex-direction: column; gap: 4px; }
-  .iv-row:last-child { border-bottom: none; }
-  .iv-row-top, .iv-row-bot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .iv-foot { padding: 12px 16px; font-size: 12px; }
-
   /* ===== v1.3b6 微信（PC 端）：固定大小窗口 ===== */
   .win.wechat-win {
     width: 700px; height: 560px;
@@ -1545,7 +1478,7 @@
     border: 1px solid #d8dbe0; border-radius: 8px;
     overflow: hidden;
   }
-  .wechat-body { display: flex; flex-direction: row; height: calc(100% - 41px); }
+  .wechat-body { display:flex;flex-direction:row;flex:1;min-height:0; }
   .wechat-list {
     width: 200px; flex-shrink: 0; background: #e9e9e9;
     border-right: 1px solid #d5d5d5; overflow-y: auto; padding: 6px 0;
@@ -1604,19 +1537,6 @@
   .wc-reply { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid #e3e3e3; background: #f5f5f5; }
   .wc-call { background: transparent; border: none; font-size: 18px; cursor: pointer; padding: 4px 6px; border-radius: 4px; }
   .wc-call:hover { background: rgba(0,0,0,.06); }
-  /* v1.3b7 三选回复按钮（真实按钮样式） */
-  .wc-tone-row { display: flex; flex: 1; gap: 6px; min-width: 0; }
-  .wc-tone {
-    flex: 1; min-width: 0; padding: 9px 4px; border-radius: 6px;
-    border: 1px solid #d8dbe0; background: #fff;
-    color: #1a1a1a; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit;
-    transition: transform 0.06s ease, background 0.14s ease;
-  }
-  .wc-tone:hover { background: #e9f7ef; }
-  .wc-tone:active { transform: translateY(1px); }
-  .wc-tone.pos { color: #1d7a3f; }
-  .wc-tone.neu { color: #555; }
-  .wc-tone.neg { color: #8a4a4a; }
   /* v1.3b8b 场景短信回复按钮（恢复前代三档交互，与手机端一致） */
   .wc-opt-group { display: flex; flex-direction: column; gap: 6px; margin: 0 0 4px 38px; }
   .wc-opt {
@@ -1640,9 +1560,31 @@
   .wc-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b2b6bb; gap: 8px; }
   .wce-icon { font-size: 48px; opacity: .5; }
   .wce-title { font-size: 13px; }
+  .wechat-win .win-bar { flex:none;background:#f7f7f7;color:#202326;border-bottom:1px solid #dedfe1; }
+  .wechat-win .win-x { color:#737b80; }
+  .wechat-list { width:240px;display:flex;flex-direction:column;min-height:0; }
+  .wechat-list-head,.social-tabs,.social-search,.request-inbox { flex:none; }
+  .social-tabs { display:flex;gap:3px;padding:4px 9px 9px; }
+  .social-tabs button { flex:1;border:0;border-radius:5px;padding:7px 2px;background:transparent;color:#6d767c;font:inherit;font-size:12px;cursor:pointer; }
+  .social-tabs button.on { background:#dff1e6;color:#078346; }
+  .social-search { box-sizing:border-box;width:calc(100% - 20px);margin:0 10px 8px;border:0;border-radius:5px;padding:7px 10px;background:#dddfe1;color:#202326;font:inherit;font-size:12px; }
+  .request-inbox { display:flex;justify-content:space-between;width:100%;padding:11px 12px;border:0;border-bottom:1px solid #d8dcdf;background:#f3f4f4;color:#566269;text-align:left;cursor:pointer;font:inherit;font-size:11px; }
+  .wc-list-empty { margin:20px 12px;color:#737b80;font-size:12px; }
+  .wc-prev { color:#737b80; }
+  .wc-item { min-height:65px;flex:none; }
+  .wc-chat-head small { display:block;margin-top:4px;font-size:10px;color:#737b80;font-weight:400; }
+  .wc-time { display:block;margin-top:5px;color:#6d767c;font-size:9px;text-align:right; }
+  .wc-reply { flex-wrap:wrap;flex:none; }
+  .composer-toggle { flex:1;border:1px solid #dce0e2;border-radius:6px;padding:9px 12px;background:#fff;color:#737b80;text-align:left;font:inherit;font-size:12px;cursor:pointer; }
+  .wc-topic-row { display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%; }
+  .wc-topic { border:1px solid #c9dfd2;border-radius:6px;padding:7px 9px;background:#fff;color:#087c41;font:inherit;font-size:11px;cursor:pointer; }
+  .wc-topic:hover { background:#e4f6eb; }
+  @media(max-width:600px) { .wechat-list{width:37%;}.wechat-win{max-width:calc(100% - 16px)!important;}.wc-msgs{padding:10px;}.wc-name{font-size:11px;}.wc-item{padding:8px 6px;gap:5px;} }
 
   /* ===== v1.34 喵喵对决赛报名面板（贴吧同档次卡片） ===== */
   .tourney {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto;
+    overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch;
     display: flex; flex-direction: column; gap: 12px;
     padding: 4px 2px 16px;
   }
@@ -1740,4 +1682,6 @@
     background: #eaf4ff; border: 1px solid #c3ddf5;
     padding: 4px 12px; border-radius: 999px;
   }
+.forum-compose-content{display:contents}.forum-compose-toggle{display:none}
+@media(max-height:600px),(max-width:900px){.win.tieba{top:8px;width:calc(100% - 20px);max-width:calc(100% - 20px);height:calc(100% - 52px);max-height:calc(100% - 52px)}.tieba-right{display:none}.tieba-left{width:130px;flex-basis:130px}.tieba-composer{margin:6px;padding:7px}.forum-compose-toggle{display:block;margin-left:auto;border:1px solid #91a5bb;border-radius:5px;background:#edf2f7;color:#385b83;min-height:30px;padding:4px 10px;cursor:pointer;font:inherit}.forum-compose-content:not(.open){display:none}.tieba-feed{touch-action:pan-y;min-height:80px}.tieba-tools{margin-top:5px}}
 </style>

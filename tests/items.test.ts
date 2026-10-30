@@ -7,7 +7,7 @@ describe("物品系统：数据", () => {
     expect(ITEM_POINT_COST).toBe(2);
   });
 
-  it("50 件物品齐全（v1.20 新增摆摊小车）", () => {
+  it("1.455 物品齐全（含小吃街三种小吃与扩充服装）", () => {
     const ids = ITEMS.map((i) => i.id);
     expect(ids).toContain("driving_license");
     expect(ids).toContain("bicycle");
@@ -63,7 +63,36 @@ describe("物品系统：数据", () => {
     expect(ids).toContain("cat_orange");
     // v1.34 新增：游乐场圣代（冰淇淋店打包带走）
     expect(ids).toContain("icecream_sundae");
-    expect(ids.length).toBe(56);
+    expect(ids).toContain("snack_skewer");
+    expect(ids).toContain("snack_noodles");
+    expect(ids).toContain("snack_tofu");
+    expect(ids).toContain("market_flower");
+    // v1.42：12 类食材、5 类调料与 3 档冰箱
+    for (const id of ["tomato", "cabbage", "potato", "carrot", "onion", "mushroom", "pork", "chicken", "beef", "egg", "milk", "rice", "salt", "sugar", "soy_sauce", "chili_powder", "salad_dressing", "fridge_small", "fridge_medium", "fridge_large"]) {
+      expect(ids).toContain(id);
+    }
+    // v1.43：林小雨特殊事件奖励
+    expect(ids).toContain("lin_xiaoyu_sketchbook");
+    expect(ids.length).toBeGreaterThanOrEqual(111);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toEqual(expect.arrayContaining([
+      "white_vest",
+      "cyan_jacket",
+      "black_pants",
+      "baseball_cap",
+      "knit_cap",
+      "jeans",
+      "khaki_pants",
+      "pinstripe_shirt",
+      "taupe_double_suit",
+      "cable_knit_sweater",
+      "blue_collared_shirt",
+      "cream_relaxed_shirt",
+      "brown_wide_trousers",
+      "taupe_suit_trousers",
+      "charcoal_relaxed_jeans",
+      "sage_wide_trousers"
+    ]));
   });
 });
 

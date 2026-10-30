@@ -42,7 +42,7 @@ describe("v1.10 百货商场：电子城", () => {
     addItem(s3, "laptop_pro", 1);
     equipItem(s3, "laptop_pro");
     const d3 = facilityEfficiency(s3, "dev");
-    expect(d1).toBeGreaterThan(base);
+    expect([base,d1,d2,d3]).toEqual([1,1,1.5,2]);
     expect(d2).toBeGreaterThan(d1);
     expect(d3).toBeGreaterThan(d2);
   });

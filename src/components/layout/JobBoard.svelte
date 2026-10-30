@@ -1,34 +1,33 @@
 <script lang="ts">
   import { gameState } from "../../stores/gameStore.svelte";
-  import { getTodayOffers, takeJobOffer, performJob, checkJobRequirements, JOB_DEFS, resolveVehicle, mergedJobEffects, getJobDef } from "../../game/core/jobs";
+  import { JOB_DEFS, getTodayOffers, takeJobOffer, previewWork, resolveVehicle, getJobDef, nowWorkMinute } from "../../game/core/jobs";
+  import { CAREER_TIERS, careerExperienceOf, careerTierFor, careerTierOf, careerTrackName, careerTrackOf, nextCareerTier } from "../../game/core/career";
   import { getMiniGameConfigFor } from "../../game/core/minigame";
-  import { checkRequirements } from "../../game/core/actions";
-  import { moveTo, isLocationOpen, getLocation, canArriveEarly, closedReason } from "../../game/core/actions";
-  import { locationName } from "../../game/core/quests";
-  import { showToast, uiState, presentJobResult } from "../../stores/uiStore.svelte";
-  import { rollEvent } from "../../game/core/events";
-  import { isReferred } from "../../game/core/contacts";
+  import { showToast, presentJobResult } from "../../stores/uiStore.svelte";
   import { formatMoney } from "../../lib/format";
+  import { SKILL_NAMES } from "../../lib/icons";
   const offers = $derived(getTodayOffers(gameState));
   const vehicle = $derived(resolveVehicle(gameState));
 
-  function tierDesc(def: (typeof JOB_DEFS)[number]): string {
-    const t = def.incomeTiers?.[vehicle];
-    if (t?.desc) return `${t.desc} +${formatMoney(t.money)}`;
-    return "";
+  const careerTrack = $derived(gameState.career.jobId ? careerTrackOf(getJobDef(gameState.career.jobId)) : "general");
+  const careerExp = $derived(careerExperienceOf(gameState, careerTrack));
+  const careerNext = $derived(nextCareerTier(gameState, careerTrack));
+
+  function careerTag(def: (typeof JOB_DEFS)[number]): string {
+    return `${careerTrackName(careerTrackOf(def))} · ${CAREER_TIERS.find((t) => t.id === careerTierOf(def))?.name ?? "入门岗"}`;
   }
 
-  /**
-   * 抢活（v0.86）：定时岗没到点就只排进任务栏，到点了才真正开工。
-   */
+  function endTime(job: (typeof offers)[number]["def"]): string {
+    const end = nowWorkMinute(gameState) + Math.round(job.duration * 60);
+    const days = Math.floor(end / 1440) - Math.floor(nowWorkMinute(gameState) / 1440);
+    const hour = String(Math.floor(end % 1440 / 60)).padStart(2, "0");
+    const minute = String(end % 60).padStart(2, "0");
+    return `${days > 0 ? `次日` : "今天"} ${hour}:${minute}`;
+  }
+
   function doJob(uid: string): void {
     const r = takeJobOffer(gameState, uid);
-    if (r.ok && r.mode === "scheduled") {
-      showToast(`✅ 活儿接下了！${r.startHour}:00 准时到岗，任务栏盯着点`);
-    } else if (r.ok && r.result) {
-      const ev = rollEvent(gameState);
-      if (ev) uiState.pendingEvent = ev;
-      // v0.96 工作小游戏（日结岗：收银/分拣/清洁等）
+    if (r.ok && r.result) {
       const jid = r.result.actionId;
       const cfg = jid ? getMiniGameConfigFor(gameState, jid) : undefined;
       const job = jid ? getJobDef(jid) : undefined;
@@ -38,51 +37,6 @@
     }
   }
 
-  /** 固定岗「前往」按钮：移动到对应地点，到点后再上班 */
-  function goToJobLoc(locationId: string): void {
-    const loc = getLocation(locationId);
-    // v0.935：开门前 2h 允许提前过去候场，其余情况才拦（并区分未开门/已打烊）
-    if (loc && !isLocationOpen(loc, gameState.time.hour) && !canArriveEarly(loc, gameState.time.hour)) {
-      showToast(`🚫 岗位地点${closedReason(loc, gameState.time.hour)}`);
-      return;
-    }
-    const r = moveTo(gameState, locationId);
-    if (!r.ok) showToast(r.reason ?? "过不去");
-  }
-
-  /**
-   * v0.93 固定岗「一键应聘」：自动前往岗位地点并立即开工（固定岗无证可走实习）。
-   * 地点打烊或硬性技能门槛不满足时给出提示，不浪费时间。
-   */
-  function applyFixed(j: (typeof JOB_DEFS)[number]): void {
-    const loc = getLocation(j.locationId ?? "");
-    if (loc && !isLocationOpen(loc, gameState.time.hour) && !canArriveEarly(loc, gameState.time.hour)) {
-      showToast(`🚫 岗位地点${closedReason(loc, gameState.time.hour)}`);
-      return;
-    }
-    // 硬性技能/ money 门槛不满足（非实习情形）→ 直接提示，不移动
-    const req = checkJobRequirements(gameState, j);
-    if (!req.ok && !req.intern) {
-      showToast(req.reason ?? "条件未满足");
-      return;
-    }
-    // 自动前往（同区瞬间，跨区半小时）
-    const mv = moveTo(gameState, j.locationId ?? "");
-    if (!mv.ok) {
-      showToast(mv.reason ?? "过不去");
-      return;
-    }
-    // 立即开工
-    const r = performJob(gameState, j.id);
-    if (r.ok && r.result) {
-      const ev = rollEvent(gameState);
-      if (ev) uiState.pendingEvent = ev;
-      // v0.96 工作小游戏
-      presentJobResult(r.result, getMiniGameConfigFor(gameState, j.id), { id: j.id, name: j.name, icon: j.icon });
-    } else if (!r.ok && r.reason) {
-      showToast(r.reason);
-    }
-  }
 </script>
 
 <div class="board hud-scope">
@@ -90,6 +44,22 @@
     <span class="title">📋 今日岗位</span>
     <span class="dim">每日 3~6 个，先到先得</span>
   </div>
+
+  <div class="board-hint">
+    💡 日结工点击<b>开始工作</b>，完成小游戏后当班到账；正式工请打开手机 →「招聘」直接入职，前往单位上班，每七天发薪。
+  </div>
+
+  {#if gameState.career.jobId}
+    {@const activeJob = getJobDef(gameState.career.jobId)}
+    <div class="career-strip">
+      <span>📈 {careerTrackName(careerTrack)} · {CAREER_TIERS.find((t) => t.id === careerTierFor(gameState, activeJob))?.name ?? "入门岗"}</span>
+      <span class="dim">履历 {careerExp} 次</span>
+      {#if careerNext}<span class="career-next">再完成 {careerNext.remaining} 次 → {careerNext.name}</span>{/if}
+      <span class="career-score">💰 待发 {formatMoney(gameState.career.accruedWages ?? 0)} 元 · 每七天发薪</span>
+    </div>
+  {:else}
+    <div class="career-strip dim">📈 每完成一次工作都会积累对应职业轨道履历，达到 3 / 10 / 24 次可晋升</div>
+  {/if}
 
   {#if offers.length === 0}
     <div class="empty">
@@ -99,8 +69,8 @@
   {:else}
     <div class="grid">
       {#each offers as { offer, def }}
-        {@const check = checkRequirements(gameState, def.requirements)}
-        <div class="job-card" class:disabled={!check.ok}>
+        {@const preview = previewWork(gameState, def)}
+        <div class="job-card">
           <div class="job-head">
             <span class="gi-emoji" style="font-size:30px;line-height:1">{def.icon}</span>
             <div class="job-info">
@@ -109,78 +79,37 @@
             </div>
             <div class="job-right">
               <span class="job-hours">🕐 {def.duration}h</span>
-              <div class="job-price">+{formatMoney(mergedJobEffects(gameState, def).money ?? def.effects.money ?? 0)}</div>
+              <div class="job-price">约 +{formatMoney(preview.wage)}</div>
             </div>
           </div>
           <div class="job-tags">
-            {#if def.startHour !== undefined}
-              <span class="tag warn">⏰ {def.startHour}:00 开工</span>
-            {:else}
-              <span class="tag info">🕐 时间自由</span>
-            {/if}
-            <span class="tag cost">⚡ {def.effects.stamina}</span>
-            {#if def.effects.stress && def.effects.stress > 0}
-              <span class="tag cost">🔥 +{def.effects.stress}</span>
+            <span class="tag career">📈 {careerTag(def)}</span>
+            <span class="tag info">🕐 预计 {endTime(def)} 下班</span>
+            <span class="tag cost">⚡ {preview.stamina}</span>
+            {#if preview.stress > 0}
+              <span class="tag cost">🔥 +{preview.stress}</span>
             {/if}
             {#if def.effects.skills}
               {#each Object.entries(def.effects.skills) as [k, v]}
                 {#if v && v > 0}
-                  <span class="tag info">+{v} {k}</span>
+                  <span class="tag info">+{v} {SKILL_NAMES[k as keyof typeof SKILL_NAMES] ?? k}</span>
                 {/if}
               {/each}
             {/if}
           </div>
           <div class="job-foot">
             <span class="quota">还剩 {offer.quota} 个名额</span>
-            <button class="btn btn-primary small" onclick={() => doJob(offer.uid)} disabled={!check.ok || offer.quota <= 0}>
-              抢活
+            <button class="btn btn-primary small" onclick={() => doJob(offer.uid)} disabled={offer.quota <= 0 || !!gameState.work?.active}>
+              开始工作
             </button>
           </div>
-          {#if def.incomeTiers}
-            <div class="tier-line">
-              <span>🚲 {tierDesc(def)}</span>
-              {#if vehicle === "none"}
-                <span class="tier-hint">有自行车可 +30/天，电动车 +80/天</span>
-              {:else if vehicle === "bicycle"}
-                <span class="tier-hint">电动车可再 +50/天</span>
-              {/if}
-            </div>
-          {/if}
-          {#if !check.ok}
-            <div class="job-lock">🔒 {check.reason}</div>
-          {/if}
+          {#if def.incomeTiers}<div class="tier-line">🚲 自有车辆可增加收入；基本工具由雇主提供。当前交通方式：{vehicle === "none" ? "步行" : vehicle === "bicycle" ? "自行车" : vehicle === "e_bike" ? "电动车" : vehicle === "car" ? "汽车" : "三轮车"}</div>{/if}
+          {#if preview.warning}<div class="job-lock">⚠️ {preview.warning}</div>{/if}
         </div>
       {/each}
     </div>
   {/if}
 
-  <!-- 固定岗位（不在劳务市场打烊也可看见） -->
-  <div class="fixed-section">
-    <div class="sub-head">📌 固定岗位（需技能 / 证书 · 无证可实习 3 天）</div>
-    <div class="fixed-list">
-      {#each JOB_DEFS.filter((j) => j.kind === "fixed" && j.locationId) as j}
-        {@const loc = getLocation(j.locationId ?? "")}
-        {@const open = loc ? isLocationOpen(loc, gameState.time.hour) : false}
-        {@const req = checkJobRequirements(gameState, j)}
-        <div class="fixed-row">
-          <span class="gi-emoji" style="font-size:22px;line-height:1">{j.icon}</span>
-          <span class="fn">{j.name}</span>
-          <span class="dim">
-            {locationName(j.locationId)} · {j.startHour !== undefined ? `${j.startHour}:00 打卡` : "自由时间"} · +{j.effects.money ?? 0}元
-          </span>
-          <button class="btn small fixed-go" onclick={() => goToJobLoc(j.locationId ?? "")} disabled={!open}>
-            📍 前往
-          </button>
-          {#if isReferred(gameState, j.id)}
-            <span class="tag gain">🤝 内推免证书</span>
-          {/if}
-          <button class="btn small fixed-apply" onclick={() => applyFixed(j)} disabled={!open || (!req.ok && !req.intern)}>
-            ✅ 一键应聘
-          </button>
-        </div>
-      {/each}
-    </div>
-  </div>
 </div>
 
 <style>
@@ -196,6 +125,34 @@
     align-items: center;
     margin-bottom: 12px;
   }
+  /* v1.463：劳务市场加正式工指引（此前玩家只逛劳务市场，找不到正式工） */
+  .board-hint {
+    font-size: 12px;
+    line-height: 1.55;
+    padding: 8px 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: rgba(120, 200, 255, 0.1);
+    border: 1px solid rgba(120, 200, 255, 0.18);
+  }
+  .board-hint b {
+    color: var(--accent-2, #6cc6ff);
+    font-weight: 700;
+  }
+  .career-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 12px;
+    padding: 8px 10px;
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    font-size: 11px;
+  }
+  .career-next { color: var(--ok); }
+  .career-score { color: var(--accent-2); }
   .title {
     font-size: 15px;
     font-weight: 700;
@@ -225,16 +182,10 @@
     gap: 6px;
     transition: all 0.15s ease;
   }
-  .job-card.disabled {
-    opacity: 0.55;
-  }
   .job-head {
     display: flex;
     align-items: center;
     gap: 8px;
-  }
-  .job-icon {
-    font-size: 22px;
   }
   .job-info {
     flex: 1;
@@ -271,6 +222,7 @@
     gap: 4px;
     flex-wrap: wrap;
   }
+  .tag.career { color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
   .job-foot {
     display: flex;
     justify-content: space-between;
@@ -298,49 +250,5 @@
     border-top: 1px dashed rgba(51, 59, 99, 0.5);
     padding-top: 6px;
     margin-top: 4px;
-  }
-  .tier-hint {
-    color: var(--text-dim);
-  }
-  .fixed-section {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(51, 59, 99, 0.5);
-  }
-  .sub-head {
-    font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-  }
-  .fixed-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .fixed-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    padding: 6px 10px;
-    border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.04);
-    flex-wrap: wrap;
-  }
-  .fn {
-    font-weight: 600;
-  }
-  .fixed-go {
-    margin-left: auto;
-  }
-  .fixed-apply {
-    background: var(--ok);
-    color: #0c1a10;
-    font-weight: 700;
-    border: 1px solid var(--ok);
-  }
-  .fixed-apply:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
 </style>

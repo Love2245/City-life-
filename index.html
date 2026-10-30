@@ -1,140 +1,69 @@
 <!doctype html>
 <html lang="zh-CN">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#10131f">
+    <style>html,body{margin:0;background-color:#10131f}</style>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,interactive-widget=resizes-content">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2440'/%3E%3Cpath d='M6 26V14h6v12M14 26V6h7v20M23 26V11h4v15' fill='%23ffd166'/%3E%3C/svg%3E">
     <title>都市生活</title>
+  </head>
+  <body>
+    <section id="local-file-help" hidden>
+      <h1>从启动入口打开都市生活</h1>
+      <p>请回到这个文件夹，双击 <strong>启动游戏.cmd</strong>。</p>
+      <p>这是源码目录，index.html 需要本地服务器才能运行。启动入口会自动打开游戏窗口，无需手动打开本文件。</p>
+      <p>若游戏窗口没有出现，请先双击启动入口，再打开下面的地址：</p>
+      <a href="http://127.0.0.1:1420/">http://127.0.0.1:1420/</a>
+    </section>
     <style>
-      /* v1.21-beta5：竖屏移动设备显示"请横屏"提示；横屏后自动隐藏。
-         方向判断使用最可靠的 matchMedia("(orientation: portrait)")，并多重延迟兜底重算，
-         避免部分机型旋转后 innerWidth/innerHeight 未及时刷新导致遮罩卡死。 */
-      html.need-rotate body {
-        overflow: hidden;
-      }
-      #rotate-hint {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-        text-align: center;
-        padding: 24px;
-        color: #eef2ff;
-        background:
-          radial-gradient(120% 120% at 50% 0%, #1b2440 0%, #0b1020 55%, #070b16 100%);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      }
-      html.need-rotate #rotate-hint {
-        display: flex;
-      }
-      #rotate-hint .ico {
-        font-size: 64px;
-        animation: rot-tip 1.8s ease-in-out infinite;
-      }
-      @keyframes rot-tip {
-        0%, 100% { transform: rotate(0deg); }
-        50% { transform: rotate(90deg); }
-      }
-      #rotate-hint .t1 {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 1px;
-      }
-      #rotate-hint .t2 {
-        font-size: 13px;
-        opacity: 0.72;
-        max-width: 280px;
-        line-height: 1.5;
-      }
-      #rotate-hint .enter-anyway {
-        margin-top: 4px;
-        padding: 10px 20px;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        color: #eef2ff;
-        font-size: 13px;
-        cursor: pointer;
-        -webkit-tap-highlight-color: transparent;
-      }
-      #rotate-hint .enter-anyway:active {
-        background: rgba(255, 255, 255, 0.16);
-      }
+      #local-file-help { max-width: 560px; margin: 14vh auto; padding: 32px; border: 1px solid #425171; border-radius: 18px; background: #1a2440; color: #edf2ff; font: 16px/1.8 system-ui, sans-serif; }
+      #local-file-help[hidden] { display: none; }
+      #local-file-help h1 { margin: 0 0 16px; font-size: 24px; }
+      #local-file-help a { color: #ffd166; }
     </style>
     <script>
-      /* v1.21-beta5-hotfix：触摸设备竖屏时提示横置；横屏自动隐藏。
-         以 matchMedia("(orientation: portrait)") 为权威信号，并加 resize / orientationchange
-         监听 + 旋转后 250ms/600ms 延迟重算兜底。
-         点击「仍要进入」先尝试 screen.orientation.lock('landscape')；若成功则横屏游玩。
-         若锁定失败（iOS Safari 等不支持锁定），则启用 data-force-portrait，由 CSS 切换为
-         竖屏单栏布局，避免三栏硬塞。 */
+      var isFile = location.protocol === 'file:';
+      if (isFile) {
+        document.body.style.background = '#10182a';
+        document.getElementById('local-file-help').hidden = false;
+      }
       (function () {
-        var forceEnter = false;
-        function isTouch() {
-          return (
-            window.matchMedia("(pointer: coarse)").matches ||
-            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-          );
-        }
-        function sync() {
-          var portrait = window.matchMedia("(orientation: portrait)").matches;
-          var show = isTouch() && portrait && !forceEnter;
-          document.documentElement.classList.toggle("need-rotate", show);
-        }
-        function recheckSoon() {
-          sync();
-          setTimeout(sync, 250);
-          setTimeout(sync, 600);
-        }
-        sync();
-        window.addEventListener("resize", recheckSoon);
-        window.addEventListener("orientationchange", recheckSoon);
-        if (window.matchMedia) {
-          var mq = window.matchMedia("(orientation: portrait)");
-          var onChange = function () { recheckSoon(); };
-          if (mq.addEventListener) mq.addEventListener("change", onChange);
-          else if (mq.addListener) mq.addListener(onChange);
-        }
-        window.addEventListener("DOMContentLoaded", function () {
-          var btn = document.getElementById("enter-anyway");
-          if (btn) {
-            btn.addEventListener("click", function () {
-              forceEnter = true;
-              var root = document.documentElement;
-              function hideHint() { root.classList.remove("need-rotate"); }
-              function usePortraitFallback() {
-                // 锁定失败：启用竖屏单栏自适应布局
-                root.setAttribute("data-force-portrait", "true");
-                hideHint();
-              }
-              if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-                window.screen.orientation.lock("landscape").then(function () {
-                  // 锁定成功，正常横屏游玩
-                  root.removeAttribute("data-force-portrait");
-                  hideHint();
-                }).catch(function () {
-                  usePortraitFallback();
-                });
-              } else {
-                usePortraitFallback();
-              }
-            });
+        // Report readiness from inline script: it runs before any module, Tauri API or
+        // IPC is involved, so the launcher window closes as soon as the page is live
+        // instead of waiting on a report that a failing module could swallow.
+        fetch('/__urban_life_desktop').then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+          if (data && data.projectId) {
+            return fetch('/__urban_life_desktop/ready', { method: 'POST', headers: { 'x-urban-life-launcher': data.projectId } });
           }
+        }).catch(function () {});
+        // This script is parsed before #app/#boot-hint exist, so the hint work must
+        // wait for DOMContentLoaded. On file:// the module never loads (module scripts
+        // are blocked on the file protocol) and the hint would otherwise cover the
+        // help text forever. Over http the observer is only a fallback: main.ts also
+        // removes the hint the moment Svelte mounts.
+        document.addEventListener('DOMContentLoaded', function () {
+          var app = document.getElementById('app'), hint = document.getElementById('boot-hint');
+          if (!app || !hint) return;
+          if (isFile) { hint.remove(); return; }
+          var observer = new MutationObserver(function () {
+            if (app.children.length > 1) { hint.remove(); observer.disconnect(); }
+          });
+          observer.observe(app, { childList: true });
         });
       })();
     </script>
-  </head>
-  <body>
-    <div id="app"></div>
-    <div id="rotate-hint">
-      <div class="ico">🔄</div>
-      <div class="t1">请将手机横置</div>
-      <div class="t2">《都市生活》手游为横版体验，请旋转手机至横屏以获得最佳画面</div>
-      <button id="enter-anyway" class="enter-anyway" type="button">仍要以当前方向进入 ›</button>
-    </div>
+    <div id="app"><div id="boot-hint"><strong data-boot-brand>都市生活</strong><span>正在加载游戏，首次可能需要几分钟…</span><span data-boot-progress role="progressbar" aria-label="加载中"></span></div></div>
+    <style>
+      #boot-hint { position: fixed; inset: 0; display: flex; flex-direction: column; gap: 12px; align-items: center; justify-content: center;
+        background: #10182a; color: #edf2ff; font: 16px/1.8 system-ui, sans-serif; }
+      #boot-hint [data-boot-brand] { font-size: 24px; letter-spacing: .12em; }
+      #boot-hint [data-boot-progress] { display: block; width: min(220px, 65vw); height: 5px; overflow: hidden; border-radius: 5px; background: #44516a; }
+      #boot-hint [data-boot-progress]::after { content: ''; display: block; width: 40%; height: 100%; border-radius: inherit; background: #ffd166; animation: boot-progress 1.4s ease-in-out infinite alternate; }
+      @keyframes boot-progress { from { transform: translateX(0); } to { transform: translateX(150%); } }
+      @media (prefers-reduced-motion: reduce) { #boot-hint [data-boot-progress]::after { animation: none; } }
+    </style>
+    <template id="portable-assets-anchor"></template>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

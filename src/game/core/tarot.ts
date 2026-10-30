@@ -11,9 +11,13 @@
  * 纯逻辑层：仅依赖 types 与 data/endings.json（只读），不 import DOM/Svelte/Tauri/engine/time，
  * 因此无循环依赖，可被 engine.ts / time.ts / jobs.ts / events.ts 安全引用。
  */
-import type { GameState, TarotCounters, TarotState } from "../types";
+import type { GameState, JobDef, TarotCounters, TarotState } from "../types";
 import { gameDay } from "./calendar";
+import { isWorkRestDay } from "./workSchedule";
 import endingsData from "../data/endings.json";
+import jobsData from "../data/jobs.json";
+
+const JOB_BY_ID = new Map((jobsData as JobDef[]).map((job) => [job.id, job]));
 
 /** 结局 tier 查表（endings.json 为顶层数组） */
 const ENDING_TIER = new Map<string, string>(
@@ -122,7 +126,8 @@ export const TAROT_CARDS: TarotCard[] = [
     name: "战车",
     symbol: "征服",
     hint: "完成 1 个创业项目达 100%。",
-    check: (s) => Object.values(s.career.projects).some((v) => v >= 100),
+    check: (s) => Object.values(s.career.projects).some((v) => v >= 100)
+      || Object.entries(s.flags).some(([key, value]) => key.startsWith("project_completed_") && value === true),
   },
   {
     id: 8,
@@ -278,6 +283,18 @@ export function evaluateTarot(state: GameState): number[] {
   return newly;
 }
 
+/**
+ * 取出待提示的塔罗解锁并清空队列。UI 层（ScenePanel）在 effect 里只读长度做触发，
+ * 消费动作收在这里，避免 effect 内联自写 `pendingTarot` 的反模式；
+ * 卸载期间的 pending 不会被清掉，重新挂载会继续提示（符合原设计意图）。
+ */
+export function consumePendingTarot(state: GameState): number[] {
+  const pending = state.pendingTarot;
+  if (pending.length === 0) return [];
+  state.pendingTarot = [];
+  return pending;
+}
+
 const within = (v: number, lo: number, hi: number): boolean => v >= lo && v <= hi;
 
 /**
@@ -305,12 +322,16 @@ export function tickTarotDaily(state: GameState): number[] {
   // 星星：心情≥85
   c.starStreak = a.mood >= 85 ? c.starStreak + 1 : 0;
 
-  // 皇帝：必须「有固定工作 + 当天去上了班 + 没迟到」才算守住秩序的一天。
-  // 无业 / 缺勤（等同请假）/ 迟到 任一发生即断。判定后清零当日迟到标记。
+  // 皇帝：在职期间，按时完成应出勤班次，或遵守排班休息日，才算守住秩序的一天。
+  // 初次上班前不累计；缺勤、迟到或无业会断链。判定后清零当日迟到标记。
   const wasLate = state.flags.wasLateToday === true;
-  const employed = state.career.jobId !== null;
-  const workedToday = state.career.lastWorkDay === gameDay(state.time);
-  c.emperorStreak = employed && workedToday && !wasLate ? c.emperorStreak + 1 : 0;
+  const jobId = state.career.jobId;
+  const job = jobId ? JOB_BY_ID.get(jobId) : undefined;
+  const today = gameDay(state.time);
+  const beforeFirstShift = Number.isFinite(state.career.firstShiftDay) && today < state.career.firstShiftDay!;
+  const observedDay = !!job && !beforeFirstShift && !wasLate
+    && (isWorkRestDay(job, today) || state.career.lastWorkDay === today);
+  c.emperorStreak = observedDay ? c.emperorStreak + 1 : 0;
   state.flags.wasLateToday = false;
 
   // 隐者：无固定工作 → 连续 +1，否则归零

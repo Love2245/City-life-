@@ -1,22 +1,24 @@
 <script lang="ts">
-  import { newGame, goto, pendingState, profile } from "../stores/gameStore.svelte";
+  import { newGame, goto } from "../stores/gameStore.svelte";
   import { validateNewGameSetup } from "../game/core/families";
-  import { ITEMS, START_ITEMS, startCostOf, ITEM_POINT_COST } from "../game/core/items";
+  import { ITEMS, START_ITEMS, startCostOf, ITEM_POINT_COST, addItem } from "../game/core/items";
   import { createInitialState } from "../game/core/state";
   import { applyFamily, applyAllocation } from "../game/core/families";
   import { applyItem } from "../game/core/items";
   import { getMaxStamina } from "../game/core/stats";
-  import type { Allocation, GameMode } from "../game/types";
+  import type { Allocation } from "../game/types";
   import { formatMoney } from "../lib/format";
+  import SceneModeChoice from '../components/SceneModeChoice.svelte';
+  import {uiState,setSceneMode} from '../stores/uiStore.svelte';
+  import type {SceneMode} from '../lib/sceneMode';
 
   // v1.0：删除开局家庭选择，普通/永恒模式固定普通家庭；剧情模式走故事设定。
   const FAMILY_ID = "ordinary";
 
-  let step = $state(1); // 1=属性分配，2=确认
+  let step = $state(1); // 1=画面选择，2=属性分配，3=确认
+  let sceneMode=$state<SceneMode>(uiState.sceneMode);
   let alloc = $state<Allocation>({ money: 0, charm: 0, stamina: 0, intelligence: 0, items: 0 });
   let ownedItems = $state<string[]>([]);
-  /** v0.991 模式：普通 / 永恒；剧情模式独立入口（主菜单） */
-  let mode = $state<GameMode>(pendingState.mode === "story" ? "normal" : pendingState.mode);
 
   /** 剩余点数（普通家庭配额 10） */
   const remaining = $derived(10 - (alloc.money + alloc.charm + alloc.stamina + alloc.intelligence + alloc.items));
@@ -26,7 +28,10 @@
     const s = createInitialState();
     applyFamily(s, FAMILY_ID);
     applyAllocation(s, alloc);
-    for (const id of ownedItems) applyItem(s, id);
+    for (const id of ownedItems) {
+      addItem(s, id, 1);
+      applyItem(s, id);
+    }
     return {
       money: s.player.money,
       maxStamina: getMaxStamina(s),
@@ -62,40 +67,27 @@
   }
   function start(): void {
     if (!valid.ok) return;
-    newGame({ familyId: FAMILY_ID, allocation: alloc, ownedItems, mode });
+    setSceneMode(sceneMode);
+    // v1.44：删除模式选择，开局固定经典模式——只有坏结局（饿死/破产/猝死等）会结束游戏
+    newGame({ familyId: FAMILY_ID, allocation: alloc, ownedItems, mode: "normal" });
   }
-
-  /** 模式选择项（永恒解锁后可选；剧情模式由主菜单独立入口进入） */
-  const modeOptions = $derived([
-    { id: "normal" as GameMode, label: "普通模式", desc: "标准都市生活", locked: false },
-    { id: "eternal" as GameMode, label: "永恒模式", desc: "达成结局后解锁 · 物价更高 / 救济减半", locked: !profile.unlocked.eternal },
-  ]);
 </script>
 
-<div class="page">
+<div class="page setup-page">
   <div class="head">
     <button class="btn" onclick={() => goto("menu")}>← 返回</button>
-    <div class="title">📜 开局设定</div>
-    <span class="step-indicator">第 {step} / 2 步</span>
+    <div class="title">开局设定</div>
+    <span class="step-indicator">第 {step} / 3 步</span>
   </div>
 
-  <!-- v0.991 模式选择：普通默认；永恒解锁后可选 -->
-  <div class="mode-bar">
-    {#each modeOptions as o}
-      <button
-        class="mode-chip {mode === o.id ? "on" : ""}"
-        disabled={o.locked}
-        onclick={() => (mode = o.id)}
-        title={o.locked ? "先达成一次结局解锁" : o.desc}
-      >
-        {o.locked ? "🔒" : o.id === "normal" ? "🌱" : "♾️"}
-        {o.label}
-      </button>
-    {/each}
-  </div>
+  {#if step!==1}<div class="setup-intro"><span class="page-eyebrow">一段生活，从这里开始</span><p>{step === 2 ? "给新的自己一些底气，再出发去认识这座城市。" : "看看行囊与初始属性，准备好就出发。"}</p></div>{/if}
 
+  <!-- v1.44：模式选择已删除，固定经典模式（仅坏结局结束游戏，否则无限生活） -->
   <div class="content">
     {#if step === 1}
+      <SceneModeChoice value={sceneMode} onChange={mode=>sceneMode=mode}/>
+      <div class="footer"><button class="btn btn-primary" onclick={()=>step=2}>下一步：分配属性 →</button></div>
+    {:else if step === 2}
       <!-- 步骤 1：属性分配（普通家庭，10 点） -->
       <p class="hint">
         普通家庭出身 · 共 10 点自由分配 · 剩余
@@ -203,9 +195,10 @@
       </div>
 
       <div class="footer">
+        <button class="btn" onclick={()=>step=1}>← 上一步：选择画面</button>
         <button
           class="btn btn-primary"
-          onclick={() => (step = 2)}
+          onclick={() => (step = 3)}
           disabled={!valid.ok}
         >下一步：确认 →</button>
       </div>
@@ -214,6 +207,11 @@
       <!-- 步骤 2：确认 -->
       <p class="hint">确认你的开局设定</p>
       <div class="confirm-card">
+        <div class="c-row"><span class="dim">场景画面</span><span>{sceneMode==='3d'?'3D · 自由视角':'2D · 固定方向'}</span></div>
+        <div class="c-row">
+          <span class="dim">模式</span>
+          <span>🎮 经典模式 <span class="dim">（仅坏结局结束游戏，否则无限生活）</span></span>
+        </div>
         <div class="c-row">
           <span class="dim">家庭</span>
           <span>🏠 普通家庭</span>
@@ -245,7 +243,7 @@
       {/if}
 
       <div class="footer">
-        <button class="btn" onclick={() => (step = 1)}>← 上一步</button>
+        <button class="btn" onclick={() => (step = 2)}>← 上一步</button>
         <button class="btn btn-primary big" onclick={() => start()} disabled={!valid.ok}>
           🌆 开始生活
         </button>
@@ -276,23 +274,6 @@
     font-size: 13px;
     color: var(--accent);
     font-weight: 700;
-  }
-  .mode-bar {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin: 14px 0 4px;
-    flex-wrap: wrap;
-  }
-  .mode-chip {
-    font-size: 13px;
-    padding: 8px 14px;
-    border-radius: 20px;
-  }
-  .mode-chip.on {
-    background: var(--accent, #5b8cff);
-    border-color: var(--accent, #5b8cff);
-    color: #fff;
   }
   .content {
     max-width: 920px;
