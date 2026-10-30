@@ -1,8 +1,8 @@
 /**
  * v1.3 外卖到家
  * ------------------------------------------------------------------
- * 在线点餐：从「可即食的消耗品」菜单选一份，扣款下单，约 1 小时（跨天 tick 即到达）送达，
- * 领取后即时食用（恢复饱腹 / 心情）。
+ * 在线点餐：从「可即食的消耗品」菜单选一份，扣款下单后即时送达，
+ * 玩家领取后物品进入背包，可自行食用。
  *
  * 菜单 = items.json 中「消耗品 + 含饱腹效果」的条目；价格 = 物品 cost + 配送费。
  */
@@ -37,7 +37,7 @@ export const TAKEOUT_MENU: TakeoutItem[] = ITEMS.filter((it) => {
   };
 });
 
-/** 下单外卖 */
+/** 下单外卖：etaDays 保持为 0，下单即到达。 */
 export function placeTakeout(state: GameState, itemId: string): { ok: boolean; text: string } {
   const m = TAKEOUT_MENU.find((x) => x.id === itemId);
   if (!m) return { ok: false, text: "菜单上没有这道" };

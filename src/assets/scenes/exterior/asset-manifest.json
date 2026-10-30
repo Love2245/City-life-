@@ -1,0 +1,374 @@
+{
+  "purpose": "Urban Life local study exterior scenes",
+  "assets": [
+    {
+      "id": "street-lamp",
+      "file": "street-lamp.glb",
+      "bytes": 42808,
+      "sha256": "6d5d2f4b4c28492600cb0a62b4ef2888bb9b123293a2bce91bc2ae0cadafe425",
+      "size": [
+        0.29001,
+        5.62381,
+        1.10957
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\03_车站前商业街\\独立物件\\SM_Streetlight_02_LOD0__64354c9762aa.glb",
+      "sourceSceneSHA256": "27dd1563caed2c6f0c2dbb0eb192509a19cc462780cd64ea0bc8d52ace7a134c",
+      "sourceNodes": [
+        "SM_Streetlight_02_LOD0"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 936,
+      "materials": 1,
+      "textures": 0,
+      "sourceName": "SM_Streetlight_02_LOD0",
+      "sourceFileSHA256": "27dd1563caed2c6f0c2dbb0eb192509a19cc462780cd64ea0bc8d52ace7a134c"
+    },
+    {
+      "id": "street-lamp-light",
+      "file": "street-lamp-light.glb",
+      "bytes": 12008,
+      "sha256": "88e9b566fe862ea60cc678e063f2ddc8e2b340c1832af0bc6afbd4bf5b26e5b9",
+      "size": [
+        0.29,
+        5.62427,
+        1.10957
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\03_车站前商业街\\独立物件\\SM_Streetlight_02_LOD2__37e7e24633c3.glb",
+      "sourceSceneSHA256": "12d3ddc65b2e269025ee873df3f4319b829b1be9d1115ce47155bff3b8003d84",
+      "sourceNodes": [
+        "SM_Streetlight_02_LOD2"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 186,
+      "materials": 1,
+      "textures": 0,
+      "sourceName": "SM_Streetlight_02_LOD2",
+      "sourceFileSHA256": "12d3ddc65b2e269025ee873df3f4319b829b1be9d1115ce47155bff3b8003d84"
+    },
+    {
+      "id": "street-bench",
+      "file": "street-bench.glb",
+      "bytes": 118752,
+      "sha256": "00ff83b35025de2dc35e01942f5aaa17e85f50277fa46b3746b612dea7bb1c6d",
+      "size": [
+        0.31676,
+        0.40418,
+        1.25543
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\03_车站前商业街\\独立物件\\bench_2__265c1a73d575.glb",
+      "sourceSceneSHA256": "0936edaa69dbb86bce1dbbbe935d49330a54312ae9841b6e351122ee80b9fbd5",
+      "sourceNodes": [
+        "bench (2)"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 456,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "bench (2)",
+      "sourceFileSHA256": "0936edaa69dbb86bce1dbbbe935d49330a54312ae9841b6e351122ee80b9fbd5"
+    },
+    {
+      "id": "air-conditioner",
+      "file": "air-conditioner.glb",
+      "bytes": 550924,
+      "sha256": "9ea2b67fbede210bd996f1e44daa6b8f2317f388a05e6369e8b309dd66514135",
+      "size": [
+        0.35728,
+        0.9056,
+        1.19899
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\08_东京街道夜景\\独立物件\\AE_Conditioner_02_LOD0__9b771f170d1b.glb",
+      "sourceSceneSHA256": "59df4eced1d7ea2ffdafaf7b96d705083065e071b42851ada14625f72bb54255",
+      "sourceNodes": [
+        "AE_Conditioner_02_LOD0"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 2176,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "AE_Conditioner_02_LOD0",
+      "sourceFileSHA256": "59df4eced1d7ea2ffdafaf7b96d705083065e071b42851ada14625f72bb54255"
+    },
+    {
+      "id": "air-conditioner-light",
+      "file": "air-conditioner-light.glb",
+      "bytes": 449920,
+      "sha256": "5794f6c259d125e305f925eefe2fc0c2b3e222e02958d89730f82bdf60521aca",
+      "size": [
+        0.35728,
+        0.89932,
+        0.76643
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\08_东京街道夜景\\独立物件\\AE_Conditioner_02_LOD2__81edbf9f3e57.glb",
+      "sourceSceneSHA256": "74b7f36cf75d244c775721a28b9ec50058cfd3da64b0c256217c8b2fdaa30931",
+      "sourceNodes": [
+        "AE_Conditioner_02_LOD2"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 252,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "AE_Conditioner_02_LOD2",
+      "sourceFileSHA256": "74b7f36cf75d244c775721a28b9ec50058cfd3da64b0c256217c8b2fdaa30931"
+    },
+    {
+      "id": "mailbox",
+      "file": "mailbox.glb",
+      "bytes": 352092,
+      "sha256": "94c02fb7ce3b4394256237cffd25b85cb92e315a5d5b873fcf0ddc4a52a6f185",
+      "size": [
+        0.18379,
+        0.3422,
+        0.26629
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\08_东京街道夜景\\独立物件\\AE_Mailbox_01_LOD0__b417cd845e74.glb",
+      "sourceSceneSHA256": "ca34a0648cbb5b5a5cf391245b4c29f5a6e678504173993aac7578cfd3f93376",
+      "sourceNodes": [
+        "AE_Mailbox_01_LOD0"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 258,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "AE_Mailbox_01_LOD0",
+      "sourceFileSHA256": "ca34a0648cbb5b5a5cf391245b4c29f5a6e678504173993aac7578cfd3f93376"
+    },
+    {
+      "id": "road-hatch",
+      "file": "road-hatch.glb",
+      "bytes": 132588,
+      "sha256": "2197f61eeed667913697027f90c0f113be3d70d1ca420da37b186a711e9905a4",
+      "size": [
+        0.65602,
+        0.01781,
+        0.656
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\08_东京街道夜景\\独立物件\\Road_Hatch_02__3ea0035f845b.glb",
+      "sourceSceneSHA256": "6260cecb084f84b9ca973a85f5f8ca22b24cb65b6ea168f78a65f763919b42f9",
+      "sourceNodes": [
+        "Road_Hatch_02"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 158,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "Road_Hatch_02",
+      "sourceFileSHA256": "6260cecb084f84b9ca973a85f5f8ca22b24cb65b6ea168f78a65f763919b42f9"
+    },
+    {
+      "id": "bicycle",
+      "file": "bicycle.glb",
+      "bytes": 326052,
+      "sha256": "92d2fa6c93f87d3d89ce7dbca69f38d8ced304976cc1247ee2f120a651bcd5c7",
+      "size": [
+        0.64104,
+        1.33624,
+        1.98764
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\07_住宅楼与庭院\\独立物件\\AE_Bicycle_01_LOD1__b779d0fa535e.glb",
+      "sourceSceneSHA256": "b86e7ac65870c2583d50d08302b14ab388560a9a7356410db677fea62752d111",
+      "sourceNodes": [
+        "AE_Bicycle_01_LOD1"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 2908,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "AE_Bicycle_01_LOD1",
+      "sourceFileSHA256": "b86e7ac65870c2583d50d08302b14ab388560a9a7356410db677fea62752d111"
+    },
+    {
+      "id": "bicycle-light",
+      "file": "bicycle-light.glb",
+      "bytes": 195292,
+      "sha256": "37a234e1ae4b08acc7ee684b1419043daa40b9c473423ce75fb4b4c31c364578",
+      "size": [
+        0.63737,
+        1.33271,
+        1.96315
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\07_住宅楼与庭院\\独立物件\\AE_Bicycle_01_LOD2__8b7f6bd195b1.glb",
+      "sourceSceneSHA256": "846c0777c24d826e510b08960974bc538e676d07f157dc56a3fed7da62d4edf4",
+      "sourceNodes": [
+        "AE_Bicycle_01_LOD2"
+      ],
+      "sourceMatrices": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "triangles": 1055,
+      "materials": 1,
+      "textures": 1,
+      "sourceName": "AE_Bicycle_01_LOD2",
+      "sourceFileSHA256": "846c0777c24d826e510b08960974bc538e676d07f157dc56a3fed7da62d4edf4"
+    }
+  ]
+}

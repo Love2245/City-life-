@@ -1,0 +1,182 @@
+[
+  {
+    "id": "luxury_coat",
+    "slot": "clothes",
+    "shopPrice": 2999
+  },
+  {
+    "id": "shirt",
+    "slot": "clothes",
+    "shopPrice": 199
+  },
+  {
+    "id": "suit",
+    "slot": "clothes",
+    "shopPrice": 1299
+  },
+  {
+    "id": "pinstripe_shirt",
+    "slot": "clothes",
+    "shopPrice": 199
+  },
+  {
+    "id": "taupe_double_suit",
+    "slot": "clothes",
+    "shopPrice": 1599
+  },
+  {
+    "id": "cable_knit_sweater",
+    "slot": "clothes",
+    "shopPrice": 299
+  },
+  {
+    "id": "cream_relaxed_shirt",
+    "slot": "clothes",
+    "shopPrice": 179
+  },
+  {
+    "id": "plain_white_tee",
+    "slot": "clothes",
+    "shopPrice": 59
+  },
+  {
+    "id": "plain_black_tee",
+    "slot": "clothes",
+    "shopPrice": 59
+  },
+  {
+    "id": "plain_gray_tee",
+    "slot": "clothes",
+    "shopPrice": 59
+  },
+  {
+    "id": "plain_gray_pants",
+    "slot": "pants",
+    "shopPrice": 129
+  },
+  {
+    "id": "white_vest",
+    "slot": "clothes",
+    "shopPrice": 0
+  },
+  {
+    "id": "cyan_jacket",
+    "slot": "clothes",
+    "shopPrice": 0
+  },
+  {
+    "id": "factory_uniform",
+    "slot": "clothes",
+    "shopPrice": null
+  },
+  {
+    "id": "farm_workwear",
+    "slot": "clothes",
+    "shopPrice": null
+  },
+  {
+    "id": "service_apron",
+    "slot": "clothes",
+    "shopPrice": null
+  },
+  {
+    "id": "delivery_vest",
+    "slot": "clothes",
+    "shopPrice": null
+  },
+  {
+    "id": "underlayer_white",
+    "slot": "underlayer",
+    "shopPrice": 0
+  },
+  {
+    "id": "underlayer_black",
+    "slot": "underlayer",
+    "shopPrice": 0
+  },
+  {
+    "id": "underlayer_gray",
+    "slot": "underlayer",
+    "shopPrice": 0
+  },
+  {
+    "id": "blue_collared_shirt",
+    "slot": "underlayer",
+    "shopPrice": 169
+  },
+  {
+    "id": "black_pants",
+    "slot": "pants",
+    "shopPrice": 0
+  },
+  {
+    "id": "baseball_cap",
+    "slot": "hat",
+    "shopPrice": 79
+  },
+  {
+    "id": "knit_cap",
+    "slot": "hat",
+    "shopPrice": 99
+  },
+  {
+    "id": "jeans",
+    "slot": "pants",
+    "shopPrice": 199
+  },
+  {
+    "id": "khaki_pants",
+    "slot": "pants",
+    "shopPrice": 179
+  },
+  {
+    "id": "brown_wide_trousers",
+    "slot": "pants",
+    "shopPrice": 229
+  },
+  {
+    "id": "taupe_suit_trousers",
+    "slot": "pants",
+    "shopPrice": 399
+  },
+  {
+    "id": "charcoal_relaxed_jeans",
+    "slot": "pants",
+    "shopPrice": 229
+  },
+  {
+    "id": "sage_wide_trousers",
+    "slot": "pants",
+    "shopPrice": 229
+  },
+  {
+    "id": "football_jersey",
+    "slot": "clothes",
+    "shopPrice": 99
+  },
+  {
+    "id": "basketball_jersey",
+    "slot": "clothes",
+    "shopPrice": 89
+  },
+  {
+    "id": "sports_shorts",
+    "slot": "pants",
+    "shopPrice": 69
+  },
+  {
+    "id": "olive_overshirt",
+    "slot": "clothes",
+    "shopPrice": 118
+  },
+  {
+    "id": "navy_hoodie",
+    "slot": "clothes",
+    "shopPrice": 98
+  },
+  {
+    "id": "sand_chinos",
+    "slot": "pants",
+    "shopPrice": 78
+  }
+]

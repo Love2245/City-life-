@@ -10,6 +10,10 @@
   import { applyEffects } from "../../game/engine";
   import { formatMoney } from "../../lib/format";
   import { playSound } from "../../lib/audio";
+  import { playerArt } from "../../lib/catArt";
+  import { hasLongTermResidence } from "../../game/core/residence";
+
+  let artZoom = $state<Record<string, number>>({});
 
   const RARITY_LABEL: Record<string, string> = {
     common: "普通",
@@ -42,6 +46,10 @@
   }
 
   function adopt(catId: string): void {
+    if (!hasLongTermResidence(gameState)) {
+      showToast("先有自己的长期住处，再来领养猫咪吧；短期住宿通常不允许养宠物");
+      return;
+    }
     const def = getCatDef(catId);
     if (!def) return;
     if (hasCat(gameState, catId)) {
@@ -67,6 +75,19 @@
         : `🐾 你领养了「${pet.name}」（${label}），加入了你的伙伴`,
     );
   }
+
+  function zoomArt(event: WheelEvent, catId: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.deltaY === 0) return;
+    const current = artZoom[catId] ?? 1;
+    const next = Math.max(1, Math.min(2.5, current * Math.exp(-event.deltaY * 0.0012)));
+    artZoom = { ...artZoom, [catId]: Math.round(next * 100) / 100 };
+  }
+
+  function resetArtZoom(catId: string): void {
+    artZoom = { ...artZoom, [catId]: 1 };
+  }
 </script>
 
 <div class="overlay hud-scope" onclick={close} transition:fade={{ duration: 150 }}>
@@ -79,14 +100,38 @@
       店员热情地介绍：<b>「这里的猫咪都明码标价，看中哪只直接领养带走，保证健康好养！」</b>
       当前余额：<b class="money">{formatMoney(gameState.player.money)}</b>
     </p>
+    {#if !hasLongTermResidence(gameState)}
+      <p class="hint">领养需要稳定住所。签下租约或拥有房产后，这里的猫咪就可以带回家。</p>
+    {/if}
 
     <div class="cat-list">
       {#each cats as def}
         {@const owned = hasCat(gameState, def.id)}
         {@const price = priceOf(def.rarity)}
         {@const enough = gameState.player.money >= price}
+        {@const art = playerArt(def.id)}
         <div class="cat-card" class:owned>
-          <div class="cat-icon">{def.icon}</div>
+          <div
+            class="cat-art"
+            class:zoomed={(artZoom[def.id] ?? 1) > 1}
+            role="img"
+            aria-label={`${def.name}立绘，滚动滚轮放大查看，双击恢复`}
+            title="滚动滚轮放大查看，双击恢复"
+            onwheel={(event) => zoomArt(event, def.id)}
+            ondblclick={() => resetArtZoom(def.id)}
+            style={`--cat-art-zoom:${artZoom[def.id] ?? 1}`}
+          >
+            {#if art}
+              <img class="cat-art-image" src={art} alt={def.name} draggable="false" />
+            {:else}
+              <span class="cat-icon">{def.icon}</span>
+            {/if}
+            {#if (artZoom[def.id] ?? 1) > 1}
+              <span class="cat-art-scale">{Math.round((artZoom[def.id] ?? 1) * 100)}%</span>
+            {:else}
+              <span class="cat-art-hint">滚轮放大</span>
+            {/if}
+          </div>
           <div class="cat-info">
             <div class="cat-name">
               {def.name}
@@ -99,18 +144,20 @@
           {:else}
             <button
               class="adopt-btn"
-              class:disabled={!enough}
-              disabled={!enough}
+              class:disabled={!enough || !hasLongTermResidence(gameState)}
+              disabled={!enough || !hasLongTermResidence(gameState)}
               onclick={() => adopt(def.id)}
             >
-              {enough ? `领养 ${formatMoney(price)}` : `差 ${formatMoney(price - gameState.player.money)}`}
+              {!hasLongTermResidence(gameState)
+                ? "需要稳定住所"
+                : enough ? `领养 ${formatMoney(price)}` : `差 ${formatMoney(price - gameState.player.money)}`}
             </button>
           {/if}
         </div>
       {/each}
     </div>
 
-    <p class="foot-note dim">💡 街头、公园偶尔也会遇到流浪猫——缘分到了免费带回家。</p>
+    <p class="foot-note dim">💡 橘猫 800 元、薄荷猫 3,500 元；街头和公园也可能免费遇到猫咪。滚动猫咪立绘可放大，双击恢复。</p>
   </div>
 </div>
 
@@ -196,10 +243,45 @@
   .cat-card.owned {
     opacity: 0.55;
   }
+  .cat-art {
+    position: relative;
+    width: 58px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    cursor: zoom-in;
+    z-index: 1;
+  }
+  .cat-art.zoomed { z-index: 4; }
+  .cat-art-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.35));
+    transform: scale(var(--cat-art-zoom, 1));
+    transform-origin: center;
+    transition: transform 120ms ease-out;
+    pointer-events: none;
+  }
   .cat-icon {
     font-size: 30px;
     line-height: 1;
-    flex-shrink: 0;
+  }
+  .cat-art-hint,.cat-art-scale {
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    transform: translateX(-50%);
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: rgba(10, 12, 20, .78);
+    color: #f2e5c4;
+    font-size: 9px;
+    white-space: nowrap;
+    pointer-events: none;
   }
   .cat-info {
     flex: 1;

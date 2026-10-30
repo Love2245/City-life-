@@ -4,28 +4,46 @@
  * 素材来自 docs/v133-plan/art（对立绘 → src/assets/cats/opponents，玩家立绘 → players），
  * 每只猫四姿态：idle / attack / hurt / enter。
  *
- * 资源用 import.meta.glob + ?url 引入：开发态是文件路径，构建后是 /assets/xxx.png，
+ * 资源用 import.meta.glob + ?url 引入：开发态是文件路径，构建后是 /assets/xxx.webp，
  * 再由 inline_single.py 统一内联成 data URI（与单文件 HTML 打包流程一致）。
  */
 
 /** 立绘姿态 */
+import actionFrames from './catActionFrames.json';
 export type CatPose = "idle" | "attack" | "hurt" | "enter";
+export interface CatPortraitAsset {src:string;frame?:{x:number;y:number;width:number;height:number;sheetWidth:number;sheetHeight:number}}
+interface ActionSheetFrame {width:number;height:number;attack:number[];hurt:number[]}
+const ACTION_MODULES=import.meta.glob<string>('../assets/cats/duel-actions/*/*_actions.png',{eager:true,query:'?url',import:'default'});
+const ACTION_ART=Object.fromEntries(Object.entries(ACTION_MODULES).map(([path,url])=>[path.split('/').slice(-2).join('/').replace('_actions.png',''),url]));
+const ACTION_FRAMES=actionFrames as Record<string,ActionSheetFrame>;
+const ROUNDHEAD_MODULES=import.meta.glob<string>('../assets/cats/duel-roundhead-1498/roundhead_*.png',{eager:true,query:'?url',import:'default'});
+const ROUNDHEAD_ART=Object.fromEntries(Object.entries(ROUNDHEAD_MODULES).map(([path,url])=>[path.split('/').pop()!.replace('.png',''),url]));
+function actionPortrait(group:'players'|'opponents',key:string,pose:CatPose):CatPortraitAsset|undefined{
+  if(pose!=='attack'&&pose!=='hurt')return undefined;
+  if(key==='roundhead'&&ROUNDHEAD_ART[`roundhead_${pose}`])return {src:ROUNDHEAD_ART[`roundhead_${pose}`]};
+  const id=group+'/'+key,src=ACTION_ART[id],sheet=ACTION_FRAMES[id],r=sheet?.[pose];
+  return src&&r?{src,frame:{x:r[0],y:r[1],width:r[2],height:r[3],sheetWidth:sheet.width,sheetHeight:sheet.height}}:undefined;
+}
 
 // 泛型是「单个模块的默认导出类型」：?url 默认导出为 URL 字符串，故为 <string>。
 // 写成 <Record<string,string>> 会让整体推断成 Record<string,Record<string,string>>，与 indexModules 不匹配。
-// v1.36：立绘统一为透明背景的 *.png（原 *.jpg 背景为不透明白色，圆框会糊成白底）。
-const OPP_MODULES = import.meta.glob<string>("../assets/cats/opponents/*.png", {
+// v1.42：运行时统一使用透明 WebP，避免大 PNG 进入开发/便携构建；PNG 保留为源素材。
+const OPP_MODULES = import.meta.glob<string>("../assets/cats/opponents/*.webp", {
   eager: true,
   query: "?url",
   import: "default",
 });
-const PLR_MODULES = import.meta.glob<string>("../assets/cats/players/*.png", {
+const PLR_MODULES = import.meta.glob<string>("../assets/cats/players/*.webp", {
   eager: true,
   query: "?url",
   import: "default",
 });
 
-/** 把 glob 结果索引成 { "burger_idle": "/assets/...png" } */
+// 1.498：重新提取的对战待机立绘。原PNG与旧姿态继续留作源素材及回退。
+const CLEAN_OPP_MODULES=import.meta.glob<string>("../assets/cats/duel-clean/opponents/*.png",{eager:true,query:'?url',import:'default'});
+const CLEAN_PLR_MODULES=import.meta.glob<string>("../assets/cats/duel-clean/players/*.png",{eager:true,query:'?url',import:'default'});
+
+/** 把 glob 结果索引成 { "burger_idle": "/assets/...webp" } */
 function indexModules(mods: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [path, url] of Object.entries(mods)) {
@@ -35,8 +53,8 @@ function indexModules(mods: Record<string, string>): Record<string, string> {
   return out;
 }
 
-const OPP_ART = indexModules(OPP_MODULES);
-const PLR_ART = indexModules(PLR_MODULES);
+const OPP_ART = {...indexModules(OPP_MODULES),...indexModules(CLEAN_OPP_MODULES)};
+const PLR_ART = {...indexModules(PLR_MODULES),...indexModules(CLEAN_PLR_MODULES),...ROUNDHEAD_ART,...(ROUNDHEAD_ART.roundhead_idle?{roundhead_enter:ROUNDHEAD_ART.roundhead_idle}:{})};
 
 /** 已接入立绘的对手 key（构建期检查用） */
 export const OPPONENT_ART_KEYS: string[] = Array.from(
@@ -96,6 +114,19 @@ const OPPONENT_ART_MAP: Record<string, string> = {
   roundhead: "roundhead",
 };
 
+export type CatNativeFacing='left'|'right'|'front';
+/** 逐张按原始头部与身体朝向记录；镜像只应用于立绘层。 */
+export const CAT_NATIVE_FACING:Record<string,CatNativeFacing>={
+  orange:'left',cow:'right',black:'left',mint:'left',glass:'left',android:'right',spider:'right',golden:'left',roundhead:'front',white:'left',
+  stray:'left',ghost:'left',bully:'left',burger:'left',chubby:'front',frenzied:'left',killerqueen:'left',lightning:'left',mangy:'left',marshmallow:'left',
+  mechat:'left',minion:'right',necromancer:'left',piglet:'left',skeleton:'right',snowman:'left',tiger:'right',webbing:'left',
+};
+function mirrorToward(key:string,desired:'left'|'right'):1|-1{
+  const facing=CAT_NATIVE_FACING[key]??'left';return facing==='front'||facing===desired?1:-1;
+}
+export function playerBattleScaleX(catId:string):1|-1{return mirrorToward(catId,'right');}
+export function opponentBattleScaleX(opponentId:string):1|-1{return mirrorToward(OPPONENT_ART_MAP[opponentId]??deriveKey(opponentId,OPP_ART)??opponentId,'left');}
+
 /** 从对手 id 猜立绘 key：剥前缀后逐个词匹配（opp_burger → burger） */
 function deriveKey(id: string, pool: Record<string, string>): string | undefined {
   const keys = new Set(Object.keys(pool).map((k) => k.replace(/_(idle|attack|hurt|enter)$/, "")));
@@ -126,6 +157,17 @@ export function opponentArt(opponentId: string, pose: CatPose = "idle"): string 
  */
 export function playerArt(catId: string, pose: CatPose = "idle"): string | undefined {
   return pick(PLR_ART, catId, pose);
+}
+
+/** Runtime action viewports use untouched two-pose sheets, with original idle art. */
+export function playerBattlePortrait(catId:string,pose:CatPose='idle'):CatPortraitAsset|undefined{
+  const action=actionPortrait('players',catId,pose);if(action)return action;
+  const src=playerArt(catId,pose==='enter'?'idle':pose);return src?{src}:undefined;
+}
+export function opponentBattlePortrait(opponentId:string,pose:CatPose='idle'):CatPortraitAsset|undefined{
+  const key=OPPONENT_ART_MAP[opponentId]??deriveKey(opponentId,OPP_ART)??opponentId;
+  const action=actionPortrait('opponents',key,pose)??actionPortrait('players',key,pose);if(action)return action;
+  const src=opponentArt(opponentId,pose==='enter'?'idle':pose);return src?{src}:undefined;
 }
 
 /** 该对手是否已接入立绘（未接入时 UI 回退 emoji） */

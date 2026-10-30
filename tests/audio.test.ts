@@ -5,6 +5,7 @@ import { JOB_DEFS } from "../src/game/core/jobs";
 import { EVENTS } from "../src/game/core/events";
 import { createInitialState } from "../src/game/core/state";
 import type { SoundId } from "../src/game/types";
+import { setActionLocation } from "./helpers/actionLocation";
 
 /** 全部 SoundId（与 types.ts 定义一致） */
 const ALL_SOUND_IDS: SoundId[] = [
@@ -52,6 +53,7 @@ describe("sound 透传到结算结果", () => {
   it("performAction 的 result 携带行动 sound", () => {
     const s = createInitialState(1);
     s.time.hour = 10; // park 6-22 营业
+    setActionLocation(s, "walk_park");
     const r = performAction(s, "walk_park");
     expect(r.ok).toBe(true);
     expect(r.result?.sound).toBe("walk");
@@ -60,6 +62,7 @@ describe("sound 透传到结算结果", () => {
   it("非休息类行动 sound 正确透传", () => {
     const s = createInitialState(1);
     s.time.hour = 12; // street 白天营业
+    setActionLocation(s, "wander_street");
     const r = performAction(s, "wander_street");
     expect(r.ok).toBe(true);
     expect(r.result?.sound).toBe("walk");

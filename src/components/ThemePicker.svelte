@@ -3,7 +3,8 @@
    * v1.21-beta UI 皮肤选择器（设置页 / 手机设置 App 共用）
    * 每张卡用皮肤自身色值现绘一个迷你界面缩略图，所见即所得。
    */
-  import { uiState, setSkin, SKINS, type SkinId } from "../stores/uiStore.svelte";
+  import { onMount } from "svelte";
+  import { uiState, setSkin, SKINS } from "../stores/uiStore.svelte";
 
   interface Props {
     /** compact：手机设置 App 内的紧凑排布（单列、字号更小） */
@@ -11,48 +12,41 @@
   }
   let { compact = false }: Props = $props();
 
-  function pick(id: SkinId): void {
-    setSkin(id);
-  }
+  const defaultSkin = SKINS.find((s) => s.id === "default") ?? SKINS[0]!;
+
+  // v1.41：保留旧存档的皮肤字段，但设置入口统一回到默认主题。
+  onMount(() => {
+    if (uiState.skin !== "default") setSkin("default");
+  });
 </script>
 
 <div class="skin-grid" class:compact>
-  {#each SKINS as s (s.id)}
-    {@const on = uiState.skin === s.id}
-    <button
-      class="skin-card"
-      class:on
-      onclick={() => pick(s.id)}
-      aria-pressed={on}
-      title={s.desc}
-    >
+  <button class="skin-card on" onclick={() => setSkin("default")} aria-pressed="true" title={defaultSkin.desc}>
       <!-- 迷你界面预览：用该皮肤的真实色值现绘 -->
-      <div class="preview" style="background:{s.swatch.bg};">
-        <div class="pv-bar" style="background:{s.swatch.card};">
-          <span class="pv-dot" style="background:{s.swatch.accent};"></span>
-          <span class="pv-line" style="background:{s.swatch.text}; opacity:.55;"></span>
+      <div class="preview" style="background:{defaultSkin.swatch.bg};">
+        <div class="pv-bar" style="background:{defaultSkin.swatch.card};">
+          <span class="pv-dot" style="background:{defaultSkin.swatch.accent};"></span>
+          <span class="pv-line" style="background:{defaultSkin.swatch.text}; opacity:.55;"></span>
         </div>
         <div class="pv-body">
-          <div class="pv-card" style="background:{s.swatch.card};">
-            <span class="pv-line short" style="background:{s.swatch.text}; opacity:.75;"></span>
-            <span class="pv-line" style="background:{s.swatch.text}; opacity:.35;"></span>
+          <div class="pv-card" style="background:{defaultSkin.swatch.card};">
+            <span class="pv-line short" style="background:{defaultSkin.swatch.text}; opacity:.75;"></span>
+            <span class="pv-line" style="background:{defaultSkin.swatch.text}; opacity:.35;"></span>
           </div>
           <div class="pv-side">
-            <span class="pv-chip" style="background:{s.swatch.accent};"></span>
-            <span class="pv-chip" style="background:{s.swatch.accent2};"></span>
+            <span class="pv-chip" style="background:{defaultSkin.swatch.accent};"></span>
+            <span class="pv-chip" style="background:{defaultSkin.swatch.accent2};"></span>
           </div>
         </div>
       </div>
 
       <div class="meta">
         <span class="name">
-          {s.name}
-          {#if on}<span class="check">✓</span>{/if}
+          {defaultSkin.name}<span class="check">✓</span>
         </span>
-        <span class="desc">{s.desc}</span>
+        <span class="desc">{defaultSkin.desc}</span>
       </div>
-    </button>
-  {/each}
+  </button>
 </div>
 
 <style>

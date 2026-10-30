@@ -45,6 +45,10 @@ describe("新手引导 v0.94", () => {
     applyEffects(s, { satiety: 30 }, "🍜");
     expect(s.tutorial.done).toContain("eat_meal");
 
+    s.flags["commuted_once"] = true;
+    checkTutorialProgress(s);
+    expect(s.tutorial.done).toContain("commute_once");
+
     // 入职（ever_worked 或 career.jobId）
     s.flags["ever_worked"] = true;
     checkTutorialProgress(s);
@@ -55,6 +59,13 @@ describe("新手引导 v0.94", () => {
     checkTutorialProgress(s);
     expect(s.tutorial.done).toContain("work_once");
 
+    s.flags["manual_saved_once"] = true;
+    checkTutorialProgress(s);
+    expect(s.tutorial.done).toContain("save_game");
+    s.flags["cat_cared_once"] = true;
+    checkTutorialProgress(s);
+    s.flags["socialized_once"] = true;
+    checkTutorialProgress(s);
     // 睡觉（sleepSettlement 写 slept_once；进度检查由下次 applyEffects 触发）
     sleepSettlement(s, { stayedUp: false, hours: 8 });
     expect(s.flags["slept_once"]).toBe(true);
@@ -74,20 +85,66 @@ describe("新手引导 v0.94", () => {
     const s = createInitialState();
     completeTutorialStep(s, "open_phone");
     applyEffects(s, { satiety: 30 }, "🍜"); // eat
+    s.flags["commuted_once"] = true;
     s.flags["ever_worked"] = true;
     s.flags["jobs_done_count"] = 1;
+    s.flags["manual_saved_once"] = true;
+    s.flags["cat_cared_once"] = true;
+    s.flags["socialized_once"] = true;
     s.flags["slept_once"] = true;
-    applyEffects(s, { mood: 1 }); // 一次结算链式推进 find_job → work_once → rest_well
+    applyEffects(s, { mood: 1 }); // 一次结算链式推进通勤 → 工作 → 存档 → 猫咪 → 社交 → 恢复
     expect(isTutorialDone(s)).toBe(true);
   });
 
-  it("TUTORIAL_STEPS 覆盖五步首日引导", () => {
+  it("v1.43 修复：存档步骤只认手动存档，自动存档不算完成", () => {
+    const s = createInitialState();
+    for (const step of TUTORIAL_STEPS) {
+      if (step.id !== "save_game") completeTutorialStep(s, step.id);
+    }
+    // 仅自动存档置位（saveGame() 每次自动存档都会写 saved_once）
+    s.flags["saved_once"] = true;
+    checkTutorialProgress(s);
+    expect(s.tutorial.done).not.toContain("save_game");
+    // 玩家真正在「存档 / 读档」界面手动保存一次
+    s.flags["manual_saved_once"] = true;
+    checkTutorialProgress(s);
+    expect(s.tutorial.done).toContain("save_game");
+  });
+
+  it("TUTORIAL_STEPS 覆盖七天新手引导主线", () => {
     expect(TUTORIAL_STEPS.map((s) => s.id)).toEqual([
       "open_phone",
       "eat_meal",
+      "commute_once",
       "find_job",
       "work_once",
+      "save_game",
+      "care_cat",
+      "socialize",
       "rest_well",
     ]);
+  });
+
+  it("照顾猫咪是可选支线，不会阻塞社交和休息主线", () => {
+    const s = createInitialState();
+    for (const id of ["open_phone", "eat_meal", "commute_once", "find_job", "work_once", "save_game"]) {
+      completeTutorialStep(s, id);
+    }
+    s.pets = [];
+    s.flags["socialized_once"] = true;
+    s.flags["slept_once"] = true;
+
+    s.time.day = 6;
+    expect(checkTutorialProgress(s)).toEqual(["socialize", "rest_well"]);
+    expect(s.tutorial.done).not.toContain("care_cat");
+
+    s.time.day = 7;
+    expect(checkTutorialProgress(s)).toEqual([]);
+    expect(isTutorialDone(s)).toBe(true);
+    expect(s.tutorial.done).not.toContain("care_cat");
+
+    s.flags["cat_cared_once"] = true;
+    expect(checkTutorialProgress(s)).toEqual(["care_cat"]);
+    expect(isTutorialDone(s)).toBe(true);
   });
 });

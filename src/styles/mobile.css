@@ -1,0 +1,2552 @@
+/* ============================================================================
+   都市生活 · 手游（PE 移动端）横屏适配 —— 单一权威章节
+   ============================================================================
+
+   基准设备：iPhone 15 Pro Max 横屏
+     · 逻辑视口        932 × 430 CSS px（DPR 3，物理 2796 × 1290）
+     · 安全区由系统 env() 提供，左右旋转、浏览器工具栏与用户留白实时生效。
+   兼容区间：19.5:9 ~ 21:9 手机横屏（360~430 CSS px 高）；竖屏由
+   GameView 的旋转遮罩接管，不做压缩排版。
+
+   设计原则
+     1. 横屏下「高度」才是稀缺维度 —— 所有字号、行高、内距、触控尺寸
+        一律以视口高度(vh/svh)为流体主轴；横向分工交给 grid 的 px/%。
+     2. 安全区只声明一次：env() 真值 → --sai-* 令牌 → 由 .game-root 统一
+        以内距方式让位；position:fixed 的弹窗自行消费同一组令牌。
+     3. 三栏 = 左状态栏(px，可拖拽) + 中玩法区(1fr) + 右手机(px)。
+        地图态左右栏不渲染，中央画布独占整幅可用宽度。
+     4. 触控目标与基础字号在缩小时按有效 zoom 补偿，手游下的整体
+        zoom 仍尊重用户设置（钳制 0.7~1.3）；3D 分辨率独立改变渲染缓冲。
+
+   本文件由 main.ts 在 app.css / themes.css 之后载入，因此同特异度下
+   本文件规则生效，无需 !important 堆叠。
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 令牌层：安全区 + 流体刻度
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] {
+  /* ---- 系统安全区：env() 与原生兼容值取较大值，不累加；额外留白由玩家设置 ---- */
+  --sai-top: max(env(safe-area-inset-top, 0px), var(--native-safe-top, 0px));
+  --sai-right: max(env(safe-area-inset-right, 0px), var(--native-safe-right, 0px), var(--mobile-edge-padding, 8px));
+  --sai-bottom: max(env(safe-area-inset-bottom, 0px), var(--native-safe-bottom, 0px), var(--mobile-bottom-padding, 8px));
+  --sai-left: max(env(safe-area-inset-left, 0px), var(--native-safe-left, 0px), var(--mobile-edge-padding, 8px));
+
+  /* ---- v1.44.3 UI 缩放：整体 zoom 真实缩放（钳制 0.7~1.3）。
+     安全区令牌属于"物理视口"，使用处必须除以有效缩放系数
+     （m-ui-zoom），避免 zoom 改变让位量 ---- */
+  --m-ui-zoom: clamp(0.7, var(--ui-zoom, 1), 1.3);
+  /* v1.44.5：这是安全区与局部构图使用的有效祖先缩放。
+     全屏小游戏与喵喵对决直接继承 .app-zoom，不再用反向 zoom 抵消设置里的 UI 比例；
+     这样可避免手游 0.7×2=1.4 的放大溢出。 */
+  --eff-zoom: var(--m-ui-zoom);
+  --sai-t: calc(var(--sai-top) / var(--m-ui-zoom));
+  --sai-r: calc(var(--sai-right) / var(--m-ui-zoom));
+  --sai-b: calc(var(--sai-bottom) / var(--m-ui-zoom));
+  --sai-l: calc(var(--sai-left) / var(--m-ui-zoom));
+
+  /* ---- 流体令牌基准不再叠加 UI 缩放（整体 zoom 已统一缩放，避免二次放大） ---- */
+  --m-zoom: 1;
+  /* ---- 流体字号（以 402px 高为基准取值，随视口高线性变化） ---- */
+  --m-fs-xs: calc(clamp(12px, 2.8vh, 15px) / min(1, var(--eff-zoom)));
+  --m-fs-sm: calc(clamp(12px, 3.1vh, 17px) / min(1, var(--eff-zoom)));
+  --m-fs-md: calc(clamp(13px, 3.7vh, 20px) / min(1, var(--eff-zoom)));
+  --m-fs-lg: calc(clamp(16px, 4.9vh, 26px) / min(1, var(--eff-zoom)));
+
+  /* ---- 流体间距 ---- */
+  --m-pad: calc(clamp(6px, 1.5vh, 12px) * var(--m-zoom));
+  --m-gap: calc(clamp(5px, 1.2vh, 10px) * var(--m-zoom));
+
+  /* ---- 触控目标：按 app 与画布有效缩放补偿，触屏下不低于 44px ---- */
+  --m-tap: max(44px, calc(44px / min(1, var(--eff-zoom))));
+
+  /* ---- 顶栏高度 = 一个触控行 + 内距 ---- */
+  --m-topbar: calc(var(--m-tap) + 2 * var(--m-pad));
+  --m-topbar: calc(var(--m-tap) + 8px);
+
+  /* ---- 三栏份额 ---- */
+  /* 左栏：用户可拖拽的 px 宽度，但视觉上限锁在可用宽度的 26%，
+     保证宽屏/大折叠设备上中央玩法区不会被侧栏挤没。 */
+  --m-left-w: min(calc(var(--ui-attr-w, 144px) + 12px), 28%);
+  --m-left-min: 104px;
+  --m-left-collapsed: 48px;
+  /* 右栏（常驻手机面板）：窄但足以放下 4 列 App 网格 */
+  --m-phone-w: clamp(min(146px, 22%), 25%, 208px);
+  --m-phone-collapsed: 48px;
+
+  /* ---- 卡片轨道 ---- */
+  --m-card-h: calc(clamp(96px, 26svh, 176px) * var(--m-zoom));
+  --m-tile-h: calc(clamp(104px, 27svh, 168px) * var(--m-zoom));
+  --m-tile-w: 128px;
+}
+
+/* --------------------------------------------------------------------------
+   2. 布局外壳：安全区内距只在这里声明一次
+   -------------------------------------------------------------------------- */
+
+/* Browser/fullscreen canvas stays opaque through the cutout and overscroll area.
+   Insets belong to controls; the viewport itself is never padded or narrowed. */
+html[data-game-mode="mobile"],
+:root[data-game-mode="mobile"] body,
+:root[data-game-mode="mobile"] #app,
+:root[data-game-mode="mobile"] .app-zoom {
+  background-color:#10131f;
+}
+html[data-game-mode="mobile"] { overscroll-behavior:none; }
+html[data-game-mode="mobile"]::backdrop { background:#10131f; }
+
+:root[data-game-mode="mobile"] .zoom-wrapper {
+  position: relative;
+  display: block;
+  /* UI stays at its chosen size; renderers lower only their GPU buffer size. */
+  zoom: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  /* 背景铺满整屏（含安全区），仅内容让位 */
+  background: var(--bg-deep);
+  background-image: var(--grad-sky);
+}
+
+/* v1.44.1 手游 UI 缩放上移到 App 壳层：.app-zoom 用钳制后的 --m-ui-zoom 整体缩放，
+   主菜单/设置/独立小游戏/全部弹窗与端游一样全局生效（App.svelte 基础规则用未钳制
+   --ui-zoom，此处以更高特异性覆盖 zoom 值；宽高保持 100%，见 App.svelte 内注释）。
+   .game-root 退回纯布局，仅保留安全区让位。 */
+:root[data-game-mode="mobile"] .app-zoom {
+  zoom: var(--m-ui-zoom);
+}
+
+:root[data-game-mode="mobile"] .game-root {
+  /* 宽高由 .app-zoom 的钳制缩放统一承担，此处填满即可；不再自带 zoom/transform */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  /* 四向安全区：横屏下 left/right 各 59px（灵动岛侧）、top/bottom 各 20px
+     （--sai-t/r/b/l 已除以 --m-ui-zoom：安全区是物理视口值，
+     会被 app-zoom 的 zoom 再乘回去） */
+  padding: var(--sai-t) var(--sai-r) var(--sai-b) var(--sai-l);
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   3. 顶栏：单行、压缩、内容全部落在安全区内
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .topbar {
+  flex: 0 0 auto;
+  min-height: var(--m-topbar);
+  height: var(--m-topbar);
+  min-width: 0;
+  flex-wrap: nowrap;
+  gap: var(--m-gap);
+  padding: 0 var(--m-pad);
+  overflow: hidden;
+}
+
+/* 手游顶栏只放高频信息：品牌无信息量、端游的「距午夜 / 闹钟」行并入可展开的第二行。
+   难度 / 物价 / 剧情 / 良心在逻辑层就不渲染（见 TopBar 的 mobileInfo 分支），
+   不在这里重复声明 display:none —— 信息一条都不丢，只是换了展示位置。 */
+:root[data-game-mode="mobile"] .topbar .brand,
+:root[data-game-mode="mobile"] .topbar .remaining {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .topbar .clock {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .topbar .clock-toggle {
+  justify-content: center;
+  min-height: var(--m-tap);
+}
+
+:root[data-game-mode="mobile"] .topbar .date-line {
+  gap: calc(var(--m-gap) * 1.2);
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .topbar .date,
+:root[data-game-mode="mobile"] .topbar .weekday,
+:root[data-game-mode="mobile"] .topbar .clock-time,
+:root[data-game-mode="mobile"] .topbar .period-badge {
+  font-size: var(--m-fs-md);
+  line-height: 1.1;
+}
+
+:root[data-game-mode="mobile"] .topbar .money-box {
+  flex: 0 1 auto;
+  min-width: 0;
+  gap: calc(var(--m-gap) * 0.9);
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .topbar .money-box .chip {
+  font-size: var(--m-fs-xs);
+  padding: 0 6px;
+  height: calc(var(--m-tap) - 8px);
+  min-height: calc(var(--m-tap) - 8px);
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .topbar .chip.lodging {
+  min-height: var(--m-tap);
+}
+
+:root[data-game-mode="mobile"] .topbar .menu-box {
+  flex: 0 0 auto;
+  gap: calc(var(--m-gap) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .topbar .menu-box .phone-btn {
+  width: var(--m-tap);
+  height: var(--m-tap);
+  min-width: var(--m-tap);
+  min-height: var(--m-tap);
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--m-fs-lg);
+  line-height: 1;
+}
+
+:root[data-game-mode="mobile"] .topbar .menu-box > .btn:last-child {
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.8);
+  white-space: nowrap;
+  font-size: var(--m-fs-sm);
+  line-height: 1.1;
+}
+
+/* 顶栏入口文字在手游下收起为纯图标，为 📜 日志入口腾出宽度 */
+:root[data-game-mode="mobile"] .topbar .menu-open-text {
+  display: none;
+}
+
+/* ---- v1.44 顶栏第二行：端游常驻、横屏放不下的次要信息 ----
+   点时钟展开，不常驻以免挤占本就不多的纵向空间。 */
+:root[data-game-mode="mobile"] .topbar .info-caret {
+  font-size: var(--m-fs-xs);
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+:root[data-game-mode="mobile"] .topbar.info-open {
+  flex-wrap: wrap;
+  height: auto;
+  min-height: var(--m-topbar);
+  padding-bottom: calc(var(--m-pad) * 0.5);
+}
+
+:root[data-game-mode="mobile"] .topbar .topbar-extra {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: calc(var(--m-gap) * 0.7);
+  min-width: 0;
+  min-height: calc(var(--m-tap) - 8px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+:root[data-game-mode="mobile"] .topbar .topbar-extra::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .topbar .topbar-extra .chip {
+  flex: 0 0 auto;
+  font-size: var(--m-fs-xs);
+  padding: 0 6px;
+  height: calc(var(--m-tap) - 10px);
+  min-height: calc(var(--m-tap) - 10px);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   4. 三栏网格
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .main {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: minmax(0, var(--m-left-w)) minmax(min(160px, 100%), 1fr) minmax(0, var(--m-phone-w));
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* 地图态：左右栏不渲染，中央画布必须独占整幅可用宽度。
+   （旧实现缺此分支，中央地图只剩 14% 宽 ≈122px，整张地图被压成竖条。） */
+:root[data-game-mode="mobile"] .main.map-selection {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+:root[data-game-mode="mobile"] .main:has(.sidebar.collapsed) {
+  grid-template-columns: minmax(0, var(--m-left-collapsed)) minmax(min(160px, 100%), 1fr) minmax(0, var(--m-phone-w));
+}
+
+:root[data-game-mode="mobile"] .main:has(.quest-side.collapsed) {
+  grid-template-columns: minmax(0, var(--m-left-w)) minmax(min(160px, 100%), 1fr) minmax(0, var(--m-phone-collapsed));
+}
+
+:root[data-game-mode="mobile"] .main:has(.sidebar.collapsed):has(.quest-side.collapsed) {
+  grid-template-columns: minmax(0, var(--m-left-collapsed)) minmax(min(160px, 100%), 1fr) minmax(0, var(--m-phone-collapsed));
+}
+
+:root[data-game-mode="mobile"] .sidebar,
+:root[data-game-mode="mobile"] .scene,
+:root[data-game-mode="mobile"] .quest-side {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  height: 100%;
+  flex: none;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ---- 左栏拖拽分隔条：手游下真正驱动左栏宽度 ----
+   .resize-handle 是 .sidebar 的兄弟节点（.main 的直接子元素）。
+   网格里它会被当成第 4 个单元格，因此脱离文档流、绝对定位到左栏右缘。 */
+:root[data-game-mode="mobile"] .resize-handle {
+  position: absolute;
+  top: 0;
+  right: auto;
+  bottom: 0;
+  left: calc(min(calc(var(--ui-attr-w, 144px) + 12px), 28%) - 6px);
+  width: 12px;
+  height: auto;
+  z-index: 20;
+  display: block;
+  background: transparent;
+}
+
+:root[data-game-mode="mobile"] .main.map-selection .resize-handle,
+:root[data-game-mode="mobile"] .main:has(.sidebar.collapsed) .resize-handle {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. 左栏（状态栏）：紧凑密度 + 折叠把手不再越界
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .sidebar {
+  padding: var(--m-pad);
+  border-right: 1px solid var(--hud-border);
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .sidebar .player-name {
+  display: none;
+}
+
+/* 折叠把手：绝对定位在 48px 折叠列内，左右各留 4px，绝不越出视口 */
+:root[data-game-mode="mobile"] .sidebar .sidebar-edge-toggle {
+  top: calc(var(--m-pad) * 0.6);
+  right: 4px;
+  left: 4px;
+  width: auto;
+  min-width: 0;
+  width: calc(100% - 8px);
+  height: var(--m-tap);
+  min-height: var(--m-tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .sidebar .side-head {
+  min-height: var(--m-tap);
+  justify-content: flex-end;
+}
+
+:root[data-game-mode="mobile"] .sidebar .section {
+  padding: calc(var(--m-pad) * 0.7) calc(var(--m-pad) * 0.9);
+}
+
+:root[data-game-mode="mobile"] .sidebar .section-title {
+  font-size: var(--m-fs-xs);
+  margin-bottom: calc(var(--m-gap) * 0.6);
+}
+
+:root[data-game-mode="mobile"] .sidebar .stat-row {
+  margin-bottom: calc(var(--m-gap) * 0.45);
+}
+
+:root[data-game-mode="mobile"] .sidebar .stat-bar {
+  font-size: var(--m-fs-xs);
+  gap: calc(var(--m-gap) * 0.5);
+}
+
+:root[data-game-mode="mobile"] .sidebar .stat-bar .label {
+  width: auto;
+  white-space: nowrap;
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .sidebar .stat-bar .val {
+  font-size: var(--m-fs-xs);
+}
+
+/* 折叠列：只放一个把手，且把手必须在列内 */
+:root[data-game-mode="mobile"] .sidebar.collapsed {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .sidebar.collapsed .resize-handle {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. 中栏（玩法区）
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .scene {
+  padding: var(--m-pad);
+  gap: var(--m-gap);
+  min-width: 0;
+}
+
+/* ---- 行动卡：三/四列自适应，卡片高度随视口高伸缩 ---- */
+:root[data-game-mode="mobile"] .action-grid {
+  grid-template-columns: repeat(auto-fill, minmax(clamp(132px, 30%, 240px), 1fr));
+  gap: var(--m-gap);
+  margin-top: 0;
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+}
+
+:root[data-game-mode="mobile"] .action-card {
+  min-width: 0;
+  height: 100%;
+  min-height: var(--m-card-h);
+  padding: calc(var(--m-pad) * 0.9);
+  gap: calc(var(--m-gap) * 0.7);
+  border-radius: 12px;
+}
+
+:root[data-game-mode="mobile"] .action-card .action-icon,
+:root[data-game-mode="mobile"] .action-card .a-icon {
+  font-size: var(--m-fs-lg);
+}
+
+:root[data-game-mode="mobile"] .action-card .action-name,
+:root[data-game-mode="mobile"] .action-card .a-name {
+  font-size: var(--m-fs-md);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+:root[data-game-mode="mobile"] .action-card .action-desc,
+:root[data-game-mode="mobile"] .action-card .a-desc {
+  font-size: var(--m-fs-xs);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* 名称/徽标一律单行省略，杜绝窄卡片里的逐字换行 */
+:root[data-game-mode="mobile"] .action-card .action-name,
+:root[data-game-mode="mobile"] .action-card .a-name,
+:root[data-game-mode="mobile"] .region-view .card .name,
+:root[data-game-mode="mobile"] .region-grid-view .r-card .r-name,
+:root[data-game-mode="mobile"] .main-view .d-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .action-card .action-lock {
+  font-size: var(--m-fs-xs);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .group-card,
+:root[data-game-mode="mobile"] .loc-chip,
+:root[data-game-mode="mobile"] .crumb {
+  min-width: 0;
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .scene .crumb,
+:root[data-game-mode="mobile"] .scene .loc-chip {
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.8);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ---- 场景导航工具条：单行、可横向滚动，不折行 ---- */
+:root[data-game-mode="mobile"] .scene-nav-frame {
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.7);
+  padding: calc(var(--m-gap) * 0.5) calc(var(--m-pad) * 0.6);
+  border-radius: 12px 12px 0 0;
+  margin-bottom: -1px;
+  background: rgba(8, 16, 28, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+:root[data-game-mode="mobile"] .scene-nav-frame::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .scene-nav-frame > .breadcrumbs,
+:root[data-game-mode="mobile"] .scene-nav-frame > .loc-nav {
+  flex: 0 0 auto;
+  min-width: max-content;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.7);
+}
+
+:root[data-game-mode="mobile"] .scene-body > .region-view,
+:root[data-game-mode="mobile"] .scene-body > .region-grid-view,
+:root[data-game-mode="mobile"] .scene-body > .main-view {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* ---- 室内等待：进入正常内容流，默认折叠为一个小入口 ---- */
+:root[data-game-mode="mobile"] .scene-body {
+  padding-bottom: 0;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .mobile-wait-toggle {
+  display: flex;
+  align-items: center;
+  align-self: flex-end;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: var(--m-tap);
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.8);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 999px;
+  background: rgba(8, 16, 34, 0.76);
+  color: rgba(238, 241, 255, 0.86);
+  font: inherit;
+  font-size: var(--m-fs-xs);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .mobile-wait-toggle:hover {
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+  color: var(--accent, #ffd166);
+}
+
+:root[data-game-mode="mobile"] .scene-body > .wait-bar {
+  position: static !important;
+  inset: auto;
+  z-index: auto;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.7);
+  padding: calc(var(--m-gap) * 0.6) calc(var(--m-pad) * 0.7);
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(15, 25, 48, 0.78), rgba(7, 13, 28, 0.78));
+}
+
+:root[data-game-mode="mobile"] .scene-body > .wait-bar::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .wait-bar.mobile-wait-hidden {
+  display: none !important;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .wait-bar .wait-label,
+:root[data-game-mode="mobile"] .scene-body > .wait-bar .wait-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .scene-body > .wait-bar .wait-btn {
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.8);
+}
+
+/* 手游不常驻行动日志条（会吃掉半个横屏画布）；
+   v1.44 起由顶栏 📜 打开全屏日志弹层，内容与端游日志条同源同一组件。 */
+:root[data-game-mode="mobile"] .game-root > .log-panel {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. 地图视图（L1 / L2 / L3）
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .region-view,
+:root[data-game-mode="mobile"] .region-grid-view,
+:root[data-game-mode="mobile"] .main-view {
+  padding: var(--m-pad);
+  gap: calc(var(--m-gap) * 0.8);
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .scene-body.map-integrated {
+  gap: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .region-view,
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .region-grid-view,
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .main-view {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border-radius: 14px;
+}
+
+/* ---- 顶部整合工具条：路径 + 返回 + 图例/等待开关，高度锁定一个触控行 ---- */
+:root[data-game-mode="mobile"] .region-view .head,
+:root[data-game-mode="mobile"] .region-grid-view .head,
+:root[data-game-mode="mobile"] .main-view .head {
+  flex: 0 0 auto;
+  gap: calc(var(--m-gap) * 0.4);
+  padding: 0;
+  min-height: 0;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-topline,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-topline {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.6);
+  min-width: 0;
+  width: 100%;
+  min-height: var(--m-tap);
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-breadcrumbs,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-breadcrumbs {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.5);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-breadcrumbs::-webkit-scrollbar,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-breadcrumbs::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-crumb,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-crumb {
+  flex: 0 0 auto;
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.65);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--m-fs-xs);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-title-nav,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-title-nav {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.5);
+  max-width: 46%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-title-nav::-webkit-scrollbar,
+:root[data-game-mode="mobile"] .region-grid-view .integrated-title-nav::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .title-nav-btn,
+:root[data-game-mode="mobile"] .region-grid-view .title-nav-btn {
+  flex: 0 0 auto;
+  min-width: var(--m-tap);
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.6);
+  font-size: var(--m-fs-xs);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .region-view .mobile-footer-toggle,
+:root[data-game-mode="mobile"] .region-view .mobile-footer-toggle-top {
+  flex: 0 0 auto;
+  min-width: var(--m-tap);
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.7);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 999px;
+  background: rgba(8, 16, 34, 0.72);
+  color: rgba(238, 241, 255, 0.82);
+  font: inherit;
+  font-size: var(--m-fs-xs);
+  line-height: 1.05;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+:root[data-game-mode="mobile"] .region-view .mobile-footer-toggle:hover,
+:root[data-game-mode="mobile"] .region-view .mobile-footer-toggle-top:hover {
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+  color: var(--accent, #ffd166);
+}
+
+/* ---- 标题与提示 ---- */
+:root[data-game-mode="mobile"] .region-view .head-main,
+:root[data-game-mode="mobile"] .region-grid-view .head-main,
+:root[data-game-mode="mobile"] .main-view .head-main {
+  min-height: 0;
+  gap: calc(var(--m-gap) * 0.6);
+}
+
+:root[data-game-mode="mobile"] .region-view .title,
+:root[data-game-mode="mobile"] .region-grid-view .title,
+:root[data-game-mode="mobile"] .main-view .title {
+  font-size: var(--m-fs-lg);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+:root[data-game-mode="mobile"] .region-view .hint,
+:root[data-game-mode="mobile"] .region-grid-view .hint,
+:root[data-game-mode="mobile"] .main-view .hint {
+  font-size: var(--m-fs-xs);
+  line-height: 1.2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+/* ---- L1 城市：区域卡片横向均分并填满画布 ---- */
+:root[data-game-mode="mobile"] .scene-body:has(> .main-view) {
+  padding-bottom: 0;
+}
+
+:root[data-game-mode="mobile"] .main-view .districts {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: none;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(180px, 30%, 300px), 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  align-items: stretch;
+  justify-content: start;
+  gap: var(--m-gap);
+  overflow: auto;
+}
+
+:root[data-game-mode="mobile"] .main-view .district {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: calc(var(--m-pad) * 1.2) calc(var(--m-pad) * 0.9);
+  gap: calc(var(--m-gap) * 0.6);
+  border-radius: 13px;
+  justify-content: center;
+}
+
+:root[data-game-mode="mobile"] .main-view .district .gi-emoji {
+  font-size: calc(var(--m-fs-lg) * 1.9);
+}
+
+:root[data-game-mode="mobile"] .main-view .d-name {
+  font-size: var(--m-fs-md);
+}
+
+:root[data-game-mode="mobile"] .main-view .d-desc,
+:root[data-game-mode="mobile"] .main-view .d-travel,
+:root[data-game-mode="mobile"] .main-view .d-badge {
+  font-size: var(--m-fs-xs);
+  line-height: 1.25;
+}
+
+/* ---- L2 / L3：五列紧凑卡片（横屏扫读效率最高） ---- */
+:root[data-game-mode="mobile"] .region-grid-view .grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  align-items: stretch;
+  gap: calc(var(--m-gap) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .region-view .grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  align-content: stretch;
+  align-items: stretch;
+  gap: calc(var(--m-gap) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .region-grid-view .r-card,
+:root[data-game-mode="mobile"] .region-view .card {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  padding: calc(var(--m-pad) * 0.9) calc(var(--m-pad) * 0.5);
+  gap: calc(var(--m-gap) * 0.35);
+  border-radius: 12px;
+  justify-content: center;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .region-grid-view .r-card .gi-emoji,
+:root[data-game-mode="mobile"] .region-view .card .gi-emoji {
+  font-size: calc(var(--m-fs-lg) * 1.7);
+  line-height: 1;
+}
+
+:root[data-game-mode="mobile"] .region-view .card .name,
+:root[data-game-mode="mobile"] .region-grid-view .r-name {
+  max-width: 100%;
+  font-size: var(--m-fs-sm);
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:root[data-game-mode="mobile"] .region-view .card .travel,
+:root[data-game-mode="mobile"] .region-view .card .badge,
+:root[data-game-mode="mobile"] .region-grid-view .r-travel,
+:root[data-game-mode="mobile"] .region-grid-view .r-badge {
+  max-width: 100%;
+  font-size: var(--m-fs-xs);
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- 底部图例 / 等待：折叠态彻底移除，展开态在内容流中保持紧凑 ---- */
+:root[data-game-mode="mobile"] .region-view .region-footer {
+  flex: 0 0 auto;
+  margin-top: 0;
+  gap: calc(var(--m-gap) * 0.5) calc(var(--m-gap) * 1.4);
+  padding-top: calc(var(--m-gap) * 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+:root[data-game-mode="mobile"] .region-view .region-footer.mobile-footer-hidden {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .legend {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: nowrap;
+  gap: calc(var(--m-gap) * 0.4) calc(var(--m-gap) * 1.2);
+  padding-top: 0;
+  font-size: var(--m-fs-xs);
+  line-height: 1.15;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .legend::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-wait {
+  flex: 0 1 auto;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0;
+  gap: calc(var(--m-gap) * 0.5);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: transparent;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-wait::-webkit-scrollbar {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-wait-label,
+:root[data-game-mode="mobile"] .region-view .integrated-wait-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .region-view .integrated-wait-btn {
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.7);
+}
+
+/* 顶部整合工具条内嵌的图例/等待（v1.395f 结构） */
+:root[data-game-mode="mobile"] .region-view .mobile-top-footer {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  background: rgba(8, 16, 34, 0.6);
+  gap: calc(var(--m-gap) * 0.5) calc(var(--m-gap) * 1.2);
+  overflow: hidden;
+}
+
+/* ---- 地图态生存速览 ----
+   地图态左右栏都不渲染，ScenePanel 的 .map-survival-strip 是唯一的状态出口
+   （GameView 里曾有一份等价实现，属重复渲染，已删除）。
+   手游：它在 .scene-body 内容流内，压成一条紧凑带与下方地图卡拼合。 */
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  gap: calc(var(--m-gap) * 0.8);
+  padding: calc(var(--m-gap) * 0.55) calc(var(--m-pad) * 0.8);
+  border: 1px solid var(--hud-border);
+  border-radius: 10px;
+  max-width: min(360px, 100%);
+  align-self: flex-end;
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip .ms-cell {
+  gap: calc(var(--m-gap) * 0.5);
+}
+
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip .ms-name,
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip .ms-val {
+  font-size: var(--m-fs-xs);
+  min-width: 0;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip .ms-val {
+  min-width: 22px;
+}
+
+:root[data-game-mode="mobile"] .scene-body > .map-survival-strip .ms-track {
+  height: 6px;
+}
+
+/* 地图卡与生存带拼合成一整块 */
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .region-view,
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .region-grid-view,
+:root[data-game-mode="mobile"] .scene-body.map-integrated > .main-view {
+  border-radius: 0 0 14px 14px;
+}
+
+/* --------------------------------------------------------------------------
+   8. 右栏（常驻手机面板）
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .quest-side {
+  padding: calc(var(--m-pad) * 0.6);
+  border-left: 1px solid var(--hud-border);
+}
+
+:root[data-game-mode="mobile"] .quest-side.collapsed {
+  width: 100%;
+  min-width: 0;
+  padding: 4px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .quest-side .mobile-handle {
+  position: static;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--m-fs-lg);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+/* 只有收起态才显示把手。展开态若强制 display:flex，它会以静态子元素身份
+   按 height:100% 抢占整栏高度，把 flex:1 的 .phone-host 压成 0 高——
+   右侧手机「不显示但占位」正是由此而来；显隐仍交给组件的 .visible 控制。 */
+:root[data-game-mode="mobile"] .quest-side.collapsed .mobile-handle {
+  display: flex;
+}
+
+:root[data-game-mode="mobile"] .phone-host {
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+}
+
+:root[data-game-mode="mobile"] .phone {
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .phone.panel {
+  width: 100%;
+  height: 100%;
+  padding: calc(var(--m-pad) * 0.6);
+  border-radius: 24px;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .p-top {
+  padding: calc(var(--m-pad) * 0.4) calc(var(--m-pad) * 0.5);
+}
+
+:root[data-game-mode="mobile"] .phone.panel .phone-screen {
+  border-radius: 18px;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .p-content,
+:root[data-game-mode="mobile"] .phone.panel .app-page,
+:root[data-game-mode="mobile"] .phone.panel .todo-page {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* App 网格：面板窄，3 列比 4 列更可读 */
+:root[data-game-mode="mobile"] .phone.panel .apps {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--m-gap) * 0.6);
+  padding: calc(var(--m-pad) * 0.7) calc(var(--m-pad) * 0.6) var(--m-pad);
+}
+
+:root[data-game-mode="mobile"] .phone.panel .apps .app {
+  min-width: 0;
+  min-height: var(--m-tap);
+  gap: 2px;
+  padding: calc(var(--m-pad) * 0.5) 2px;
+  border-radius: 10px;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .apps .app .gi-emoji,
+:root[data-game-mode="mobile"] .phone.panel .apps .app .a-icon {
+  font-size: calc(var(--m-fs-lg) * 0.92);
+  line-height: 1;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .apps .app .a-name {
+  max-width: 100%;
+  font-size: var(--m-fs-xs);
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .apps .app-badge {
+  top: 2px;
+  right: 2px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  font-size: 9px;
+}
+
+/* 底部 Dock 五等分 */
+:root[data-game-mode="mobile"] .phone.panel .p-dock {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .phone.panel .p-dock .dock-btn {
+  min-width: 0;
+  width: 100%;
+  height: var(--m-tap);
+}
+
+/* Dock 按钮：5 等分后单格宽约 34px（iOS 标签栏同量级），
+   高度仍严格保持 --m-tap(44px)，符合 HIG 的高度下限。 */
+
+/* --------------------------------------------------------------------------
+   9. 弹窗族：统一消费安全区，内容永不越界
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .overlay,
+:root[data-game-mode="mobile"] .transit-overlay,
+:root[data-game-mode="mobile"] .cook-overlay,
+:root[data-game-mode="mobile"] .npc-overlay,
+:root[data-game-mode="mobile"] .laptop-desktop {
+  padding: calc(var(--sai-t) + var(--m-pad)) calc(var(--sai-r) + var(--m-pad))
+    calc(var(--sai-b) + var(--m-pad)) calc(var(--sai-l) + var(--m-pad));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 弹窗卡片：默认不超出可用画布；超高时内部滚动 */
+:root[data-game-mode="mobile"] .overlay > *,
+:root[data-game-mode="mobile"] .transit-overlay > *,
+:root[data-game-mode="mobile"] .cook-overlay > *,
+:root[data-game-mode="mobile"] .npc-overlay > * {
+  max-width: 100%;
+  max-height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* 通用弹窗内距与字号压缩 */
+:root[data-game-mode="mobile"] .modal {
+  width: min(420px, 100%);
+  padding: var(--m-pad);
+  border-radius: 14px;
+}
+
+:root[data-game-mode="mobile"] .modal-title {
+  font-size: var(--m-fs-md);
+  margin-bottom: calc(var(--m-gap) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .modal-body {
+  gap: calc(var(--m-gap) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .info-row {
+  font-size: var(--m-fs-xs);
+  padding: calc(var(--m-pad) * 0.6) calc(var(--m-pad) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .btn-col {
+  gap: calc(var(--m-gap) * 0.7);
+}
+
+/* ---- 全屏手机弹窗：横屏下改为「横向平板面板」，铺满安全区并分栏 ---- */
+:root[data-game-mode="mobile"] .overlay > .phone:not(.panel) {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  padding: calc(var(--m-pad) * 0.8);
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-top {
+  padding: calc(var(--m-pad) * 0.5) calc(var(--m-pad) * 0.8);
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .phone-screen {
+  border-radius: 18px;
+}
+
+/* 横屏宽幅：App 网格改为 7 列 × 可滚动，避免只剩两三行可见 */
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: calc(var(--m-gap) * 0.7);
+  padding: calc(var(--m-pad) * 0.8) var(--m-pad) var(--m-pad);
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps .app {
+  min-width: 0;
+  min-height: var(--m-tap);
+  padding: calc(var(--m-pad) * 0.5) 2px;
+  border-radius: 10px;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps .app .gi-emoji {
+  font-size: calc(var(--m-fs-lg) * 0.9);
+  line-height: 1;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps .app .a-name {
+  max-width: 100%;
+  font-size: var(--m-fs-xs);
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-hero {
+  padding: calc(var(--m-pad) * 0.8) var(--m-pad);
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-dock {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  padding: 2px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-dock .dock-btn {
+  min-width: 0;
+  width: 100%;
+  height: var(--m-tap);
+}
+
+/* 全屏小游戏：占满安全区，返回入口不被刘海遮挡 */
+:root[data-game-mode="mobile"] .overlay.minigame-overlay {
+  padding: 0;
+}
+:root[data-game-mode="mobile"] .overlay > .minigame-full,
+:root[data-game-mode="mobile"] .overlay > .mg-card {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ---- 行动日志弹层：铺满安全区，内容与端游常驻日志条一致 ---- */
+:root[data-game-mode="mobile"] .overlay > .log-sheet {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  border-top: 0;
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-head {
+  padding: calc(var(--m-pad) * 0.6) var(--m-pad);
+  font-size: var(--m-fs-sm);
+  min-height: var(--m-tap);
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-head .count {
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-body {
+  padding: calc(var(--m-pad) * 0.6) var(--m-pad);
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-entry {
+  font-size: var(--m-fs-sm);
+  line-height: 1.45;
+}
+
+:root[data-game-mode="mobile"] .log-sheet .log-entry .meta {
+  font-size: var(--m-fs-xs);
+}
+
+:root[data-game-mode="mobile"] .log-sheet .empty {
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .log-sheet-foot {
+  padding: calc(var(--m-pad) * 0.6) var(--m-pad);
+  flex: 0 0 auto;
+}
+
+:root[data-game-mode="mobile"] .log-sheet-foot .btn {
+  min-height: var(--m-tap);
+  min-width: 96px;
+}
+
+/* --------------------------------------------------------------------------
+   10. 触控目标兜底：手游下所有可点元素不得低于 --m-tap
+   （排除自带行高语义的元素与分隔条，避免把密集条压爆）
+   -------------------------------------------------------------------------- */
+
+/* 兜底用 :where() 归零自身特异性：引擎/组件里显式更小的控件（棋格、
+   地图工具条等）得以按自身比例渲染，否则 44px 地板会把它们强行撑爆
+   （象棋 10×10 棋盘每格被撑到 44px 高 → 纵向彻底垮掉）。 */
+:root[data-game-mode="mobile"] :where(button:not(.resize-handle):not(.collapse-btn):not(.dock-btn)),
+:root[data-game-mode="mobile"] :where(.btn),
+:root[data-game-mode="mobile"] :where([role="button"]:not(.resize-handle)) {
+  min-height: var(--m-tap);
+  min-width: 0;
+}
+
+:root[data-game-mode="mobile"] .btn {
+  padding: 0 calc(var(--m-pad) * 0.9);
+  font-size: var(--m-fs-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+   11. 主菜单（手游）：可滚动 + 内容不越顶
+   旧实现在 height:402px 下不可滚动（滚动兜底媒体查询要求 min-height:520px），
+   且 flex 居中 + 溢出导致顶部内容跑到视口外，底部入口完全点不到。
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .menu-root {
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: calc(var(--sai-t) + var(--m-pad)) calc(var(--sai-r) + var(--m-pad))
+    calc(var(--sai-b) + var(--m-pad)) calc(var(--sai-l) + var(--m-pad));
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+:root[data-game-mode="mobile"] .menu-panel {
+  width: min(440px, 100%);
+  /* v1.44.5 只做水平居中（margin: 0 auto），垂直交给 .menu-root 的
+     justify-content: flex-start —— 原来写的是 `margin: auto`，双向自动外边距会吃掉
+     全部剩余空间并优先于 justify-content，面板被垂直居中后一旦比可用高度高，
+     溢出会**对称挤进上下安全区**：横屏实测面板顶边 y=6px，而安全区顶到 24px，
+     标题/副标题因此贴进灵动岛区域。改为贴顶 + .menu-root 内部滚动即可。 */
+  margin: 0 auto;
+  gap: var(--m-gap);
+  padding: var(--m-pad);
+  border-radius: 16px;
+}
+
+/* 横屏矮视口：菜单整体再收一档（逻辑 540px 的面板在 393px 高的屏上会超预算），
+   让它不需要滚动也能一屏放下。 */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root[data-game-mode="mobile"] .menu-panel .logo-icon {
+    font-size: calc(var(--m-fs-lg) * 1.1);
+  }
+  :root[data-game-mode="mobile"] .menu-panel .title {
+    font-size: var(--m-fs-md);
+    letter-spacing: 2px;
+  }
+  :root[data-game-mode="mobile"] .menu-panel .menu-btns {
+    gap: 6px;
+  }
+  :root[data-game-mode="mobile"] .menu-panel .menu-btn {
+    padding: 8px;
+    font-size: 13px;
+  }
+}
+
+:root[data-game-mode="mobile"] .menu-panel .logo-icon {
+  font-size: calc(var(--m-fs-lg) * 1.7);
+}
+
+:root[data-game-mode="mobile"] .menu-panel .title {
+  font-size: var(--m-fs-lg);
+  letter-spacing: 3px;
+  margin-top: 0;
+}
+
+:root[data-game-mode="mobile"] .menu-panel .subtitle {
+  font-size: var(--m-fs-xs);
+  letter-spacing: 1px;
+}
+
+:root[data-game-mode="mobile"] .menu-btns {
+  gap: calc(var(--m-gap) * 0.7);
+}
+
+:root[data-game-mode="mobile"] .menu-btn {
+  width: 100%;
+  min-height: var(--m-tap);
+  padding: 0 calc(var(--m-pad) * 0.9);
+  font-size: var(--m-fs-sm);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* 其余全屏页（设置 / 存档 / 命运 / 回忆录 / 结局 / 周记 / 小游戏 / 开局）同样让位安全区 */
+:root[data-game-mode="mobile"] .settings-page > .settings-cards { columns: 1; }
+:root[data-game-mode="mobile"] .page,
+:root[data-game-mode="mobile"] .fate-root,
+:root[data-game-mode="mobile"] .memoir-root,
+:root[data-game-mode="mobile"] .ending-root,
+:root[data-game-mode="mobile"] .report-root,
+:root[data-game-mode="mobile"] .arcade-root,
+:root[data-game-mode="mobile"] .intro-root {
+  padding: calc(var(--sai-t) + var(--m-pad)) calc(var(--sai-r) + var(--m-pad))
+    calc(var(--sai-b) + var(--m-pad)) calc(var(--sai-l) + var(--m-pad));
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* v1.44.4 独立小游戏：舞台必须拿到**确定高度**，否则第 14 / 1740 节里那些依赖
+   `flex:1` + `min-height:0` 的「整机一屏放下」规则全部落空 —— 内容按自然高度铺开
+   （实测餐厅引擎 592px 高，在 393px 高的横屏里底部整排按钮被切掉、只能滚动）。
+   这里让 .arcade-play 吃满 .arcade-root 的内容盒、舞台再吃满标题行之后的剩余高度。 */
+:root[data-game-mode="mobile"] .arcade-play {
+  height: 100%;
+  min-height: 0;
+}
+
+:root[data-game-mode="mobile"] .arcade-play-head {
+  flex: 0 0 auto;
+}
+
+:root[data-game-mode="mobile"] .arcade-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: var(--m-gap);
+  /* 兜底用 auto 而非 hidden：万一某引擎仍有硬性最小高度，宁可内部滚动也不要
+     把按钮裁掉导致完全点不到（可操作性优先于美观）。 */
+  overflow: auto;
+}
+
+/* 引擎根要在舞台里吃满高度，各引擎内部那些 min-height 地板才压得下去
+   （.rg-main 基础样式带 min-height:220px，不给出确定高度就无法收缩）。 */
+:root[data-game-mode="mobile"] .arcade-stage .mgh-game > * {
+  height: 100%;
+  min-height: 0;
+}
+
+/* 顶栏 chip：固定高度的内联 span 文字贴基线 → 必须转 flex 垂直居中 */
+:root[data-game-mode="mobile"] .topbar .chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   12. 竖屏兜底
+   -------------------------------------------------------------------------- */
+
+@media (orientation: portrait) {
+  :root[data-game-mode="mobile"] .zoom-wrapper {
+    display: none;
+  }
+  /* 加载时仍需有效布局来完成目标首帧；结束后恢复横屏游玩提示。 */
+  :root[data-game-mode="mobile"]:has([data-scene-loading-overlay]) .zoom-wrapper {
+    display: block;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. 地图（手游反馈）：隐藏等待条 + 工具条/标牌紧凑 + 自由缩放
+   等待条横屏下遮挡地图视野，等待功能仍走地点内/场景的「等待」入口；
+   缩放下限已在 MapAtlas.svelte 降到 0.5（整图可完整可见）。
+   -------------------------------------------------------------------------- */
+
+:root[data-game-mode="mobile"] .atlas-wait {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .atlas-header {
+  padding: 6px 8px;
+}
+
+:root[data-game-mode="mobile"] .atlas h2 {
+  font-size: 18px;
+  margin: 2px 0;
+  letter-spacing: 1px;
+}
+
+:root[data-game-mode="mobile"] .atlas .eyebrow {
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+:root[data-game-mode="mobile"] .atlas-tools {
+  gap: 4px;
+  max-width: none;
+  flex-wrap: nowrap;
+}
+
+/* 单行排布：各工具组禁止收缩换行（挤压会导致按钮文字竖排），导航组可横向滚动 */
+:root[data-game-mode="mobile"] .atlas-tools > * {
+  flex-shrink: 0;
+}
+
+:root[data-game-mode="mobile"] .atlas-tools .atlas-navigation {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+/* 路径 + 时间 + 缩放 + 列表合并为一行（旧实现折两行占高） */
+:root[data-game-mode="mobile"] .atlas-navigation {
+  flex-basis: auto;
+  min-width: 0;
+}
+
+:root[data-game-mode="mobile"] .integrated-topline,
+:root[data-game-mode="mobile"] .integrated-breadcrumbs,
+:root[data-game-mode="mobile"] .integrated-title-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+:root[data-game-mode="mobile"] .atlas-crumb {
+  min-height: 28px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .atlas-time,
+:root[data-game-mode="mobile"] .zoom-value,
+:root[data-game-mode="mobile"] .zoom-reset,
+:root[data-game-mode="mobile"] .list-toggle {
+  white-space: nowrap;
+}
+
+:root[data-game-mode="mobile"] .city-atlas-navigation button {
+  min-height: 32px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+:root[data-game-mode="mobile"] .atlas-time {
+  font-size: 10px;
+}
+
+:root[data-game-mode="mobile"] .zoom-button,
+:root[data-game-mode="mobile"] .zoom-reset,
+:root[data-game-mode="mobile"] .list-toggle {
+  min-height: 32px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+:root[data-game-mode="mobile"] .zoom-button {
+  width: 30px;
+  font-size: 15px;
+}
+
+:root[data-game-mode="mobile"] .zoom-value {
+  min-width: 38px;
+  font-size: 10px;
+}
+
+/* 缩小地图时标牌等比收敛，避免大头小身子 */
+:root[data-game-mode="mobile"] .map-pin {
+  min-height: 36px;
+  padding: 6px 10px;
+}
+
+:root[data-game-mode="mobile"] .map-pin .pin-heading {
+  font-size: 17px;
+  gap: 6px;
+}
+
+:root[data-game-mode="mobile"] .map-pin .pin-name { font-weight: 800; }
+
+:root[data-game-mode="mobile"] .map-pin .pin-heading svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* --------------------------------------------------------------------------
+   14. 小游戏（手游反馈）：近全屏舞台 + 控件等比例缩小
+   -------------------------------------------------------------------------- */
+
+/* 全屏舞台内边距收窄，把纵向空间还给引擎 */
+:root[data-game-mode="mobile"] .overlay .mg-card.fs {
+  padding: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mg-head {
+  min-height: 40px;
+  gap: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mg-title {
+  font-size: var(--m-fs-sm);
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mg-close {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  font-size: 14px;
+}
+
+/* 横屏引擎按钮统一收敛（原 48px 地板在 300px 高的舞台里放不下） */
+:root[data-game-mode="mobile"] .overlay .mg-card.fs:not(.checkout):not(.delivery):not(.factory):not(.restaurant) button:not(.cell) {
+  min-height: 40px;
+  font-size: 13.5px;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .seq-btn,
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .whack-hole {
+  min-height: 48px;
+}
+
+/* 象棋舞台按自身可用高度排布，棋盘与棋子样式由组件统一管理。 */
+
+/* ---- 收银台：键盘 6 列 × 2 行，纵向不再溢出 ---- */
+:root[data-game-mode="mobile"] .mg-stage.fs .cg {
+  padding: 8px 10px;
+  gap: 6px;
+  box-sizing: border-box;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-pay {
+  grid-template-columns: minmax(0, 1fr) 240px;
+  padding: 8px;
+  gap: 8px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-keys {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-key {
+  min-height: 34px;
+  font-size: 0.95rem;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-submit {
+  min-height: 36px;
+  font-size: 0.85rem;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-screen {
+  padding: 4px 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .cg .cg-screen-val {
+  font-size: 1.05rem;
+}
+
+/* ---- 全屏手机 → 平板质感：圆角悬浮面板 + 居中胶囊 Dock + 更大的磁贴 ---- */
+:root[data-game-mode="mobile"] .overlay > .phone:not(.panel) {
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps .app {
+  min-height: calc(var(--m-tap) * 1.2);
+  gap: 4px;
+  border-radius: 14px;
+}
+
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-dock {
+  width: min(62%, 430px);
+  margin: 4px auto 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ---- 弹窗（睡觉/菜单等）等比压缩：一屏放下，不再滚动 ---- */
+:root[data-game-mode="mobile"] .overlay .modal {
+  width: min(420px, 96%);
+  max-height: 100%;
+  padding: 10px 12px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .modal-title {
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .hint {
+  font-size: 10.5px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .slider-box {
+  gap: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .slider-head {
+  font-size: 11px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .presets {
+  gap: 6px;
+  margin-top: 6px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .presets .preset {
+  min-height: 30px;
+  padding: 2px 12px;
+  font-size: 11px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .alarm-box {
+  font-size: 11px;
+  margin-top: 8px;
+  padding-top: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .opts {
+  gap: 5px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .opts .opt {
+  min-height: 38px;
+  padding: 4px 8px;
+  gap: 8px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .opts .o-icon {
+  font-size: 18px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .opts .o-name {
+  font-size: 12px;
+}
+
+:root[data-game-mode="mobile"] .overlay .modal .opts .o-desc {
+  font-size: 10px;
+}
+
+/* ---- 喵喵对决：战场容器避开灵动岛/手势条（.battle 是 absolute inset:0，父级 padding 管不到它） ---- */
+:root[data-game-mode="mobile"] .battle {
+  inset: var(--sai-t) var(--sai-r) var(--sai-b) var(--sai-l);
+}
+
+/* 侧栏等待芯片：脱离 44px 兜底，保持紧凑 */
+:root[data-game-mode="mobile"] .sidebar .wait-chip {
+  min-height: 26px;
+}
+
+/* ---- 餐厅/饮品店：整机一屏放下，原料栏常驻可见（不再频繁滚动） ---- */
+:root[data-game-mode="mobile"] .mg-stage.fs .rg {
+  gap: 5px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-top {
+  font-size: 11px;
+  gap: 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-main {
+  grid-template-columns: 104px minmax(0, 1fr) 168px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 6px;
+  min-height: 0;
+  flex: 1 1 0;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg {
+  position: relative;
+  inset: auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: auto;
+  gap: 5px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-queue {
+  max-height: none;
+  gap: 4px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-cust {
+  padding: 3px 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-assembly {
+  padding: 4px;
+  gap: 3px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ticket {
+  align-self: stretch;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  overflow: auto;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-assembly-label {
+  font-size: 10px;
+}
+
+/* 吧台组件整体等比缩小（zoom 影响布局，比 transform 更适合排版） */
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-assembly .workbench {
+  zoom: 0.7;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .work-notice {
+  font-size: 10px;
+  margin: 0;
+}
+
+/* 材料分类完整显示，原料按钮保留单行并可横向浏览，不挤占工作区高度。 */
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: 4px 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-tab {
+  min-height: 36px;
+  padding: 3px 4px;
+  font-size: 10px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-head,
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-list,
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-controls {
+  min-width: 0;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-btn {
+  min-width: 0;
+  min-height: 44px;
+  padding: 3px 6px;
+  gap: 6px;
+  font-size: 11px;
+  border-radius: 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-head {
+  display: none;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-list {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  gap: 6px;
+  min-height: 48px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-list > .rg-ing-btn {
+  flex: 0 0 116px;
+  width: 116px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-icon svg,
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ing-icon .food-art {
+  width: 28px;
+  height: 28px;
+}
+
+:root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-slot svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* 竖屏手机将队列放在上方、工作台和小票并排，避免三栏在窄屏挤成一列。 */
+@media (max-width: 680px) and (orientation: portrait) {
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 68px minmax(0, 1fr);
+  }
+
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-queue {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    min-height: 0;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-cust {
+    flex: 0 0 116px;
+  }
+
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-assembly,
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg .rg-ticket {
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+  }
+}
+
+/* 餐饮小游戏使用订单板 / 成品台两栏，覆盖旧模板的三栏规则。 */
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout {
+  padding:10px;
+  gap:6px;
+  border-width:4px;
+  box-sizing:border-box;
+  overflow:auto;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-main {
+  grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);
+  grid-template-rows:minmax(280px,1fr);
+  min-height:280px;
+  gap:8px;
+  flex:1 1 0;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-queue {
+  grid-column:auto;
+  flex-direction:column;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding:6px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-cust {
+  flex:0 0 auto;
+  min-width:0;
+  padding:6px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-assembly {
+  padding:8px;
+  gap:5px;
+  height:auto;
+  max-height:none;
+  overflow:hidden;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-assembly .workbench {
+  zoom:1;
+  min-height:135px;
+  flex:1 1 135px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .burger-stack:not(.thumbnail) {
+  --burger-size:clamp(96px,16vw,170px);
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-slots {
+  top:85px;
+  right:14px;
+  gap:6px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-slot {
+  width:48px;
+  height:48px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-slot .food-art {
+  width:30px;
+  height:30px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing {
+  grid-template-columns:minmax(0,1fr) 110px;
+  grid-template-rows:40px 66px;
+  padding:6px;
+  gap:6px;
+  flex-shrink:0;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-list {
+  grid-column:1;
+  display:flex;
+  height:66px;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-list > .rg-ing-btn {
+  flex:0 0 72px;
+  width:72px;
+  height:66px;
+  min-height:66px;
+  flex-direction:column;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-controls {
+  grid-column:2;
+  grid-row:1 / 3;
+  grid-template-columns:1fr;
+  grid-template-rows:1fr 1fr;
+}
+@media (max-width:540px) and (orientation:portrait) {
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-main {
+    grid-template-columns:1fr;
+    grid-template-rows:160px minmax(300px,1fr);
+    min-height:468px;
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-queue {
+    flex-direction:row;
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-cust {
+    flex:0 0 205px;
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .burger-stack:not(.thumbnail) {
+    --burger-size:160px;
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing {
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:40px 66px 44px;
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-controls {
+    grid-column:1;
+    grid-row:3;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr;
+  }
+}
+
+@media (max-height:560px) and (orientation:landscape) {
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout.grill-layout .rg-assembly .workbench { min-height:105px; flex-basis:105px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout { padding:6px; gap:4px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-shop-heading b { font-size:18px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-top { padding:4px 8px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-main { min-height:240px; grid-template-rows:minmax(240px,1fr); }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-assembly { padding:6px; gap:4px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-assembly-label,
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-current-order small { display:none; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-current-order b { font-size:15px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-assembly .workbench { min-height:125px; flex-basis:125px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .burger-stack:not(.thumbnail) { --burger-size:120px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-slots { top:55px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-build-recipe { font-size:9px; gap:3px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-build-recipe span { padding:2px 4px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing { grid-template-rows:40px 56px; padding:4px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-list { height:56px; min-height:56px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-list > .rg-ing-btn { min-height:56px; height:56px; padding:2px; gap:2px; }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .rg-ing-icon { height:28px; width:28px; flex-basis:28px; }
+}
+
+/* 制作工位需要独立的操作区；手机保留制作反馈动画与完整按钮。 */
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout:has(.crafted-assembly) .rg-main {
+  min-height:330px;
+  grid-template-rows:minmax(330px,1fr);
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .crafted-assembly .rg-slots {
+  position:static;
+  flex-direction:row;
+  width:100%;
+}
+:root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .crafted-assembly .rg-slot{flex:1;width:auto;height:30px;}
+:root[data-game-mode="mobile"] .rg .craft-actions button { min-height:64px; font-size:14px; padding:8px 18px; }
+:root[data-game-mode="mobile"] .rg .craft-hint { font-size:12px; line-height:1.3; }
+@media (max-width:540px) and (orientation:portrait) {
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout:has(.crafted-assembly) .rg-main {
+    min-height:500px;
+    grid-template-rows:160px minmax(330px,1fr);
+  }
+}
+@media (max-height:560px) and (orientation:landscape) {
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout:has(.crafted-assembly) .rg-main {
+    min-height:245px;
+    grid-template-rows:minmax(245px,1fr);
+  }
+  :root[data-game-mode="mobile"] .mg-stage.fs .rg.restaurant-layout .crafted-assembly .rg-slots{top:52px;right:auto;left:8px;flex-direction:row;}
+  :root[data-game-mode="mobile"] .rg .craft-actions button{min-height:48px;padding:4px 12px;font-size:12px;}
+  :root[data-game-mode="mobile"] .rg .craft-hint{font-size:10px;}
+  :root[data-game-mode="mobile"] .rg .craft-actions .craft-flip{min-height:36px;}
+}
+
+/* 低矮横屏中压缩反应游戏的场景盒，开始按钮与目标按钮都留在可视区。 */
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .shift {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  gap: 6px;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .shift p {
+  line-height: 1.35;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .yard {
+  flex: 1 1 0;
+  min-height: 150px;
+  aspect-ratio: auto;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .shift .object {
+  width: clamp(44px, 11vw, 64px);
+  min-width: 44px;
+  min-height: 44px;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mem-wrap {
+  height: 100%;
+  min-height: 0;
+  justify-content: center;
+  gap: clamp(4px, 1vh, 12px);
+  padding: 0;
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mem-grid {
+  width: min(360px, 92vw);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(4px, 1vw, 8px);
+}
+
+:root[data-game-mode="mobile"] .overlay .mg-card.fs .mem-card {
+  min-width: 0;
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+/* --------------------------------------------------------------------------
+   15. 性能优化（手游）：掉帧主要来自全屏 backdrop-filter 与 3x DPR 填充率
+   -------------------------------------------------------------------------- */
+
+/* 1) 停用全部背景模糊（移动 GPU 上每帧重采样的最大开销源）；
+   玻璃面板均已带半透明底色兜底，视觉上由「磨砂」变「透亮」，可读性不变 */
+:root[data-game-mode="mobile"] .zoom-wrapper,
+:root[data-game-mode="mobile"] .zoom-wrapper * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 2) 大阴影瘦身：多层/大扩散阴影在低端 GPU 上同样昂贵 */
+:root[data-game-mode="mobile"] .zoom-wrapper .action-card,
+:root[data-game-mode="mobile"] .zoom-wrapper .loc-card,
+:root[data-game-mode="mobile"] .zoom-wrapper .card,
+:root[data-game-mode="mobile"] .zoom-wrapper .slot-card,
+:root[data-game-mode="mobile"] .zoom-wrapper .panel {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* 3) 装饰性动画降负：光晕/粒子类持续动画在缩放后的舞台上保留，但
+   filter: blur 装饰全部移除 */
+:root[data-game-mode="mobile"] .zoom-wrapper * {
+  filter: none !important;
+}
+
+/* 餐饮/网吧小游戏共用工作台含多组位移与透明度动画；移动 WebView 关闭装饰动效，
+   避免食材更新时反复合成整块工作台。游戏判定与计时不受影响。 */
+:root[data-game-mode="mobile"] .rg .workbench,
+:root[data-game-mode="mobile"] .rg .workbench * {
+  animation: none !important;
+  transition: none !important;
+}
+
+:root[data-game-mode="mobile"] .rg .rg-patience-fill {
+  transition-duration: 0.2s;
+}
+
+/* Small visual controls still need a full-size hit area after the PE zoom. */
+:root[data-game-mode="mobile"] .page .alloc-row .ctrl > .small,
+:root[data-game-mode="mobile"] .shelf-header .close,
+:root[data-game-mode="mobile"] .mg-card.fs.delivery .mg-close,
+:root[data-game-mode="mobile"] .mg-card.fs.factory .mg-close,
+:root[data-game-mode="mobile"] .card-mode .close,
+:root[data-game-mode="mobile"] .card-mode .controls button,
+:root[data-game-mode="mobile"] .card-mode .settle,
+:root[data-game-mode="mobile"] .card-mode .forfeit {
+  box-sizing: border-box;
+  min-width: var(--m-tap);
+  min-height: var(--m-tap);
+}
+
+:root[data-game-mode="mobile"] .page .alloc-row .ctrl > .small,
+:root[data-game-mode="mobile"] .shelf-header .close,
+:root[data-game-mode="mobile"] .mg-card.fs.delivery .mg-close,
+:root[data-game-mode="mobile"] .mg-card.fs.factory .mg-close,
+:root[data-game-mode="mobile"] .card-mode .close {
+  width: var(--m-tap);
+  height: var(--m-tap);
+}
+
+/* The opened handset is a drawer at its natural width instead of a compressed app grid. */
+:root[data-game-mode="mobile"] .main:has(.quest-side:not(.collapsed)) {
+  grid-template-columns:minmax(0,var(--m-left-w)) minmax(min(160px,100%),1fr) minmax(0,var(--m-phone-collapsed));
+}
+:root[data-game-mode="mobile"] .main:has(.sidebar.collapsed):has(.quest-side:not(.collapsed)) {
+  grid-template-columns:minmax(0,var(--m-left-collapsed)) minmax(min(160px,100%),1fr) minmax(0,var(--m-phone-collapsed));
+}
+:root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) {
+  position:absolute;inset:8px 8px 8px auto;width:min(292px,calc(100vw - 24px));z-index:35;padding:8px;border:1px solid var(--hud-border);border-radius:30px;background:#142035ed;box-shadow:0 16px 48px #0007;
+}
+:root[data-game-mode="mobile"] .quest-side:not(.collapsed) .phone-host { height:auto;aspect-ratio:9 / 19.5;max-height:100%; }
+:root[data-game-mode="mobile"] .phone.panel { padding:3px;border-radius:34px; }
+:root[data-game-mode="mobile"] .phone.panel .p-top { padding:3px 10px 1px; }
+:root[data-game-mode="mobile"] .phone.panel .phone-screen { border-radius:0 0 15px 15px; }
+:root[data-game-mode="mobile"] .phone.panel .apps { padding:0;gap:12px 7px; }
+:root[data-game-mode="mobile"] .phone.panel .apps .app { padding:0;min-height:59px;gap:5px;background:transparent; }
+:root[data-game-mode="mobile"] .phone.panel .apps .a-name { font-size:10px;line-height:1.2; }
+:root[data-game-mode="mobile"] .phone.panel .p-dock { display:flex;width:auto;margin:5px 8px 0;padding:5px;border-radius:19px;gap:2px; }
+:root[data-game-mode="mobile"] .phone.panel .p-dock .dock-btn { height:45px; }
+
+/* Full phone uses the same handset proportions, including short landscape screens. */
+:root[data-game-mode="mobile"] .overlay > .phone:not(.panel) {
+  width:min(388px,calc((100dvh / var(--eff-zoom,1) - 24px) * .48),calc(100vw / var(--eff-zoom,1) - 24px));
+  height:min(808px,calc(100dvh / var(--eff-zoom,1) - 24px));
+  padding:4px;border:4px solid #202a39;border-radius:38px;
+}
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-top { padding:3px 11px 1px; }
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps { grid-template-columns:repeat(var(--desktop-columns,4),minmax(0,1fr));padding:0;gap:12px 7px; }
+:root[data-game-mode="mobile"] .phone:not(.panel) .apps .app { padding:0;min-height:59px;gap:5px;background:transparent; }
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-dock { display:flex;width:auto;margin:5px 8px 0;padding:5px;border-radius:19px;gap:2px; }
+:root[data-game-mode="mobile"] .phone:not(.panel) .p-dock .dock-btn { height:45px; }
+@container handset (max-width:220px) {
+  :root[data-game-mode="mobile"] .phone:not(.panel) .apps { grid-template-columns:repeat(var(--desktop-columns,2),minmax(0,1fr)); }
+}
+
+/* Keep the side panel calm and opaque so the city scene does not show through behind the phone. */
+:root[data-game-mode="pc"] .main > .quest-side:not(.collapsed),
+:root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) {
+  background:#111827;
+  background-image:none;
+}
+
+/* Short windows scale only the rendered handset. Its home screen keeps the full layout size,
+   so the app grid does not gain extra pages when the outer phone is made smaller. */
+@media (max-height:760px) {
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) .phone-host,
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host {
+    flex:1 1 auto;
+    width:100%;
+    height:100%;
+    max-height:100%;
+    aspect-ratio:auto;
+    align-items:center;
+    justify-content:center;
+    border-radius:0;
+    background:transparent;
+    box-shadow:none;
+  }
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel,
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel {
+    flex:0 0 auto;
+    width:100%;
+    height:auto;
+    max-width:100%;
+    max-height:none;
+    aspect-ratio:9 / 19.5;
+    transform:scale(.9);
+    transform-origin:center;
+  }
+  :root[data-game-mode="pc"] .quest-side:not(.collapsed) .phone.panel {
+    padding:8px;
+    border-radius:26px;
+  }
+  :root[data-game-mode="mobile"] .quest-side:not(.collapsed) .phone.panel {
+    padding:3px;
+    border-radius:26px;
+  }
+}
+
+@media (max-height:640px) {
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel,
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel {
+    transform:scale(.78);
+  }
+}
+
+@media (max-height:540px) {
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel,
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel {
+    transform:scale(.64);
+  }
+}
+
+@media (max-height:470px) {
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel,
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel {
+    transform:scale(.58);
+  }
+}
+
+/* Landscape phone drawer: keep the handset proportional and remove the empty outer frame. */
+@media (max-height:760px) {
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) {
+    --mobile-handset-width: min(292px, calc((100dvh - 16px) * 9 / 19.5), calc(100vw - 24px));
+    inset: 50% 8px auto auto;
+    width: var(--mobile-handset-width);
+    height: min(calc(100dvh - 16px), calc(var(--mobile-handset-width) * 19.5 / 9));
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    transform: translateY(-50%);
+  }
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    aspect-ratio: auto;
+    align-items: stretch;
+    justify-content: stretch;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  :root[data-game-mode="mobile"] .main > .quest-side:not(.collapsed) .phone-host > .phone.panel {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    transform: none;
+  }
+}
+
+/* The pocket is an overlay; ordinary facilities retain only status and play columns. */
+:root[data-game-mode="mobile"] .phone-edge {
+  right:var(--sai-r);top:calc(var(--sai-t) + 45px);bottom:var(--sai-b);
+}
+:root[data-game-mode="mobile"] :is(.home-interior,.cafe-interior,.store-interior) > .phone-pocket { right:calc(var(--sai-r) - 77px); }
+:root[data-game-mode="mobile"] :is(.home-interior,.cafe-interior,.store-interior) > .phone-pocket:is(:hover,:focus-visible) { right:calc(var(--sai-r) - 65px); }
+:root[data-game-mode="mobile"] .main.phone-pocket-layout{grid-template-columns:minmax(0,var(--m-left-w)) minmax(min(160px,100%),1fr)}
+:root[data-game-mode="mobile"] .main.phone-pocket-layout:has(.sidebar.collapsed){grid-template-columns:minmax(0,var(--m-left-collapsed)) minmax(min(160px,100%),1fr)}
+
+/* Browser toolbars may change the available height without leaving landscape. */
+:root[data-game-mode="mobile"] body { height:100%;height:100dvh;min-height:0; }
+:root[data-game-mode="mobile"] .app-zoom .view-fade > .page {
+  box-sizing:border-box;min-height:0;min-width:0;
+  padding:calc(var(--sai-t) + 12px) calc(var(--sai-r) + 16px) calc(var(--sai-b) + 16px) calc(var(--sai-l) + 16px);
+  touch-action:pan-y;
+}
+:root[data-game-mode="mobile"] .title-screen {
+  --title-sai-t:var(--sai-t);--title-sai-r:var(--sai-r);--title-sai-b:var(--sai-b);--title-sai-l:var(--sai-l);
+}
+:root[data-game-mode="mobile"] .mobile-display-controls { margin-top:12px;padding-top:14px;border-top:1px solid var(--border); }
+:root[data-game-mode="mobile"] :is(.casino-backdrop,.leisure-backdrop) {
+  box-sizing:border-box;padding:var(--sai-t) var(--sai-r) var(--sai-b) var(--sai-l);
+}
+:root[data-game-mode="mobile"] .casino-backdrop .casino-menu {
+  padding:8px 12px;min-height:0;height:100%;overflow:hidden;
+}
+:root[data-game-mode="mobile"] .casino-backdrop .casino-game-layout { grid-template-columns:minmax(0,1fr);gap:0; }
+:root[data-game-mode="mobile"] .casino-backdrop .casino-game-layout { width:100%;max-width:none; }
+:root[data-game-mode="mobile"] .casino-backdrop .casino-preview { display:none; }
+:root[data-game-mode="mobile"] .casino-backdrop .casino-game-footer :is(.gold-button,.back-button),
+:root[data-game-mode="mobile"] .casino-backdrop .casino-menu-head button {
+  min-height:var(--m-tap);font-size:var(--m-fs-sm);
+}
+:root[data-game-mode="mobile"] .casino-backdrop .casino-game-footer { flex-direction:row; }
+:root[data-game-mode="mobile"] .casino-backdrop .casino-game-footer .back-button { width:auto;flex:0 0 28%; }
+:root[data-game-mode="mobile"] .casino-backdrop :is(.casino-menu-head h2,.casino-game-heading h3) { font-size:var(--m-fs-lg); }
+:root[data-game-mode="mobile"] .casino-backdrop :is(.casino-game-form>p,.casino-wager,.number-choice,.casino-lead,.casino-head-right>span) { font-size:var(--m-fs-sm); }
+:root[data-game-mode="mobile"] .casino-backdrop :is(.casino-menu-head small,.casino-game-heading small,.casino-game-content details) { font-size:var(--m-fs-xs); }
+:root[data-game-mode="mobile"] .casino-backdrop :is(.casino-category-row nav button,.game-picker button,.wager-presets button,.choice-row button) {
+  min-height:var(--m-tap);font-size:var(--m-fs-sm);
+}
+:root[data-game-mode="mobile"] .casino-backdrop .casino-wager input { min-height:var(--m-tap);font-size:var(--m-fs-md); }
+:root[data-game-mode="mobile"] .leisure-backdrop.leisure-backdrop {
+  padding:var(--sai-t) var(--sai-r) var(--sai-b) var(--sai-l);
+}
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode > header { flex-shrink:0;padding:6px 14px; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode h2 { font-size:var(--m-fs-lg); }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table-wallet { font-size:var(--m-fs-md); }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode :is(.table-eyebrow,.table-wallet small,.round-footer>span) { font-size:var(--m-fs-xs); }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode :is(.controls button,.round-footer button,.close) { min-height:var(--m-tap);font-size:var(--m-fs-sm); }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode :is(.table-label,.hand-value,.board-label,.chips,.round-duration,.rules) { font-size:var(--m-fs-xs); }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table-label { min-width:0;gap:10px; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .rules {
+  position:static;inset:auto;width:100%;max-width:none;max-height:calc(110px / var(--eff-zoom));
+  overflow:auto;flex-shrink:0;margin:2px 0;line-height:1.5;
+}
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .rules summary { font-size:var(--m-fs-xs);min-height:26px; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) {
+  width:100%;max-width:none;container-type:size;
+  grid-template-columns:minmax(180px,.7fr) minmax(0,1.3fr);
+  grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr) auto;
+  grid-template-areas:'dealer-label board-label' 'dealer board' 'player-label board' 'player board' 'chips chips';
+  gap:4px 18px;padding:4px 18px;
+  --card-width:calc(52px / var(--eff-zoom));
+}
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .dealer-label { grid-area:dealer-label; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .dealer { grid-area:dealer; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .player-label { grid-area:player-label; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .player { grid-area:player; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .board-label { grid-area:board-label;align-self:end;text-align:center; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .board { grid-area:board;gap:8px; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) .chips { grid-area:chips; }
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode .table .shoe { display:none; }
+@supports(height:1cqh) {
+  :root[data-game-mode="mobile"] .leisure-dialog.card-mode .table:not(.blackjack-table) {
+    --card-width:min(calc(58px / var(--eff-zoom)),calc((100cqh - 90px) / 2.8),calc((100cqw - 40px) / 8));
+  }
+}
+
+/* Absolute desktop windows and the taskbar must consume insets themselves. */
+:root[data-game-mode="mobile"] .laptop-desktop { padding:0; }
+:root[data-game-mode="mobile"] .laptop-desktop .desktop-icons {
+  left:calc(var(--sai-l) + 12px);top:calc(var(--sai-t) + 12px);
+  max-width:calc(100% - var(--sai-l) - var(--sai-r) - 24px);
+}
+:root[data-game-mode="mobile"] .laptop-desktop .taskbar {
+  left:var(--sai-l);right:var(--sai-r);bottom:var(--sai-b);width:auto;
+  height:var(--m-tap);box-sizing:border-box;
+}
+:root[data-game-mode="mobile"] .laptop-desktop .taskbar :is(button,.tb-btn) { min-height:var(--m-tap);min-width:var(--m-tap); }
+:root[data-game-mode="mobile"] .laptop-desktop .win {
+  inset:auto;left:calc(var(--sai-l) + 8px);right:calc(var(--sai-r) + 8px);top:calc(var(--sai-t) + 8px);
+  width:auto;max-width:none;transform:none;
+  height:calc(100% - var(--sai-t) - var(--sai-b) - var(--m-tap) - 20px);
+  max-height:calc(100% - var(--sai-t) - var(--sai-b) - var(--m-tap) - 20px);min-height:0;
+}
+:root[data-game-mode="mobile"] .laptop-desktop .win-body { min-height:0;font-size:var(--m-fs-sm); }
+:root[data-game-mode="mobile"] .laptop-desktop .win-body.scroll { flex:1;max-height:none;overflow:auto;touch-action:pan-y; }
+:root[data-game-mode="mobile"] .laptop-desktop .start-menu {
+  left:var(--sai-l);right:var(--sai-r);bottom:calc(var(--sai-b) + var(--m-tap) + 8px);
+  width:auto;max-width:none;max-height:calc(100% - var(--sai-t) - var(--sai-b) - var(--m-tap) - 16px);transform:none;overflow:auto;
+}
+:root[data-game-mode="mobile"] .leisure-dialog.card-mode :is(.controls,.round-footer) { width:100%;max-width:none; }
+
+/* The computer app uses the global UI zoom once. Keep its mobile layout
+   independent of desktop breakpoints and give each page its own scroll area. */
+:root[data-game-mode="mobile"] .ss-app {
+  --ss-body:clamp(14px,3.25vh,16px);
+  --ss-small:clamp(12px,2.8vh,14px);
+  font-size:var(--ss-body);min-width:0;position:relative;
+}
+:root[data-game-mode="mobile"] .ss-app :is(button,input,select) { font-size:inherit; }
+:root[data-game-mode="mobile"] .ss-app :is(small,label,summary,.panel-title,.trade-quote,.order-preview>div,.fund-card p,.loan-detail,.notice-row,.empty,.empty-state p,.market-news,.quote-metrics,.chart-tabs button,.list-labels) { font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app :is(.brand strong,.list-heading strong,.stock-name b,.stock-number b,.fund-card h3,.empty-state strong,.legacy-item strong) { font-size:1em; }
+:root[data-game-mode="mobile"] .ss-app :is(.stock-name small,.stock-number small,.stock-name i,td small,th,.collateral-list label,.collateral-list small,.help-trigger) { font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app :is(.app-header,.main-tabs) { height:auto;min-height:var(--m-tap);flex:none;padding:0 10px;gap:6px; }
+:root[data-game-mode="mobile"] .ss-app .brand small,
+:root[data-game-mode="mobile"] .ss-app .market-clock,
+:root[data-game-mode="mobile"] .ss-app .main-tabs>span { display:none; }
+:root[data-game-mode="mobile"] .ss-app .brand-mark { width:26px;height:26px;font-size:18px;border-radius:6px; }
+:root[data-game-mode="mobile"] .ss-app .app-header { position:absolute;top:0;right:0;z-index:2;min-height:0;padding:0;background:transparent;border:0; }
+:root[data-game-mode="mobile"] .ss-app .brand { display:none; }
+:root[data-game-mode="mobile"] .ss-app .close-app { margin-left:auto;min-width:var(--m-tap);min-height:var(--m-tap);font-size:24px; }
+:root[data-game-mode="mobile"] .ss-app .account-strip { min-height:var(--m-tap);padding:4px calc(var(--m-tap) + 6px) 4px 10px;gap:14px;flex-wrap:nowrap;overflow-x:auto; }
+:root[data-game-mode="mobile"] .ss-app .account-strip::before { content:'顺顺花';color:var(--ss-gold);font-weight:600;font-size:1.1em;flex-shrink:0; }
+:root[data-game-mode="mobile"] .ss-app .account-strip>div { flex-shrink:0;gap:1px; }
+:root[data-game-mode="mobile"] .ss-app .account-strip>div:nth-child(3),
+:root[data-game-mode="mobile"] .ss-app .account-strip>div:nth-child(4) { display:none; }
+:root[data-game-mode="mobile"] .ss-app .account-strip strong { font-size:1.1em; }
+:root[data-game-mode="mobile"] .ss-app .account-strip>div:first-child strong { font-size:1.2em; }
+:root[data-game-mode="mobile"] .ss-app .account-strip .next-tick small { display:none; }
+:root[data-game-mode="mobile"] .ss-app .next-tick button { min-height:32px;padding:3px 8px;font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .main-tabs { overflow-x:auto;overflow-y:hidden; }
+:root[data-game-mode="mobile"] .ss-app .main-tabs button { flex:1 0 auto;height:auto;min-height:var(--m-tap);padding:4px 10px;font-size:1em;white-space:nowrap; }
+:root[data-game-mode="mobile"] .ss-app .work-area { display:none;min-height:0;flex:1; }
+:root[data-game-mode="mobile"] .ss-app .work-area.market-page { display:grid;grid-template-columns:minmax(200px,26%) minmax(0,1fr); }
+:root[data-game-mode="mobile"] .ss-app .work-area.market-page .trade-panel { display:none; }
+:root[data-game-mode="mobile"] .ss-app .work-area.trade-page { display:block;overflow:hidden; }
+:root[data-game-mode="mobile"] .ss-app .work-area.trade-page :is(.stock-list,.quote-panel) { display:none; }
+:root[data-game-mode="mobile"] .ss-app .lower-panel { display:none;min-height:0;flex:1; }
+:root[data-game-mode="mobile"] .ss-app .lower-panel.lower-page { display:flex; }
+:root[data-game-mode="mobile"] .ss-app :is(.stock-list,.stock-scroll,.quote-panel,.trade-panel,.lower-content) { min-width:0;min-height:0;overscroll-behavior:contain;touch-action:pan-x pan-y; }
+:root[data-game-mode="mobile"] .ss-app .stock-list { overflow:auto; }
+:root[data-game-mode="mobile"] .ss-app .stock-scroll { flex:none;overflow:visible; }
+:root[data-game-mode="mobile"] .ss-app .list-controls { grid-template-columns:auto minmax(0,1fr);padding:5px;gap:4px; }
+:root[data-game-mode="mobile"] .ss-app .list-heading { grid-column:1;grid-row:1; }
+:root[data-game-mode="mobile"] .ss-app .list-heading strong { display:none; }
+:root[data-game-mode="mobile"] .ss-app .list-heading button { padding:4px;min-height:32px;font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .list-controls input { grid-column:2;grid-row:1;width:100%;min-height:32px;font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .list-controls select { grid-column:1/-1;min-height:30px;font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .list-labels { padding:3px 6px; }
+:root[data-game-mode="mobile"] .ss-app .stock-row { padding:7px 6px;min-height:var(--m-tap); }
+:root[data-game-mode="mobile"] .ss-app .stock-number { display:block; }
+:root[data-game-mode="mobile"] .ss-app .stock-number svg { display:none; }
+:root[data-game-mode="mobile"] .ss-app .stock-number small { display:block; }
+:root[data-game-mode="mobile"] .ss-app .quote-panel { padding:8px 12px; }
+:root[data-game-mode="mobile"] .ss-app .quote-heading h2 { font-size:1.4em; }
+:root[data-game-mode="mobile"] .ss-app .hero-price strong { font-size:1.8em; }
+:root[data-game-mode="mobile"] .ss-app .quote-metrics { margin-top:8px;padding-bottom:6px; }
+:root[data-game-mode="mobile"] .ss-app .chart-shell { flex:none;min-width:0;min-height:150px; }
+:root[data-game-mode="mobile"] .ss-app .chart-shell svg { max-height:none; }
+:root[data-game-mode="mobile"] .ss-app .empty-chart { font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .trade-panel { width:100%;height:100%;max-width:none;margin:0;border:0;padding:10px 14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;gap:8px 16px; }
+:root[data-game-mode="mobile"] .ss-app .trade-panel :is(.panel-title,.side-tabs,details,.quick-buttons,.order-preview,.submit-order,.help-note) { grid-column:1/-1; }
+:root[data-game-mode="mobile"] .ss-app .trade-panel :is(label,.side-tabs,details,.panel-title,.quick-buttons,.order-preview,.entry-toggle) { margin:0; }
+:root[data-game-mode="mobile"] .ss-app .trade-panel label { font-size:var(--ss-small);align-content:start; }
+:root[data-game-mode="mobile"] .ss-app .trade-panel :is(button,input,select),
+:root[data-game-mode="mobile"] .ss-app .lower-content :is(button,input,select) { font-size:1em;min-height:var(--m-tap); }
+:root[data-game-mode="mobile"] .ss-app .trade-panel .submit-order { position:static;box-shadow:none;font-size:1.05em; }
+:root[data-game-mode="mobile"] .ss-app .entry-toggle { align-items:end; }
+:root[data-game-mode="mobile"] .ss-app .entry-toggle button { flex:1; }
+:root[data-game-mode="mobile"] .ss-app .trade-quote { align-self:end;min-height:var(--m-tap);padding:0; }
+:root[data-game-mode="mobile"] .ss-app .lower-tabs { min-height:var(--m-tap); }
+:root[data-game-mode="mobile"] .ss-app .lower-tabs button { min-height:var(--m-tap);font-size:1em;flex-shrink:0; }
+:root[data-game-mode="mobile"] .ss-app .funds-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+:root[data-game-mode="mobile"] .ss-app :is(.fund-card,.legacy-item) { min-width:0; }
+:root[data-game-mode="mobile"] .ss-app .form-row { flex-wrap:wrap; }
+:root[data-game-mode="mobile"] .ss-app .form-row input { flex:1 1 120px;width:100%; }
+:root[data-game-mode="mobile"] .ss-app table { font-size:1em; }
+:root[data-game-mode="mobile"] .ss-app .status-bar { min-height:20px;padding:3px 10px;font-size:var(--ss-small); }
+:root[data-game-mode="mobile"] .ss-app .status-bar span:last-child { display:none; }
+:root[data-game-mode="mobile"] .ss-app .stock-help {
+  --ss-help-height:calc((100dvh - var(--sai-top,0px) - var(--sai-bottom,0px) - 24px) / var(--m-ui-zoom));
+  box-sizing:border-box;inset:0;margin:auto;
+  width:min(480px,calc((100dvw - var(--sai-left,0px) - var(--sai-right,0px) - 24px) / var(--m-ui-zoom)));
+  max-width:calc((100dvw - var(--sai-left,0px) - var(--sai-right,0px) - 24px) / var(--m-ui-zoom));
+  max-height:var(--ss-help-height);
+}
+:root[data-game-mode="mobile"] .ss-app .help-content { max-height:calc(var(--ss-help-height) - 2px); }
+:root[data-game-mode="mobile"] .ss-app .stock-help :is(header,footer) { flex-shrink:0; }
+:root[data-game-mode="mobile"] .ss-app .help-body { min-height:0; }
+@container shunshunhua (max-width:650px) {
+  :root[data-game-mode="mobile"] .ss-app .funds-grid { grid-template-columns:minmax(0,1fr); }
+  :root[data-game-mode="mobile"] .ss-app .work-area.market-page { grid-template-columns:minmax(175px,31%) minmax(0,1fr); }
+  :root[data-game-mode="mobile"] .ss-app .stock-name i { display:none; }
+}
+:root[data-game-mode="mobile"] .laptop-desktop :is(.dev-name,.dev-btn) { font-size:var(--m-fs-sm); }
+:root[data-game-mode="mobile"] .laptop-desktop :is(.dev-desc,.dev-pct,.royalty-cap,.royalty-summary span,.royalty-summary p,.royalty-summary small) { font-size:var(--m-fs-xs); }
+
+:root[data-game-mode="mobile"] :is(.service-overlay,.terminal-overlay,.warning-overlay,.fishing-overlay,.phone-game-full) {
+  box-sizing:border-box;
+  padding:calc(var(--sai-t) + 8px) calc(var(--sai-r) + 8px) calc(var(--sai-b) + 8px) calc(var(--sai-l) + 8px);
+}
+:root[data-game-mode="mobile"] :is(.service-dialog,.warning-card) { max-height:100%; }
+:root[data-game-mode="mobile"] :is(.service-dialog,.service-catalog) button { min-height:var(--m-tap);font-size:var(--m-fs-sm); }
+:root[data-game-mode="mobile"] .service-dialog :is(p,span,small) { font-size:var(--m-fs-xs); }
+:root[data-game-mode="mobile"] .fishing-overlay .fishing-dialog { height:100%;max-height:100%; }
+
+/* The scene is already inside game-root's safe area; avoid reserving it twice. */
+:root[data-game-mode="mobile"] :is(.home-snapshot,.cafe-snapshot,.store-snapshot) { left:12px;top:12px; }
+:root[data-game-mode="mobile"] :is(.home-tools,.cafe-tools,.store-tools) { right:12px;top:12px; }
+:root[data-game-mode="mobile"] .home-left-stack { left:12px; }
+

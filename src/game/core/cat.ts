@@ -6,6 +6,7 @@ import type { CatCombatAttrs, CatDef, CatPersonality, CatRarity, GameState, PetS
 import { randomInt } from "../rng";
 import { absoluteDay } from "./membership";
 import { createInitialPack } from "./cardPack";
+import { hasLongTermResidence } from "./residence";
 import catsData from "../data/cats.json";
 
 export const CAT_DATA = catsData as unknown as { version: number; cats: CatDef[] };
@@ -31,6 +32,11 @@ const PERSONALITY_MOD: Record<CatPersonality, Partial<CatCombatAttrs>> = {
 };
 
 export const CAT_PERSONALITIES = Object.keys(PERSONALITY_MOD) as CatPersonality[];
+export const MAX_CAT_LEVEL = 100;
+
+function boundedCatLevel(level: number): number {
+  return Number.isFinite(level) ? Math.max(1, Math.min(MAX_CAT_LEVEL, Math.floor(level))) : 1;
+}
 
 /** 随机性格（走 state.rng，可复现） */
 export function randomPersonality(state: GameState): CatPersonality {
@@ -44,12 +50,13 @@ export function computeCatAttrs(
   personality: CatPersonality,
   trainBonus?: Partial<CatCombatAttrs>,
 ): CatCombatAttrs {
+  const safeLevel = boundedCatLevel(level);
   const mod = PERSONALITY_MOD[personality] ?? {};
   const raw = {
-    hp: cat.base.hp + cat.growth.hp * (level - 1),
-    atk: cat.base.atk + cat.growth.atk * (level - 1),
-    def: cat.base.def + cat.growth.def * (level - 1),
-    spd: cat.base.spd + cat.growth.spd * (level - 1),
+    hp: cat.base.hp + cat.growth.hp * (safeLevel - 1),
+    atk: cat.base.atk + cat.growth.atk * (safeLevel - 1),
+    def: cat.base.def + cat.growth.def * (safeLevel - 1),
+    spd: cat.base.spd + cat.growth.spd * (safeLevel - 1),
   };
   return {
     hp: Math.max(1, Math.round(raw.hp * (mod.hp ?? 1)) + (trainBonus?.hp ?? 0)),
@@ -66,7 +73,7 @@ export function hasCat(state: GameState, catId: string): boolean {
 
 /** 升到下一级所需经验（等级越高越慢） */
 export function expToNext(level: number): number {
-  return 40 + (level - 1) * 20;
+  return 40 + (boundedCatLevel(level) - 1) * 20;
 }
 
 /**
@@ -74,15 +81,29 @@ export function expToNext(level: number): number {
  * 升级时重算战斗属性（基础 + 成长 + 性格 + 训练加成）。返回是否升级。
  */
 export function gainCatExp(pet: PetState, amount: number): boolean {
-  if (amount <= 0) return false;
+  if (!Number.isFinite(amount) || amount <= 0) return false;
+  const previousLevel = pet.level;
+  const normalizedLevel = boundedCatLevel(pet.level);
+  const normalized = previousLevel !== normalizedLevel;
+  pet.level = normalizedLevel;
+  pet.exp = Number.isFinite(pet.exp) ? Math.max(0, pet.exp) : 0;
+  if (pet.level >= MAX_CAT_LEVEL) {
+    pet.exp = 0;
+    if (normalized) {
+      const def = getCatDef(pet.catId);
+      if (def) pet.attrs = computeCatAttrs(def, pet.level, pet.personality, pet.trainBonus);
+    }
+    return false;
+  }
   pet.exp += amount;
   let leveled = false;
-  while (pet.exp >= expToNext(pet.level)) {
+  while (pet.level < MAX_CAT_LEVEL && pet.exp >= expToNext(pet.level)) {
     pet.exp -= expToNext(pet.level);
     pet.level += 1;
     leveled = true;
   }
-  if (leveled) {
+  if (pet.level >= MAX_CAT_LEVEL) pet.exp = 0;
+  if (leveled || normalized) {
     const def = getCatDef(pet.catId);
     if (def) pet.attrs = computeCatAttrs(def, pet.level, pet.personality, pet.trainBonus);
   }
@@ -94,8 +115,10 @@ export function adoptCat(state: GameState, catId: string, name?: string): PetSta
   const def = getCatDef(catId);
   if (!def || def.rarity === "boss") return null;
   const personality = randomPersonality(state);
+  let nextUid = 1;
+  while (state.pets.some((existing) => existing.uid === `pet_${nextUid}`)) nextUid++;
   const pet: PetState = {
-    uid: `pet_${state.pets.length + 1}`,
+    uid: `pet_${nextUid}`,
     catId,
     icon: def.icon,
     name: name ?? def.name,
@@ -105,6 +128,7 @@ export function adoptCat(state: GameState, catId: string, name?: string): PetSta
     attrs: computeCatAttrs(def, 1, personality),
     care: { satiety: 80, mood: 80, hygiene: 80 },
     acquiredDay: absoluteDay(state.time),
+    consecutiveSickDays: 0,
     // v1.37 卡包系统：收养即获得初始卡包（8 进攻 + 8 防守，均为普通品质）
     cardPack: createInitialPack(),
   };
@@ -124,14 +148,15 @@ export const CAT_ADOPT_PRICE: Record<Exclude<CatRarity, "boss">, number> = {
   legend: 30000,
 };
 
-/** v1.38 宠物店可领养猫种：仅「黄金猫」（其他获取渠道：初始即橘猫、公园随机薄荷猫）。 */
-const SHOP_CAT_IDS = ["golden"];
+/** 宠物店为错过开局收养或公园偶遇的玩家保留稳定获取途径；Boss 不进入商店。 */
+const SHOP_CAT_IDS = ["orange", "mint", "golden"];
 export function adoptableCats(): CatDef[] {
   return CATS.filter((c) => SHOP_CAT_IDS.includes(c.id));
 }
 
 /** 达成目标型获取：检查并发放（幂等，已拥有则跳过）。返回新收养的猫或 null。 */
 export function checkCatAcquisition(state: GameState): PetState | null {
+  if (!hasLongTermResidence(state)) return null;
   for (const def of CATS) {
     if (!def.acquireGoal) continue;
     if (hasCat(state, def.id)) continue;

@@ -21,7 +21,8 @@ export function getMaxStamina(state: GameState): number {
   // v1.25 体质分档加成体力上限：40/60/80 → +20/+40/+70
   const fit = state.player.stats.fitness;
   const fitBonus = fit >= 80 ? 70 : fit >= 60 ? 40 : fit >= 40 ? 20 : 0;
-  return Math.max(20, Math.min(999, 100 + bonus + capMod + fateCap + fitBonus));
+  const hikingCap = Math.max(0, Math.min(20, state.player.hikingStaminaCapBonus ?? 0));
+  return Math.max(20, Math.min(999, 100 + bonus + capMod + fateCap + fitBonus + hikingCap));
 }
 
 /**

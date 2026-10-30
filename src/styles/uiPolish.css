@@ -1,0 +1,215 @@
+/* v1.48：城市书页。共享视觉层不参与游戏计算与手游画布缩放。 */
+:root:not([data-skin]), :root[data-skin="default"] {
+  --bg-deep: #10131f;
+  --bg-soft: #181c2e;
+  --bg-card: #222842;
+  --bg-card-hover: #2a3152;
+  --bg-panel: rgba(16, 19, 31, .82);
+  --border: #333b63;
+  --text-main: #eef1ff;
+  --text-dim: #a8b2d6;
+  --accent: #ffd166;
+  --accent-2: #6cc6ff;
+  --accent-ink: #1a1a2e;
+  --accent-hover: #ffe08a;
+  --danger: #ff6b6b;
+  --warn: #ffb347;
+  --ok: #7bd88f;
+  --grad-sky: linear-gradient(160deg, #1a2440 0%, #2b3a67 55%, #4a3f6b 100%);
+  --grad-panel: linear-gradient(180deg, rgba(34, 40, 66, .9), rgba(24, 28, 46, .95));
+  --hud-text: #f4f7ff;
+  --hud-text-dim: rgba(233, 239, 255, .74);
+  --hud-surface: linear-gradient(180deg, rgba(30, 36, 62, .9), rgba(18, 22, 40, .95));
+  --hud-surface-solid: rgba(16, 20, 36, .9);
+  --hud-border: rgba(255, 255, 255, .16);
+  --glass-bg: rgba(13, 17, 32, .68);
+  --glass-border: rgba(255, 255, 255, .12);
+}
+:root:not([data-skin])[data-theme="day"], :root[data-skin="default"][data-theme="day"] {
+  --grad-sky: linear-gradient(150deg, #172c32, #35565b 65%, #65746b);
+}
+:root:not([data-skin])[data-theme="dusk"], :root[data-skin="default"][data-theme="dusk"] {
+  --grad-sky: linear-gradient(150deg, #182a31, #36464c 65%, #726451);
+}
+
+/* 让强调只出现在可行动的地方，静态卡片不随鼠标移动。 */
+.btn {
+  font-weight: 600;
+  line-height: 1.45;
+  letter-spacing: .02em;
+  box-shadow: 0 1px 0 #ffffff09 inset;
+  transition: background var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-fast);
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px #0002;
+}
+.btn-primary {
+  background: linear-gradient(120deg, var(--accent), color-mix(in srgb, var(--accent) 88%, white));
+  box-shadow: 0 2px 9px #0002;
+}
+.btn-primary:hover { background: var(--accent-hover); filter: none; }
+.view-fade .card:hover {
+  transform: none;
+  border-color: var(--border);
+  box-shadow: 0 3px 14px #0002;
+}
+body :is(button, a, input, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 3px;
+}
+.h1, .h2, .title, .modal-title { text-wrap: balance; }
+.count, .clock, .money-box, .stat-bar .value { font-variant-numeric: tabular-nums; }
+
+/* 独立页面共享书页布局；保留每个页面自己的滚动容器。 */
+.app-zoom .view-fade > .page {
+  padding: clamp(18px, 3.2vw, 42px) max(20px, calc((100% - 1120px) / 2));
+  background: radial-gradient(ellipse at 90% 0%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 55%), var(--bg-deep);
+  gap: 24px;
+  overscroll-behavior: contain;
+}
+.view-fade > .page > :is(.page-head, .head) {
+  min-height: 54px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+.view-fade > .page .h1, .setup-page > .head > .title {
+  color: var(--text-main);
+  font-size: clamp(22px, 2.4vw, 30px);
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.page-intro, .setup-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.65;
+}
+.page-eyebrow { color: var(--accent); font-size: 12px; font-weight: 600; letter-spacing: .12em; }
+.page-intro p, .setup-intro p { font-size: 14px; color: var(--text-dim); }
+.view-fade > .page .btn { min-height: 42px; }
+.view-fade > .page .card { padding: 22px; border-radius: var(--radius-lg); }
+/* 设置页：单列纵向 + 内部两列紧凑流。原先整页用 grid 两列，卡片高度不齐会把
+   整行撑到最高卡片的高度，右列下方留出大片空白（见 2026-10-20 截图）。 */
+.app-zoom .view-fade > .settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.view-fade .settings-page > .settings-cards {
+  columns: 2;
+  column-gap: 18px;
+}
+.view-fade .settings-page > .settings-cards > .setting-card {
+  /* 卡片不可跨列拆分，否则排序控件会被劈成两半；保持 flex 列布局（行距靠 gap） */
+  break-inside: avoid;
+  margin: 0 0 18px;
+}
+.view-fade .settings-page > .settings-rest {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  min-width: 0;
+}
+.view-fade .settings-page > .settings-rest > .updates-card { grid-column: 1 / -1; }
+@media (max-width: 920px) {
+  .view-fade .settings-page > .settings-cards { columns: 1; }
+  .view-fade .settings-page > .settings-rest { grid-template-columns: minmax(0, 1fr); }
+}
+.view-fade .settings-page .setting-card {
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid color-mix(in srgb, var(--border) 82%, var(--accent-2));
+  background: linear-gradient(145deg, color-mix(in srgb, var(--bg-card) 94%, var(--accent-2) 6%), var(--bg-card));
+  box-shadow: 0 8px 24px #050a171c, 0 1px 0 #ffffff08 inset;
+}
+.view-fade .settings-page .h2 { padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--border) 76%, transparent); font-size: 17px; letter-spacing: .02em; }
+.view-fade .settings-page .row { min-height: 42px; gap: 14px; font-size: 13px; }
+.view-fade .settings-page .row > .dim { flex: 1; }
+.view-fade .settings-page .row > input[type="range"] { flex: 1; min-width: 80px; height: 28px; }
+.view-fade .settings-page :is(.switch, .seg-btn) { min-height: 36px; border-color: var(--border); }
+.view-fade .settings-page .seg { gap: 5px; flex: 1; }
+.view-fade .settings-page .seg-btn { font-size: 12px; padding-inline: 10px; }
+.view-fade .settings-page .display-card .display-mode-row { align-items: flex-start; }
+.view-fade .settings-page .display-card .display-mode-row > .dim { padding-top: 8px; }
+.view-fade .settings-page .danger-zone { background: color-mix(in srgb, var(--danger) 5%, var(--bg-card)); border-color: color-mix(in srgb, var(--danger) 40%, var(--border)); }
+.view-fade .settings-page .setting-card p { line-height: 1.7; font-size: 13px; }
+.view-fade .settings-page .cl-head { cursor: pointer; min-height: 40px; padding: 8px 0; line-height: 1.65; }
+.view-fade .settings-page .cl-head::before { content: "+"; color: var(--accent); width: 15px; flex: none; }
+.view-fade .settings-page .cl-entry[open] .cl-head::before { content: "−"; }
+.view-fade .settings-page .cl-head::-webkit-details-marker { display: none; }
+.view-fade .settings-page .cl-notes { max-width: 900px; padding-bottom: 10px; }
+.view-fade .saves-page .slot-grid { gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 248px), 1fr)); }
+.view-fade .saves-page .slot-card { min-height: 226px; gap: 18px; }
+.view-fade .saves-page .slot-name { border-bottom: 1px solid var(--border); padding-bottom: 14px; font-size: 16px; }
+.view-fade .saves-page .slot-info { gap: 8px; font-size: 14px; line-height: 1.5; }
+.view-fade .saves-page .slot-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 4px 0; }
+.view-fade .saves-page .empty-mark { font-size: 22px; opacity: .7; }
+.view-fade .saves-page .slot-empty small { font-size: 11px; }
+.view-fade .saves-page .slot-actions { border-top: 1px solid var(--border); padding-top: 14px; align-items: center; flex-wrap: wrap; }
+.view-fade .setup-page .content { max-width: 880px; }
+.view-fade .setup-page .setup-intro { max-width: 880px; width: 100%; margin-inline: auto; }
+.view-fade .setup-page .alloc-box { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.view-fade .setup-page .alloc-row { min-width: 0; padding: 16px; gap: 12px; border-radius: var(--radius-md); }
+.view-fade .setup-page .alloc-row .a-info { gap: 12px; }
+.view-fade .setup-page .a-desc { margin-top: 4px; line-height: 1.5; }
+.view-fade .setup-page .alloc-row .ctrl { gap: 6px; }
+.view-fade .setup-page .alloc-row .small { width: 36px; min-height: 36px; }
+.view-fade .setup-page .hint { background: color-mix(in srgb, var(--accent) 7%, var(--bg-card)); border-radius: var(--radius-md); padding: 16px 18px; line-height: 1.7; letter-spacing: .02em; }
+.view-fade .setup-page .preview { border-style: solid; border-color: var(--border); line-height: 1.65; }
+.view-fade .setup-page .item-card { min-height: 76px; }
+.view-fade .setup-page .footer { border-top: 1px solid var(--border); padding-top: 20px; }
+.view-fade .setup-page .step-indicator { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
+
+/* 常用弹层：表面、标题分隔与关闭目标；小游戏保持专属构图。 */
+.hud-scope {
+  --bg-card-hover: color-mix(in srgb, var(--hud-surface-solid) 90%, var(--hud-text));
+  --bg-soft: color-mix(in srgb, var(--hud-surface-solid) 96%, var(--hud-text));
+}
+.zoom-wrapper :is(.overlay, .shelf-overlay) { background-color: #08151cb5; backdrop-filter: blur(5px); }
+.zoom-wrapper .overlay > :is(.modal, .bag), .shelf-overlay > .shelf-modal {
+  border: 1px solid var(--hud-border);
+  background: var(--hud-surface);
+  color: var(--hud-text);
+  box-shadow: 0 24px 70px #0007, 0 1px 0 #ffffff0a inset;
+  border-radius: var(--radius-lg);
+}
+.zoom-wrapper .bag-head, .shelf-modal .shelf-header {
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--hud-border);
+}
+.zoom-wrapper .bag-close, .shelf-modal .close { width: 42px; height: 42px; border: 1px solid var(--hud-border); background: transparent; border-radius: var(--radius-sm); }
+.zoom-wrapper .bag-title, .shelf-modal h2 { font-size: 21px; letter-spacing: .04em; }
+.confirm-overlay .confirm-card {
+  border-color: var(--hud-border);
+  background: var(--hud-surface);
+  color: var(--hud-text);
+  border-radius: var(--radius-lg);
+}
+.confirm-overlay .confirm-btn { min-height: 42px; border-radius: var(--radius-sm); }
+
+/* 首次设备选择与首页同一色系。 */
+.device-setup-overlay { background: #09171cef; }
+.device-setup-overlay .device-setup { color: var(--text-main); background: linear-gradient(145deg, var(--bg-card), var(--bg-deep) 75%); border-color: var(--border); border-radius: 18px; }
+.device-setup-overlay .device-choice { border-color: var(--border); }
+.device-setup-overlay :is(.device-desc, p) { color: var(--text-dim); }
+.device-setup-overlay .eyebrow { color: var(--accent); }
+
+@media (max-width: 900px) {
+  .app-zoom .view-fade > .settings-page { grid-template-columns: 1fr; }
+  .view-fade .settings-page .map-style-card { grid-column: auto; }
+  .view-fade .setup-page .alloc-box { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .app-zoom .view-fade > .page { gap: 18px; padding: 18px 16px; }
+  .view-fade > .page > :is(.page-head, .head) { gap: 8px; padding-bottom: 14px; }
+  .view-fade > .page .card { padding: 18px; }
+  .view-fade .settings-page .row { flex-wrap: wrap; row-gap: 10px; }
+  .view-fade .settings-page .row > .dim { flex-basis: 45%; }
+  .view-fade .settings-page .row .seg { flex-basis: 100%; justify-content: flex-start; }
+  .view-fade .settings-page :is(.seg-btn, .switch) { min-height: 44px; }
+  .view-fade .setup-page .a-name { font-size: 14px; }
+  .view-fade .setup-page .alloc-row .small { width: 42px; min-height: 42px; }
+  .page-intro p, .setup-intro p { font-size: 13px; }
+}

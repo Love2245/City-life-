@@ -9,10 +9,24 @@ import familyData from "../data/families.json";
 import { scaleCost } from "./difficulty";
 import { addContact } from "./contacts";
 import { recordMoney } from "./weekly";
+import { currentWeather } from "./weather";
+import {prepayCityHotel,CITY_HOTEL_ROOMS} from './cityHotels';
+import { gameDay } from "./calendar";
+import {ownedProperties,activeOwnedProperty,bestOwnedProperty,addOwnedProperty,normalizeOwnedProperties,settlePropertyRent} from './propertyPortfolio';
+import { getRegion, isRegionUnlocked, regionLockReason } from "./regions";
+import {
+  currentResidence, permanentResidence, residenceLocationId, residenceRegion, isResidenceLocation,
+  hasTempleStay, hasWorkerDormStay, unlockResidence, TEMPLE_STAY_UNTIL,
+  WORKER_DORM_STAY_UNTIL, temporaryStayThroughDate,
+  expireTempleStay as expireTempleTemporaryStay,
+  expireWorkerDormStay as expireWorkerDormTemporaryStay,
+} from "./residence";
 
 export const HOUSING: HousingData = housingData as HousingData;
 
-const govTier = HOUSING.gov;
+/** 租约每 30 个游戏日滚动续期一次。 */
+export const LEASE_PERIOD_DAYS = 30;
+
 const nightlyTiers = HOUSING.nightly;
 const leaseTiers = HOUSING.lease;
 const buyTiers = HOUSING.buy ?? [];
@@ -36,7 +50,7 @@ export function getLodging(id: string): LodgingTier | undefined {
 }
 
 /** 获取月租房源 */
-export function getLeaseTier(id: string): (LodgingTier & { rentGrowthRate: number }) | undefined {
+export function getLeaseTier(id: string): (LodgingTier & { rentGrowthRate: number; rentCap?: number }) | undefined {
   return leaseMap.get(id);
 }
 
@@ -50,20 +64,35 @@ export function getBuyTiers(): (LodgingTier & { buyPrice: number })[] {
   return buyTiers;
 }
 
-/** 当前实际生效的住宿档位（gov→政府档；nightly→所选档(缺省 atm)；lease→月租档；own→产权档） */
+/** 当前借宿档位；入住持续到返回常住建筑或更换住处。 */
+export function awayNightTier(state: GameState): LodgingTier | undefined {
+  const id = state.living.awayNight?.lodgingId;
+  if (id === "temple" && !hasTempleStay(state)) return undefined;
+  if (id === "worker_dorm" && !hasWorkerDormStay(state)) return undefined;
+  return id ? nightlyMap.get(id) : undefined;
+}
+
+/** 退掉借宿登记，恢复常住地址。 */
+export function clearAwayNight(state: GameState): void {
+  state.living.awayNight = null;
+}
+
+/** 是否已经拥有产权住房（兼容产权档、产权 id 与旧存档 flag）。 */
+export function hasOwnedProperty(state: GameState): boolean {
+  return ownedProperties(state).length>0 || state.living.mode === "own" || !!state.living.ownedId || state.flags["owned_property"] === true;
+}
+
+/** 当前实际入住档位；借宿期间保留原有租约或产权。 */
 export function getEffectiveLodging(state: GameState): LodgingTier {
-  const l = state.living;
-  if (l.mode === "gov") return govTier;
-  if (l.mode === "lease") {
-    const tier = l.lease ? leaseMap.get(l.lease.housingId) : undefined;
-    return tier ?? govTier;
-  }
-  if (l.mode === "own") {
-    const tier = l.ownedId ? buyMap.get(l.ownedId) : undefined;
-    return tier ?? govTier;
-  }
-  // nightly：未选默认 atm
-  return nightlyMap.get(l.nightly?.lodgingId ?? "atm") ?? govTier;
+  return currentResidence(state);
+}
+
+/**
+ * v1.43.x 住院恢复率专用：忽略「今晚外宿」，返回玩家真实住处档位。
+ * 住院期间人实际在病房，外宿预订不计入恢复率（且会在睡眠结算时作废）。
+ */
+export function getResidenceLodging(state: GameState): LodgingTier {
+  return permanentResidence(state);
 }
 
 /** 当前住处是否具备某设施 */
@@ -71,17 +100,38 @@ export function hasFacility(state: GameState, f: Facility): boolean {
   return getEffectiveLodging(state).facilities.includes(f);
 }
 
-/**
- * v0.97 当前住处的出门定位区域（home 地点动态归属）。
- * 连锁酒店/出租屋/出租公寓 → 市中心；青年旅舍/民宿/政府住房/露宿 → 住宅区。
- */
+/** 当前入住建筑的区域；借宿与常住共用实际地址。 */
 export function currentRegion(state: GameState): string {
-  return getEffectiveLodging(state).region ?? "downtown_residential";
+  return residenceRegion(state);
+}
+
+/** 当前租约距离下次扣款的游戏日数；缺少日期的未迁移状态按完整周期显示。 */
+export function daysUntilNextRent(state: GameState): number | null {
+  const lease = state.living.mode === "lease" ? state.living.lease : null;
+  if (!lease) return null;
+  const today = gameDay(state.time);
+  const dueDay = Number.isSafeInteger(lease.nextRentDay)
+    ? lease.nextRentDay!
+    : today + LEASE_PERIOD_DAYS;
+  return Math.max(0, dueDay - today);
 }
 
 /** 当前住处显示名（home 地点动态名称） */
 export function currentResidenceName(state: GameState): string {
+  if (currentResidence(state).id === "temple") {
+    const date = temporaryStayThroughDate(state, TEMPLE_STAY_UNTIL);
+    return `寺庙禅房（可住至 ${date ?? "资格有效期内"}）`;
+  }
+  if (currentResidence(state).id === "worker_dorm") {
+    const date = temporaryStayThroughDate(state, WORKER_DORM_STAY_UNTIL);
+    return `工人集体宿舍（可住至 ${date ?? "资格有效期内"}）`;
+  }
+  if (currentResidence(state).id === "npc_guest_room") {
+    return "朋友家客房（借宿一晚）";
+  }
   const l = state.living;
+  const away = awayNightTier(state);
+  if (away) return `${away.name}（借宿，${away.price} 元/晚）`;
   if (l.mode === "gov") return `政府免费住宿（剩 ${l.govDaysLeft} 晚）`;
   if (l.mode === "lease") {
     const tier = l.lease ? leaseMap.get(l.lease.housingId) : undefined;
@@ -95,35 +145,115 @@ export function currentResidenceName(state: GameState): string {
   return `${tier?.name ?? "流浪"}（${tier?.price ?? 0} 元/晚）`;
 }
 
-/** 今晚住宿费用（mode=nightly 时） */
-export function nightlyPrice(state: GameState): number {
-  const tier = getLodging(state.living.nightly?.lodgingId ?? "atm");
-  return tier?.price ?? 0;
+/** 地图住处标牌使用住宿档位的配置名称；期限、费用等状态留给住处详情展示。 */
+export function mapResidenceName(state: GameState): string {
+  const residence = currentResidence(state);
+  // 地图建筑标牌只显示建筑本名；借宿费用、剩余期限等状态留在居家详情页。
+  return residence.name;
 }
 
-/** 选择今晚住宿（仅 mode=nightly 生效） */
-export function selectLodging(state: GameState, lodgingId: string): boolean {
-  if (state.living.mode !== "nightly") return false;
-  if (!nightlyMap.has(lodgingId)) return false;
-  state.living.nightly = { lodgingId };
+/** 居家页面与地图使用同一份当前入住名称。 */
+export function homeResidenceName(state: GameState): string {
+  return currentResidenceName(state);
+}
+
+/** 入睡必须回到实际入住建筑，住院病房另行处理。 */
+export function canSleepHere(state: GameState): boolean {
+  if (state.flags["hospitalized"]) return state.locationId === "hospital";
+  const rawStayId = state.living.awayNight?.lodgingId
+    ?? (state.living.mode === "nightly" ? state.living.nightly?.lodgingId : undefined);
+  if (rawStayId === "temple" && !hasTempleStay(state)) return false;
+  if (rawStayId === "worker_dorm" && !hasWorkerDormStay(state)) return false;
+  const residence = currentResidence(state);
+  if (!isResidenceLocation(state)) return false;
+  if (residence.id === "temple") return hasTempleStay(state);
+  if (residence.id === "worker_dorm") return hasWorkerDormStay(state);
   return true;
 }
 
-/** 签约月租（mode→lease，扣首月房租（含家庭折扣）；要求 money ≥ 折后价） */
+/** 到期只结束住宿身份，不把玩家瞬移到另一栋房子。 */
+export function expireTempleStay(state: GameState): void {
+  expireTempleTemporaryStay(state);
+}
+
+export function expireWorkerDormStay(state: GameState): void {
+  expireWorkerDormTemporaryStay(state);
+}
+
+/** 今晚住宿费用（mode=nightly 时） */
+export function nightlyPrice(state: GameState): number {
+  const tier = getEffectiveLodging(state);
+  return tier?.price ?? 0;
+}
+
+/** 当晚实际住宿费；寒潮加价在选择校验、界面与睡眠结算间共用同一计算。 */
+export function nightlyCost(state: GameState, basePrice: number): number {
+  const base = Math.max(0, Math.round(basePrice));
+  return currentWeather(state) === "coldwave" ? Math.round(base * 1.3) : base;
+}
+
+/**
+ * 登记当前住宿。按晚住宿直接改住址；固定住房借宿保留原租约/产权。
+ * 旧 forceAwayNight 参数只保留调用兼容，不再产生任意地点都能入睡的虚拟外宿。
+ */
+export function selectLodging(
+  state: GameState,
+  lodgingId: string,
+  _opts?: { forceAwayNight?: boolean },
+): boolean {
+  const tier = nightlyMap.get(lodgingId);
+  if (!tier) return false;
+  if ((state.districtLeisure?.active || state.fishing?.active) || (tier.region && !isRegionUnlocked(state, getRegion(tier.region)))) return false;
+  if (lodgingId === "camping_lodging" && state.locationId !== "camping_base") return false;
+  if (lodgingId === "temple" && (state.locationId !== "temple" || !hasTempleStay(state))) return false;
+  if (lodgingId === "worker_dorm" && (state.locationId !== "worker_dormitory" || !hasWorkerDormStay(state))) return false;
+  // 房费在入睡结算时扣除，这里先挡住明显付不起的选择，避免睡完变成负资产
+  const alreadyBooked=CITY_HOTEL_ROOMS.has(lodgingId)&&currentResidence(state).id===lodgingId&&state.flags.hotel_booking_id===[...CITY_HOTEL_ROOMS].indexOf(lodgingId)+1;
+  if (!alreadyBooked&&nightlyCost(state, tier.price) > state.player.money) return false;
+  if(!prepayCityHotel(state,lodgingId,nightlyCost(state,tier.price)))return false;
+  // 旧 home 字段不能随换房把玩家瞬移到新地址；先固定当前所在的真实建筑。
+  if (state.locationId === "home") state.locationId = residenceLocationId(state);
+  unlockResidence(state, lodgingId);
+  if (state.living.mode === "nightly") {
+    state.living.nightly = { lodgingId };
+    state.living.awayNight = null;
+    return true;
+  }
+  state.living.awayNight = { lodgingId };
+  return true;
+}
+
+/** 签约月租（mode→lease，预付首个 30 日租期；要求 money ≥ 折后价） */
 export function signLease(state: GameState, housingId: string): { ok: boolean; reason?: string } {
+  if (housingId === 'dev_incubator') return { ok: false, reason: '创业孵化基地为纯办公场所，请到市政大厅注册公司' };
   const tier = leaseMap.get(housingId);
   if (!tier) return { ok: false, reason: "未知房源" };
+  if ((state.districtLeisure?.active || state.fishing?.active)) return { ok: false, reason: "请先收竿或完成当前娱乐活动" };
+  const campusHome=['dev_incubator','boyue_talent_apartment'].includes(housingId);
+  const admissionState=campusHome?{...state,flags:{...state.flags,item_student_pass:true}}:state;
+  if (tier.region && !isRegionUnlocked(admissionState, getRegion(tier.region))) return { ok: false, reason: regionLockReason(state, getRegion(tier.region)) };
+  if (hasOwnedProperty(state)) return { ok: false, reason: "已有产权住房，不能再签普通租约" };
   const discount = familyRentDiscount(state);
   const price = Math.round(tier.price * (1 - discount));
   if (state.player.money < price) return { ok: false, reason: `付不起首月房租（需 ${price} 元）` };
+  if (state.locationId === "home") state.locationId = residenceLocationId(state);
   state.player.money -= price;
-  recordMoney(state, -price); // v1.10 周记（P1-10 补记：签约首月房租入周记）
-  state.flags["lease_first_month_prepaid"] = true; // v1.215：首月已随签约预付，当晚结算不再重复扣
+  recordMoney(state, -price); // v1.10 周记（签约首期房租入周记）
+  delete state.flags["lease_prepaid_month"];
+  delete state.flags["lease_first_month_prepaid"];
   state.living.mode = "lease";
+  if(campusHome)state.flags.item_student_pass=true;
   state.living.govDaysLeft = 0;
   state.living.nightly = null;
-  state.living.lease = { housingId, rent: price, rentGrowthCount: 0 };
-  pushLog(state, tier.icon, `签约${tier.name}，月租 ${price} 元${discount > 0 ? `（含政府补贴 -${Math.round(discount * 100)}%）` : ""}，从此不用再找地方住`);
+  state.living.awayNight = null;
+  state.living.lease = {
+    housingId,
+    rent: price,
+    rentGrowthCount: 0,
+    nextRentDay: gameDay(state.time) + LEASE_PERIOD_DAYS,
+  };
+  unlockResidence(state, housingId);
+  pushLog(state, tier.icon, `签约${tier.name}，首期租金 ${price} 元（覆盖 30 天）${discount > 0 ? `（含政府补贴 -${Math.round(discount * 100)}%）` : ""}，从此不用再找地方住`);
   addContact(state, "landlord"); // v0.98：租房后自动添加房东联系方式
   return { ok: true };
 }
@@ -135,28 +265,51 @@ export function hasLeaseOption(): boolean {
 
 /**
  * v0.94 一次性买断产权房（mode→own）。
- * 房价按当前物价倍率缩放（scaleCost）；已有产权则拒绝重复购买。
+ * 房价按当前物价倍率缩放；允许多套及相同房型，购买后默认自住最好的一套。
  * 购房后免租金/免月租，永居。
  * 返回 { ok, reason?, price }，price 为含物价浮动的实际成交价。
  */
-export function buyProperty(state: GameState, housingId: string): { ok: boolean; reason?: string; price?: number } {
+export function buyProperty(state: GameState, housingId: string): { ok: boolean; reason?: string; price?: number; text?:string } {
   const tier = buyMap.get(housingId);
   if (!tier) return { ok: false, reason: "未知房源" };
-  if (state.living.mode === "own") {
-    return { ok: false, reason: "已经拥有产权住房，不能重复购买" };
-  }
+  if(state.districtLeisure?.active||state.fishing?.active)return{ok:false,reason:'请先收竿或完成当前娱乐活动'};
+  if(tier.region&&!isRegionUnlocked(state,getRegion(tier.region)))return{ok:false,reason:regionLockReason(state,getRegion(tier.region))};
   const price = scaleCost(state, tier.buyPrice);
   if (state.player.money < price) {
     return { ok: false, reason: `买不起（需 ${price} 元，含物价浮动）` };
   }
+  if (state.locationId === "home") state.locationId = residenceLocationId(state);
+  settlePropertyRent(state);
+  const bought=addOwnedProperty(state,housingId);
+  const active=bestOwnedProperty(ownedProperties(state),activeOwnedProperty(state)?.id)??bought;
   state.player.money -= price;
   recordMoney(state, -price); // v1.215：买断产权计入周记支出（P1-10）
   state.living.mode = "own";
   state.living.govDaysLeft = 0;
   state.living.nightly = null;
+  state.living.awayNight = null;
   state.living.lease = null;
-  state.living.ownedId = housingId;
+  state.living.ownedId = active.housingId;
+  state.living.activePropertyId=active.id;
+  unlockResidence(state, housingId);
   state.flags["owned_property"] = true;
-  pushLog(state, tier.icon, `一次性买断「${tier.name}」共 ${price} 元，从此不用再交房租`);
-  return { ok: true, price };
+  const home=buyMap.get(active.housingId)!;
+  const text=`买下「${tier.name}」共 ${price} 元；自住${home.name}，其余${ownedProperties(state).length-1}套自动出租，每满30个出租日收取月租。`;
+  pushLog(state,tier.icon,text);
+  return { ok: true, price,text };
+}
+
+/** 选择持有的一套产权房自住；保持玩家所在地图位置，其他套继续出租。 */
+export function switchOwnedResidence(state:GameState,propertyId:string):{ok:boolean;reason?:string}{
+ const target=ownedProperties(state).find(p=>p.id===propertyId);
+ if(!target)return{ok:false,reason:'没有这套产权房'};
+ if(state.districtLeisure?.active||state.fishing?.active)return{ok:false,reason:'请先收竿或完成当前娱乐活动'};
+ if(state.flags.hospitalized)return{ok:false,reason:'请先办理出院'};
+ if(state.locationId==='home')state.locationId=residenceLocationId(state);
+ settlePropertyRent(state);normalizeOwnedProperties(state);
+ state.living.mode='own';state.living.ownedId=target.housingId;state.living.activePropertyId=target.id;
+ state.living.awayNight=null;state.living.nightly=null;state.living.lease=null;
+ unlockResidence(state,target.housingId);
+ pushLog(state,'🏠',`将${buyMap.get(target.housingId)?.name}设为自住，其余产权房自动出租。`);
+ return{ok:true};
 }

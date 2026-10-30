@@ -1,6 +1,6 @@
 <script lang="ts">
   // 都市生活 v0.991 — 回忆录：历次生平的结局记录
-  import { profile, goto } from "../stores/gameStore.svelte";
+  import { profile, backFromPage } from "../stores/gameStore.svelte";
   import { formatMoney } from "../lib/format";
 
   const TIER_LABEL: Record<string, string> = { bad: "失败", good: "成功", secret: "隐藏" };
@@ -10,7 +10,7 @@
 <div class="memoir-root">
   <div class="memoir-panel">
     <div class="memoir-head">
-      <button class="btn" onclick={() => goto("menu")}>← 返回</button>
+      <button class="btn" onclick={() => backFromPage()}>← 返回</button>
       <h2 class="memoir-title">📖 回忆录</h2>
       <span class="memoir-count dim">共 {profile.memoirs.length} 段人生</span>
     </div>

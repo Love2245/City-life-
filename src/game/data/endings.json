@@ -1,13 +1,25 @@
 [
   {
+    "id": "ending_financial_default",
+    "name": "杠杆尽头",
+    "icon": "📉",
+    "tier": "bad",
+    "desc": "宽限期结束，全部可偿债资产仍未能填平金融欠款",
+    "text": "最后一份催款通知停在屏幕上。账户、投资和能够变卖的房车已经抵去欠款，剩下的数字却仍然无法归零。你关掉顺顺花，收拾行李，离开这座曾经让你期待的城市。",
+    "condition": {
+      "financialDefault": true
+    }
+  },
+  {
     "id": "ending_bankrupt",
     "name": "破产离场",
     "icon": "💸",
     "tier": "bad",
     "desc": "欠了一屁股债，这座城市容不下你",
-    "text": "连续七天入不敷出，债主的电话打爆了你的手机。你打包好仅有的行李，买了一张回老家的车票。都市的霓虹依旧闪烁，只是不再属于你。",
+    "text": "连续七天入不敷出，或背负逾期债务三天仍无力偿还。债主的电话打爆了你的手机，你打包好仅有的行李，买了一张回老家的车票。都市的霓虹依旧闪烁，只是不再属于你。",
     "condition": {
-      "negativeMoneyStreak": 7
+      "negativeMoneyStreak": 7,
+      "debtStreakMin": 3
     }
   },
   {
@@ -52,7 +64,8 @@
     "text": "健康早就见了底，你却总说\"再撑一天就去医院\"。第三天夜里，心脏没能再撑住。房东第二天敲门没人应，才发现你躺在床上，手机屏幕还亮着未发出的请假信息。",
     "condition": {
       "healthMin": 0,
-      "criticalHealthStreak": 4
+      "criticalHealthStreak": 4,
+      "suddenDeath": true
     }
   },
   {

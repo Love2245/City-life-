@@ -68,11 +68,10 @@ describe("v0.981 配置一致性", () => {
     }
   });
 
-  it("弥撒配置：周六 15:00–18:00 限制（v1.05 聚餐已合并到弥撒结算）", () => {
+  it("弥撒配置：周六 15:00–18:00 限制；聚餐由独立行动处理", () => {
     const mass = actionList.find((a) => a.id === "church_mass") as any;
     expect(mass?.requirements?.weekday ?? []).toContain("sat");
     expect(mass?.requirements?.hourRange).toEqual({ start: 15, end: 18 });
-    // v1.05：ev_church_fellowship 已从随机事件池移除，改为弥撒结算时直接 applyEffects
   });
 
   it("小游戏 key 指向真实 job / 行动", () => {
@@ -94,7 +93,6 @@ describe("v0.981 配置一致性", () => {
     }
   });
 
-  // v1.05：ev_church_fellowship 已合并到弥撒结算，不再作为独立事件存在，此测试移除
 });
 
 describe("v0.99 配置一致性（社交系统）", () => {
@@ -141,7 +139,7 @@ describe("v0.99 配置一致性（社交系统）", () => {
   });
 
   it("v1.3b2 菜市场：夜间折扣标记齐全且农村同品更便宜", () => {
-    const marketIds = ["buy_fruit_market", "buy_vegetable_market", "buy_meat_market", "buy_egg_market", "buy_milk_market"];
+    const marketIds = ["buy_fruit_market", "buy_cabbage_market", "buy_pork_market", "buy_egg_market", "buy_milk_market"];
     const priceOf = (id: string): number => {
       const a = actionList.find((x) => x.id === id) as any;
       expect(a, `缺少行动 ${id}`).toBeTruthy();
@@ -153,17 +151,17 @@ describe("v0.99 配置一致性（社交系统）", () => {
       expect(a.discount, `${id} 缺折扣标记`).toEqual({ afterHour: 21, rate: 0.75 });
     }
     // 农村同品必须比菜市场便宜（价格优势）
-    expect(priceOf("farm_buy_vegetable")).toBeLessThan(priceOf("buy_vegetable_market"));
+    expect(priceOf("farm_buy_vegetable")).toBeLessThan(priceOf("buy_cabbage_market"));
     expect(priceOf("farm_buy_egg")).toBeLessThan(priceOf("buy_egg_market"));
     expect(priceOf("pasture_buy_milk")).toBeLessThan(priceOf("buy_milk_market"));
-    expect(priceOf("farm_buy_meat")).toBeLessThan(priceOf("buy_meat_market"));
+    expect(priceOf("farm_buy_meat")).toBeLessThan(priceOf("buy_pork_market"));
   });
 
   it("v1.3b2 农村地区也卖肉（farm_buy_meat 存在且价格优势）", () => {
     expect(actionIds).toContain("farm_buy_meat");
     const a = actionList.find((x) => x.id === "farm_buy_meat") as any;
-    expect(a.itemId).toBe("meat");
-    expect(Math.abs(a.effects.money as number)).toBeLessThan(15); // 比菜市场 15 元便宜
+    expect(a.itemId).toBe("pork");
+    expect(Math.abs(a.effects.money as number)).toBeLessThan(12); // 比菜市场猪肉便宜
   });
 });
 
@@ -212,7 +210,7 @@ describe("v1.4 配置一致性（猫咪系统）", () => {
 describe("v1.4 P2 配置一致性（猫咪用品）", () => {
   const catItemList = (catItems as { items: Array<Record<string, any>> }).items;
   const catItemIds = new Set(catItemList.map((i) => i.id));
-  const VALID_CAT = ["food", "toy", "bed", "train", "special"];
+  const VALID_CAT = ["food", "toy", "bed", "train", "special", "device"];
   const VALID_TIER = ["basic", "good", "lux"];
   const VALID_CAT_ACTION = ["feed", "clean", "play", "train"];
 

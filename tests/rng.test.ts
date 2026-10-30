@@ -26,6 +26,16 @@ describe("RNG：确定性", () => {
     expect(r.calls).toBe(2);
   });
 
+  it("旧存档缺少游标时从既有调用位置继续，不重置随机序列", () => {
+    const seed = 317;
+    const calls = 12;
+    const legacy = { seed, calls };
+    const expectedGenerator = legacyMulberry32(seed + (calls + 1) * 0x6d2b79f5);
+    expect(nextRandom(legacy)).toBe(expectedGenerator());
+    expect(legacy.calls).toBe(calls + 1);
+    expect(legacy.state).toBeDefined();
+  });
+
   it("randomInt 在闭区间内", () => {
     const r = createRng(99);
     for (let i = 0; i < 200; i++) {
@@ -55,3 +65,13 @@ describe("RNG：确定性", () => {
     expect(chance(r, 0)).toBe(false);
   });
 });
+
+function legacyMulberry32(seed: number): () => number {
+  let a = seed;
+  return () => {
+    let t = a += 0x6d2b79f5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}

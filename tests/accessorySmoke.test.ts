@@ -7,7 +7,7 @@ import { startBattle, allOpponents } from "../src/game/core/catBattle";
 import { ensureCardPack } from "../src/game/core/cardPack";
 
 describe("v1.38 饰品链路冒烟", () => {
-  it("买饰品→佩戴→开战应用开局效果", () => {
+  it("买饰品→佩戴记录保留，新版竞技不叠加饰品倍率", () => {
     const s = createInitialState(7);
     s.player.money = 100000;
     adoptCat(s, "orange");
@@ -30,9 +30,9 @@ describe("v1.38 饰品链路冒烟", () => {
     expect(r.ok, r.reason).toBe(true);
     expect(s.catBattle).toBeTruthy();
     // 王者之冠：startStrength 4 / startBlock 8 / drawBonus 1
-    expect(s.catBattle!.playerStrength).toBeGreaterThanOrEqual(4);
-    expect(s.catBattle!.playerBlock).toBeGreaterThanOrEqual(8);
-    expect(s.catBattle!.log.some((l) => l.includes("饰品生效"))).toBe(true);
+    expect(s.catBattle!.playerStrength).toBe(0);
+    expect(s.catBattle!.playerBlock).toBe(0);
+    expect(s.catBattle!.player.hp).toBe(80);expect(s.catBattle!.playerHand).toHaveLength(5);expect(pet.accessory).toBe("ac_crown");
   });
 
   it("生病猫咪无法开战", () => {
@@ -45,5 +45,16 @@ describe("v1.38 饰品链路冒烟", () => {
     const r = startBattle(s, opp.id);
     expect(r.ok).toBe(false);
     expect(r.reason).toContain("生病");
+  });
+
+  it("寄养期间不能更换猫咪饰品", () => {
+    const s = createInitialState(8);
+    adoptCat(s, "orange");
+    const pet = s.pets[0];
+    buyAccessory(s, "ac_crown");
+    pet.fostered = true;
+
+    expect(equipAccessory(s, pet.uid, "ac_crown").ok).toBe(false);
+    expect(pet.accessory).toBeUndefined();
   });
 });

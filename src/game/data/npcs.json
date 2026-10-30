@@ -1,11 +1,88 @@
 [
   {
     "id": "npc_lin_xiaoyu",
+    "gender": "female",
     "name": "林小雨",
     "nick": "咖啡馆的姑娘",
+    "identity": {
+      "descriptor": "咖啡厅常客",
+      "familiar": "小林",
+      "known": "林小雨"
+    },
     "icon": "👩‍🎨",
     "romanceable": true,
     "meetLocation": "cafe",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "cafe",
+        "regionId": "downtown_residential",
+        "outfitContext": "service",
+        "hourRange": [
+          7,
+          9
+        ]
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "dev_art_gallery",
+        "regionId": "development_culture",
+        "outfitContext": "casual",
+        "hourRange": [
+          12,
+          17
+        ],
+        "randomGroup": "saturday_visit"
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "dev_university",
+        "regionId": "campus_teacher",
+        "outfitContext": "casual",
+        "hourRange": [
+          12,
+          17
+        ],
+        "randomGroup": "saturday_visit"
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "library",
+        "regionId": "downtown_center",
+        "outfitContext": "casual",
+        "hourRange": [
+          12,
+          17
+        ]
+      },
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "locationId": "commercial_office",
+        "regionId": "downtown_commercial",
+        "outfitContext": "service",
+        "hourRange": [
+          9.5,
+          17.5
+        ]
+      }
+    ],
     "meetChance": 0.25,
     "meetVisitCount": 3,
     "metText": "在咖啡馆坐了几回，靠窗的姑娘冲你点了点头——你们算是认识了。",
@@ -30,7 +107,7 @@
       "friend": "borrow"
     },
     "desc": "咖啡馆常客，学设计的，喜欢安静和轻食。",
-    "netName": "拿铁不加糖",
+    "netName": "小雨的草稿纸",
     "netAvatar": "🎨",
     "talk": {
       "acquaintance": {
@@ -52,16 +129,6 @@
         "text": "林小雨：『我老板缺个临时美工，要不要我帮你问问？』",
         "options": [
           {
-            "label": "太好了，帮我留意",
-            "affinity": 4,
-            "help": {
-              "log": "林小雨记下了你的联系方式，说有活第一时间找你。",
-              "reward": {
-                "mood": 3
-              }
-            }
-          },
-          {
             "label": "不用了，我自己来",
             "affinity": -2,
             "log": "你婉拒了她的好意。"
@@ -71,20 +138,6 @@
       "close_friend": {
         "text": "林小雨：『有个社区墙绘的活儿，工期一周，报酬不错，你接不接？』",
         "options": [
-          {
-            "label": "接！什么时候开始",
-            "affinity": 5,
-            "commission": {
-              "title": "社区墙绘兼职",
-              "desc": "帮林小雨的朋友完成一面社区墙绘，约 5 天。",
-              "days": 5,
-              "reward": {
-                "money": 220,
-                "charm": 3
-              },
-              "rewardText": "+220 元 +3 魅力"
-            }
-          },
           {
             "label": "最近太忙了",
             "affinity": -1,
@@ -96,11 +149,48 @@
   },
   {
     "id": "npc_zhao_gang",
+    "gender": "male",
     "name": "赵刚",
     "nick": "劳务市场的老哥",
+    "identity": {
+      "descriptor": "劳务市场老工头",
+      "familiar": "刚哥",
+      "known": "赵刚"
+    },
     "icon": "👷",
     "romanceable": false,
     "meetLocation": "labor_market",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "locationId": "labor_market",
+        "outfitContext": "retail",
+        "hourRange": [
+          9,
+          15
+        ]
+      },
+      {
+        "weekdays": [
+          5,
+          6
+        ],
+        "locationId": "snack_street",
+        "outfitContext": "casual",
+        "hourRange": [
+          17,
+          19
+        ]
+      }
+    ],
     "meetChance": 0.3,
     "meetConditions": {
       "hourRange": [
@@ -125,7 +215,7 @@
     "desc": "劳务市场的老工头，路子野，讲义气。",
     "meetVisitCount": 2,
     "metText": "总在劳务市场碰见这个老哥，一来二去就熟了，他拍着你肩膀说：以后有活想着你。",
-    "netName": "老炮儿刚子",
+    "netName": "赵刚（招工）",
     "netAvatar": "🍺",
     "talk": {
       "acquaintance": {
@@ -147,17 +237,6 @@
         "text": "赵刚：『仓库那边缺个搬货的，今儿就能上，去不去？』",
         "options": [
           {
-            "label": "去！带我一个",
-            "affinity": 4,
-            "help": {
-              "log": "赵刚把你推荐给了仓库主管，当场结了半天工钱。",
-              "reward": {
-                "money": 80,
-                "stamina": -10
-              }
-            }
-          },
-          {
             "label": "今天歇歇",
             "affinity": -1,
             "log": "你今天想歇着，赵刚咧嘴一笑。"
@@ -167,20 +246,6 @@
       "close_friend": {
         "text": "赵刚：『城东有个装修队长期缺人，活儿糙但钱实在，干不干？』",
         "options": [
-          {
-            "label": "干！多长工期",
-            "affinity": 5,
-            "commission": {
-              "title": "装修队长期帮工",
-              "desc": "跟着赵刚的装修队干一阵子，约 6 天。",
-              "days": 6,
-              "reward": {
-                "money": 360,
-                "fitness": 2
-              },
-              "rewardText": "+360 元 +2 体力上限"
-            }
-          },
           {
             "label": "我再想想",
             "affinity": -1,
@@ -192,11 +257,43 @@
   },
   {
     "id": "npc_chen_jie",
+    "gender": "female",
     "name": "陈姐",
     "nick": "快餐店大姐",
+    "identity": {
+      "descriptor": "快餐店掌勺",
+      "familiar": "陈姐",
+      "known": "陈姐"
+    },
     "icon": "👩‍🍳",
     "romanceable": false,
     "meetLocation": "fast_food",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "locationId": "fast_food",
+        "outfitContext": "service",
+        "allDay": true
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "market",
+        "outfitContext": "service",
+        "hourRange": [
+          9,
+          12
+        ]
+      }
+    ],
     "meetChance": 0.35,
     "meetConditions": {
       "hourRange": [
@@ -221,23 +318,12 @@
     "desc": "快餐店掌勺大姐，心善，爱给人塞吃的。",
     "meetVisitCount": 3,
     "metText": "在快餐店吃了两回，大姐说你跟别人不一样，非拉你坐下聊了会儿。",
-    "netName": "掌勺陈姐",
+    "netName": "陈姐",
     "netAvatar": "🍳",
     "talk": {
       "acquaintance": {
         "text": "陈姐：『又来啦？今天想吃点啥？』",
         "options": [
-          {
-            "label": "陈姐推荐个菜",
-            "affinity": 3,
-            "help": {
-              "log": "陈姐给你加了份招牌红烧肉，不要钱。",
-              "reward": {
-                "satiety": 20,
-                "money": 0
-              }
-            }
-          },
           {
             "label": "老三样就行",
             "affinity": 1,
@@ -249,17 +335,6 @@
         "text": "陈姐：『后厨缺个帮切菜的，笨点没事，来搭把手？』",
         "options": [
           {
-            "label": "成，我帮你切",
-            "affinity": 4,
-            "help": {
-              "log": "你帮陈姐备了半天菜，她塞给你一份盒饭和工钱。",
-              "reward": {
-                "satiety": 15,
-                "money": 30
-              }
-            }
-          },
-          {
             "label": "我手笨算了",
             "affinity": -1,
             "log": "你摆摆手，陈姐笑了笑。"
@@ -269,20 +344,6 @@
       "close_friend": {
         "text": "陈姐：『店里想推外卖，你脑子活，帮我想想菜单呗？』",
         "options": [
-          {
-            "label": "包在我身上",
-            "affinity": 5,
-            "commission": {
-              "title": "帮快餐店排外卖菜单",
-              "desc": "帮陈姐设计一周外卖套餐，约 4 天。",
-              "days": 4,
-              "reward": {
-                "money": 160,
-                "charm": 2
-              },
-              "rewardText": "+160 元 +2 魅力"
-            }
-          },
           {
             "label": "这我不在行",
             "affinity": -1,
@@ -294,11 +355,49 @@
   },
   {
     "id": "npc_wang_lei",
+    "netName": "闲庭信步",
+    "gender": "male",
     "name": "王磊",
     "nick": "公园晨练大爷",
+    "identity": {
+      "descriptor": "公园晨练的退休干部",
+      "familiar": "王叔",
+      "known": "王爷爷"
+    },
     "icon": "👴",
     "romanceable": false,
     "meetLocation": "park",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "locationId": "park",
+        "regionId": "downtown_center",
+        "outfitContext": "outdoor",
+        "hourRange": [
+          6,
+          9
+        ]
+      },
+      {
+        "weekdays": [
+          4
+        ],
+        "locationId": "hospital",
+        "outfitContext": "casual",
+        "hourRange": [
+          14,
+          17
+        ]
+      }
+    ],
     "meetChance": 0.2,
     "meetConditions": {
       "minCharm": 10,
@@ -325,40 +424,61 @@
     "metText": "陈姐说你人实在，非要把她认识的退休干部老王介绍给你——公园晨练的大爷，看着挺精神。"
   },
   {
-    "id": "npc_li_na",
-    "name": "？？？",
-    "nick": "工位旁的姐姐",
-    "icon": "👩‍💻",
-    "romanceable": false,
-    "type": "colleague",
-    "meetLocation": "electronics_factory",
-    "meetChance": 0.35,
-    "meetConditions": {
-      "hourRange": [
-        8,
-        18
-      ],
-      "requireEmployed": true
-    },
-    "initialAffinity": 5,
-    "likes": [
-      "fruit",
-      "bento"
-    ],
-    "dislikes": [],
-    "contactAt": 25,
-    "perks": {
-      "friend": "borrow"
-    },
-    "desc": "电子厂流水线旁边的同事，上班时经常互相搭把手。"
-  },
-  {
     "id": "npc_netbar_boss",
+    "gender": "male",
     "name": "网咖老板",
     "nick": "网吧老板",
+    "identity": {
+      "descriptor": "网吧柜台老板",
+      "familiar": "老板",
+      "known": "老板"
+    },
     "icon": "🎮",
     "romanceable": false,
     "meetLocation": "internet_cafe",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "internet_cafe",
+        "regionId": "downtown_residential",
+        "outfitContext": "service",
+        "hourRange": [
+          9,
+          18
+        ]
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "boyue_nightclub",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          21,
+          2
+        ],
+        "overnight": true
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "electronics_store",
+        "regionId": "downtown_mall",
+        "outfitContext": "retail",
+        "hourRange": [
+          9,
+          18
+        ]
+      }
+    ],
     "meetChance": 0.35,
     "meetVisitCount": 3,
     "meetConditions": {
@@ -378,7 +498,7 @@
     },
     "desc": "网吧老板，面冷心热，常给熟客打折。",
     "metText": "老板看你来了好几回，熟了之后说：小伙子，常来就给你个会员价。",
-    "netName": "深夜在线",
+    "netName": "重启试试",
     "netAvatar": "🕹️",
     "talk": {
       "acquaintance": {
@@ -400,16 +520,6 @@
         "text": "网吧老板：『常来也不容易，我这有张闲置的会员卡，先借你刷着。』",
         "options": [
           {
-            "label": "谢了老板！",
-            "affinity": 4,
-            "help": {
-              "log": "网吧老板送你一张免费上网券，今儿网费免了。",
-              "reward": {
-                "mood": 4
-              }
-            }
-          },
-          {
             "label": "不用这么客气",
             "affinity": -1,
             "log": "你推辞了，老板也没勉强。"
@@ -419,20 +529,6 @@
       "close_friend": {
         "text": "网吧老板：『店里的机器老卡，你会弄电脑，帮我重装几台呗？』",
         "options": [
-          {
-            "label": "没问题，交给我",
-            "affinity": 5,
-            "commission": {
-              "title": "给网吧重装系统",
-              "desc": "帮网吧老板重装并优化几台机器，约 3 天。",
-              "days": 3,
-              "reward": {
-                "money": 200,
-                "intelligence": 2
-              },
-              "rewardText": "+200 元 +2 智力"
-            }
-          },
           {
             "label": "我不太会装系统",
             "affinity": -1,
@@ -444,11 +540,43 @@
   },
   {
     "id": "npc_librarian",
+    "gender": "female",
     "name": "图书馆大姐",
     "nick": "图书管理员",
+    "identity": {
+      "descriptor": "阅览室管理员",
+      "familiar": "大姐",
+      "known": "大姐"
+    },
     "icon": "📚",
     "romanceable": false,
     "meetLocation": "library",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "library",
+        "outfitContext": "service",
+        "allDay": true
+      },
+      {
+        "weekdays": [
+          5,
+          6
+        ],
+        "locationId": "lake_park",
+        "outfitContext": "outdoor",
+        "hourRange": [
+          12,
+          18
+        ]
+      }
+    ],
     "meetChance": 0.3,
     "meetVisitCount": 3,
     "meetConditions": {
@@ -468,7 +596,7 @@
     },
     "desc": "图书馆管理员，安静温柔，爱推荐书。",
     "metText": "大姐帮你找了本编程入门，说：多看看书，比在网吧打游戏强。",
-    "netName": "书页之间",
+    "netName": "暂不剧透",
     "netAvatar": "📚",
     "talk": {
       "acquaintance": {
@@ -490,17 +618,6 @@
         "text": "图书馆大姐：『馆里要整理一批旧书，缺个帮手，来不？』",
         "options": [
           {
-            "label": "我来帮忙",
-            "affinity": 4,
-            "help": {
-              "log": "你帮大姐归整了半天书架，她送你一张借书卡。",
-              "reward": {
-                "intelligence": 1,
-                "mood": 2
-              }
-            }
-          },
-          {
             "label": "今天先不啦",
             "affinity": -1,
             "log": "你今天想自己看书，大姐理解。"
@@ -511,20 +628,6 @@
         "text": "图书馆大姐：『社区要办读书会，你文笔好，帮写几篇推文行不？』",
         "options": [
           {
-            "label": "乐意之至",
-            "affinity": 5,
-            "commission": {
-              "title": "社区读书会推文",
-              "desc": "帮图书馆大姐写几篇读书会推文，约 4 天。",
-              "days": 4,
-              "reward": {
-                "money": 140,
-                "charm": 2
-              },
-              "rewardText": "+140 元 +2 魅力"
-            }
-          },
-          {
             "label": "我写不太好",
             "affinity": -1,
             "log": "你谦称笔头不行，大姐说下次也行。"
@@ -534,30 +637,549 @@
     }
   },
   {
-    "id": "npc_pharmacist",
-    "name": "药房大哥",
-    "nick": "药房老哥",
-    "icon": "💊",
+    "id": "npc_flower_market_owner",
+    "gender": "female",
+    "name": "苏荷",
+    "nick": "花市摊主",
+    "identity": {
+      "descriptor": "花鸟市场摊主",
+      "familiar": "苏姐",
+      "known": "苏荷"
+    },
+    "icon": "🌸",
     "romanceable": false,
-    "meetLocation": "clinic",
-    "meetChance": 0.35,
+    "meetLocation": "flower_market",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "flower_market",
+        "outfitContext": "market",
+        "allDay": true
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "amusement_park",
+        "outfitContext": "casual",
+        "allDay": true
+      }
+    ],
+    "meetChance": 0.42,
     "meetVisitCount": 2,
     "meetConditions": {
       "hourRange": [
         8,
-        22
+        21
       ]
     },
-    "initialAffinity": 5,
-    "likes": [
-      "fruit",
-      "farm_egg"
-    ],
+    "initialAffinity": 10,
     "contactAt": 20,
-    "perks": {
-      "friend": "referral_job_convenience_clerk"
+    "desc": "花鸟市场的老摊主，周末最忙，平日也会照料一排排绿植。",
+    "metText": "苏荷递给你一张养护卡：花市周末热闹，平日来找我也能挑到耐养的盆栽。",
+    "netName": "苏荷·花与绿植",
+    "netAvatar": "🪴",
+    "talk": {
+      "acquaintance": {
+        "text": "苏荷：『看花还是看小鱼？第一次来可以先逛一圈。』",
+        "options": [
+          {
+            "label": "想挑一盆好养的",
+            "affinity": 3,
+            "log": "苏荷给你推荐了几种耐阴绿植。"
+          },
+          {
+            "label": "先看看小动物",
+            "affinity": 1,
+            "log": "你在摊位间慢慢看了起来。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "苏荷：『周末前要补一批货，紫羊区那边的花农最可靠，可惜我抽不开身。』",
+        "options": [
+          {
+            "label": "我今天只是来逛逛",
+            "affinity": 1,
+            "log": "苏荷笑着说下次来再慢慢挑。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_snack_street_vendor",
+    "gender": "male",
+    "name": "马师傅",
+    "nick": "小吃街马师傅",
+    "identity": {
+      "descriptor": "小吃街摊主",
+      "familiar": "马师傅",
+      "known": "马师傅"
     },
-    "desc": "社区药房老板，懂点医，爱唠叨养生。",
-    "metText": "老哥看你买药，多送了你一包板蓝根：年轻人，多注意身体。"
+    "icon": "🍢",
+    "romanceable": false,
+    "meetLocation": "snack_street",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "locationId": "snack_street",
+        "regionId": "downtown_station",
+        "outfitContext": "service",
+        "hourRange": [
+          13,
+          24
+        ]
+      },
+      {
+        "weekdays": [
+          4
+        ],
+        "locationId": "boyue_snack_street",
+        "regionId": "boyue_night_market",
+        "outfitContext": "service",
+        "hourRange": [
+          13,
+          24
+        ]
+      },
+      {
+        "weekdays": [
+          5,
+          6
+        ],
+        "locationId": "dev_food_street",
+        "regionId": "development_university",
+        "outfitContext": "service",
+        "hourRange": [
+          13,
+          24
+        ]
+      }
+    ],
+    "meetChance": 0.42,
+    "meetVisitCount": 2,
+    "meetConditions": {
+      "hourRange": [
+        10,
+        23
+      ]
+    },
+    "initialAffinity": 9,
+    "contactAt": 20,
+    "desc": "小吃街的老摊主，讲究火候和待客，最懂哪种招牌能留住回头客。",
+    "metText": "马师傅让你尝了口刚出锅的小吃：摊位不大，味道和招牌可不能马虎。",
+    "netName": "老马小炒",
+    "netAvatar": "🍜",
+    "talk": {
+      "acquaintance": {
+        "text": "马师傅：『刚出锅，趁热吃。你要是想摆摊，先观察客人脚步。』",
+        "options": [
+          {
+            "label": "请教摆摊窍门",
+            "affinity": 3,
+            "log": "马师傅讲了几句招呼客人的小窍门。"
+          },
+          {
+            "label": "先买份小吃",
+            "affinity": 2,
+            "log": "你买了份热乎的小吃，边吃边看街上的人流。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "马师傅：『招牌不是越复杂越好，先把花市那边的客群摸清楚，再定口味。』",
+        "options": [
+          {
+            "label": "我先从简单的做起",
+            "affinity": 2,
+            "log": "马师傅点点头，让你先把一两样小吃做熟。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_suburb_farmer",
+    "gender": "male",
+    "name": "陈守田",
+    "nick": "陈叔",
+    "identity": {
+      "descriptor": "紫羊区农户",
+      "familiar": "陈叔",
+      "known": "陈叔"
+    },
+    "icon": "👨‍🌾",
+    "romanceable": false,
+    "meetLocation": "farm",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "farm",
+        "outfitContext": "farm",
+        "allDay": true
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "pasture",
+        "outfitContext": "farm",
+        "allDay": true
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "camping_base",
+        "regionId": "development_reserve",
+        "outfitContext": "outdoor",
+        "hourRange": [
+          9,
+          17
+        ]
+      }
+    ],
+    "meetChance": 0.4,
+    "meetVisitCount": 2,
+    "meetConditions": {
+      "hourRange": [
+        7,
+        19
+      ]
+    },
+    "initialAffinity": 10,
+    "contactAt": 20,
+    "desc": "紫羊区的农户，种菜也养鸡，愿意和城里人分享新鲜农产的门道。",
+    "metText": "陈叔从田边抬起头：城里来的？想买新鲜菜，等下午这一车收完更合适。",
+    "netName": "守田",
+    "netAvatar": "🌾",
+    "talk": {
+      "acquaintance": {
+        "text": "陈叔：『今天的菜刚摘，想买点带回城里，得自己挑。』",
+        "options": [
+          {
+            "label": "请你推荐当季菜",
+            "affinity": 3,
+            "log": "陈叔教你分辨了几种当季蔬菜。"
+          },
+          {
+            "label": "我先随便逛逛",
+            "affinity": 1,
+            "log": "你沿着田埂看了看农场的日常。"
+          }
+        ]
+      },
+      "friend": {
+        "text": "陈叔：『下批新鲜货要进城，光靠一辆三轮车不太够，得有人帮忙安排路线。』",
+        "options": [
+          {
+            "label": "我先买点菜回去",
+            "affinity": 2,
+            "log": "陈叔给你挑了几样新鲜农产。"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": "npc_fan_kejie",
+    "netName": "阿杰",
+    "gender": "male",
+    "name": "范柯杰",
+    "nick": "夜市驻唱青年",
+    "identity": {
+      "descriptor": "泊月夜市驻唱青年",
+      "familiar": "柯杰",
+      "known": "范柯杰"
+    },
+    "icon": "🎤",
+    "romanceable": false,
+    "meetLocation": "boyue_lounge_bar",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0
+        ],
+        "locationId": "boyue_lounge_bar",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          18,
+          23
+        ]
+      },
+      {
+        "weekdays": [
+          1
+        ],
+        "locationId": "boyue_arcade",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          15,
+          18
+        ]
+      },
+      {
+        "weekdays": [
+          2
+        ],
+        "locationId": "dev_food_street",
+        "regionId": "development_university",
+        "outfitContext": "casual",
+        "hourRange": [
+          17,
+          20
+        ]
+      },
+      {
+        "weekdays": [
+          3
+        ],
+        "locationId": "boyue_lounge_bar",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          18,
+          23
+        ]
+      },
+      {
+        "weekdays": [
+          4
+        ],
+        "locationId": "boyue_nightclub",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          18,
+          6
+        ],
+        "overnight": true
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "boyue_lounge_bar",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          18,
+          23
+        ]
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "boyue_snack_street",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          17,
+          20
+        ]
+      }
+    ],
+    "meetChance": 0.35,
+    "initialAffinity": 0,
+    "contactAt": 25,
+    "desc": "泊月夜市的驻唱青年，晚上在清吧唱歌，也会接零工攒钱偿还欠款并支持双胞胎妹妹读书。",
+    "dialoguePlaceholder": "暂时没有什么想聊的"
+  },
+  {
+    "id": "npc_jack_fanma",
+    "netName": "Jack",
+    "gender": "male",
+    "name": "杰克·范马",
+    "nick": "工程学院留学生",
+    "identity": {
+      "descriptor": "工程学院留学生",
+      "familiar": "范杰克",
+      "known": "范杰克"
+    },
+    "icon": "🎧",
+    "romanceable": false,
+    "meetLocation": "boyue_engineering_college",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "boyue_engineering_college",
+        "regionId": "campus_engineering",
+        "outfitContext": "casual",
+        "hourRange": [
+          8,
+          12
+        ]
+      },
+      {
+        "weekdays": [
+          0,
+          2,
+          4
+        ],
+        "locationId": "boyue_gym",
+        "regionId": "boyue_mall",
+        "outfitContext": "casual",
+        "hourRange": [
+          15,
+          17
+        ]
+      },
+      {
+        "weekdays": [
+          1,
+          3
+        ],
+        "locationId": "boyue_basketball_court",
+        "regionId": "boyue_olympic",
+        "outfitContext": "outdoor",
+        "hourRange": [
+          16,
+          18
+        ]
+      },
+      {
+        "weekdays": [
+          4,
+          5
+        ],
+        "locationId": "boyue_lounge_bar",
+        "regionId": "boyue_night_market",
+        "outfitContext": "casual",
+        "hourRange": [
+          19,
+          23
+        ]
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "boyue_basketball_court",
+        "regionId": "boyue_olympic",
+        "outfitContext": "outdoor",
+        "hourRange": [
+          13,
+          15
+        ]
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "boyue_gym",
+        "regionId": "boyue_mall",
+        "outfitContext": "casual",
+        "hourRange": [
+          15,
+          17
+        ]
+      }
+    ],
+    "meetChance": 0.35,
+    "initialAffinity": 0,
+    "contactAt": 25,
+    "desc": "美日混血的工程学院留学生，身材高大，认真健身和练习音乐，坚持拒绝不尊重创作的商单。",
+    "dialoguePlaceholder": "暂时没有什么想聊的"
+  },
+  {
+    "id": "npc_fan_kexi",
+    "netName": "小汐",
+    "gender": "female",
+    "name": "范珂汐",
+    "nick": "师范学院学生",
+    "identity": {
+      "descriptor": "师范学院学生",
+      "familiar": "珂汐",
+      "known": "范珂汐"
+    },
+    "icon": "🎓",
+    "romanceable": false,
+    "meetLocation": "dev_university",
+    "weeklySchedule": [
+      {
+        "weekdays": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "locationId": "dev_university",
+        "regionId": "campus_teacher",
+        "outfitContext": "casual",
+        "hourRange": [
+          8,
+          15
+        ]
+      },
+      {
+        "weekdays": [
+          2
+        ],
+        "locationId": "dev_food_street",
+        "regionId": "development_university",
+        "outfitContext": "casual",
+        "hourRange": [
+          16,
+          18
+        ]
+      },
+      {
+        "weekdays": [
+          5
+        ],
+        "locationId": "western_restaurant",
+        "regionId": "downtown_center",
+        "outfitContext": "service",
+        "hourRange": [
+          11,
+          15
+        ]
+      },
+      {
+        "weekdays": [
+          6
+        ],
+        "locationId": "boyue_western_restaurant",
+        "regionId": "boyue_mall",
+        "outfitContext": "service",
+        "hourRange": [
+          11,
+          15
+        ]
+      }
+    ],
+    "meetChance": 0.35,
+    "initialAffinity": 0,
+    "contactAt": 25,
+    "desc": "师范学院学生，范柯杰的双胞胎妹妹，性格文静。周末会在树堰区或泊月区的西餐厅兼职。",
+    "dialoguePlaceholder": "暂时没有什么想聊的"
   }
 ]

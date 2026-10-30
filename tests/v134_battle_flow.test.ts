@@ -8,7 +8,8 @@
  *
  * 本文件在完整 GameView 上还原真实点击路径，确保两个入口都能真正开出战斗界面。
  */
-import { describe, it, expect, beforeEach } from "vitest";
+import {createCatDuelState} from "../src/game/core/catDuelCollection";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { mount, unmount, flushSync } from "svelte";
 import GameView from "../src/views/GameView.svelte";
 import { gameState, currentView } from "../src/stores/gameStore.svelte";
@@ -31,9 +32,15 @@ function click(el: Element | null | undefined): void {
 function setup(): void {
   currentView.name = "game";
   const s = gameState;
+  s.locationId = "home";
+  s.region = "downtown_residential";
+  s.area = "downtown_residential";
+  s.navStack = [];
   s.time = { day: 2, month: 8, year: 2026, hour: 14, minute: 0, stayedUp: false };
   s.player.money = 5000;
+  s.flags.item_car = true;
   s.catBattle = undefined;
+  s.catDuel=createCatDuelState();
   s.flags["cat_battle_pending"] = false;
   s.flags["cat_free_train_day"] = 0;
   s.flags["cat_free_train_count"] = 0;
@@ -53,35 +60,20 @@ function mountGameView(): { target: HTMLDivElement; comp: Record<string, unknown
   return { target, comp };
 }
 
-beforeEach(setup);
+beforeEach(() => {
+  setup();
+  // freeTrainCat uses a separately seeded RNG for its 50% encounter branch.
+  // Seed 1 makes the first draw land on the encounter side, so these UI tests
+  // cover the intended path without relying on 12 probabilistic retries.
+  vi.spyOn(Math, "random").mockReturnValue(1 / 0xffffffff);
+});
+afterEach(() => vi.restoreAllMocks());
 
 describe("v1.34-hotfix 对决入口端到端", () => {
-  it("游乐场「喵喵娱乐赛」：点击后自动弹出战斗界面", () => {
-    moveTo(gameState, "suburb");
-    moveTo(gameState, "suburban_edge");
-    moveTo(gameState, "amusement_park");
-
-    const { target, comp } = mountGameView();
-    try {
-      const btn = findBtn(target, "喵喵娱乐赛");
-      expect(btn, "应渲染出娱乐赛入口").toBeTruthy();
-      click(btn);
-      flushSync();
-      flushSync();
-
-      expect(uiState.modal, "应自动切到战斗界面").toBe("battle");
-      expect(gameState.catBattle, "应建立战斗状态").toBeTruthy();
-      expect(gameState.catBattle?.casual, "娱乐赛为休闲对决").toBe(true);
-      expect(target.innerHTML, "战斗界面应渲染出手牌").toContain("结束回合");
-    } finally {
-      unmount(comp);
-      target.remove();
-    }
-  });
+  it('娱乐赛先准备和组牌，确认开始后才建立战斗并计时',()=>{moveTo(gameState,'suburb');moveTo(gameState,'suburban_edge');moveTo(gameState,'amusement_park');const {target,comp}=mountGameView();try{const before=JSON.stringify(gameState.time);click(findBtn(target,'喵喵娱乐赛'));flushSync();flushSync();expect(uiState.modal).toBe('cat_duel');expect(gameState.catBattle).toBeUndefined();expect(JSON.stringify(gameState.time)).toBe(before);click(findBtn(target,'开始对决'));flushSync();flushSync();expect(gameState.catBattle?.casual).toBe(true);expect(uiState.modal).toBe('battle');expect(target.textContent).toContain('结束回合');}finally{unmount(comp);target.remove();}});
 
   it("公园「猫咪自由锻炼」→ 遭遇 → 应战：能开出战斗界面", () => {
-    moveTo(gameState, "suburb");
-    moveTo(gameState, "suburban_edge");
+    moveTo(gameState, "downtown_center");
     moveTo(gameState, "park");
 
     const { target, comp } = mountGameView();
@@ -129,8 +121,7 @@ describe("v1.34-hotfix 对决入口端到端", () => {
   });
 
   it("公园「猫咪自由锻炼」→ 遭遇 → 逃跑：清空战斗、无损失", () => {
-    moveTo(gameState, "suburb");
-    moveTo(gameState, "suburban_edge");
+    moveTo(gameState, "downtown_center");
     moveTo(gameState, "park");
 
     const { target, comp } = mountGameView();

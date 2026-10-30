@@ -4,8 +4,10 @@
  */
 import type { GameState, SurvivalAttrs, Skills, Effects, ResultDelta } from "./types";
 import { createInitialState } from "./core/state";
+import { nextLogSequence } from "./core/logSequence";
 import { advanceHours, sleepSettlement, periodOfHour } from "./core/time";
 import { getMaxStamina } from "./core/stats";
+import { changeGrowthStat } from "./core/growthStats";
 import { applyStatuses, cureStatuses } from "./core/statuses";
 import { recordMoney } from "./core/weekly";
 import { weightedDraw } from "./rng";
@@ -19,6 +21,23 @@ import {
   checkCrisisRecovered,
 } from "./core/tarot";
 import { checkTutorialProgress, currentTutorialStep, TUTORIAL_STEPS } from "./core/tutorial";
+import { residenceLocationId, residenceRegion } from "./core/residence";
+
+/** 晕倒强制回家时仍保留有效住房所在区域，避免回家后导航栈丢失。 */
+function collapseHomeRegion(state: GameState): string {
+  return residenceRegion(state);
+}
+
+/**
+ * 晕倒回家时同步完整的地图导航路径。
+ * 这里不直接依赖 regions.ts（该模块反向读取 actions.ts，而 actions.ts
+ * 又依赖 engine.ts），用住房实际可能落点的稳定父子关系避免初始化循环。
+ */
+function collapseHomeNavigation(regionId: string): string[] {
+  return regionId === "suburban_edge"
+    ? ["map", "suburb", regionId]
+    : ["map", "downtown", regionId];
+}
 
 /** 收集效果的非零增量（供结算弹窗展示，带中文标签） */
 export function collectDeltas(effects: Effects): ResultDelta[] {
@@ -75,10 +94,10 @@ export function applyEffects(state: GameState, effects: Effects, icon = "📝"):
     a.satiety = clamp(a.satiety + effects.satiety);
     if (effects.satiety > 0) state.flags["ateToday"] = true; // v0.936：标记当日进食，供饥饿计数
   }
-  if (effects.intelligence) p.stats.intelligence = clamp(p.stats.intelligence + effects.intelligence);
-  if (effects.charm) p.stats.charm = clamp(p.stats.charm + effects.charm);
-  if (effects.fitness) { p.stats.fitness = clamp(p.stats.fitness + effects.fitness); state.flags["exercised_today"] = true; } // v1.25：每日目标「运动一次」
-  if (effects.fame) p.stats.fame = clamp(p.stats.fame + effects.fame);
+  if (effects.intelligence) changeGrowthStat(state, "intelligence", effects.intelligence);
+  if (effects.charm) changeGrowthStat(state, "charm", effects.charm);
+  if (effects.fitness) changeGrowthStat(state, "fitness", effects.fitness);
+  if (effects.fame) changeGrowthStat(state, "fame", effects.fame);
   if (effects.stress) p.stress = clamp(p.stress + effects.stress);
 
   if (effects.skills) {
@@ -132,8 +151,8 @@ export function applyEffects(state: GameState, effects: Effects, icon = "📝"):
 }
 
 /** 推进时间（行动后调用） */
-export function advanceTime(state: GameState, hours: number): { crossedDay: boolean } {
-  return advanceHours(state, hours);
+export function advanceTime(state: GameState, hours: number, onArrival?: () => void): { crossedDay: boolean } {
+  return advanceHours(state, hours, true, false, onArrival);
 }
 
 /**
@@ -146,30 +165,43 @@ export function advanceTime(state: GameState, hours: number): { crossedDay: bool
  * 实现在 engine（避免 fatigue → time → jobs → fatigue 重环）。
  */
 export function triggerCollapse(state: GameState, why: string): void {
-  const fee = Math.max(30, Math.round(state.player.money * 0.2));
+  // 负债时不再加重现金缺口，但保留健康代价，避免晕倒成为免费的体力恢复方式。
+  const fee = state.player.money < 0 ? 0 : Math.min(state.player.money, Math.max(30, Math.round(state.player.money * 0.2)));
+  const debtCollapse = state.player.money < 0;
+  const healthPenalty = debtCollapse ? 5 : 2;
   state.player.money -= fee;
-  recordMoney(state, -fee); // v1.10 周记（医药费计入支出）
+  if (fee > 0) recordMoney(state, -fee); // v1.10 周记（医药费计入支出）
   state.flags["collapsed_once"] = true; // v0.94：「死里逃生」标记
   markCollapsed(state); // v0.985：置位「已晕倒未睡」，若醒后不睡直接行动则解锁倒吊人
   markMajorCrisis(state); // v0.985：晕倒计入重大危机，日后重新站起来解锁高塔
-  pushLog(state, "🚑", `${why}，体力透支晕倒了！被好心人送回家，医药费 -${fee} 元`);
+  pushLog(state, "🚑", `${why}，体力透支晕倒了！被好心人送回家，${fee > 0 ? `医药费 -${fee} 元` : `负债中，健康 -${healthPenalty}`}`);
 
   // 强制回家
-  state.locationId = "home";
-  state.region = "downtown_residential";
-  state.navStack = [];
+  state.locationId = residenceLocationId(state);
+  state.region = collapseHomeRegion(state);
+  state.area = state.region;
+  state.navStack = collapseHomeNavigation(state.region);
 
   // 恢复一半体力
   const max = getMaxStamina(state);
   state.player.attrs.stamina = Math.round(max * 0.5);
-  state.player.attrs.health = Math.max(0, state.player.attrs.health - 2);
+  state.player.attrs.health = Math.max(0, state.player.attrs.health - healthPenalty);
   state.player.attrs.mood = Math.max(0, state.player.attrs.mood - 5);
   state.player.stress = Math.min(100, state.player.stress + 5);
 
   // v1.06：晕倒前先结算必要生存/经济项（月租/发薪/生存/结局），再推进时间
   sleepSettlement(state, { stayedUp: true, hours: 0 });
+  // 记录本次强制结算实际使用的锚定日。不能在推进 12 小时后再用当前日期
+  // 覆盖，否则跨午夜晕倒会把“下一天”误标成已结算，导致翌日首次睡眠被跳过。
+  const collapseAnchor = state.flags["settledAnchor"];
+  const collapseDay = state.flags["settledToday"];
   // 时间跳过 12 小时
-  advanceHours(state, 12, false);
+  advanceHours(state, 12, true);
+  // 晕倒的强制休息已经完成本次锚定日结算；即使 12 小时后仍未跨日，
+  // 玩家再次点击睡觉也不能把本日工资、周报和结局重复结算。
+  // 同时记录强制休息后的自然日，兼容旧版按 day 判断的存档。
+  if (typeof collapseAnchor === "number") state.flags["collapseSettledAnchor"] = collapseAnchor;
+  if (typeof collapseDay === "number") state.flags["collapseSettledToday"] = collapseDay;
 
   // 疲惫状态解除（睡了 12 小时）
   cureStatuses(state, ["exhausted", "sleep_disorder"]);
@@ -177,7 +209,9 @@ export function triggerCollapse(state: GameState, why: string): void {
 
 /** 写入日志（导出供 housing/jobs/backgrounds 复用；自动派生时段与时刻） */
 export function pushLog(state: GameState, icon: string, text: string): void {
+  const sequence = nextLogSequence(state);
   state.log.push({
+    sequence,
     day: state.time.day,
     period: periodOfHour(state.time.hour),
     hour: state.time.hour,

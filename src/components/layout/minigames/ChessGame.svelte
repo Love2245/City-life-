@@ -5,6 +5,8 @@
   UI：楚河汉界、选中金框、合法落点标记、被将军警示、落子动效。
 -->
 <script lang="ts">
+  import { onDestroy } from "svelte";
+  import { miniGameRandom } from "../../../lib/minigameRandom";
   import { gameState } from "../../../stores/gameStore.svelte";
   import { applyEffects, pushLog } from "../../../game/engine";
   import { playSound } from "../../../lib/audio";
@@ -22,11 +24,16 @@
 
   let {
     cfg = {},
+    practice = false,
+    paused = false,
     onFinish = () => {},
   }: {
+    practice?: boolean;
+    paused?: boolean;
     cfg?: { winMoney?: number; drawMoney?: number; desc?: string };
     onFinish?: (ratio: number) => void;
   } = $props();
+  const random = miniGameRandom();
 
   // v1.215：棋种标识与引擎一致（象用 "e"，旧组件曾用 "b"）
   const PIECE_CHAR: Record<PieceType, [string, string]> = {
@@ -71,15 +78,18 @@
   }
 
   /** 简易 AI：黑方走棋。吃子优先 + 躲开白吃的亏，带随机性（让大爷不至于无敌） */
+  let aiTimer: ReturnType<typeof setTimeout>;
+  onDestroy(() => clearTimeout(aiTimer));
   function aiMove(): void {
+    if (finished || turn !== 1) return;
     const moves = legalMoves(board, 1);
     if (moves.length === 0) {
-      endGame(isInCheck(board, 1) ? "lose" : "draw");
+      endGame(isInCheck(board, 1) ? "win" : "draw");
       return;
     }
     let scored = moves.map((m) => {
       const nb = applyMove(board, m);
-      let s = boardEval(nb) + Math.random() * 0.8;
+      let s = boardEval(nb) + random() * 0.8;
       const target = board[m.to.r][m.to.c];
       if (target) s += target.side === 0 ? VALUE[target.type] * 2 : 0;
       // 轻微惩罚：落点会被红方免费吃掉
@@ -92,7 +102,7 @@
     });
     scored.sort((a, b) => b.s - a.s);
     // 20% 随机一步，让大爷偶尔放水
-    const pick = Math.random() < 0.2 ? moves[Math.floor(Math.random() * moves.length)] : scored[0].m;
+    const pick = random() < 0.2 ? moves[Math.floor(random() * moves.length)] : scored[0].m;
     board = applyMove(board, pick);
     lastMove = pick;
     afterMove();
@@ -127,12 +137,18 @@
     selected = null;
     legalTargets = [];
     if (turn === 1) {
-      aiThinking = true;
-      setTimeout(() => {
-        aiThinking = false;
-        aiMove();
-      }, 450);
+      aiThink();
     }
+  }
+
+  /** AI 思考定时器：暂停期间不落子（到点续等），恢复后自然继续。 */
+  function aiThink(): void {
+    aiThinking = true;
+    aiTimer = setTimeout(() => {
+      if (paused) { aiThink(); return; }
+      aiThinking = false;
+      aiMove();
+    }, 450);
   }
 
   function onCell(r: number, c: number): void {
@@ -165,20 +181,20 @@
     const winMoney = cfg.winMoney ?? 20;
     const drawMoney = cfg.drawMoney ?? 5;
     if (result === "win") {
-      applyEffects(gameState, { money: winMoney, mood: 4 }, "♟️");
-      pushLog(gameState, "♟️", `你赢了象棋大爷，彩头 +${winMoney} 元`);
+      if (!practice) applyEffects(gameState, { money: winMoney, mood: 4 }, "♟️");
+      if (!practice) pushLog(gameState, "♟️", `你赢了象棋大爷，彩头 +${winMoney} 元`);
       resultText = `将死了大爷的「將」！他笑着递来 ${winMoney} 元彩头`;
       playSound("success");
       onFinish(0.9);
     } else if (result === "draw") {
-      applyEffects(gameState, { money: drawMoney, mood: 2 }, "♟️");
-      pushLog(gameState, "♟️", `和象棋大爷下成和棋，彩头 +${drawMoney} 元`);
+      if (!practice) applyEffects(gameState, { money: drawMoney, mood: 2 }, "♟️");
+      if (!practice) pushLog(gameState, "♟️", `和象棋大爷下成和棋，彩头 +${drawMoney} 元`);
       resultText = `和棋！大爷说棋逢对手，塞给你 ${drawMoney} 元`;
       playSound("coin");
       onFinish(0.6);
     } else {
-      applyEffects(gameState, { mood: 2 }, "♟️");
-      pushLog(gameState, "♟️", "输给了象棋大爷，不过学到了几手");
+      if (!practice) applyEffects(gameState, { mood: 2 }, "♟️");
+      if (!practice) pushLog(gameState, "♟️", "输给了象棋大爷，不过学到了几手");
       resultText = "你输了。大爷拍拍你的肩：小伙子，回去练练再来！";
       playSound("coin");
       onFinish(0.3);
@@ -186,6 +202,7 @@
   }
 
   function restart(): void {
+    clearTimeout(aiTimer);
     board = initialBoard();
     selected = null;
     legalTargets = [];
@@ -199,7 +216,7 @@
 
 <div class="chess">
   <div class="c-head">
-    <span class="c-status">
+    <span class="c-status" aria-live="polite">
       {#if finished}
         {resultText}
       {:else if turn === 0}
@@ -211,9 +228,18 @@
     <span class="c-stats">胜 {stats.win} / 和 {stats.draw} / 负 {stats.lose}</span>
   </div>
 
-  <div class="board">
+  <div class="c-main">
+    <div class="board" role="group" aria-label="象棋棋盘，红方在下">
+      <svg class="board-lines" viewBox="0 0 900 1060" preserveAspectRatio="none" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="2" fill="none">
+          {#each Array.from({length:10}) as _,r}<path d={`M50 ${50+r*100+(r>=5?60:0)}H850`}/>{/each}
+          <path d="M50 50V1010M850 50V1010"/>
+          {#each Array.from({length:7}) as _,c}<path d={`M${150+c*100} 50V450M${150+c*100} 610V1010`}/>{/each}
+          <path d="M350 50L550 250M550 50L350 250M350 810L550 1010M550 810L350 1010"/>
+        </g>
+      </svg>
     {#each Array.from({ length: 10 }) as _, r}
-      <div class="row" class:river={r === 4}>
+      <div class="row">
         {#each Array.from({ length: 9 }) as _, c}
           {@const p = board[r][c]}
           {@const isSel = selected?.r === r && selected?.c === c}
@@ -221,7 +247,10 @@
           {@const isCheckKing = p?.type === "k" && ((p.side === 0 && redInCheck) || (p.side === 1 && blackInCheck))}
           {@const isLast = lastMove !== null && ((lastMove.from.r === r && lastMove.from.c === c) || (lastMove.to.r === r && lastMove.to.c === c))}
           <button
+            type="button"
             class="cell"
+            aria-label={`${p?(p.side===0?'红方':'黑方')+PIECE_CHAR[p.type][p.side]:'空位'}，第${r+1}行第${c+1}列${isTarget?'，可落子':''}`}
+            aria-pressed={isSel}
             class:sel={isSel}
             class:target={isTarget}
             class:capture={isTarget && !!p}
@@ -235,7 +264,7 @@
             {#if p}
               <span class="disc">{PIECE_CHAR[p.type][p.side]}</span>
             {:else if isTarget}
-              <span class="dot" />
+              <span class="dot"></span>
             {/if}
           </button>
         {/each}
@@ -246,159 +275,29 @@
     {/each}
   </div>
 
-  <p class="c-tip dim">{cfg.desc ?? "点击选中棋子，再点击高亮格落子；将死对方的「將」即胜"}</p>
-  <div class="c-actions">
-    <button class="c-btn" onclick={restart}>重新开局</button>
+  <div class="c-side">
+    <div class="c-seats"><span class="black-seat">● 象棋大爷 · 执黑</span><span class="red-seat">● 你 · 执红先行</span></div>
+    <div class="c-guide"><small>公园里的慢时光</small><h3>楚河汉界</h3><p class="c-tip">先点己方棋子，再点高亮位置落子。将死对方即可获胜。</p></div>
+    <p class="c-selection" aria-live="polite">{selected?`已选${PIECE_CHAR[board[selected.r][selected.c]!.type][0]} · ${legalTargets.length}处可落子`:finished?resultText:'选中棋子后，可走的位置会亮起'}</p>
+    <div class="c-actions">
+      <button type="button" class="chess-restart" onclick={restart}>重新开局</button>
+    </div>
+  </div>
   </div>
 </div>
 
 <style>
-  .chess {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .c-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12.5px;
-    font-weight: 700;
-  }
-  .c-status {
-    color: var(--accent, #ffd166);
-  }
-  .c-stats {
-    color: var(--text-dim, #9aa3c7);
-    font-weight: 600;
-  }
-  .board {
-    /* v1.33 P6：棋盘 9×10、棋子等方。宽度同时受容器与视口高度约束，
-       避免全屏舞台下棋盘超高导致 .board 纵向被裁剪（只能看到半边棋盘）。 */
-    width: min(100%, 640px, calc((100dvh - 240px) * 9 / 10));
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    border: 2px solid #8a6b3a;
-    background:
-      linear-gradient(rgba(138, 107, 58, 0.06) 1px, transparent 1px),
-      #d9b878;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-  }
-  .row {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-  }
-  .row.river {
-    border-top: 2px dashed rgba(138, 107, 58, 0.55);
-    border-bottom: 2px dashed rgba(138, 107, 58, 0.55);
-  }
-  .river {
-    display: flex;
-    justify-content: space-between;
-    padding: 1px 8px;
-    font-family: "KaiTi", "STKaiti", serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: rgba(90, 64, 26, 0.75);
-    letter-spacing: 3px;
-    line-height: 1;
-  }
-  .cell {
-    position: relative;
-    aspect-ratio: 1;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  .cell:hover {
-    background: rgba(255, 255, 255, 0.18);
-  }
-  .disc {
-    width: 78%;
-    height: 78%;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    font-weight: 800;
-    line-height: 1;
-    font-family: "KaiTi", "STKaiti", "SimSun", serif;
-    background: radial-gradient(circle at 32% 28%, #fdf0d0, #e7c889 60%, #c9a45f);
-    color: #3a2c14;
-    box-shadow: 0 2px 4px rgba(60, 40, 10, 0.35);
-  }
-  .cell.red .disc {
-    color: #b01818;
-  }
-  .cell.black .disc {
-    color: #1f1f1f;
-  }
-  .cell.sel .disc {
-    outline: 3px solid rgba(255, 209, 102, 0.9);
-    outline-offset: 1px;
-    transform: scale(1.08);
-    box-shadow: 0 0 10px rgba(255, 209, 102, 0.7);
-  }
-  .cell.target {
-    background: rgba(93, 200, 120, 0.16);
-  }
-  .cell.capture .disc {
-    outline: 2px solid rgba(220, 80, 80, 0.85);
-    outline-offset: 0;
-  }
-  .dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: rgba(46, 96, 54, 0.85);
-    box-shadow: 0 0 4px rgba(46, 96, 54, 0.5);
-  }
-  .cell.check-king .disc {
-    animation: danger-pulse 0.9s ease-in-out infinite;
-    outline: 3px solid rgba(220, 50, 50, 0.95);
-  }
-  .cell.last .disc {
-    animation: pop 0.28s ease;
-  }
-  @keyframes danger-pulse {
-    0%, 100% { box-shadow: 0 0 4px rgba(220, 50, 50, 0.4); }
-    50% { box-shadow: 0 0 14px rgba(220, 50, 50, 0.95); }
-  }
-  @keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.22); }
-    100% { transform: scale(1); }
-  }
-  .c-tip {
-    font-size: 11.5px;
-    line-height: 1.5;
-    margin: 0;
-  }
-  .c-actions {
-    display: flex;
-    gap: 8px;
-  }
-  .c-btn {
-    padding: 7px 16px;
-    border-radius: 999px;
-    background: rgba(255, 209, 102, 0.14);
-    border: 1px solid rgba(255, 209, 102, 0.4);
-    color: var(--accent, #ffd166);
-    font-size: 12.5px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.18s ease, transform 0.15s ease;
-  }
-  .c-btn:hover {
-    background: rgba(255, 209, 102, 0.24);
-    transform: translateY(-1px);
-  }
+ .chess{box-sizing:border-box;width:100%;height:100%;min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px;padding:12px 16px;border-radius:16px;color:#eee5cf;background:radial-gradient(ellipse at 20% 0,#385249,#142f30 72%);box-shadow:inset 0 0 0 1px #c5cd9c22}
+ .c-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:none;font-size:13px;min-height:26px}.c-status{color:#f6dca5;font-weight:700}.c-stats{font-size:11px;color:#b3c4b5;font-variant-numeric:tabular-nums}
+ .c-main{container-type:size;display:flex;align-items:center;justify-content:center;gap:clamp(18px,4vw,52px);flex:1;min-height:0;min-width:0}
+ .board{position:relative;isolation:isolate;box-sizing:border-box;flex:none;width:min(64%,640px,calc(100cqh * 9 / 10.6));aspect-ratio:9/10.6;display:flex;flex-direction:column;border:clamp(5px,1.2vw,10px) solid #7a5737;border-radius:10px;overflow:hidden;color:#715539;background:repeating-linear-gradient(3deg,#c99e6510 0px,#f5dbaa30 3px,#c99e6510 8px),linear-gradient(130deg,#ead2a1,#cba56c);box-shadow:0 14px 22px #0006,inset 0 0 16px #6a451533;container-type:inline-size}
+ .board-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;color:#705336}
+ .row{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));flex:1;min-height:0;position:relative}.river{height:6%;flex:none;display:flex;align-items:center;justify-content:space-around;color:#785738;font:800 clamp(10px,4.4cqw,26px)/1 'KaiTi','STKaiti',serif;letter-spacing:.3em}
+ .chess .board .cell{box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:0;min-width:0;padding:0;border:0;background:transparent;cursor:pointer;touch-action:manipulation}.cell:hover{background:#fff8cd35}.cell.last:after{content:'';position:absolute;inset:5%;border:2px solid #675b4555;border-radius:6px;pointer-events:none}.cell:focus-visible{outline:2px solid #a03c2a;outline-offset:-3px}
+ .disc{width:81%;height:81%;box-sizing:border-box;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #ad8855;color:#2a302b;font:900 clamp(12px,6cqw,38px)/1 'KaiTi','STKaiti','SimSun',serif;background:radial-gradient(circle at 30% 25%,#fff4d9,#ecd09c 67%,#d2b17c);box-shadow:0 2px 3px #68442260,inset 0 0 0 2px #fdf2d07d;z-index:1}.cell.red .disc{color:#a92d27}.cell.sel .disc{outline:3px solid #f5f0b0;outline-offset:1px;box-shadow:0 0 0 4px #597e58,0 3px 6px #45321f70;transform:scale(1.06)}.cell.capture .disc{outline:3px solid #dc795d;outline-offset:1px}.cell.check-king .disc{outline:3px solid #d6563e;animation:chess-danger 1.2s ease-in-out infinite}.dot{width:23%;height:23%;border-radius:50%;background:#47694ccc;box-shadow:0 0 0 4px #688c5e24}.cell.target{background:#507c4920}
+ .c-side{display:flex;flex-direction:column;justify-content:center;gap:18px;min-width:0;width:clamp(190px,24vw,290px);flex:none;max-height:100%;overflow:auto;padding:12px 0}.c-seats{display:flex;flex-direction:column;gap:8px;font-size:12px;font-weight:700}.black-seat{color:#c7d4c1}.red-seat{color:#f1b19d}.c-guide{padding:17px 18px;border:1px solid #becb9d33;border-radius:12px;background:#102c2c88}.c-guide small{font-size:9px;letter-spacing:2px;color:#b6bd9a}.c-guide h3{margin:6px 0 12px;font:700 clamp(24px,3vw,34px) 'KaiTi','STKaiti',serif;color:#eed8aa}.c-tip{font-size:13px;line-height:1.9;margin:0;color:#ced2bc}.c-selection{min-height:35px;margin:0;font-size:12px;line-height:1.7;color:#dccb9e}.c-actions{display:flex}.chess-restart{min-height:44px;padding:9px 20px;border:1px solid #c8af7799;border-radius:9px;background:#dcc18b;color:#213932;font-weight:700;cursor:pointer}
+ @keyframes chess-danger{50%{box-shadow:0 0 14px #cf5d42bb}}
+ @media(max-height:520px) and (orientation:landscape){.chess{padding:7px 12px;gap:5px}.c-head{min-height:22px;font-size:12px}.c-side{gap:10px;padding:4px 0;width:clamp(175px,24vw,250px)}.c-guide{padding:10px 13px}.c-guide h3{font-size:25px;margin:3px 0 7px}.c-guide small{display:none}.c-tip{font-size:11px;line-height:1.65}.c-selection{font-size:11px;min-height:30px}.c-seats{gap:4px;font-size:10px}.c-main{gap:24px}}
+ @media(orientation:portrait){.c-main{flex-direction:column;gap:10px}.board{width:min(94%,calc((100cqh - 150px) * 9 / 10.6),560px)}.c-side{width:100%;max-height:140px;display:grid;grid-template-columns:1fr auto;gap:8px;padding:0}.c-guide,.c-selection{display:none}.c-seats{grid-row:1}.c-actions{grid-column:2;grid-row:1}}
+ @media(prefers-reduced-motion:reduce){.cell.check-king .disc{animation:none}}
 </style>

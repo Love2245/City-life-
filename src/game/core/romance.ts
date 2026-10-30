@@ -5,20 +5,34 @@
 import type { GameState, ResultDelta } from "../types";
 import { applyEffects, pushLog } from "../engine";
 import { advanceHours } from "./time";
-import { gameDay } from "./calendar";
+import { gameDay, weekdayOf } from "./calendar";
 import { chance } from "../rng";
 import { getItem, itemCount, removeItem } from "./items";
-import { getNpcDef, allNpcs, npcNick } from "./npcs";
-import { ensureRelationship, addAffinity, findRelationship, canBorrow } from "./relationships";
+import { getNpcDef, allNpcs, npcNick, npcKnownName, npcAtLocation } from "./npcs";
+import { npcOrdinaryAppearanceUnlocked } from '../data/npcIntroductionProgress';
+import { ensureRelationship, addAffinity, findRelationship, canBorrow, currentState } from "./relationships";
+import { NPC_CRASH_STAY_DAY } from "./residence";
 import type { PhoneResult } from "./phone";
+import locationsData from "../data/locations.json";
+import { recordRemasterAction } from "../data/npcDialogueRemaster";
+
+const LOCATION_NAMES = new Map(
+  (locationsData as Array<{ id: string; name: string }>).map((location) => [location.id, location.name]),
+);
 
 /**
- * v0.991 人物显示名：陌生人显示「？？？」，建立初步关系后显示占位称呼（nick），真名留待 1.0。
+ * v1.43 人物显示名：陌生人显示「？？？」；相识阶段使用熟人称呼，
+ * 朋友及以上使用 NPC 配置的最终显示称呼，长辈不强行展示法定姓名。
  * v0.992 修复：只要建立关系条目（偶遇/互动过）即视为「初步关系」，不再要求 state 字段脱离 stranger。
  */
 export function npcDisplayName(state: GameState, npcId: string): string {
   const rel = findRelationship(state, npcId);
-  return rel ? npcNick(npcId) : "？？？";
+  if (!rel) return "？？？";
+  const deeplyKnown = rel.state === "friend"
+    || rel.state === "close_friend"
+    || rel.state === "lover"
+    || rel.affinity >= 40;
+  return deeplyKnown ? npcKnownName(npcId) : npcNick(npcId);
 }
 
 // 约会好感递增分档：约会次数越多，单次增益越小
@@ -51,15 +65,21 @@ export function socialActionsAvailable(state: GameState, npcId: string): SocialA
   const aff = rel?.affinity ?? 0;
   const lover = rel?.state === "lover";
   const blocked = rel?.state === "blocked";
+  const romanceable = !!getNpcDef(npcId)?.romanceable;
+  const crashable = !!rel && !blocked && (
+    currentState(rel) === "friend"
+    || currentState(rel) === "close_friend"
+    || currentState(rel) === "lover"
+  );
   const dates = state.romance.dateCount[npcId] ?? 0;
   return {
-    call: !blocked,
+    call: !!rel && !blocked,
     gift: giftableCount(state) > 0 && !blocked,
-    date: !blocked && aff >= 20 && !lover,
-    confess: !blocked && aff >= 85 && dates >= 3,
+    date: romanceable && !!rel && !blocked && aff >= 20 && !lover,
+    confess: romanceable && !!rel && !blocked && !lover && aff >= 85 && dates >= 3,
     break: lover,
     borrow: canBorrow(state, npcId),
-    crash: !blocked && !!rel && state.living.mode === "nightly",
+    crash: crashable && state.living.mode === "nightly",
     repay: !!rel?.loan,
   };
 }
@@ -97,7 +117,13 @@ export function dateNpc(state: GameState, npcId: string): PhoneResult {
     return { ok: false, text: `${def?.name ?? npcNick(npcId)} 不是可以约会的人`, reason: "not_romanceable" };
   }
   const rel = findRelationship(state, npcId);
-  const aff = rel?.affinity ?? 0;
+  if (!rel || rel.state === "blocked") {
+    return { ok: false, text: "现在不方便约 TA", reason: rel ? "blocked" : "no_relation" };
+  }
+  if (rel.state === "lover") {
+    return { ok: false, text: "你们已经是恋人了", reason: "already_lover" };
+  }
+  const aff = rel.affinity;
   if (aff < 20) return { ok: false, text: "好感还不够，先多接触吧", reason: "affinity_low" };
   const cost = 30;
   if (state.player.money < cost) return { ok: false, text: "钱不够，约不起", reason: "no_money" };
@@ -132,6 +158,7 @@ export function giftNpc(state: GameState, npcId: string, itemId: string): PhoneR
 
   addAffinity(state, npcId, total, "gift");
   removeItem(state, itemId);
+  recordRemasterAction(state, { kind: "food_gift", npcId, itemId });
   applyEffects(state, { mood: 2 });
   const text = `把${def.name}送给了${npcDef?.name ?? npcNick(npcId)}，TA挺受用，好感 +${total}`;
   pushLog(state, "🎁", text);
@@ -142,7 +169,10 @@ export function giftNpc(state: GameState, npcId: string, itemId: string): PhoneR
 export function confessNpc(state: GameState, npcId: string): PhoneResult {
   const def = getNpcDef(npcId);
   if (!def?.romanceable) return { ok: false, text: `${def?.name ?? npcNick(npcId)} 不是恋爱对象`, reason: "not_romanceable" };
-  const rel = ensureRelationship(state, npcId);
+  const rel = findRelationship(state, npcId);
+  if (!rel) return { ok: false, text: "你们还不够熟，先多接触吧", reason: "no_relation" };
+  if (rel.state === "blocked") return { ok: false, text: "现在不方便联系 TA", reason: "blocked" };
+  if (rel.state === "lover") return { ok: false, text: "你们已经是恋人了", reason: "already_lover" };
   const dates = state.romance.dateCount[npcId] ?? 0;
   if (rel.affinity < 85 || dates < 3) {
     return { ok: false, text: "好感或约会次数不足，表白被婉拒", reason: "conditions_unmet" };
@@ -178,8 +208,17 @@ export function breakUpNpc(state: GameState, npcId: string): PhoneResult {
 export function crashAtNpc(state: GameState, npcId: string): PhoneResult {
   if (state.living.mode !== "nightly") return { ok: false, text: "你有固定住处，不需要蹭住", reason: "not_nightly" };
   const rel = findRelationship(state, npcId);
-  if (!rel || rel.state === "blocked") return { ok: false, text: "和 TA 还不够熟", reason: "no_relation" };
+  const crashable = !!rel && !["blocked", "stranger", "acquaintance"].includes(currentState(rel));
+  if (!crashable) return { ok: false, text: "至少成为朋友后，才好意思开口蹭住", reason: "affinity_low" };
+  const week = Math.floor(gameDay(state.time) / 7);
+  const weekKey = `crash_week_${npcId}`;
+  if (state.flags[weekKey] === week) {
+    return { ok: false, text: "这周已经打扰过 TA 了，下周再来吧", reason: "weekly_limit" };
+  }
+  state.flags[weekKey] = week;
   state.romance.crashTonight = npcId;
+  state.flags[NPC_CRASH_STAY_DAY] = gameDay(state.time);
+  state.flags["npc_guest_room_unlocked"] = true;
   const text = `今晚去${npcNick(npcId)}家蹭一晚，明早道个谢`;
   pushLog(state, "🛏️", text);
   return { ok: true, text };
@@ -205,6 +244,9 @@ export function borrowFrom(state: GameState, npcId: string, amount: number): Pho
 export function repayLoan(state: GameState, npcId: string, amount: number): PhoneResult {
   const rel = findRelationship(state, npcId);
   if (!rel?.loan) return { ok: false, text: "没有未清借款", reason: "no_loan" };
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return { ok: false, text: "还款金额无效", reason: "invalid_amount" };
+  }
   const pay = Math.min(amount, rel.loan.amount, state.player.money);
   if (pay <= 0) return { ok: false, text: "钱不够还款", reason: "no_money" };
   applyEffects(state, { money: -pay });
@@ -226,14 +268,14 @@ export function repayLoan(state: GameState, npcId: string, amount: number): Phon
  *  v1.01 新增「常客保底」：同一地点累计到访达到 meetVisitCount 后必遇，
  *  避免脸黑永远遇不到；同事类 NPC（requireEmployed）保留仅在职偶遇。 */
 export function maybeMeetNpc(state: GameState, locId: string): string | null {
-  const hour = state.time.hour;
   const charm = state.player.stats.charm;
+  const time = { ...state.time, seed: state.rng.seed, weekday: weekdayOf(state.time), hour: state.time.hour, minute: state.time.minute, regionId: state.region };
   for (const npc of allNpcs()) {
-    if (npc.meetLocation !== locId) continue;
+    if (!npcOrdinaryAppearanceUnlocked(state, npc.id)) continue;
+    if (!npcAtLocation(npc, locId, time)) continue;
     if (findRelationship(state, npc.id)) continue; // 已认识不再偶遇
     const cond = npc.meetConditions;
     if (cond?.minCharm !== undefined && charm < cond.minCharm) continue;
-    if (cond?.hourRange && (hour < cond.hourRange[0] || hour > cond.hourRange[1])) continue;
     if (cond?.minMoney !== undefined && state.player.money < cond.minMoney) continue;
     // v0.992 同事类 NPC：仅在职时可在工作地点偶遇
     if (cond?.requireEmployed && !state.flags["employed"]) continue;
@@ -248,9 +290,10 @@ export function maybeMeetNpc(state: GameState, locId: string): string | null {
     if (guaranteed || chanceHit(state, npc.meetChance ?? 0)) {
       ensureRelationship(state, npc.id);
       addAffinity(state, npc.id, 3, "meet");
+      const locationName = LOCATION_NAMES.get(locId) ?? locId;
       const text = guaranteed
-        ? `你常来${npc.meetLocation ?? locId}，${npcDisplayName(state, npc.id)}慢慢眼熟了你，主动打了个招呼`
-        : `在${npc.meetLocation ?? locId}遇见了${npcDisplayName(state, npc.id)}，聊了几句`;
+        ? `你常来${locationName}，${npcDisplayName(state, npc.id)}慢慢眼熟了你，主动打了个招呼`
+        : `在${locationName}遇见了${npcDisplayName(state, npc.id)}，聊了几句`;
       pushLog(state, "✨", text);
       return npc.id;
     }

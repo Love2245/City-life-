@@ -1,0 +1,58 @@
+/* District facilities share the same HUD surface and skin tokens as the original scenes. */
+:root .district-services.district-services, :root .leisure-panel .entry,
+:root .leisure-panel .resume, :root .leisure-panel .collection,
+:root .leisure-panel .last-result {
+  background: var(--grad-panel); color: var(--text-main); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 12px 14px;
+}
+:root .district-services.district-services { margin: 10px 0; }
+:root .district-services.district-services p { font-size: 12.5px; line-height: 1.7; margin: 7px 0; }
+:root .district-services.district-services .notice-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+:root .district-services.district-services .notice-heading strong { font-size:14px; }
+:root .district-services.district-services small, :root .district-services.district-services .quotas { color:var(--text-dim); font-size:11px; }
+:root .district-services.district-services .quotas { gap:14px; }
+:root .district-services.district-services .fortune { max-width:none; margin-top:10px; padding:0; background:transparent; color:var(--text-main); border-radius:0; border-top:1px solid var(--border); }
+:root .district-services.district-services .fortune summary { display:flex; align-items:center; justify-content:space-between; min-height:44px; gap:12px; cursor:pointer; font-size:13px; color:var(--accent); }
+:root .district-services.district-services .fortune summary span { color:var(--text-dim); font-size:11px; }
+:root .district-services.district-services .fortune h4 { font-size:20px; margin-top:10px; }
+:root .district-services.district-services .verse { font-size:16px; line-height:1.9; }
+:root .district-services.district-services .interpretation { border-color:var(--border); padding-top:10px; }
+:root .district-services.district-services.drink-status { display:flex; gap:14px; align-items:center; flex-wrap:wrap; font-size:12px; }
+:root .district-services.district-services.drink-status span { color:var(--text-dim); }
+:root .district-services.district-services .danger, :root .district-services.district-services.drink-status .danger { color:var(--danger); }
+:root .district-services.district-services button, :root .leisure-panel button, :root .leisure-dialog.leisure-dialog:not(.card-mode) button:not(.settle),
+:root .leisure-dialog.leisure-dialog:not(.card-mode) input, :root .leisure-dialog.leisure-dialog:not(.card-mode) select, :root .leisure-panel input, :root .leisure-panel select {
+  border-color:var(--border); border-radius:var(--radius-sm); background:var(--bg-card); color:var(--text-main); font:inherit;
+}
+:root .district-services.district-services button:hover, :root .leisure-panel button:hover, :root .leisure-dialog.leisure-dialog:not(.card-mode) button:hover { border-color:var(--accent); }
+:root .leisure-panel .start, :root .leisure-panel .resume button, :root .leisure-dialog.leisure-dialog:not(.card-mode) .settle, :root .warning-card.warning-card button {
+  background:var(--accent); color:var(--accent-ink); border:1px solid var(--accent); border-radius:var(--radius-sm); font:inherit; font-weight:700;
+}
+:root .leisure-panel .entries { gap:10px; }
+:root .leisure-panel .section-heading { padding-bottom:8px; }
+:root .leisure-panel .section-heading strong { color:var(--text-main); font-size:14px; }
+:root .leisure-panel .entry-icon { background:var(--bg-card); border-color:var(--border); color:var(--accent); width:38px; height:38px; font-size:24px; border-radius:var(--radius-sm); }
+:root .leisure-panel h3 { color:var(--text-main); font-size:15px; }
+:root .leisure-panel .entry-heading span { display:none; }
+:root .leisure-panel .entry .start { width:auto; gap:20px; padding:8px 14px; background:var(--bg-card); color:var(--text-main); border-color:var(--border); font-weight:600; }
+:root .leisure-panel .entry .start:hover:not(:disabled) { border-color:var(--accent); }
+:root .leisure-panel .entry p, :root .leisure-panel details, :root .leisure-panel details p,
+:root .leisure-panel .entry-heading span, :root .leisure-panel .resume span,
+:root .leisure-panel .plush-list span, :root .leisure-panel .last-result small,
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .note, :root .leisure-dialog.leisure-dialog:not(.card-mode) .rules, :root .leisure-dialog.leisure-dialog:not(.card-mode) .round-footer>span,
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .result-card>p { color:var(--text-dim); }
+:root .leisure-panel .cost, :root .leisure-panel summary, :root .leisure-panel .resume strong,
+:root .leisure-panel .plush-list b, :root .leisure-panel .collection>strong,
+:root .leisure-panel .last-result p { color:var(--text-main); }
+:root .leisure-panel .bet, :root .leisure-panel .track { color:var(--text-dim); }
+:root .leisure-panel .unavailable { color:var(--warn); }
+:root .leisure-backdrop.leisure-backdrop:not(.card-mode), :root .warning-overlay.warning-overlay { background:var(--bg-scrim); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode), :root .warning-card.warning-card { background:var(--grad-panel); color:var(--text-main); border:1px solid var(--border); border-radius:var(--radius-lg); box-shadow:var(--shadow-pop); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode)>header, :root .leisure-dialog.leisure-dialog:not(.card-mode) .round-footer { border-color:var(--border); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) h2, :root .leisure-dialog.leisure-dialog:not(.card-mode) h3 { color:var(--text-main); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .result-metrics { border-color:var(--border); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .result-metrics span { color:var(--text-dim); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .result-metrics strong { color:var(--accent); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .hud, :root .leisure-dialog.leisure-dialog:not(.card-mode) .chips, :root .leisure-dialog.leisure-dialog:not(.card-mode) .table-label, :root .leisure-dialog.leisure-dialog:not(.card-mode) .board-label { color:var(--text-main); }
+:root .leisure-dialog.leisure-dialog:not(.card-mode) .table { background:var(--bg-soft); border-color:var(--border); box-shadow:inset 0 0 0 4px var(--bg-card); border-radius:var(--radius-md); }
+@media(max-width:440px) { :root .district-services.district-services, :root .leisure-panel .entry { padding:12px; } }

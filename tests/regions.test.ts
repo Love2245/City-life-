@@ -6,6 +6,7 @@ import {
   locationsOfRegion,
   regionPathOf,
   inferRegionOfLocation,
+  crossesTopLevelRegion,
   enterRegion,
   exitRegion,
   goToMap,
@@ -15,7 +16,7 @@ import { createInitialState } from "../src/game/core/state";
 import { LOCATIONS } from "../src/game/core/actions";
 
 describe("区域数据", () => {
-  it("7 个区域齐全", () => {
+  it("原有市区与郊区区域齐全", () => {
     const ids = REGIONS.map((r) => r.id);
     expect(ids).toContain("downtown");
     expect(ids).toContain("suburb");
@@ -37,9 +38,9 @@ describe("区域数据", () => {
     ]);
   });
 
-  it("v0.981：suburb 已解锁，downtown_station / heavy_industry 仍锁定", () => {
+  it("1.4：老城区直接开放，重工业区仍锁定", () => {
     expect(getRegion("suburb")?.locked ?? false).toBe(false);
-    expect(getRegion("downtown_station")?.locked).toBe(true);
+    expect(getRegion("downtown_station")?.locked ?? false).toBe(false);
     expect(getRegion("heavy_industry")?.locked).toBe(true);
   });
 
@@ -56,11 +57,28 @@ describe("区域数据", () => {
     expect(regionPathOf("downtown")).toEqual(["downtown"]);
   });
 
-  it("每个非 map 地点都归属至少一个区域", () => {
+  it("场景过场只在穿越一级区域边界时触发", () => {
+    expect(crossesTopLevelRegion("downtown_residential", "downtown_center")).toBe(false);
+    expect(crossesTopLevelRegion("downtown", "downtown_mall")).toBe(false);
+    expect(crossesTopLevelRegion("downtown", "suburb")).toBe(true);
+    expect(crossesTopLevelRegion(undefined, "suburb")).toBe(false);
+  });
+
+  it("每个非 map 地点都归属区域（旧宠物 id 作为兼容入口除外）", () => {
     for (const loc of LOCATIONS) {
       if (loc.id === "map") continue;
+      if (loc.id === "pet_store" || loc.id === "pet_hospital") continue;
       expect(loc.regions?.length ?? 0).toBeGreaterThanOrEqual(1);
     }
+  });
+
+  it("1.4 老城区五个地点与郊区边缘两个车站已注册", () => {
+    expect(locationsOfRegion("downtown_station").map((l) => l.id)).toEqual(
+      expect.arrayContaining(["bus_station", "high_speed_rail", "flower_market", "snack_street", "school"]),
+    );
+    expect(locationsOfRegion("suburban_edge").map((l) => l.id)).toEqual(
+      expect.arrayContaining(["suburb_bus_station", "suburb_train_station"]),
+    );
   });
 });
 
@@ -103,10 +121,11 @@ describe("导航栈", () => {
     expect(s.navStack).toEqual(["map", "suburb"]);
   });
 
-  it("enterRegion 火车站区锁定", () => {
+  it("enterRegion 可直接进入老城区", () => {
     const s = createInitialState();
     const r = enterRegion(s, "downtown_station");
-    expect(r.ok).toBe(false);
+    expect(r.ok).toBe(true);
+    expect(s.region).toBe("downtown_station");
   });
 
   it("enterRegion 压栈 + locationId=map + region 设置", () => {
@@ -144,12 +163,13 @@ describe("导航栈", () => {
     expect(s.region).toBeUndefined();
   });
 
-  it("goToMap 复位", () => {
+  it("goToMap 回到当前所在城市一级（v1.43：修复郊区被误丢回市区的死档）", () => {
     const s = createInitialState();
-    enterRegion(s, "downtown_center");
+    enterRegion(s, "downtown_center"); // 玩家在市区 L2
     goToMap(s);
-    expect(s.navStack).toEqual(["map"]);
-    expect(s.region).toBeUndefined();
+    // 回到市区一级，而非清空到 undefined（旧行为会让郊区的回主地图误判为跨城）
+    expect(s.navStack).toEqual(["map", "downtown"]);
+    expect(s.region).toBe("downtown");
     expect(s.locationId).toBe("map");
   });
 
@@ -161,11 +181,11 @@ describe("导航栈", () => {
     expect(s.region).toBe("downtown");
   });
 
-  it("crumbTo(0) 等价 goToMap", () => {
+  it("crumbTo(0) 等价 goToMap（回到当前城市一级，v1.43）", () => {
     const s = createInitialState();
     enterRegion(s, "downtown_center");
     crumbTo(s, 0);
-    expect(s.region).toBeUndefined();
+    expect(s.region).toBe("downtown");
     expect(s.locationId).toBe("map");
   });
 });

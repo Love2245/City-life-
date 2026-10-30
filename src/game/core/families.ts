@@ -6,6 +6,7 @@ import type { GameState, FamilyConfig, FamilyData, Allocation, ItemDef } from ".
 import { applyEffects } from "../engine";
 import { getItem, startCostOf } from "./items";
 import familyData from "../data/families.json";
+import { changeGrowthStat } from "./growthStats";
 
 export const FAMILY_DATA: FamilyData = familyData as FamilyData;
 export const FAMILIES: FamilyConfig[] = FAMILY_DATA.families;
@@ -38,10 +39,8 @@ export function applyAllocation(state: GameState, alloc: Allocation): void {
   const rates = FAMILY_DATA.allocationRates;
   state.allocation = { ...alloc };
   state.player.money += alloc.money * rates.moneyPerPoint;
-  state.player.stats.charm = clamp(state.player.stats.charm + alloc.charm * rates.charmPerPoint);
-  state.player.stats.intelligence = clamp(
-    state.player.stats.intelligence + alloc.intelligence * rates.intelligencePerPoint,
-  );
+  changeGrowthStat(state, "charm", alloc.charm * rates.charmPerPoint);
+  changeGrowthStat(state, "intelligence", alloc.intelligence * rates.intelligencePerPoint);
   // stamina 加点由 getMaxStamina 派生，不改 attrs.stamina
 }
 
@@ -65,6 +64,3 @@ export function validateNewGameSetup(
   return { ok: true };
 }
 
-function clamp(v: number): number {
-  return Math.max(0, Math.min(100, v));
-}

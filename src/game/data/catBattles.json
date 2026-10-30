@@ -382,7 +382,7 @@
       "id": "opp_lightning",
       "name": "闪电猫咪",
       "icon": "⚡",
-      "desc": "速度极快的闪电猫，有概率闪避你的攻击。",
+      "desc": "速度极快的闪电猫，你的攻击常常落空。",
       "element": "normal",
       "level": 6,
       "attrs": {

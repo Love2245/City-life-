@@ -12,6 +12,7 @@ import {
 import { performJob } from "../src/game/core/jobs";
 import { nap, alarmCappedHours, alarmWakeHour } from "../src/game/core/time";
 import { getMaxStamina } from "../src/game/core/stats";
+import { setActionLocation } from "./helpers/actionLocation";
 
 describe("v0.93：移除时间型疲劳硬阻断 (P1)", () => {
   it("凌晨 3 点、体力充足时仍可办事（不再“困到不行”）", () => {
@@ -20,6 +21,7 @@ describe("v0.93：移除时间型疲劳硬阻断 (P1)", () => {
     s.player.attrs.stamina = 80;
     s.player.attrs.satiety = 80;
     s.player.money = 100;
+    setActionLocation(s, "buy_lunch_convenience");
     const a = getAction("buy_lunch_convenience"); // 便利店 24h
     expect(a).toBeDefined();
     const r = canPerform(s, a!);

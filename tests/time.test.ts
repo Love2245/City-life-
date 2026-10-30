@@ -1,14 +1,18 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { applyFamily } from "../src/game/core/families";
+import { gameDay } from "../src/game/core/calendar";
 import {
   advanceHours,
   sleep,
   nap,
+  naturalWakeHours,
   periodOfHour,
-  isExhausted,
   formatTime,
 } from "../src/game/core/time";
+import { getJobDef } from "../src/game/core/jobs";
+import { jobEndHour } from "../src/game/core/quests";
+import { getLeaseTier } from "../src/game/core/housing";
 
 describe("时间系统：小时推进", () => {
   it("advanceHours 推进小时", () => {
@@ -24,6 +28,26 @@ describe("时间系统：小时推进", () => {
     advanceHours(s, 0.5);
     expect(s.time.hour).toBe(7);
     expect(s.time.minute).toBe(30);
+  });
+
+  it("自然醒按分钟精确到次日 7 点", () => {
+    const s = createInitialState();
+    s.time.hour = 22;
+    s.time.minute = 30;
+    expect(naturalWakeHours(s)).toBe(8.5);
+    advanceHours(s, naturalWakeHours(s), false);
+    expect(s.time.day).toBe(2);
+    expect(s.time.hour).toBe(7);
+    expect(s.time.minute).toBe(0);
+
+    s.time.hour = 23;
+    s.time.minute = 30;
+    expect(naturalWakeHours(s)).toBe(7.5);
+    s.time.hour = 7;
+    s.time.minute = 0;
+    // 恰好 07:00 返回 0 小时：旧行为是 24（整点睡「自然醒」白过一整天）。
+    // 0 小时是安全空操作（sleep 有 hours<=0 守卫），UI 在该时刻隐藏「睡到自然醒」选项。
+    expect(naturalWakeHours(s)).toBe(0);
   });
 
   it("跨午夜只 rollover 日期 + 标熬夜，不自动入睡", () => {
@@ -100,6 +124,13 @@ describe("时间系统：睡觉", () => {
     expect(s.player.attrs.stamina).toBeCloseTo(88, 5);
   });
 
+  it("免费住宿睡眠也写入行动日志", () => {
+    const s = createInitialState();
+    s.time.hour = 22;
+    sleep(s, 8);
+    expect(s.log.some((entry) => entry.text.includes("睡了 8 小时"))).toBe(true);
+  });
+
   it("熬夜（23 点后入睡）恢复打折", () => {
     const s = createInitialState();
     applyFamily(s, "ordinary");
@@ -170,18 +201,20 @@ describe("时间系统：入睡结算", () => {
     expect(s.living.govDaysLeft).toBe(0);
   });
 
-  it("每月 1 号交房租并涨租 20%（lease 模式）", () => {
+  it("租期到期时交房租并按房源配置涨租（lease 模式）", () => {
     const s = createInitialState();
     applyFamily(s, "ordinary");
     s.living.mode = "lease";
-    s.living.lease = { housingId: "old_apartment", rent: 1000, rentGrowthCount: 0 };
+    s.living.lease = { housingId: "old_apartment", rent: 1000, rentGrowthCount: 0, nextRentDay: gameDay(s.time) };
     s.player.money = 5000;
     s.time.day = 1;
     s.time.hour = 22;
     const rent = s.living.lease.rent;
     sleep(s, 8);
     expect(s.player.money).toBe(5000 - rent);
-    expect(s.living.lease!.rent).toBe(Math.round(rent * 1.2));
+    // v1.43：涨幅与上限改为数据驱动（老小区 0.08、封顶 1800），不再硬编码 20%
+    const growthRate = getLeaseTier("old_apartment")!.rentGrowthRate;
+    expect(s.living.lease!.rent).toBe(Math.round(rent * (1 + growthRate)));
     expect(s.living.lease!.rentGrowthCount).toBe(1);
   });
 
@@ -189,7 +222,7 @@ describe("时间系统：入睡结算", () => {
     const s = createInitialState();
     applyFamily(s, "ordinary");
     s.living.mode = "lease";
-    s.living.lease = { housingId: "old_apartment", rent: 1000, rentGrowthCount: 12 };
+    s.living.lease = { housingId: "old_apartment", rent: 1000, rentGrowthCount: 12, nextRentDay: gameDay(s.time) };
     s.time.day = 1;
     s.time.hour = 22;
     const rent = s.living.lease.rent;
@@ -212,13 +245,13 @@ describe("时间系统：派生与工具", () => {
     expect(formatTime(7, 0)).toBe("07:00");
   });
 
-  it("isExhausted：凌晨 3-7 点或体力耗尽", () => {
-    const s = createInitialState();
-    s.time.hour = 4;
-    expect(isExhausted(s)).toBe(true);
-    s.time.hour = 10;
-    expect(isExhausted(s)).toBe(false);
-    s.player.attrs.stamina = 0;
-    expect(isExhausted(s)).toBe(true);
+  it("夜班岗位跨凌晨 3-7 点，因此不设「深夜强制禁行动」硬锁", () => {
+    // v1.43：历史上的 isExhausted()（凌晨 3 点逼睡）已删除——它与夜班内容直接冲突：
+    // 保安 20:00 开班、10 小时后次日 06:00 收班，玩家必须能在凌晨 3 点仍在岗/回家/睡觉。
+    // 深夜压力改由「体力归零晕倒」承接。此用例锁住这个设计决定，防止硬锁被重新加回来。
+    const night = getJobDef("job_security");
+    expect(night?.startHour).toBe(20);
+    expect(jobEndHour(night!)).toBe(6);
+    expect(periodOfHour(3)).toBe("night");
   });
 });

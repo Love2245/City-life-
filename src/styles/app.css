@@ -1,5 +1,15 @@
 /* ============ 都市生活 · 全局主题 ============ */
+:is(.home-snapshot .home-clock,.cafe-snapshot .clock,.store-snapshot .clock){border:0;background:transparent;padding:0;font-family:inherit;text-align:left;cursor:pointer;flex:0 0 auto;white-space:nowrap;}
+:is(.home-snapshot .home-clock,.cafe-snapshot .clock,.store-snapshot .clock):focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+:is(.home-snapshot .home-clock,.cafe-snapshot .clock,.store-snapshot .clock)::after{content:'';position:absolute;inset:0;}
 :root {
+  /* v1.462：统一界面动效时长与节奏；组件 transition 使用相同数值。 */
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-scene: 320ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
   /* 主色调：都市夜色 */
   --bg-deep: #10131f;
   --bg-soft: #181c2e;
@@ -66,6 +76,16 @@
   /* v0.98 UI 缩放（由 uiStore.setZoom 动态写入） */
   --ui-zoom: 1;
 
+  /* v1.44.5 安全区与局部构图使用的有效祖先缩放。
+     全屏小游戏与喵喵对决现在直接继承 .app-zoom，不再反向抵消 UI 缩放；
+     这个令牌仍供安全区和需要保持原始构图的局部组件使用，并且必须与承载它们的壳层实际值一致：
+       端游：.app-zoom 用 --ui-zoom
+       手游：.app-zoom 改用钳制后的 --m-ui-zoom；3D 分辨率独立控制缓冲尺寸
+               → 见 mobile.css 里对本变量的覆盖
+     旧实现各处硬写 calc(1 / var(--ui-zoom, 1))：手游下 --ui-zoom=0.5 而祖先实际是 0.7，
+     净缩放变成 1.4 倍 → 全屏玩法被撑出屏幕两侧并裁切。 */
+  --eff-zoom: var(--ui-zoom, 1);
+
   font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
   color: var(--text-main);
   background: var(--bg-deep);
@@ -89,7 +109,7 @@ body {
   background-image: var(--grad-sky);
   background-attachment: fixed;
   user-select: none;
-  transition: background 0.8s ease;
+  transition: background var(--dur-base) var(--ease-out);
 }
 
 button {
@@ -152,7 +172,7 @@ button {
 }
 
 html, body {
-  transition: background 0.8s ease, color 0.5s ease;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
 }
 
 /* ============ 通用组件 ============ */
@@ -163,7 +183,7 @@ html, body {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 14px 16px;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  transition: transform var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .card:hover {
   border-color: var(--accent);
@@ -193,7 +213,7 @@ html, body {
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text-main);
-  transition: all 0.15s ease;
+  transition: all var(--dur-fast) var(--ease-out);
 }
 .btn:hover {
   background: var(--bg-card-hover);
@@ -258,7 +278,7 @@ html, body {
 .stat-bar .fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.3s ease, background 0.3s ease;
+  transition: width var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
 }
 .stat-bar .val {
   min-width: 42px;
@@ -335,7 +355,7 @@ html, body {
   color: var(--text-dim);
   border-left: 2px solid transparent;
   padding: 1px 8px;
-  animation: fadeIn 0.25s ease;
+  animation: fadeIn var(--dur-base) var(--ease-out);
 }
 .log-entry .icon {
   margin-right: 4px;
@@ -410,7 +430,7 @@ html, body {
 
 /* 弹窗过渡（v1.215：淡入 + 轻微缩放，比纯上滑更柔和） */
 .modal {
-  animation: modal-in 0.2s ease;
+  animation: modal-in var(--dur-base) var(--ease-out);
 }
 @keyframes modal-in {
   from { opacity: 0; transform: translateY(14px) scale(0.97); }
@@ -445,6 +465,24 @@ html, body {
 /* 兜底：HUD 内任何显式写死深色文字的元素都拉回浅色 */
 .hud-scope :is(.action-name, .action-desc, .loc-name, .loc-desc, .h1, .h2) {
   color: inherit;
+}
+
+/* Narrow PC windows keep the scene readable; expanded side panels become drawers. */
+@media (max-width:600px) {
+  :root[data-game-mode="pc"] .main > .sidebar:not(.collapsed),
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) {
+    position:absolute; top:0; bottom:0; width:min(250px,80vw); min-width:0;
+    z-index:30; background:var(--hud-surface-solid); box-shadow:var(--shadow-pop);
+  }
+  :root[data-game-mode="pc"] .main > .sidebar:not(.collapsed) { left:0; }
+  :root[data-game-mode="pc"] .main > .quest-side:not(.collapsed) { right:0; }
+  :root[data-game-mode="pc"] .topbar { flex-wrap:wrap; gap:6px; padding:8px; }
+  :root[data-game-mode="pc"] .topbar .brand,
+  :root[data-game-mode="pc"] .topbar .money-box,
+  :root[data-game-mode="pc"] .topbar .spacer { display:none; }
+  :root[data-game-mode="pc"] .topbar .clock { flex:1 0 100%; min-width:0; box-sizing:border-box; }
+  :root[data-game-mode="pc"] .topbar .clock .date-line { white-space:nowrap; gap:6px; }
+  :root[data-game-mode="pc"] .topbar .menu-box { flex-shrink:0; }
 }
 
 /* ============ 负面状态提醒强化（v0.92）============ */
@@ -510,497 +548,23 @@ html, body {
   100% { opacity: 1; }
 }
 
-/* ============ v0.98 响应式：移动端折叠 ============ */
-@media (max-width: 768px) {
-  [data-layout="auto"] .attr-panel,
-  [data-layout="mobile"] .attr-panel {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100% !important;
-    height: 56px;
-    flex-direction: row;
-    z-index: 50;
-  }
-  [data-layout="auto"] .quest-sidebar,
-  [data-layout="mobile"] .quest-sidebar {
-    width: 100% !important;
-    max-width: 100vw;
-    height: 40vh;
-    position: fixed;
-    bottom: 56px;
-    left: 0;
-    right: 0;
-    z-index: 49;
-  }
-  [data-layout="auto"] .scene-panel,
-  [data-layout="mobile"] .scene-panel {
-    flex: 1;
-    width: 100%;
-  }
-}
+/* ============ v1.395 响应式布局 ============ */
 
-/* ============ v0.981 移动端全面适配（修正 stale 类名，实际生效） ============ */
-.mobile-tabbar {
-  display: none;
-}
+/*
+ * 桌面端保持原有布局；手游模式单独使用 20:9 横屏画布。
+ * 不再对 html 根节点套组件样式，也不使用 transform/zoom 缩放整棵游戏树。
+ */
 
-@media (max-width: 820px) {
-  /* 强制 1:1 缩放，移动端交给响应式布局；dvh 规避地址栏高度跳变 */
-  .zoom-wrapper {
-    --ui-zoom: 1;
-    height: 100dvh;
-  }
-  .game-root {
-    height: 100dvh;
-  }
-
-  /* 主区改为纵向，单面板按 tab 切换 */
-  .main {
-    flex-direction: column;
-    min-height: 0;
-  }
-
-  /* 默认隐藏所有面板，仅按当前 tab 显示其一 */
-  .sidebar,
-  .quest-side,
-  .scene,
-  .log-panel {
-    display: none !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  .game-root[data-tab="scene"] .scene {
-    display: flex !important;
-    flex-direction: column;
-  }
-  .game-root[data-tab="attrs"] .sidebar {
-    display: flex !important;
-    flex-direction: column;
-  }
-  .game-root[data-tab="quest"] .quest-side {
-    display: flex !important;
-    flex-direction: column;
-  }
-  .game-root[data-tab="log"] .log-panel {
-    display: flex !important;
-    flex-direction: column;
-    flex: 1;
-  }
-  /* 切到日志时隐藏主区，让日志占满空间 */
-  .game-root[data-tab="log"] .main {
-    display: none !important;
-  }
-
-  /* 面板内部可滚动，规避底部安全区 */
-  .scene,
-  .sidebar,
-  .quest-side,
-  .log-panel {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* 顶部栏紧凑化，适配刘海屏 */
-  .topbar {
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 8px 10px;
-    padding-top: calc(8px + env(safe-area-inset-top, 0px));
-  }
-
-  /* 底部标签栏（常态隐藏，移动端显示） */
-  .mobile-tabbar {
-    display: flex;
-    flex-shrink: 0;
-    height: calc(54px + env(safe-area-inset-bottom, 0px));
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: var(--bg-card);
-    border-top: 1px solid var(--border);
-    z-index: 60;
-  }
-
-  /* 弹窗全宽可滚动，关闭键 ≥44px 触控友好 */
-  .overlay {
-    padding: 12px;
+/* 低宽度端游窗口：页面本身不溢出，内容区域内部滚动。 */
+@media (max-width: 1100px) and (min-height: 520px) {
+  .menu-root {
     align-items: flex-start;
     overflow-y: auto;
+    padding: 20px 12px;
   }
-  .overlay > * {
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: 86dvh;
-    overflow-y: auto;
+  .menu-panel {
+    margin: auto;
   }
-  /* 手机 App 模拟器：移动端铺满全屏 */
-  .overlay > .phone {
-    height: 100dvh !important;
-    max-height: 100dvh;
-    border-radius: 0;
-    border: none;
-  }
-  .close,
-  .mg-close,
-  .e-done,
-  .r-continue,
-  .btn {
-    min-height: 44px;
-  }
-}
-
-/* ============ v1.11 手游模式（20:9 横版，居中 letterbox，不拉伸） ============ */
-
-/* 画布：20:9 固定比例居中留边，zoom 缩放以中心为原点；v1.21-beta4 用主题背景替代纯黑 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .zoom-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-deep);
-  background-image: var(--grad-sky);
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root {
-  width: min(100vw, calc(100vh * 20 / 9)) !important;
-  height: min(100vh, calc(100vw * 9 / 20)) !important;
-  transform: scale(var(--ui-zoom)) !important;
-  transform-origin: center center !important;
-}
-
-/* 横版三栏：左操作区（状态/属性）+ 中场景（不拥挤）+ 右操作区（手机/任务） */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .main {
-  flex-direction: row !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .sidebar,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side {
-  position: relative !important;
-  bottom: auto !important;
-  height: auto !important;
-  min-height: 0 !important;
-  overflow-y: auto !important;
-  flex-shrink: 0;
-}
-/* v1.21-beta4-hotfix：左栏默认 44px（半宽），clamp 30-80；standby 由组件 CSS 的 !important 接管到 18px */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .sidebar {
-  width: min(var(--attr-w, 44px), 10%) !important;
-  min-width: 30px !important;
-  padding: 6px 6px !important;
-}
-/* v1.21-beta4：右侧手机面板再略缩小，默认 168px / 18% */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side {
-  width: min(168px, 18%) !important;
-  max-width: none !important;
-  padding: 8px 6px !important;
-}
-/* v1.12 手机面板滑入：容器保持 18% 占位，收起时 translateX 滑出（露 82% 边缘），overflow 放行 transform */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side {
-  position: relative !important;
-  width: min(168px, 18%) !important;
-  overflow: visible !important;
-  transition: transform 0.22s ease !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side.collapsed {
-  width: min(168px, 18%) !important;
-  min-width: 0 !important;
-  padding: 8px 6px !important;
-  transform: translateX(82%);
-  border-left: none;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side .collapse-btn-wide {
-  display: none !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side .phone {
-  touch-action: pan-y;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .scene {
-  flex: 1 !important;
-  width: auto !important;
-  min-width: 0;
-  padding: 10px 12px !important;
-  gap: 10px !important;
-}
-
-/* v1.21 APK：事件结算弹窗不要被 .overlay > * 的 100% 强制铺满（保留适中的 460px 居中卡片） */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .overlay > .event-modal {
-  width: auto !important;
-  max-width: min(460px, 92%) !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-/* 日志面板：手游默认收起（可展开），不占横屏空间 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .log-panel {
-  display: none;
-}
-
-/* 底部标签栏：手游横版不需要 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .mobile-tabbar {
-  display: none !important;
-}
-
-/* TopBar 精简：隐藏品牌/难度/物价/天气/剧情 chip，保留时间/金钱/住宿/菜单 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .brand,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .diff,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .inflate,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .weather,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .story-chip,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .conscience-chip,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar .remaining {
-  display: none !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .topbar {
-  padding-top: env(safe-area-inset-top, 0px);
-}
-
-/* ============ v1.12 手游模式：UI 等比缩小 + 中心区兜底 ============ */
-
-/* 通用按钮缩小（原 padding 8px16px / 14px） */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .btn {
-  padding: 6px 12px !important;
-  font-size: 13px !important;
-}
-
-/* ScenePanel：行动网格密度 ×2.2（原 minmax(210px,1fr)），保证每行至少 2-3 个按钮 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-grid {
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)) !important;
-  gap: 8px !important;
-  margin-top: 8px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card {
-  padding: 8px !important;
-  gap: 4px !important;
-  border-radius: 10px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .action-icon,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .a-icon {
-  font-size: 18px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .action-name,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .a-name {
-  font-size: 11.5px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .action-desc,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .a-desc {
-  font-size: 10px !important;
-  line-height: 1.35 !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .tag {
-  font-size: 9.5px !important;
-  padding: 2px 6px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .action-card .head-right {
-  gap: 4px !important;
-}
-
-/* 地点卡片缩小：字号交给 ScenePanel.svelte scoped 规则处理 */
-/* 分组卡片缩小 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .group-card {
-  padding: 7px 10px !important;
-  font-size: 11px !important;
-  border-radius: 10px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .group-card .group-icon {
-  font-size: 18px !important;
-}
-
-/* 面包屑/导航条缩小 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .breadcrumbs {
-  font-size: 11px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .crumb {
-  padding: 3px 8px !important;
-  font-size: 11px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .loc-nav {
-  gap: 6px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .loc-chip {
-  padding: 5px 10px !important;
-  font-size: 11px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .wait-bar {
-  padding: 6px 10px !important;
-  gap: 6px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .wait-label {
-  font-size: 11px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .wait-btn {
-  font-size: 10.5px !important;
-  padding: 4px 10px !important;
-}
-
-/* 状态条（左侧栏）字号压缩 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .stat-bar {
-  font-size: 10px !important;
-}
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .stat-bar .label {
-  width: 42px !important;
-}
-
-/* 手机内字号微降，腾出操作密度 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .phone {
-  font-size: 12px;
-}
-
-/* v1.12 兜底：@media(≤820px) 会把面板 display:none 压过手游块，此处强制恢复横版三栏 */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .sidebar,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .scene {
-  display: flex !important;
-}
-
-/* ============ v1.12 热修：手游模式 .main 兜底（防 820px 规则 data-tab 隐藏主体） ============ */
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="log"] .main,
-:root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .main {
-  display: flex !important;
-}
-
-/* ============ v1.21-beta5：竖屏提示改用 index.html 的 #rotate-hint 遮罩 ============ */
-/* 旧版 .portrait-rotate CSS 旋转已在真机验证会转歪布局，整段删除；
-   竖屏时由 <html class="need-rotate"> + #rotate-hint 引导用户横置手机，
-   横屏时 data-game-mode="mobile" 的 20:9 布局自然填满视口。 */
-
-/* ============ v1.21-beta5-hotfix：手机竖屏且无法锁定横屏时，自动切为单栏底部 tab 布局 ============ */
-/* 覆盖 :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] 的横版三栏，避免竖屏硬塞导致文字竖排。 */
-@media (orientation: portrait) {
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .zoom-wrapper {
-    --ui-zoom: 1;
-    height: 100dvh;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root {
-    width: 100vw !important;
-    height: 100dvh !important;
-    transform: none !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .main {
-    flex-direction: column !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .sidebar,
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .quest-side,
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .scene {
-    display: none !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    flex: 1 !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="scene"] .scene,
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="attrs"] .sidebar,
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="quest"] .quest-side {
-    display: flex !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .log-panel {
-    display: none !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="log"] .main {
-    display: none !important;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .game-root[data-tab="log"] .log-panel {
-    display: flex !important;
-    flex: 1;
-  }
-  :root[data-game-mode="mobile"], :root[data-game-mode="tablet"] .mobile-tabbar {
-    display: flex !important;
-  }
-}
-
-/* 由 JS 显式设置 data-force-portrait 时，也强制启用竖屏单栏布局（作为 orientation 媒体查询的兜底） */
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .zoom-wrapper {
-  --ui-zoom: 1;
-  height: 100dvh;
-}
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .game-root {
-  width: 100vw !important;
-  height: 100dvh !important;
-  transform: none !important;
-}
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .main {
-  flex-direction: column !important;
-}
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .sidebar,
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .quest-side,
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .scene {
-  display: none !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-  flex: 1 !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-}
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .game-root[data-tab="scene"] .scene,
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .game-root[data-tab="attrs"] .sidebar,
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .game-root[data-tab="quest"] .quest-side {
-  display: flex !important;
-}
-html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portrait="true"][data-game-mode="tablet"] .mobile-tabbar {
-  display: flex !important;
-}
-
-/* ============ v1.3-beta2 平板模式（16:9 加宽手机布局） ============ */
-/* 平板：复用手机横版三栏，但画布比例 16:9（加宽）、左右栏更宽、字号略升 */
-
-/* 画布：16:9 居中 letterbox（区别于手机 20:9 更窄，平板视野更宽） */
-:root[data-game-mode="tablet"] .game-root {
-  width: min(100vw, calc(100vh * 16 / 9)) !important;
-  height: min(100vh, calc(100vw * 9 / 16)) !important;
-}
-
-/* 左栏：默认 96px / clamp 60-140（介于手机 44 与端游 250 之间），standby 收起同手机 */
-:root[data-game-mode="tablet"] .sidebar {
-  width: min(var(--attr-w, 96px), 16%) !important;
-  min-width: 60px !important;
-  padding: 8px 8px !important;
-}
-
-/* 右栏手机面板：默认 200px / 22%（比手机 168px 略宽） */
-:root[data-game-mode="tablet"] .quest-side {
-  width: min(200px, 22%) !important;
-  max-width: none !important;
-  padding: 8px 8px !important;
-}
-:root[data-game-mode="tablet"] .quest-side.collapsed {
-  width: min(200px, 22%) !important;
-  min-width: 0 !important;
-  padding: 8px 8px !important;
-  transform: translateX(78%);
-  border-left: none;
-}
-
-/* 平板模式下日志面板默认收起（同手机横版，节省空间） */
-:root[data-game-mode="tablet"] .log-panel {
-  display: none;
-}
-
-/* 平板模式：TopBar 精简同手机（隐藏品牌/难度/物价/天气/剧情 chip） */
-:root[data-game-mode="tablet"] .topbar .brand,
-:root[data-game-mode="tablet"] .topbar .diff,
-:root[data-game-mode="tablet"] .topbar .inflate,
-:root[data-game-mode="tablet"] .topbar .weather,
-:root[data-game-mode="tablet"] .topbar .story-chip,
-:root[data-game-mode="tablet"] .topbar .conscience-chip,
-:root[data-game-mode="tablet"] .topbar .remaining {
-  display: none !important;
-}
-
-/* 平板兜底：防止 820px 媒体查询 data-tab 隐藏主体（同手机热修） */
-:root[data-game-mode="tablet"] .game-root[data-tab="log"] .main,
-:root[data-game-mode="tablet"] .main {
-  display: flex !important;
-}
-:root[data-game-mode="tablet"] .sidebar,
-:root[data-game-mode="tablet"] .quest-side,
-:root[data-game-mode="tablet"] .scene {
-  display: flex !important;
 }
 
 /* ============ v1.3b2 UI 美化层（全变量驱动，5 套皮肤兼容） ============ */
@@ -1057,7 +621,7 @@ html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portr
 
 /* 弹窗淡入上浮（.overlay 内的卡片统一） */
 .overlay > * {
-  animation: wb-pop 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+  animation: wb-pop var(--dur-base) var(--ease-out);
 }
 @keyframes wb-pop {
   from { opacity: 0; transform: translateY(10px) scale(0.97); }
@@ -1068,7 +632,30 @@ html[data-force-portrait="true"][data-game-mode="mobile"], html[data-force-portr
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
 }
+
+/* ============================================================
+   手游（PE 移动端）横屏适配章节已迁移至文件末尾统一维护，
+   原 7 层相互覆盖的补丁块（手游 20:9 / v1.395b~f）已移除。
+   搜索 “手游 PE 横屏适配” 定位。
+   ============================================================ */
+/* Native controls use the current game skin, including modal and nested feeds. */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent, #d8b777) 48%, #68728b) color-mix(in srgb, var(--bg-deep, #141b2a) 75%, transparent); }
+::-webkit-scrollbar-corner { background: var(--bg-deep, #141b2a); }
+input[type="range"] { accent-color: var(--accent, #d8b777); cursor: pointer; }
+input[type="range"]::-webkit-slider-runnable-track { height:6px; border:1px solid var(--border,#536078); border-radius:20px; background:var(--bg-card,#26334c); }
+input[type="range"]::-webkit-slider-thumb { margin-top:-5px; }
+.is-drag-scrolling { cursor:grabbing !important; user-select:none !important; scroll-behavior:auto !important; }
+:root * { scrollbar-color:color-mix(in srgb,var(--accent,#d8b777) 55%,#7b879d) transparent !important; }
+:root *::-webkit-scrollbar-thumb { background:color-mix(in srgb,var(--accent,#d8b777) 55%,#7b879d) !important; border-color:transparent !important; border-radius:20px; }
+:root *::-webkit-scrollbar-track { background:transparent !important; }
+input[type="range"] { appearance:none; -webkit-appearance:none; min-height:18px; background:transparent; }
+input[type="range"]::-webkit-slider-thumb { appearance:none; -webkit-appearance:none; width:14px; height:14px; margin-top:-5px; border:2px solid var(--bg-soft,#172236); border-radius:50%; background:var(--accent,#d8b777); box-shadow:0 0 0 1px var(--border,#536078); }
+input[type="range"]::-moz-range-track { height:5px; background:var(--bg-card,#26334c); border:1px solid var(--border,#536078); border-radius:20px; }
+input[type="range"]::-moz-range-thumb { width:12px; height:12px; border:2px solid var(--bg-soft,#172236); border-radius:50%; background:var(--accent,#d8b777); }
+

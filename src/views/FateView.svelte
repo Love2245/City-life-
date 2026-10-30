@@ -1,24 +1,39 @@
 <script lang="ts">
   // 都市生活 v0.991 — 命运：永久加成兑换（多周目核心）
-  import { profile, persistProfile, goto } from "../stores/gameStore.svelte";
+  import { profile, persistProfile, backFromPage } from "../stores/gameStore.svelte";
   import { BOOST_DEFS, buyBoost } from "../game/core/profile";
   import { showToast } from "../stores/uiStore.svelte";
 
-  function onBuy(id: string): void {
+  let saving = $state(false);
+
+  async function onBuy(id: string): Promise<void> {
+    if (saving) return;
+    saving = true;
+    const before = JSON.parse(JSON.stringify(profile));
     const r = buyBoost(profile, id);
     if (r.ok) {
-      void persistProfile();
-      showToast("✅ 已兑换永久加成");
+      let saved = false;
+      try {
+        saved = await persistProfile();
+      } catch {
+        saved = false;
+      }
+      if (saved) showToast("✅ 已兑换永久加成");
+      else {
+        Object.assign(profile, before);
+        showToast("档案保存失败，兑换已撤销；请释放存储空间后重试");
+      }
     } else {
       showToast(r.reason ?? "兑换失败");
     }
+    saving = false;
   }
 </script>
 
 <div class="fate-root">
   <div class="fate-panel">
     <div class="fate-head">
-      <button class="btn" onclick={() => goto("menu")}>← 返回</button>
+      <button class="btn" onclick={() => backFromPage()}>← 返回</button>
       <h2 class="fate-title">🔮 命运</h2>
       <div class="fate-points">✦ {profile.fatePoints} 命运点</div>
     </div>
@@ -37,7 +52,7 @@
           </div>
           <button
             class="btn {maxed ? "" : "btn-primary"}"
-            disabled={maxed || profile.fatePoints < price}
+            disabled={saving || maxed || profile.fatePoints < price}
             onclick={() => onBuy(b.id)}
           >
             {maxed ? "已满档" : `✦ ${price}`}

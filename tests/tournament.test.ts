@@ -124,8 +124,9 @@ describe("v1.33 P4c 赛程时间", () => {
     signupTournament(s, "tournament_primary");
     expect(ticketStatusText(s)).toBe("距开赛还有 1 天");
     setDay(s, 2, 9); // 周日 9 点
-    expect(ticketStatusText(s)).toBe("今天 14:00 开赛");
+    expect(ticketStatusText(s)).toBe("今天 14:00 开赛，今日结束前可入场");
     setDay(s, 2, 15); // 周日 15 点（已过开赛时刻）
+    expect(ticketStatusText(s)).toBe("比赛进行中，今日结束前可入场");
     startTournament(s);
     expect(ticketStatusText(s)).toBe("进行中");
   });
@@ -159,7 +160,7 @@ describe("v1.33 P4c 开赛与战斗入口", () => {
     expect(s.catBattle!.tournamentId).toBe(entry.tierId);
   });
 
-  it("周日 14:00 未到场 → 门票作废不退款", () => {
+  it("周日当日可入场，跨到周一未参赛才作废且不退款", () => {
     const s = setupCat(1, 15);
     setDay(s, 1, 9); // 周六报名
     signupTournament(s, "tournament_primary");
@@ -167,6 +168,10 @@ describe("v1.33 P4c 开赛与战斗入口", () => {
     setDay(s, 2, 16); // 周日 16 点仍未开赛
     expireTicketIfMissed(s);
     const entry = s.catTournament!.entry!;
+    expect(entry.settled).toBe(false);
+    expect(s.inventory[TICKET_ITEMS[entry.tierId]]).toBe(1);
+    setDay(s, 3, 0); // 周一比赛日结束
+    expireTicketIfMissed(s);
     expect(entry.settled).toBe(true);
     expect(s.inventory[TICKET_ITEMS[entry.tierId]]).toBeUndefined();
     expect(s.player.money).toBe(moneyBefore); // 不退款
@@ -282,31 +287,7 @@ describe("v1.33 P4c 辅助计算", () => {
 });
 
 describe("v1.39 赛事连胜生命值延续", () => {
-  it("战胜第一场后保留剩余生命，第二场以当前生命开局", () => {
-    const s = setupCat(3, 20);
-    setDay(s, 2, 15);
-    const t = getTournamentDef("tournament_primary")!;
-    signupTournament(s, t.id);
-    const entry = s.catTournament!.entry!;
-    startTournament(s);
-    // 第一场：把玩家打到残血再获胜
-    startBattle(s, entry.queue[0], t.id);
-    const b1 = s.catBattle!;
-    b1.player.hp = Math.round(b1.player.attrs.hp * 0.4);
-    b1.opponent.hp = 0;
-    b1.finished = true;
-    b1.won = true;
-    b1.phase = "over";
-    settleBattle(s);
-    // 战后保留剩余生命（不恢复满）
-    const pet = s.pets[0];
-    expect(pet.curHp).toBe(Math.round(b1.player.attrs.hp * 0.4));
-    // 第二场：以当前生命开局
-    const r2 = startNextTournamentBattle(s);
-    expect(r2.ok).toBe(true);
-    expect(s.catBattle!.player.hp).toBe(pet.curHp);
-    expect(s.catBattle!.player.hp).toBeLessThan(s.catBattle!.player.attrs.hp);
-  });
+  it('新版赛事每场重置80生命，不回写日常猫咪生命',()=>{const s=setupCat(3,20);setDay(s,2,15);const t=getTournamentDef('tournament_primary')!;signupTournament(s,t.id);const entry=s.catTournament!.entry!;startTournament(s);startBattle(s,entry.queue[0],t.id);const b=s.catBattle!;s.pets[0].curHp=55;b.player.hp=12;b.finished=true;b.won=true;b.phase='over';settleBattle(s);expect(s.pets[0].curHp).toBe(55);expect(startNextTournamentBattle(s).ok).toBe(true);expect(s.catBattle!.player.hp).toBe(80);});
 
   it("连胜 3 场才结束，中途不结算", () => {
     const s = setupCat(3, 20);

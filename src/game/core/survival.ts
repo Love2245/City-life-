@@ -14,6 +14,7 @@
  */
 import type { GameState } from "../types";
 import { markMajorCrisis, checkCrisisRecovered, onRecoveredDepressionOrInjury } from "./tarot";
+import { stockObligationsOf } from './stockObligations';
 
 // ---------- 阈值常量（UI 与逻辑共用，避免魔法数字散落） ----------
 
@@ -26,6 +27,10 @@ export const HYGIENE_WARN = 30;
 export const MOOD_DEPRESSION_THRESHOLD = 30;
 /** 抑郁判定：连续低落天数达到此值触发抑郁症 */
 export const DEPRESSION_DAYS = 7;
+/** v1.43 抑郁自助恢复：心情回到此值以上（入睡前口径）才开始累计恢复天数 */
+export const DEPRESSION_RECOVER_MOOD = 45;
+/** v1.43 抑郁自助恢复：连续稳定这么多天即可自行走出抑郁（心理门诊仍是更快的付费选择） */
+export const DEPRESSION_RECOVER_DAYS = 3;
 
 /** 健康归零后可撑的天数，超过即猝死 */
 export const DEAD_HEALTH_GRACE_DAYS = 3;
@@ -103,6 +108,8 @@ export function guardSurvival(
 export interface DailySurvivalResult {
   /** 本次结算新触发的抑郁症 */
   depressionTriggered?: boolean;
+  /** v1.43：本次结算自行走出了抑郁症（心情稳定回升） */
+  depressionRecovered?: boolean;
   /** 猝死（游戏结束） */
   suddenDeath?: boolean;
   /** 健康归零已持续天数 */
@@ -150,6 +157,27 @@ export function dailySurvivalSettlement(
     }
   }
 
+  // ---- 1b) 抑郁的自助恢复路径（v1.43）----
+  // 旧版只有 200 元心理门诊能解除抑郁，而抑郁期间 canWork 会拒绝所有工作（含兼职外卖），
+  // 且全游戏没有物品卖出机制 → 穷玩家会陷入「没钱治 → 干不了活 → 更没钱」的软锁。
+  // 现在心情回到 DEPRESSION_RECOVER_MOOD 以上并稳定 DEPRESSION_RECOVER_DAYS 天即可自行走出。
+  if (isDepressed(state)) {
+    if (moodForDepression >= DEPRESSION_RECOVER_MOOD) {
+      const recoverDays = Number(state.flags["depressionRecoverStreak"] ?? 0) + 1;
+      if (recoverDays >= DEPRESSION_RECOVER_DAYS) {
+        cureDepression(state);
+        state.flags["depressionRecoverStreak"] = 0;
+        out.depressionRecovered = true;
+        log("🌤️", "这些天你把日子过慢了一点，心里慢慢松开了——抑郁的症状正在退去，你又能干活了");
+      } else {
+        state.flags["depressionRecoverStreak"] = recoverDays;
+        log("🌤️", `情绪缓和了一些（${recoverDays}/${DEPRESSION_RECOVER_DAYS} 天），再坚持一下就能走出抑郁`);
+      }
+    } else {
+      state.flags["depressionRecoverStreak"] = 0;
+    }
+  }
+
   // ---- 2) 健康归零：连续 3 天未救治 → 猝死 ----
   const prevCritical = p.criticalHealthStreak ?? 0;
   if (p.attrs.health <= 0) {
@@ -194,6 +222,8 @@ export function cureDepression(state: GameState): boolean {
   if (idx < 0) return false;
   state.statuses.splice(idx, 1);
   state.player.depressionStreak = 0;
+  // v1.43：自助恢复进度也要一并清掉，否则付费治愈后残留的天数会让下次复发秒愈。
+  state.flags["depressionRecoverStreak"] = 0;
   state.player.attrs.mood = Math.max(state.player.attrs.mood, 45);
   onRecoveredDepressionOrInjury(state); // v0.985 力量：从抑郁中完全恢复
   return true;
@@ -257,6 +287,26 @@ export function survivalWarnings(
   push("mood", "心情", "🫥", a.mood, `情绪低落（已连续 ${state.player.depressionStreak ?? 0} 天），当心抑郁`);
   push("hygiene", "干净度", "🚿", a.hygiene, a.hygiene < HYGIENE_WORK_MIN ? "太脏了，这形象没法上班！" : "该洗澡了");
 
+  // 金钱与债务维度：破产是唯一 bad 结局（endings.json：连续 7 天资金为负，或债务逾期 3 天），
+  // 玩家必须从负债第一天就有感知，而不是等来静默的 game over。阈值口径与结局判定逐字对齐。
+  const debtStreak = Math.max(0, Math.floor(state.player.debtStreak ?? 0));
+  const negativeStreak = Math.max(0, Math.floor(state.player.negativeMoneyStreak ?? 0));
+  if (debtStreak >= 2) {
+    list.push({ key: "debt", label: "债务", icon: "💸", severity: "critical", text: `债务已逾期 ${debtStreak} 天，${3 - debtStreak} 天后将破产离场，立刻还债！` });
+  } else if (debtStreak === 1) {
+    list.push({ key: "debt", label: "债务", icon: "💸", severity: "danger", text: "身背欠款，债务逾期 3 天将触发破产结局" });
+  } else if (state.player.money < 0) {
+    list.push({ key: "debt", label: "资金", icon: "💸", severity: "danger", text: "资金已见底为负，尽快赚钱补上，拖成逾期债务很危险" });
+  }
+  if (negativeStreak >= 5) {
+    list.push({ key: "money", label: "收支", icon: "📉", severity: "danger", text: `已连续 ${negativeStreak} 天入不敷出，再 ${7 - negativeStreak} 天将触发破产结局` });
+  } else if (negativeStreak >= 3) {
+    list.push({ key: "money", label: "收支", icon: "📉", severity: "warn", text: `已连续 ${negativeStreak} 天入不敷出，连续 7 天将触发破产结局` });
+  }
+
+  for (const debt of stockObligationsOf(state)) {
+    if (debt.severity !== 'ok') list.push({ key: `finance:${debt.id}`, label: debt.title, icon: '💳', severity: debt.severity, text: debt.detail });
+  }
   const order: SurvivalSeverity[] = ["ok", "warn", "danger", "critical"];
   return list.sort((x, y) => order.indexOf(y.severity) - order.indexOf(x.severity)).slice(0, n);
 }

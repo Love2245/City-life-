@@ -64,6 +64,8 @@ describe("存档迁移 v12 → v13（纪元换算）", () => {
     const s = createInitialState();
     // 还原为旧纪元（1年1月1日 起）
     s.version = 12;
+    // 旧存档没有穿搭字段；迁移应按旧档兜底规则补基础衣服，而不是沿用新档的开局外套。
+    s.equipped = {};
     s.time = { day: 5, month: 1, year: 1, hour: 9, minute: 0, stayedUp: false };
     s.vehicles = { e_bike: { day: 5, month: 2, year: 1 } }; // 旧纪元到期日（租 30 天 → 2月5日）
     s.memberships = { gym: { day: 10, month: 1, year: 1 } };
@@ -104,13 +106,35 @@ describe("存档迁移 v12 → v13（纪元换算）", () => {
   it("equipped / weather 默认值补齐", () => {
     const s = makeV12();
     const m = migrateSave(s);
-    expect(m.equipped).toEqual({});
+    expect(m.equipped).toMatchObject({ clothes: "white_vest", pants: "black_pants" });
     expect(m.weather.id).toBe("sunny");
   });
 
-  it("当前版本存档原样返回", () => {
+  it("当前版本存档保留业务数据，补齐一次性迁移标记且再次迁移幂等", () => {
     const s = createInitialState();
     expect(s.version).toBe(SAVE_VERSION);
-    expect(migrateSave(s)).toBe(s);
+    const migrated = migrateSave(s);
+    expect(migrated).not.toBe(s);
+    // Current saves are deep-cloned through JSON during migration, so compare
+    // the persisted shape (which intentionally omits undefined optionals).
+    const expected = JSON.parse(JSON.stringify(s)) as GameState;
+    expected.player.baseStats = { ...expected.player.stats };
+    expected.locationId = "old_apartment";
+    expected.flags = {
+      ...expected.flags,
+      programming_royalty_persistent_v1: true,
+      company_incubator_office_v36: true,
+      temple_lodging_rule_v2: true,
+      industrial_dorm_lodging_rule_v2: true,
+      npc_crash_stay_rule_v2: true,
+      outfit_sets_v1: true, // ensureWardrobeDefaults 迁移新写入的一次性标记
+      development_work_v2_migrated: true,
+      development_work_v2_day: gameDay(expected.time),
+      development_work_v2_minutes: 0,
+      personal_development_work_v2_migrated: true,
+    };
+    expect(migrated).toEqual(expected);
+    expect(s.flags.programming_royalty_persistent_v1).toBeUndefined();
+    expect(migrateSave(migrated)).toEqual(migrated);
   });
 });

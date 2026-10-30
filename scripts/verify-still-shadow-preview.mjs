@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';import {mkdirSync,writeFileSync} from 'node:fs';import {resolve,join} from 'node:path';
+import playwright from 'file:///C:/Users/lijia/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright-core/index.js';
+const out=resolve('docs/still-soft-shadows-1497-20261025/preview');mkdirSync(out,{recursive:true});
+const browser=await playwright.chromium.launch({headless:true,executablePath:'C:/Users/lijia/AppData/Local/Google/Chrome/Application/chrome.exe'}),report={cases:[],errors:[]};
+try{const page=await browser.newPage({viewport:{width:1920,height:1080},deviceScaleFactor:1});page.on('pageerror',e=>report.errors.push(e.message));await page.addInitScript(()=>{const original=HTMLCanvasElement.prototype.getContext;window.gl=0;HTMLCanvasElement.prototype.getContext=function(kind,...args){if(/webgl/.test(kind))window.gl++;return original.call(this,kind,...args);};});
+for(const id of ['own_apartment','hotel']){await page.goto('http://127.0.0.1:1427/scripts/still-shadow-preview.html?id='+id);await page.waitForFunction(()=>window.ready);
+for(const angle of [0,2])for(const enabled of [false,true]){const timing=await page.evaluate(({enabled,angle})=>window.showShadow(enabled,angle),{enabled,angle});if(enabled){console.log(JSON.stringify(timing.comparison));assert(timing.comparison.shadedPixelFraction>.005);assert(timing.comparison.meanChannelDrop>0&&timing.comparison.meanChannelDrop<8);assert.equal(timing.comparison.brightenedPixels,0);}
+const name=`${id}-${angle}-${enabled?'shadow':'before'}.png`;await page.screenshot({path:join(out,name)});report.cases.push({id,angle,enabled,...timing,file:name});}assert.equal(await page.evaluate(()=>window.gl),0);}
+report.webgl=0;report.passed=report.errors.length===0;writeFileSync(join(out,'verification.json'),JSON.stringify(report,null,2));assert(report.passed);console.log(JSON.stringify(report,null,2));}finally{await browser.close();}

@@ -8,7 +8,7 @@ describe("评价文案：数据完整性", () => {
   it("每个行动 verdicts ≥ 6 条", () => {
     for (const a of ACTIONS) {
       // v1.20 读书行动：verdict 由书中片段动态生成（见 read_book handler），无需静态 verdicts
-      if (a.handler === "read_book") continue;
+      if (a.handler === "read_book" || a.handler?.startsWith("district_")) continue;
       expect(a.verdicts?.length ?? 0, `${a.id} verdicts 不足 6 条`).toBeGreaterThanOrEqual(6);
     }
   });

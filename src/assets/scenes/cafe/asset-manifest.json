@@ -1,0 +1,177 @@
+{
+  "purpose": "Local Urban Life cafe scene integration; reference provenance retained",
+  "upstreamManifest": "../../../../previews/cafe/asset-manifest.json",
+  "models": 14,
+  "images": 4,
+  "assets": [
+    {
+      "file": "book-cream.glb",
+      "bytes": 453176,
+      "sha256": "9D8D71E5B8DFAECB5A9C1FC6FF58479F26D18465AB6481F82BD11E48A32941AB",
+      "sourceFile": "previews/cafe/assets/book-cream.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "book-olive.glb",
+      "bytes": 453160,
+      "sha256": "1B7EE26F0D95554E9D3522FDE7ACC01408DA0D6F42429F65AC479D70648863D7",
+      "sourceFile": "previews/cafe/assets/book-olive.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "cafe-bar-poster-v2.png",
+      "bytes": 2949577,
+      "sha256": "BE40AB78A23441A8EC8322E3FDADE3C2EFA3A212978333B0C4E2688578E032B3",
+      "sourceFile": "previews/cafe/assets/cafe-bar-poster-v2.png",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "cafe-stool.glb",
+      "bytes": 494476,
+      "sha256": "77B65EDFFFF6113806CF0EF5BD9091707523B2D4DC7C2DA3EEC04724F4626D0F",
+      "sourceFile": "previews/cafe/assets/cafe-stool.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "cafe-table.glb",
+      "bytes": 489396,
+      "sha256": "7C801A945A4390A31C8016E2161E6832A84957BBDFDE84FCA55D5E5274BF211C",
+      "sourceFile": "previews/cafe/assets/cafe-table.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "ceramic-cup.glb",
+      "bytes": 70912,
+      "sha256": "273DAE77ED44A2823F45027ACE0B77373F3DD16EE0B09350A23DB34D716FB4A6",
+      "sourceFile": "previews/cafe/assets/ceramic-cup.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "city-afternoon.png",
+      "bytes": 2966708,
+      "sha256": "FE23F9ABCCBE80BEC0F81F116A13787074535E0306410329D423C66E3CBD01F0",
+      "sourceFile": "previews/cafe/assets/city-afternoon.png",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "coffee-pot.glb",
+      "bytes": 96320,
+      "sha256": "18DE1509CFFF60235C41F2F2FAB685700CD7497799724400785AA1B61E56FD70",
+      "sourceFile": "previews/cafe/assets/coffee-pot.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "coffee-ritual.png",
+      "bytes": 2781774,
+      "sha256": "49EB4DD64277251F5353AEB636C5449DB7E0A7A0F1952CED4D7D0E230480D4B4",
+      "sourceFile": "previews/cafe/assets/coffee-ritual.png",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "fire-extinguisher.glb",
+      "bytes": 73428,
+      "sha256": "75D75902F8E821139791AEC07E420107F852A9791FEAC0C93C53EF410868CDD5",
+      "sourceFile": "previews/cafe/assets/fire-extinguisher.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "lin-seated-neutral-eight-v2.png",
+      "bytes": 1015727,
+      "sha256": "5C3490894E6B62BBC7D19F0096DACA22C87563B37A1F932307DFB153D38ED9A8",
+      "sourceFile": "previews/cafe/assets/lin-seated-neutral-eight-v2.png",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "plant-leaf.glb",
+      "bytes": 905036,
+      "sha256": "C90C15538E9F943FC506F75965CE79C4A3FDC25FAC986D94BDE4FD2B9D3B849C",
+      "sourceFile": "previews/cafe/assets/plant-leaf.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "plant-small.glb",
+      "bytes": 1035788,
+      "sha256": "5ACEF408CE473DB28D7B761B34B43201F6324A052642BD34366E0418DC01806A",
+      "sourceFile": "previews/cafe/assets/plant-small.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "register.glb",
+      "bytes": 201844,
+      "sha256": "63D9765CC20EDBD496AD02D8B25A3C439F57E814AC24BC798C0B0F8BCD69B8A8",
+      "sourceFile": "previews/cafe/assets/register.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "trash.glb",
+      "bytes": 83628,
+      "sha256": "E9FF0C45444EF53F668D9574DC7A1E87B9366D7C3C919F3DC26D094E9ACF0903",
+      "sourceFile": "previews/cafe/assets/trash.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "id": "woven-basket",
+      "file": "woven-basket.glb",
+      "bytes": 640888,
+      "sha256": "22d109450eb040b171961e788acedd45ea54bca8ffedfbe4e5f80895675942cc",
+      "size": [
+        0.5,
+        0.58996,
+        0.3
+      ],
+      "sourceScene": "G:\\都市生活\\素材库\\外部游戏参考素材\\Manaka_场景与物件_20261018\\01_公寓与家居\\独立物件\\basket01__be157b4cf53f.glb",
+      "sourceSceneSHA256": "6fd295deaf2801a613ba5efa36426aa4664829df4f878654afb678fa288f04a1",
+      "sourceNodes": [
+        "basket01"
+      ],
+      "sourceMatrices": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      ],
+      "triangles": 188,
+      "materials": 1,
+      "textures": 1,
+      "venue": "cafe",
+      "sourceName": "basket01",
+      "sourceFileSHA256": "6fd295deaf2801a613ba5efa36426aa4664829df4f878654afb678fa288f04a1"
+    },
+    {
+      "file": "pixabay-cezve-4797.glb",
+      "bytes": 1113160,
+      "sha256": "1be4758eed9fa94d791d8c09c9ae51557e286362c3ce70e46a9887a2960c7134",
+      "sourceUrl": "https://pixabay.com/3d-models/cezve-turkish-coffee-pot-coffee-pot-4797/",
+      "author": "Gal-B",
+      "license": "Pixabay Content License",
+      "licenseUrl": "https://pixabay.com/service/license-summary/",
+      "sourceFile": "G:\\都市生活\\素材库\\家居家具物件模型\\Pixabay咖啡馆物件_20261027\\咖啡壶_Gal-B_4797_原始.glb",
+      "sourceUnchanged": true
+    },
+    {
+      "file": "polyhaven-potted-plant-04.glb",
+      "bytes": 2119832,
+      "sha256": "fa2767cb3d4c20197a58914b88488bb06dc86ab051313ba6a834950015b1d254",
+      "sourceUrl": "https://polyhaven.com/a/potted_plant_04",
+      "author": "James Ray Cock",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://polyhaven.com/license",
+      "sourceFile": "G:\\都市生活\\素材库\\家居家具物件模型\\PolyHaven咖啡馆物件_20261027\\原始",
+      "processing": "将原版 glTF、几何数据和 1K 纹理组合为内嵌 GLB；不改几何和图像"
+    }
+  ]
+}

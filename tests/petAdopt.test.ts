@@ -12,6 +12,13 @@ describe("v1.33 宠物店领养系统", () => {
     expect(pool.length).toBeGreaterThan(0);
   });
 
+  it("错过开局和公园获取后仍可在宠物店购买橘猫或薄荷猫", () => {
+    const pool = adoptableCats();
+    expect(pool.map((cat) => cat.id)).toEqual(["orange", "mint", "golden"]);
+    expect(CAT_ADOPT_PRICE.common).toBe(800);
+    expect(CAT_ADOPT_PRICE.rare).toBe(3500);
+  });
+
   it("定价覆盖普通/稀有/超稀有/传说四档", () => {
     for (const r of ["common", "rare", "super", "legend"] as const) {
       expect(CAT_ADOPT_PRICE[r]).toBeGreaterThan(0);
@@ -37,7 +44,7 @@ describe("v1.33 宠物店领养系统", () => {
       expect(a.group, `${id} 归猫训练组`).toBe("cat_train");
     }
     const buy = ACTIONS.filter((x) => x.id.startsWith("cat_buy_") && x.handler === "buy_cat_item");
-    expect(buy.length).toBe(16); // 12 商店用品 + 4 医院特供（含体力药水）
+    expect(buy.length).toBe(17); // 12 商店用品 + 自动照料机 + 4 医院特供（含体力药水）
     for (const a of buy) {
       const expectLoc = a.catItemId && ["cat_potion", "cat_hp_potion", "cat_purifier", "cat_revive"].includes(a.catItemId)
         ? "pet_hospital"

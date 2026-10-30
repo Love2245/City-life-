@@ -13,9 +13,9 @@
       "id": "fund",
       "name": "货币基金",
       "icon": "📈",
-      "desc": "月均收益 1%，波动小，几乎不亏",
-      "expectedRate": 0.01,
-      "volatility": 0.02,
+      "desc": "月均收益 0.6%，但会随行情波动，单月可能亏 3% 左右——不是保本产品",
+      "expectedRate": 0.006,
+      "volatility": 0.035,
       "minAmount": 500
     },
     {

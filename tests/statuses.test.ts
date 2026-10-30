@@ -2,10 +2,11 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { applyFamily } from "../src/game/core/families";
 import { reconcileStatuses, hasStatus, statusSleepPenalty } from "../src/game/core/statuses";
-import { sleep, isExhausted } from "../src/game/core/time";
+import { advanceHours, sleep } from "../src/game/core/time";
 import { performAction, canPerform, getAction } from "../src/game/core/actions";
 import { performJob } from "../src/game/core/jobs";
 import { useItem } from "../src/game/core/items";
+import { setActionLocation } from "./helpers/actionLocation";
 
 describe("Debuff：疲惫", () => {
   it("体力耗尽触发疲惫", () => {
@@ -34,13 +35,6 @@ describe("Debuff：疲惫", () => {
     expect(hasStatus(s, "sleep_disorder")).toBe(true);
   });
 
-  it("疲惫状态下凌晨 2 点被逼睡", () => {
-    const s = createInitialState();
-    s.statuses.push({ id: "exhausted", severity: 1, count: 1 });
-    s.time.hour = 2;
-    s.player.attrs.stamina = 50;
-    expect(isExhausted(s)).toBe(true);
-  });
 });
 
 describe("Debuff：肌肉劳损与生病", () => {
@@ -57,6 +51,7 @@ describe("Debuff：肌肉劳损与生病", () => {
     s.time.hour = 10; // 健身房 8-22 营业
     s.statuses.push({ id: "sick", severity: 1, count: 1 });
     const a = getAction("exercise_gym")!;
+    setActionLocation(s, "exercise_gym");
     const check = canPerform(s, a);
     expect(check.ok).toBe(false);
     expect(check.reason).toContain("生病");
@@ -68,6 +63,7 @@ describe("Debuff：肌肉劳损与生病", () => {
     s.time.hour = 10; // 人民医院全天营业
     s.player.money = 200;
     s.statuses.push({ id: "sick", severity: 2, count: 1 });
+    setActionLocation(s, "see_doctor_hospital");
     const r = performAction(s, "see_doctor_hospital");
     expect(r.ok).toBe(true);
     expect(hasStatus(s, "sick")).toBe(false);
@@ -87,6 +83,13 @@ describe("Debuff：肌肉劳损与生病", () => {
     reconcileStatuses(s);
     expect(hasStatus(s, "sick")).toBe(false);
   });
+
+  it("健康低于阈值时重复检查不会把生病等级按调用次数升级", () => {
+    const s = createInitialState();
+    s.player.attrs.health = 20;
+    for (let i = 0; i < 5; i++) reconcileStatuses(s);
+    expect(s.statuses.find((status) => status.id === "sick")?.severity).toBe(1);
+  });
 });
 
 describe("Debuff：饥饿", () => {
@@ -105,6 +108,20 @@ describe("Debuff：饥饿", () => {
     expect(h?.severity).toBe(3);
   });
 
+  it("饥饿等级由当前饱腹阈值决定，重复检查不升级且回升会降级", () => {
+    const s = createInitialState();
+    s.player.attrs.satiety = 30;
+    reconcileStatuses(s);
+    reconcileStatuses(s);
+    expect(s.statuses.find((status) => status.id === "hungry")?.severity).toBe(1);
+    s.player.attrs.satiety = 10;
+    reconcileStatuses(s);
+    expect(s.statuses.find((status) => status.id === "hungry")?.severity).toBe(2);
+    s.player.attrs.satiety = 25;
+    reconcileStatuses(s);
+    expect(s.statuses.find((status) => status.id === "hungry")?.severity).toBe(1);
+  });
+
   it("饱腹 ≥50 解除饥饿", () => {
     const s = createInitialState();
     s.statuses.push({ id: "hungry", severity: 2, count: 1 });
@@ -117,8 +134,21 @@ describe("Debuff：饥饿", () => {
     const s = createInitialState();
     applyFamily(s, "ordinary");
     const sat0 = s.player.attrs.satiety; // 75
+    setActionLocation(s, "wander_street");
     performAction(s, "wander_street"); // 1h
     expect(s.player.attrs.satiety).toBe(sat0 - 3);
+  });
+
+  it("相同经过时长无论拆成几段都消耗相同饱腹", () => {
+    const single = createInitialState();
+    const split = createInitialState();
+    single.player.attrs.satiety = 75;
+    split.player.attrs.satiety = 75;
+    advanceHours(single, 1);
+    advanceHours(split, 0.5);
+    advanceHours(split, 0.5);
+    expect(single.player.attrs.satiety).toBe(72);
+    expect(split.player.attrs.satiety).toBe(72);
   });
 
   it("饥饿状态下锻炼被禁用", () => {

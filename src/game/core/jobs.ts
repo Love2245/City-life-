@@ -1,619 +1,565 @@
-/**
- * 工作机会系统：日结工每日刷新劳务市场、固定岗位校验、证书实习期。
- * 纯逻辑层。
- */
-import type { GameState, JobDef, JobOffer, ActionResult, Skills } from "../types";
+import {dispatchPayTerms,dispatchWage,validDispatchPay} from '../../lib/streetDispatch/pay.js';
+/** v1.465: all work starts a persistent shift and settles once after its challenge. */
+import type { GameState, JobDef, JobOffer, ActionResult, Effects, WorkSession, WorkState } from "../types";
+import actionsData from '../data/actions.json';
+import { grantWorkerDormStay } from './residence';
+import { pendingStreetPerformance } from './streetPerformance';
 import { randomInt, weightedDraw } from "../rng";
-import { applyEffects, advanceTime, collectDeltas, pickVerdict, pushLog, triggerCollapse, type Effects } from "../engine";
-import { checkRequirements, isLocationOpen, getLocation, closedReason } from "./actions";
-import { onWorkDone, markLateToday } from "./tarot";
+import { applyEffects, advanceTime, collectDeltas, pushLog, triggerCollapse } from "../engine";
+import { markLateToday, onWorkDone } from "./tarot";
 import { reconcileStatuses } from "./statuses";
-import { isStaminaZero } from "./fatigue";
 import { canWork, guardSurvival } from "./survival";
-import { enterRegion, goToMap } from "./regions";
-import { applyJob } from "./career";
-import { recordJob, recordMoney } from "./weekly";
-import { isReferred } from "./contacts";
+import { hireJob, getWorkShift, creditWorkedShift, processWorkCalendar, recordCareerProgress } from "./career";
+import { recordJob } from "./weekly";
 import { currentWeather } from "./weather";
-import { fameIncomeMult } from "./stats";
-import { gameDay, weekdayLabel, weekdayOf } from "./calendar";
-import {
-  isPunctual,
-  latenessOfJob,
-  latePenalty,
-  formatDuration,
-  acceptJobQuest,
-  completeJobQuest,
-  failJobQuest,
-  jobQuestOfToday,
-  markGoalWorked, // v1.215：上班成功标记「干一次活」每日目标（dailyGoals.test.ts）
-  type LatePenalty,
-} from "./quests";
+import { gameDay, weekdayOf } from "./calendar";
+import { isRestDayOf } from "./workSchedule";
+import { priceMultiplier } from "./difficulty";
+import { checkJobRequirements as evaluateJobRequirements, hasJobCertificate } from "./jobRequirements";
+import { recordClothingWorkMilestone } from "./clothing";
+import { deliveryShiftTimeLimit, getMiniGameConfig, gradeOf } from "./minigame";
 import jobsData from "../data/jobs.json";
+import { recordRemasterAction } from "../data/npcDialogueRemaster";
+import locationsData from "../data/locations.json";
+import { getRegion, isRegionUnlocked, regionLockReason } from "./regions";
 
 export const JOB_DEFS: JobDef[] = jobsData as JobDef[];
+const defMap = new Map(JOB_DEFS.map(job => [job.id, job]));
+export const MASTERY_FULL_SHIFTS = 10;
+export const SKIP_WAGE_RATIO = 0.8;
+/** 手机兼职外卖一天一班，每班八小时，工资取小游戏实际配送收入。 */
+export const DELIVERY_DAILY_LIMIT = 1;
+export const DELIVERY_SHIFT_MINUTES = 8 * 60;
+/** 网约车按班次接单：一天最多开一班，每班十小时。 */
+export const RIDE_HAILING_DAILY_LIMIT = 1;
+export const RIDE_HAILING_SHIFT_MINUTES = 10 * 60;
 
-const defMap = new Map(JOB_DEFS.map((j) => [j.id, j]));
-
-/** v0.95 热浪：有体力消耗的工作额外 +25% 消耗 */
-function heatwaveStaminaBoost(state: GameState, eff: Effects): void {
-  if (currentWeather(state) === "heatwave" && (eff.stamina ?? 0) < 0) {
-    state.player.attrs.stamina = Math.max(0, state.player.attrs.stamina - Math.round(-(eff.stamina ?? 0) * 0.25));
-  }
+export function ensureWorkState(state: GameState): WorkState {
+  const work = state.work ??= { masteryMinutes: {}, settledIds: [], wageRecords: [], sequence: 0 };
+  normalizeDeliveryParttimeSession(state);
+  if (work.active) work.active.canSkip = completedWorkShifts(state, work.active.jobId, work.active.standardMinutes) >= MASTERY_FULL_SHIFTS;
+  return work;
 }
 
-/** v0.965 工作质量分：正常 0.85，迟到扣至 0.4（负责人对话依据） */
-function jobQualityOf(punchPenaltyRatio: number): number {
-  return punchPenaltyRatio >= 1 ? 0.85 : 0.4;
+export function completedWorkShifts(state: GameState, jobId: string, standardMinutes?: number): number {
+  const saved = state.work?.completedShifts?.[jobId];
+  if (Number.isFinite(saved) && saved! >= 0) return Math.floor(saved!);
+  const minutes = standardMinutes ?? (jobId === 'job_delivery' ? DELIVERY_SHIFT_MINUTES : Math.round((defMap.get(jobId)?.duration ?? 1) * 60));
+  return Math.max(0, Math.floor((state.work?.masteryMinutes[jobId] ?? 0) / Math.max(1, minutes)));
 }
 
-/** v0.97 该岗今天是否休息日（缺省每周六休；双休岗周六日；自由接单岗不休） */
-export function isRestDay(state: GameState, job: JobDef): boolean {
-  // v1.20：日结工没有双休限制，每天都可以工作
-  if (job.kind === "day") return false;
-  const days = job.restDays ?? ["sat"];
-  if (days.length === 0) return false;
-  // restDays 存英文标识（sat/sun），星期映射：周六=5、周日=6
-  const w = weekdayOf(state.time);
-  const key = w === 5 ? "sat" : w === 6 ? "sun" : undefined;
-  return key ? days.includes(key) : false;
+/** 旧一小时兼职会话沿用同一进度和种子，恢复为八小时实际收入班次。 */
+export function normalizeDeliveryParttimeSession(state: GameState): void {
+  const session = state.work?.active;
+  if (!session || session.jobId !== "job_delivery" || session.source !== "delivery") return;
+  session.endMinute = session.startMinute + DELIVERY_SHIFT_MINUTES;
+  session.workedMinutes = DELIVERY_SHIFT_MINUTES;
+  session.standardMinutes = DELIVERY_SHIFT_MINUTES;
+  session.baseWage = 0;
+  session.canSkip = completedWorkShifts(state, session.jobId, DELIVERY_SHIFT_MINUTES) >= MASTERY_FULL_SHIFTS;
+  const key = `delivery_order_${session.day}`;
+  state.flags[key] = Math.max(1, Number(state.flags[key] ?? 0));
 }
 
-/** v0.97 休息日提示文案 */
-function restReason(state: GameState, job: JobDef): string {
-  return `${job.name}今天休息（${weekdayLabel(state.time)}）`;
-}
-
-export function getJobDef(id: string): JobDef | undefined {
-  return defMap.get(id);
-}
-
-/* ==================== 证书实习期（v0.89） ==================== */
-
-/** 证书类 flag：允许无证实习（工资 50%，累计 3 个工作日自动发证） */
-const CERTIFICATE_FLAGS = ["item_certificate", "item_driving_license"];
-
-const FLAG_NAMES: Record<string, string> = {
-  item_certificate: "技能证书",
-  item_driving_license: "驾驶本",
-  item_driving_course: "学车报名",
-  item_laptop: "笔记本电脑",
-  item_training_cert: "培训证书", // v1.10：培训学校结业证书（不参与实习换证闭环）
+const ACTION_WORK_PROGRESS_JOB: Record<string, string> = {
+  steel_shift: "job_factory_line",
+  glass_quality_shift: "job_factory_qc",
+  aluminum_recycle_shift: "job_loading",
+  internet_night_job: "job_netbar_admin",
+  boyue_internet_night_job: "job_boyue_netbar_admin",
+  market_help_stand: "job_convenience_clerk",
+  bus_station_gig: "job_convenience_clerk",
+  development_bus_station_gig: "job_boyue_convenience_clerk",
 };
-
-function flagName(flag: string): string {
-  return FLAG_NAMES[flag] ?? flag;
+// Scene wage actions use the same persistent session and settlement rules as listed jobs.
+for (const action of actionsData) {
+  const sourceJob=defMap.get(ACTION_WORK_PROGRESS_JOB[action.id]??'');
+  if (!sourceJob) continue;
+  defMap.set(action.id,{ ...sourceJob, id:action.id, name:action.name, icon:action.icon,
+    desc:action.desc??'',kind:'day',locationId:action.locationId,duration:action.duration??1,
+    effects:action.effects??{},requirements:action.requirements,sound:action.sound as JobDef['sound'],
+    incomeTiers:undefined,moneyRange:undefined,heavy:['steel_shift','glass_quality_shift','aluminum_recycle_shift'].includes(action.id),
+  } as JobDef);
+}
+export function performWageAction(state:GameState, actionId:string):WorkResult {
+  const job=defMap.get(actionId);
+  return job&&ACTION_WORK_PROGRESS_JOB[actionId]?beginWork(state,job,'site'):{ok:false,reason:'该零工不存在'};
 }
 
-function getAttrValueOf(state: GameState, key: string): number {
-  const attrs = state.player.attrs as unknown as Record<string, number>;
-  const stats = state.player.stats as unknown as Record<string, number>;
-  return attrs[key] ?? stats[key] ?? 0;
+/** 普通工资行动也写入统一工作履历、周报和每日目标。 */
+export function recordWageActionCompletion(state: GameState, actionId: string, wage: number): boolean {
+  const progressJob = getJobDef(ACTION_WORK_PROGRESS_JOB[actionId] ?? "");
+  if (!progressJob) return false;
+  const day = gameDay(state.time);
+  const completedFlag = `worked_${actionId}_${day}`;
+  if (state.flags[completedFlag]) return false;
+  state.flags[completedFlag] = true;
+  state.flags.ever_worked = true;
+  if (!state.flags[`job_done_${actionId}`]) {
+    state.flags[`job_done_${actionId}`] = true;
+    state.flags.jobs_done_count = Number(state.flags.jobs_done_count ?? 0) + 1;
+  }
+  recordJob(state);
+  onWorkDone(state, progressJob.id, wage);
+  recordCareerProgress(state, progressJob);
+  // 工资行动属于一次实际工作，会中断连续农场帮工。
+  state.flags.npc_remaster_farm_help_streak_npc_suburb_farmer = 0;
+
+  const work = ensureWorkState(state);
+  const sequence = ++work.sequence;
+  work.wageRecords.push({
+    id: `action_${actionId}_${day}_${sequence}`,
+    jobId: actionId,
+    day,
+    kind: "day",
+    base: wage,
+    gameBonus: 0,
+    attendanceBonus: 0,
+    total: wage,
+    note: "劳动行动工资到账",
+  });
+  if (work.wageRecords.length > 500) work.wageRecords.splice(0, work.wageRecords.length - 500);
+  return true;
 }
 
-/** 岗位要求的证书 flag（无则 undefined） */
+export function nowWorkMinute(state: GameState): number {
+  return gameDay(state.time) * 1440 + state.time.hour * 60 + state.time.minute;
+}
+export function getJobDef(id: string): JobDef | undefined { return defMap.get(id); }
+export function isRestDay(state: GameState, job: JobDef): boolean {
+  return isRestDayOf(job, weekdayOf(state.time));
+}
+export function jobApplicationSuccessChance(state: GameState, job: JobDef): number {
+  return checkJobRequirements(state, job).ok ? 1 : 0;
+}
+export function checkJobRequirements(state: GameState, job: JobDef) {
+  return evaluateJobRequirements(state, job);
+}
 export function internFlagOf(job: JobDef): string | undefined {
-  const f = job.requirements?.flag;
-  return f && CERTIFICATE_FLAGS.includes(f) ? f : undefined;
+  const flag = job.requirements?.flag;
+  return flag === "item_certificate" || flag === "item_driving_license" || flag === "item_training_cert"
+    ? flag : undefined;
 }
-
-/**
- * v1.20 持证判定：拥有对应证书即视为持证；
- * 培训学校的结业证书（item_training_cert）升级为「万能证书」，可解锁所有需要技能证书的岗位。
- */
 export function hasCertificate(state: GameState, flag: string): boolean {
-  if (state.flags[flag]) return true;
-  if (flag === "item_certificate" && state.flags["item_training_cert"]) return true;
-  return false;
+  return hasJobCertificate(state, flag);
 }
-
-/** 是否处于实习态：岗位要求证书且玩家无证（内推则免实习） */
+/** No formal role currently defines an internship track; configured requirements are hard gates. */
 export function isIntern(state: GameState, job: JobDef): boolean {
-  const flag = internFlagOf(job);
-  if (!flag) return false;
-  if (isReferred(state, job.id)) return false;
-  return !hasCertificate(state, flag);
+  return checkJobRequirements(state, job).intern;
+}
+export function applyForJob(state: GameState, job: JobDef, replace = false) {
+  return hireJob(state, job, replace);
+}
+export function fixedJobsOf(locationId: string): JobDef[] {
+  return JOB_DEFS.filter(job => job.kind === "formal" && job.locationId === locationId);
+}
+export function localJobsOf(locationId: string): JobDef[] {
+  return JOB_DEFS.filter(job => job.locationId === locationId);
 }
 
-/**
- * 岗位需求校验（实习友好版）：
- * - attr/skill/money 严格校验
- * - 证书类 flag 缺失 → 放行并标记 intern（进入实习）
- * - 非证书 flag 缺失 → 拒绝
- */
-export function checkJobRequirements(
-  state: GameState,
-  job: JobDef,
-): { ok: boolean; reason?: string; intern?: boolean } {
-  const intern = isIntern(state, job);
-  const req = job.requirements;
-  // v1.20 万能证书：持有培训结业证书 → 所有需要技能证书的岗位完全解锁（含技能门槛）
-  const masterCert = req?.flag === "item_certificate" && state.flags["item_training_cert"];
-  if (req?.attr) {
-    for (const [key, need] of Object.entries(req.attr)) {
-      const cur = getAttrValueOf(state, key);
-      if (cur < (need ?? 0)) return { ok: false, reason: `${key}不足（需 ${need}）` };
-    }
-  }
-  if (req?.skill && !masterCert) {
-    for (const [key, need] of Object.entries(req.skill)) {
-      const k = key as keyof Skills;
-      if (state.player.skills[k] < (need ?? 0)) return { ok: false, reason: `技能不足（需 ${need}）` };
-    }
-  }
-  if (req?.money && state.player.money < req.money) {
-    return { ok: false, reason: `金钱不足（需 ${req.money}）` };
-  }
-  // 证书门槛：内推（referral_<jobId>）可免证书直接入职；培训结业证书为万能证书（v1.20）
-  if (req?.flag && !masterCert && !intern && !hasCertificate(state, req.flag) && !isReferred(state, job.id)) {
-    return { ok: false, reason: `缺少${flagName(req.flag)}` };
-  }
-  return { ok: true, intern };
-}
-
-/**
- * 实习期结算：工资减半 + 累计工作日（同日幂等）。
- * 满 3 天 → 发证 + 日志，下一班起恢复全额（本次仍按实习折半）。
- */
-function applyInternPay(state: GameState, job: JobDef, eff: Effects): Effects {
-  if (!isIntern(state, job)) return eff;
-  const flag = internFlagOf(job)!;
-  const c = state.career;
-  if (c.internLastDay !== gameDay(state.time)) {
-    c.internDays[job.id] = (c.internDays[job.id] ?? 0) + 1;
-    c.internLastDay = gameDay(state.time);
-  }
-  const total = c.internDays[job.id];
-  const after = Math.round((eff.money ?? 0) * 0.5);
-  if (total >= 3) {
-    state.flags[flag] = true;
-    c.internDays[job.id] = 0;
-    pushLog(state, "🎓", `实习满 3 天，正式获得${flagName(flag)}！下一班起恢复全额工资`);
-  } else {
-    pushLog(state, "📋", `实习期第 ${total}/3 天，工资减半：${after} 元`);
-  }
-  return { ...eff, money: after };
-}
-
-/** 跨天则重建今日岗位池（v0.93：3~6 个 day 岗位；保底含 1 个低门槛岗，确保玩家总能找到活） */
 export function refreshLaborMarket(state: GameState): void {
-  if (state.laborMarket.generatedDay === gameDay(state.time)) return;
-  state.laborMarket.generatedDay = gameDay(state.time);
+  // 旧存档可能仍留有网约车劳务 offer；App 是唯一开班入口，先清除旧名额。
+  state.laborMarket.offers = state.laborMarket.offers.filter(offer => offer.jobId !== "job_ride_hailing");
+  const today = gameDay(state.time);
+  if (state.laborMarket.generatedDay === today) return;
+  state.laborMarket.generatedDay = today;
   state.laborMarket.offers = [];
-  const pool = JOB_DEFS.filter((j) => j.kind === "day" && !j.locationId);
-  if (pool.length === 0) return;
-  const n = randomInt(state.rng, 3, 6);
-  const lowBarrier = pool.filter((j) => !j.requirements?.skill && !j.requirements?.flag);
-  const picked: JobDef[] = [];
-  // v0.93 保底：优先放入一个无技能/无证书门槛的岗，保证「总能找到活干」
-  if (lowBarrier.length > 0) {
-    const g = weightedDraw(state.rng, lowBarrier.map((j) => ({ item: j, weight: j.weight ?? 1 })));
-    if (g) picked.push(g);
-  }
-  const remaining = n - picked.length;
-  for (let i = 0; i < remaining; i++) {
-    const job = weightedDraw(state.rng, pool.map((j) => ({ item: j, weight: j.weight ?? 1 })));
-    if (job) picked.push(job);
-  }
-  for (const job of picked) {
-    state.laborMarket.offers.push({
-      uid: `${job.id}_${state.laborMarket.offers.length}`,
-      jobId: job.id,
-      quota: job.quota ?? 1,
+  const pool = JOB_DEFS.filter(job => job.kind === "day" && !job.locationId && job.id !== "job_ride_hailing");
+  const starters = pool.filter(job => !job.requirements?.skill && !job.requirements?.flag);
+  const count = randomInt(state.rng, 3, 6);
+  for (let i = 0; i < count; i++) {
+    const candidates = i === 0 && starters.length ? starters : pool;
+    const job = weightedDraw(state.rng, candidates.map(item => ({ item, weight: item.weight ?? 1 })));
+    if (job) state.laborMarket.offers.push({
+      uid: job.id + "_" + today + "_" + i, jobId: job.id, quota: job.quota ?? 1,
     });
   }
 }
+export function getTodayOffers(state: GameState): Array<{ offer: JobOffer; def: JobDef }> {
+  return state.laborMarket.offers.flatMap(offer => {
+    const def = defMap.get(offer.jobId);
+    return def && def.id !== "job_ride_hailing" && offer.quota > 0 ? [{ offer, def }] : [];
+  });
+}
 
-/** 当前交通工具档位 */
 export type VehicleType = "none" | "bicycle" | "e_bike" | "tricycle" | "car";
-/** 载具优先级（高→低），用于"持高档载具跑低档岗"时回退到岗位支持的最高档 */
-const VEHICLE_PRIORITY: VehicleType[] = ["car", "tricycle", "e_bike", "bicycle", "none"];
-
+const VEHICLES: VehicleType[] = ["car", "tricycle", "e_bike", "bicycle", "none"];
 export function resolveVehicle(state: GameState): VehicleType {
-  if (state.flags["item_car"]) return "car";
-  if (state.flags["item_tricycle"]) return "tricycle";
-  if (state.flags["item_e_bike"]) return "e_bike";
-  if (state.flags["item_bicycle"]) return "bicycle";
-  return "none";
+  return VEHICLES.find(type => type !== "none" && !!state.flags["item_" + type]) ?? "none";
 }
-
-/** 岗位支持的载具档（incomeTiers 键）；当前车辆不在其中时回退到比它低一档的岗位支持档 */
 export function resolveTierForJob(state: GameState, job: JobDef): VehicleType {
-  if (!job.incomeTiers) return "none";
-  const current = resolveVehicle(state);
-  if (job.incomeTiers[current]) return current;
-  // v1.215 修复（P1-7）：回退只向「低档」方向走——持 e_bike 跑快递时，
-  // 原实现从高到低遍历先命中 tricycle（+33% 最高档），报酬错档；现在 e_bike 未支持则依次试 bicycle/none。
-  const idx = VEHICLE_PRIORITY.indexOf(current);
-  for (let i = idx; i < VEHICLE_PRIORITY.length; i++) {
-    const v = VEHICLE_PRIORITY[i];
-    if (job.incomeTiers[v]) return v;
-  }
-  return "none";
+  return VEHICLES.slice(VEHICLES.indexOf(resolveVehicle(state))).find(type => !!job.incomeTiers?.[type]) ?? "none";
 }
-
-/** 合并 incomeTiers 覆盖基础 effects（纯函数） */
+/** Employer supplies baseline equipment; owned vehicle can only improve the job. */
 export function mergedJobEffects(state: GameState, job: JobDef): Effects {
-  const tier = job.incomeTiers?.[resolveTierForJob(state, job)];
-  if (!tier) return job.effects;
+  const vehicle = resolveTierForJob(state, job);
+  const bonus = { none: 0, bicycle: .05, e_bike: .1, tricycle: .12, car: .15 }[vehicle];
+  const tier = vehicle !== "none" ? job.incomeTiers?.[vehicle] : undefined;
   return {
     ...job.effects,
-    money: tier.money,
-    stamina: tier.stamina ?? job.effects.stamina,
-    stress: tier.stress ?? job.effects.stress,
-    log: tier.log ?? job.effects.log,
+    money: Math.round((job.effects.money ?? 0) * (1 + (job.incomeTiers ? bonus : 0))),
+    stamina: tier?.stamina == null ? job.effects.stamina : Math.max(job.effects.stamina ?? 0, tier.stamina),
+    stress: tier?.stress == null ? job.effects.stress : Math.min(job.effects.stress ?? 0, tier.stress),
   };
 }
-
-/** 结算版 effects：浮动工资区间 + log {money} 占位替换（走 rng 可复现） */
-export function settleJobEffects(state: GameState, job: JobDef): Effects {
-  const tier = job.incomeTiers?.[resolveTierForJob(state, job)];
+export function jobSkillWageMultiplier(state: GameState, job: JobDef): number {
+  const keys = Object.keys(job.requirements?.skill ?? job.effects.skills ?? {}) as Array<keyof typeof state.player.skills>;
+  const skill = Math.max(0, ...keys.map(key => state.player.skills[key] ?? 0));
+  return 1 + Math.min(.3, skill * .015);
+}
+/** 培训学校逐级结业后，对普通工作和接单收入统一生效。 */
+export function skillCertificateWageMultiplier(state: GameState): number {
+  const rawLevel = state.flags.skill_certificate_level;
+  const savedLevel = typeof rawLevel === "number" && Number.isFinite(rawLevel)
+    ? Math.max(0, Math.min(3, Math.floor(rawLevel)))
+    : 0;
+  const level = Math.max(savedLevel, state.flags.item_training_cert ? 1 : 0);
+  return [1, 1.05, 1.1, 1.2][level];
+}
+function wageEffects(state: GameState, job: JobDef, draw: boolean): Effects {
   const eff = mergedJobEffects(state, job);
-  let money = eff.money ?? 0;
-  let log = eff.log ?? "";
-  const range = tier?.moneyRange ?? job.moneyRange;
-  if (range) {
-    money = randomInt(state.rng, range.min, range.max);
-  }
-  // v1.20 持证上岗补贴：需要证书的岗位，持证者每次上班额外 +10 元
-  const certBonus = certifiedBonus(state, job);
-  money += certBonus;
-  const tpl = tier?.log ?? job.effects.log ?? "";
-  if (tpl.includes("{money}")) {
-    log = tpl.replace("{money}", String(money));
-  } else if (tier?.log) {
-    log = tier.log;
-  }
-  if (certBonus > 0) log = `${log}（持证补贴 +${certBonus} 元）`;
-  return { ...eff, money, log };
-}
-
-/** 持证上岗补贴金额：岗位要求证书且玩家持证 → 10 元（实习期无证不补） */
-function certifiedBonus(state: GameState, job: JobDef): number {
-  const flag = job.requirements?.flag;
-  if (!flag || !CERTIFICATE_FLAGS.includes(flag)) return 0;
-  return hasCertificate(state, flag) ? 10 : 0;
-}
-
-/** 工作后若地点打烊，按 region 回退到区域或主地图 */
-function kickJobToMap(state: GameState): void {
-  if (state.locationId === "map") return;
-  const loc = getLocation(state.locationId);
-  if (loc && !isLocationOpen(loc, state.time.hour)) {
-    if (state.region) {
-      enterRegion(state, state.region);
-      pushLog(state, "🗺️", "天色已晚，这里打烊了，你回到了街上");
-    } else {
-      goToMap(state);
-      pushLog(state, "🗺️", "天色已晚，这里打烊了，你回到了主地图");
-    }
-  }
-}
-
-/**
- * 到岗打卡判定（三分支共用）。
- * - 不需按时 / 准点 → { blocked: false, penalty.ratio = 1 }
- * - 迟到未超 2h → 不阻断，返回折算系数与心情惩罚
- * - 迟到超 2h → 判旷工，阻断上班。
- *   罚款只在**玩家已接下当日任务**时收取（违约金语义）：没接过的活儿单纯"轮不到你"，不罚钱。
- */
-function punchIn(state: GameState, job: JobDef): { blocked: boolean; reason?: string; penalty: LatePenalty } {
-  const late = latenessOfJob(state, job);
-  const penalty = latePenalty(late);
-  if (!isPunctual(job) || late <= 0) {
-    return { blocked: false, penalty: latePenalty(0) };
-  }
-  markLateToday(state); // v0.985：当日迟到 → 打断「皇帝」的连续守序天数
-  if (penalty.absent) {
-    const accepted = jobQuestOfToday(state, job);
-    if (accepted) {
-      state.player.money -= penalty.fine;
-      recordMoney(state, -penalty.fine); // v1.215 修复（P1-10）：旷工罚款计入周记支出
-      state.player.attrs.mood = Math.max(0, state.player.attrs.mood + penalty.moodPenalty);
-      failJobQuest(state, job, penalty.fine);
-      const reason = `迟到 ${formatDuration(late)}，主管让你今天别干了，还罚了 ${penalty.fine} 元`;
-      pushLog(state, "⏰", reason);
-      return { blocked: true, reason, penalty };
-    }
-    const reason = `这活儿 ${job.startHour}:00 就开工了，你晚了 ${formatDuration(late)}，人家不要你了`;
-    return { blocked: true, reason, penalty };
-  }
-  return { blocked: false, penalty };
-}
-
-/** 把迟到折算系数施加到当日结算 effects 上（day / fixed 岗当场发钱） */
-function applyLateToEffects(state: GameState, eff: Effects, penalty: LatePenalty, late: number): Effects {
-  if (penalty.ratio >= 1) return eff;
-  const before = eff.money ?? 0;
-  const after = Math.round(before * penalty.ratio);
-  pushLog(state, "⏰", `迟到 ${formatDuration(late)}，今天的工钱被扣到 ${after} 元（原 ${before} 元）`);
+  const range = job.moneyRange;
+  const raw = range
+    ? draw ? randomInt(state.rng, range.min, range.max) : Math.round((range.min + range.max) / 2)
+    : eff.money ?? 0;
+  const certificate = internFlagOf(job);
+  const supplement = certificate && hasCertificate(state, certificate) ? 10 : 0;
   return {
     ...eff,
-    money: after,
-    mood: (eff.mood ?? 0) + penalty.moodPenalty,
+    money: Math.min(Math.round((job.kind === "formal" ? 170 : 180) * priceMultiplier(state)),
+      Math.max(0, Math.round(raw * jobSkillWageMultiplier(state, job) * skillCertificateWageMultiplier(state) * priceMultiplier(state)) + supplement)),
+    log: undefined,
   };
 }
-
-/** 某地点的固定岗位（双入口渲染用） */
-export function fixedJobsOf(locationId: string): JobDef[] {
-  return JOB_DEFS.filter((j) => j.kind === "fixed" && j.locationId === locationId);
+export function settleJobEffects(state: GameState, job: JobDef): Effects {
+  return wageEffects(state, job, true);
 }
-
-/** 某地点的全部本地岗位（日结/周结/月结/固定，场景渲染用） */
-export function localJobsOf(locationId: string): JobDef[] {
-  return JOB_DEFS.filter((j) => j.locationId === locationId);
+/** A full shift quote without RNG draws or attendance-dependent proration. */
+export function fullShiftWage(state: GameState, job: JobDef): number { return wageEffects(state, job, false).money ?? 0; }
+function minigameWageMultiplier(score: number): number {
+  const grade = gradeOf(score);
+  return grade === "D" ? 0 : grade === "C" ? 0.5 : grade === "B" ? 0.85 : 1;
 }
-
-/** 从劳务市场接活（uid）或固定岗位（jobId）：校验 → 结算 → 推进时长 */
-/**
- * 标记完成过某工作。仅在新工作种类时累加 jobs_done_count（不同工种数）。
- * v0.985：同时喂给塔罗计数器——paid>0 计入「魔术师·首次有偿工作」，工种去重计入「死神·换过 5 种工作」。
- * @param paid 本次当场到手的工资（周结/月结岗当日为 0，工资在 career.paycheck 结算）
- */
-function markJobDone(state: GameState, jobId: string, paid: number): void {
-  state.flags["ever_worked"] = true;
-  recordJob(state); // v1.10 周记：完成一次工作
-  if (state.flags["job_done_" + jobId] !== true) {
-    state.flags["job_done_" + jobId] = true;
-    const prev = typeof state.flags["jobs_done_count"] === "number" ? (state.flags["jobs_done_count"] as number) : 0;
-    state.flags["jobs_done_count"] = prev + 1;
-  }
-  onWorkDone(state, jobId, paid);
+export function workStatusReason(state: GameState): string | undefined {
+  if (state.endingId) return "游戏已经结束";
+  if (state.flags.hospitalized) return "正在住院，请先出院";
+  if (state.player.attrs.stamina <= 0) return "体力耗尽，强行工作会晕倒，请先休息";
+  if (state.player.attrs.satiety <= 0) return "饱腹耗尽，强行工作会低血糖晕倒，请先吃饭";
+  return canWork(state).reason;
 }
-
-export function performJob(
-  state: GameState,
-  key: string,
-): { ok: boolean; reason?: string; crossedDay?: boolean; result?: ActionResult } {
-  // v0.92 生存准入：抑郁症 / 干净度过低 → 直接无法上班（先于疲劳判定，给出明确原因）
-  const work = canWork(state);
-  if (!work.ok) return { ok: false, reason: work.reason };
-
-  // 生存兜底（v0.93 行为变更）：不再以时间为硬阻断，只要体力>0 凌晨也能上班。
-  // 仅体力归零或饱腹归零时仍强行工作 → 晕倒（低血糖/力竭），由 guardSurvival 处理。
-  if (isStaminaZero(state) || state.player.attrs.satiety <= 0) {
-    const g = guardSurvival(state, "在极度疲惫时强行工作", triggerCollapse);
-    if (!g.ok) return { ok: false, reason: g.reason };
+function scaledEffects(effects: Effects, ratio: number): Effects {
+  const out: Effects = { ...effects, money: undefined, log: undefined };
+  const keys = ["stamina", "health", "mood", "hygiene", "satiety", "stress", "intelligence", "charm", "fitness", "fame"] as const;
+  for (const key of keys) {
+    const value = effects[key];
+    if (typeof value === "number") (out as Record<string, unknown>)[key] = Math.round(value * ratio);
   }
-
-  // 固定岗 + 地点型日结岗（如流水线/分拣）：按 jobId 直查，走打烊/迟到/实习/结算（无 quota；v0.89）
-  const fixedJob = defMap.get(key);
-  // v1.06：同日防重复（固定岗/地点型日结岗每天限一次）
-  const _todayGuard = `worked_${key}_${gameDay(state.time)}`;
-  if (fixedJob && (fixedJob.kind === "fixed" || (fixedJob.kind === "day" && !!fixedJob.locationId))) {
-    if (state.flags[_todayGuard]) return { ok: false, reason: "今天已经上过班了，明天再来" };
-    // v0.97 休息日拦截
-    if (isRestDay(state, fixedJob)) return { ok: false, reason: restReason(state, fixedJob) };
-    // 打烊校验（固定岗所属地点关闭时不可上班）
-    if (fixedJob.locationId && !isLocationOpen(getLocation(fixedJob.locationId), state.time.hour)) {
-      // v0.935：区分「还没开门」与「已打烊」，并提示营业时间
-      const why = closedReason(getLocation(fixedJob.locationId), state.time.hour);
-      return { ok: false, reason: `岗位地点${why || "已打烊"}` };
-    }
-    const check = checkJobRequirements(state, fixedJob);
-    if (!check.ok) return check;
-    // 到岗打卡：迟到超 2h 直接判旷工
-    const lateFixed = latenessOfJob(state, fixedJob);
-    const punchFixed = punchIn(state, fixedJob);
-    if (punchFixed.blocked) return { ok: false, reason: punchFixed.reason };
-    let eff = applyLateToEffects(state, settleJobEffects(state, fixedJob), punchFixed.penalty, lateFixed);
-    // 证书实习期：工资减半 + 累计 3 天发证（v0.89）
-    eff = applyInternPay(state, fixedJob, eff);
-    applyEffects(state, eff, fixedJob.icon);
-    heatwaveStaminaBoost(state, eff);
-    markJobDone(state, fixedJob.id, eff.money ?? 0);
-    state.flags[_todayGuard] = true;
-    markGoalWorked(state); // v1.215：完成工作标记「干一次活」每日目标
-    completeJobQuest(state, fixedJob);
-    const { crossedDay } = advanceTime(state, fixedJob.duration ?? 8);
-    reconcileStatuses(state, {
-      heavyWork: fixedJob.heavy,
-      staminaCost: -(eff.stamina ?? 0),
-    });
-    kickJobToMap(state);
-    return {
-      ok: true,
-      crossedDay,
-      result: {
-        actionId: fixedJob.id,
-        icon: fixedJob.icon,
-        name: fixedJob.name,
-        duration: fixedJob.duration ?? 8,
-        deltas: collectDeltas(eff),
-        sound: fixedJob.sound,
-        verdict: pickVerdict(state, fixedJob.verdicts),
-        quality: jobQualityOf(punchFixed.penalty.ratio),
-      },
-    };
-  }
-
-  // 周结/月结岗（正式工）：按 jobId 直查，走入职/上班逻辑，工资发薪日结算
-  const cycleJob = defMap.get(key);
-  if (cycleJob && (cycleJob.kind === "weekly" || cycleJob.kind === "monthly")) {
-    // v0.97 休息日拦截
-    if (isRestDay(state, cycleJob)) return { ok: false, reason: restReason(state, cycleJob) };
-    if (cycleJob.locationId && !isLocationOpen(getLocation(cycleJob.locationId), state.time.hour)) {
-      const why = closedReason(getLocation(cycleJob.locationId), state.time.hour);
-      return { ok: false, reason: `岗位地点${why || "已打烊"}` };
-    }
-    const check = checkRequirements(state, cycleJob.requirements);
-    if (!check.ok) return check;
-    // 到岗打卡：旷工不调 applyJob，lastWorkDay 不更新 → 连续 3 天走 checkAutoQuit 自动离职
-    const lateCycle = latenessOfJob(state, cycleJob);
-    const punchCycle = punchIn(state, cycleJob);
-    if (punchCycle.blocked) return { ok: false, reason: punchCycle.reason };
-    const hired = applyJob(state, cycleJob);
-    if (!hired.ok) return { ok: false, reason: hired.reason };
-    // 当日只结算体力/健康等消耗，工资在发薪日发放
-    const eff: Effects = { ...cycleJob.effects, money: undefined };
-    // 正式工当日不发钱，迟到改为即时扣现金
-    if (punchCycle.penalty.ratio < 1) {
-      const daily = cycleJob.effects.money ?? 0;
-      const fine = Math.round(daily * (1 - punchCycle.penalty.ratio));
-      state.player.money -= fine;
-      recordMoney(state, -fine); // v1.215 修复（P1-10）：迟到考勤罚款计入周记支出
-      eff.mood = (eff.mood ?? 0) + punchCycle.penalty.moodPenalty;
-      pushLog(state, "⏰", `迟到 ${formatDuration(lateCycle)}，被扣了 ${fine} 元考勤罚款`);
-    }
-    applyEffects(state, eff, cycleJob.icon);
-    heatwaveStaminaBoost(state, eff);
-    markJobDone(state, cycleJob.id, 0); // 周/月结：当日不发钱，报酬在 career.paycheck 计入
-    markGoalWorked(state); // v1.215：完成工作标记「干一次活」每日目标
-    completeJobQuest(state, cycleJob);
-    const { crossedDay } = advanceTime(state, cycleJob.duration ?? 8);
-    reconcileStatuses(state, {
-      heavyWork: cycleJob.heavy,
-      staminaCost: -(eff.stamina ?? 0),
-    });
-    kickJobToMap(state);
-    return {
-      ok: true,
-      crossedDay,
-      result: {
-        actionId: cycleJob.id,
-        icon: cycleJob.icon,
-        name: cycleJob.name,
-        duration: cycleJob.duration ?? 8,
-        deltas: collectDeltas(eff),
-        sound: cycleJob.sound,
-        verdict: pickVerdict(state, cycleJob.verdicts),
-        quality: jobQualityOf(punchCycle.penalty.ratio),
-      },
-    };
-  }
-
-  // 日结岗：通过 uid 在 offers 中查找
-  const offerIdx = state.laborMarket.offers.findIndex((o) => o.uid === key);
-  if (offerIdx < 0) return { ok: false, reason: "岗位已招满或消失" };
-  const offer = state.laborMarket.offers[offerIdx];
-  const job = defMap.get(offer.jobId);
-  if (!job) return { ok: false, reason: "未知岗位" };
-  // v0.97 休息日拦截（自由接单岗 restDays=[] 不受影响）
-  if (isRestDay(state, job)) return { ok: false, reason: restReason(state, job) };
-  if (offer.quota <= 0) return { ok: false, reason: "岗位已招满" };
-
-  const check = checkRequirements(state, job.requirements);
-  if (!check.ok) return check;
-
-  // 到岗打卡：外卖/快递/网约车/出租车 punctual=false 完全跳过；旷工时名额不减
-  const lateDay = latenessOfJob(state, job);
-  const punchDay = punchIn(state, job);
-  if (punchDay.blocked) return { ok: false, reason: punchDay.reason };
-
-  const eff = applyLateToEffects(state, settleJobEffects(state, job), punchDay.penalty, lateDay);
-  applyEffects(state, eff, job.icon);
-  markJobDone(state, job.id, eff.money ?? 0);
-  markGoalWorked(state); // v1.215：完成工作标记「干一次活」每日目标
-  completeJobQuest(state, job);
-  offer.quota--;
-  if (offer.quota <= 0) {
-    state.laborMarket.offers.splice(offerIdx, 1);
-  }
-  const { crossedDay } = advanceTime(state, job.duration ?? 8);
-  reconcileStatuses(state, {
-    heavyWork: job.heavy,
-    staminaCost: -(eff.stamina ?? 0),
-  });
-  kickJobToMap(state);
-  return {
-    ok: true,
-    crossedDay,
-    result: {
-      actionId: job.id,
-      icon: job.icon,
-      name: job.name,
-      duration: job.duration ?? 8,
-      deltas: collectDeltas(eff),
-      sound: job.sound,
-      verdict: pickVerdict(state, job.verdicts),
-      quality: jobQualityOf(punchDay.penalty.ratio),
-    },
-  };
-}
-
-/**
- * 劳务市场「接活」统一入口。
- * - 定时岗且还没到点 → 只排进任务栏（mode="scheduled"），到点再从任务栏开工
- * - 已到点（含迟到 ≤2h）→ 立刻开工（mode="worked"）
- * - 自由岗（外卖/快递/网约车/出租车）→ 一律立刻开工
- */
-export function takeJobOffer(
-  state: GameState,
-  uid: string,
-): { ok: boolean; mode?: "scheduled" | "worked"; reason?: string; crossedDay?: boolean; result?: ActionResult; startHour?: number } {
-  const offer = state.laborMarket.offers.find((o) => o.uid === uid);
-  if (!offer) return { ok: false, reason: "岗位已招满或消失" };
-  const job = defMap.get(offer.jobId);
-  if (!job) return { ok: false, reason: "未知岗位" };
-
-  if (isPunctual(job) && job.startHour !== undefined) {
-    const now = state.time.hour + state.time.minute / 60;
-    const notYet = latenessOfJob(state, job) <= 0 && Math.abs(now - job.startHour) > 1e-6;
-    if (notYet) {
-      const check = checkRequirements(state, job.requirements);
-      if (!check.ok) return check;
-      // 排班仅记录 quest；quota 在 performJob 实际开工时再减（避免双重扣减 + 第二次 takeJobOffer 找不到 offer）
-      acceptJobQuest(state, job, uid);
-      return { ok: true, mode: "scheduled", startHour: job.startHour };
-    }
-  }
-  const r = performJob(state, uid);
-  return { ...r, mode: r.ok ? "worked" : undefined };
-}
-
-/** 从任务栏开工：day 岗走 offerUid，其余走 jobId */
-export function workQuestJob(
-  state: GameState,
-  quest: { jobId?: string; offerUid?: string },
-): { ok: boolean; reason?: string; crossedDay?: boolean; result?: ActionResult } {
-  if (!quest.jobId) return { ok: false, reason: "该任务不是工作任务" };
-  const job = defMap.get(quest.jobId);
-  if (!job) return { ok: false, reason: "未知岗位" };
-  const key = job.kind === "day" ? quest.offerUid ?? quest.jobId : quest.jobId;
-  return performJob(state, key);
-}
-
-/** 拿到今日岗位列表（带完整 def） */
-export function getTodayOffers(state: GameState): Array<{ offer: JobOffer; def: JobDef }> {
-  const out: Array<{ offer: JobOffer; def: JobDef }> = [];
-  for (const offer of state.laborMarket.offers) {
-    const def = defMap.get(offer.jobId);
-    if (def) out.push({ offer, def });
-  }
+  if (effects.skills) out.skills = Object.fromEntries(Object.entries(effects.skills).map(([key, value]) => [key, Math.round((value ?? 0) * ratio * 100) / 100]));
   return out;
 }
-
-/* ==================== v1.25 兼职外卖（手机 App 接单） ==================== */
-
-/** 兼职外卖单趟基础收入（按玩家当前交通工具档位；站点不提供车辆） */
-export function deliveryParttimeBasePay(state: GameState): number {
-  switch (resolveVehicle(state)) {
-    case "car":
-      return 90;
-    case "e_bike":
-      return 70;
-    case "tricycle":
-      return 60;
-    case "bicycle":
-      return 50;
-    default:
-      return 35; // 步行
-  }
+export function previewWork(state: GameState, job: JobDef) {
+  const standardMinutes = Math.round(job.duration * 60);
+  const now = nowWorkMinute(state);
+  const shift = job.kind === "formal" ? getWorkShift(state, job) : undefined;
+  const start = shift && shift.phase !== "none" ? Math.max(now, shift.startMinute) : now;
+  const endMinute = shift && shift.phase !== "none" ? shift.endMinute : start + standardMinutes;
+  const workedMinutes = Math.max(0, Math.min(standardMinutes, endMinute - start));
+  const ratio = workedMinutes / standardMinutes;
+  const effects = wageEffects(state, job, false);
+  const masteryMinutes = state.work?.masteryMinutes[job.id] ?? 0;
+  return {
+    duration: workedMinutes / 60, workedMinutes, standardMinutes, endMinute,
+    wage: Math.round((effects.money ?? 0) * ratio),
+    stamina: Math.round((effects.stamina ?? 0) * ratio * (currentWeather(state) === "heatwave" ? 1.25 : 1)),
+    stress: Math.round((effects.stress ?? 0) * ratio),
+    masteryMinutes, masteryTarget: standardMinutes * MASTERY_FULL_SHIFTS,
+    completedShifts: completedWorkShifts(state,job.id,standardMinutes),
+    canSkip: completedWorkShifts(state,job.id,standardMinutes) >= MASTERY_FULL_SHIFTS,
+    warning: workStatusReason(state),
+  };
 }
 
-/** 兼职外卖接一单：需已下载外卖 App；收入 = 基础档 × 影响力加成 */
-export function deliveryParttime(
-  state: GameState,
-): { ok: boolean; reason?: string; pay?: number; deltas?: ReturnType<typeof collectDeltas> } {
-  if (!state.flags["app_delivery"]) {
-    return { ok: false, reason: "还没安装外卖接单软件，请先到手机「应用市场」下载" };
+export interface WorkResult {
+  ok: boolean;
+  reason?: string;
+  crossedDay?: boolean;
+  result?: ActionResult;
+  session?: WorkSession;
+}
+function pendingResult(session: WorkSession): ActionResult {
+  const job = defMap.get(session.jobId)!;
+  return {
+    actionId: job.id, icon: job.icon,
+    name: session.source === "delivery" && job.id === "job_delivery" ? "兼职外卖" : job.name,
+    duration: session.workedMinutes / 60, deltas: [], verdict: "完成工作挑战后结算",
+  };
+}
+export function pauseWork(state: GameState): void {
+  if (state.work?.active?.status === "playing") state.work.active.status = "paused";
+}
+export function resumeWork(state: GameState): WorkSession | undefined {
+  const active = ensureWorkState(state).active;
+  if (active?.jobId === "job_delivery" && active.source === "delivery" && resolveVehicle(state) === "none") return undefined;
+  if (active?.status === "paused") active.status = "playing";
+  return active;
+}
+function beginWork(state: GameState, job: JobDef, source: WorkSession["source"], offer?: JobOffer): WorkResult {
+  if (pendingStreetPerformance(state)) return { ok:false,reason:'请先完成本次街头演出' };
+  if (state.districtLeisure?.active) return { ok: false, reason: "请先完成当前娱乐活动" };
+  const workplace = locationsData.find(location => location.id === job.locationId);
+  const lockedRegion = workplace?.regions?.map(getRegion).find(region => region?.openFrom && !isRegionUnlocked(state, region));
+  if (lockedRegion) return { ok: false, reason: regionLockReason(state, lockedRegion) };
+  const deliveryParttimeShift = job.id === "job_delivery" && source === "delivery";
+  // 已暂停的旧班次也必须有车才能继续，不能通过 active 早返回绕过准入。
+  if (deliveryParttimeShift && resolveVehicle(state) === "none") {
+    return { ok: false, reason: "兼职外卖需要先购买或租用配送车辆（自行车、电动车、三轮车或汽车）" };
   }
-  const base = deliveryParttimeBasePay(state);
-  const pay = Math.round(base * fameIncomeMult(state));
-  const eff: Effects = { money: pay, stamina: -10, stress: 3, mood: 1 };
-  applyEffects(state, eff, "🛵");
-  advanceTime(state, 1); // 接一单约 1 小时
-  pushLog(state, "🛵", `兼职接了一单外卖，赚了 ${pay} 元`);
-  markGoalWorked(state); // v1.25：兼职外卖也算「干一次活」
-  return { ok: true, pay, deltas: collectDeltas(eff) };
+  const work = ensureWorkState(state);
+  if (work.active) return work.active.jobId === job.id && work.active.source === source
+    ? { ok: true, session: work.active, result: pendingResult(work.active) }
+    : { ok: false, reason: "请先完成正在进行的工作" };
+  if (state.endingId || state.flags.hospitalized) return { ok: false, reason: workStatusReason(state) };
+  // 检查司机证照、车辆、应用及当日订单上限应早于体力结算；否则已跑完最后一单的人
+  // 体力归零后再点一次，会被误判成强行工作并晕倒，而不是收到“今日已完成”的提示。
+  if (job.id === "job_ride_hailing") {
+    if (!state.flags.item_driving_license) return { ok: false, reason: "网约车接单需要先取得驾驶证" };
+    if (!state.flags.item_car) return { ok: false, reason: "需要自有或租用的汽车才能接网约车订单" };
+    if (!state.flags.app_ride_hailing) return { ok: false, reason: "请先在手机应用市场安装网约车软件" };
+    if (rideHailingOrdersRemaining(state) <= 0) return { ok: false, reason: "今天已开始过网约车班次，明天再来接单" };
+  }
+  if (source === "delivery") {
+    if (job.id !== "job_ride_hailing" && !state.flags.app_delivery) return { ok: false, reason: "请先安装手机外卖接单软件" };
+    if (deliveryOrdersRemaining(state, job.id) <= 0) {
+      return { ok: false, reason: job.id === "job_ride_hailing" ? "今天的网约车订单已完成，明天再来接单" : "今天已开始过兼职外卖班次，明天再来接单" };
+    }
+  }
+  const ordinary = canWork(state);
+  if (!ordinary.ok) return ordinary;
+  if (state.player.attrs.stamina <= 0 || state.player.attrs.satiety <= 0) {
+    return guardSurvival(state, "强行工作", triggerCollapse);
+  }
+  processWorkCalendar(state);
+  let day = gameDay(state.time);
+  let start = nowWorkMinute(state);
+  const standardMinutes = deliveryParttimeShift ? DELIVERY_SHIFT_MINUTES : Math.round(job.duration * 60);
+  let end = start + (job.id === "job_ride_hailing" ? RIDE_HAILING_SHIFT_MINUTES : standardMinutes);
+  if (job.kind === "formal") {
+    if (state.career.jobId !== job.id) return { ok: false, reason: "请先应聘录用，再去单位上班" };
+    if (state.locationId !== job.locationId) return { ok: false, reason: "请先前往工作单位" };
+    const shift = getWorkShift(state, job);
+    if (shift.phase === "none" || shift.phase === "next" || shift.phase === "rest" || shift.day > day)
+      return { ok: false, reason: shift.label || "今天没有待上班次" };
+    if (start >= shift.endMinute) return { ok: false, reason: "本班已经下班，请查看下一班" };
+    if (start < shift.startMinute) {
+      advanceTime(state, (shift.startMinute - start) / 60);
+      const after = guardSurvival(state, "等候后强行工作", triggerCollapse);
+      if (!after.ok) return after;
+      start = nowWorkMinute(state);
+    }
+    if (start > shift.startMinute) markLateToday(state);
+    day = shift.day;
+    end = shift.endMinute;
+    if (state.flags["worked_" + job.id + "_" + day]) return { ok: false, reason: "这班已完成" };
+  } else if (source === "site") {
+    if (state.locationId !== job.locationId) return { ok: false, reason: "请先到岗位现场" };
+    if (state.flags["worked_" + job.id + "_" + day]) return { ok: false, reason: "今天已做过这份工作" };
+  } else if (source === "market") {
+    if (state.locationId !== "labor_market") return { ok: false, reason: "请先到劳务市场" };
+    if (!offer || offer.quota <= 0) return { ok: false, reason: "岗位已招满" };
+  }
+  const workedMinutes = end - start;
+  if (workedMinutes <= 0) return { ok: false, reason: "本班已经结束" };
+  const rideHailingShift = job.id === "job_ride_hailing" && source === "delivery";
+  const full = source === "delivery"
+    ? rideHailingShift
+      ? { stamina: job.effects.stamina ?? -65, stress: job.effects.stress ?? 12 }
+      : deliveryParttimeShift
+        ? { stamina: -50, stress: 10, mood: 1 }
+        : { stamina: -10, stress: 3, mood: 1 }
+    : settleJobEffects(state, job);
+  const actualRatio = source === "delivery" ? 1 : workedMinutes / standardMinutes;
+  const effects = scaledEffects(full, actualRatio);
+  if (currentWeather(state) === "heatwave" && (effects.stamina ?? 0) < 0)
+    effects.stamina = Math.round((effects.stamina ?? 0) * 1.25);
+  const session: WorkSession = {
+    id: "work_" + day + "_" + ++work.sequence,
+    jobId: job.id, kind: job.kind, source, offerUid: offer?.uid,
+    day, startMinute: start, endMinute: end, workedMinutes, standardMinutes,
+    baseWage: rideHailingShift || deliveryParttimeShift ? 0 : Math.round((full.money ?? 0) * actualRatio), wageBalanceVersion: 2, effects,
+    overtime: false,
+    seed: randomInt(state.rng, 1, 0x7fffffff),
+    canSkip: completedWorkShifts(state,job.id,standardMinutes) >= MASTERY_FULL_SHIFTS,
+    status: "playing",
+  };
+  if (getMiniGameConfig(job.id)?.type === "delivery") {
+    session.deliveryTimeLimitSec = deliveryShiftTimeLimit(session.seed);
+    const config=getMiniGameConfig(job.id)!;
+    if(config.type==='delivery'&&config.mode!=='rideshare'){
+      const targetIncome=deliveryParttimeShift?180:Math.min(Math.round(session.baseWage*(1+(config.perfectBonusRate??.05))),(session.kind==='formal'?180:200)*priceMultiplier(state));
+      session.deliveryPay=dispatchPayTerms(targetIncome,config.mode==='parcel'?6:10);
+      session.completedOrders=0;session.deliveryEarnedFare=0;delete session.effects.log;
+    }
+  }
+  if (rideHailingShift || deliveryParttimeShift) session.completedOrders = 0;
+  session.skipBaseWage = session.deliveryPay?.referenceIncome ?? (rideHailingShift ? 125 : deliveryParttimeShift ? 180 : session.baseWage);
+  work.active = session;
+  if (rideHailingShift) state.flags[rideHailingShiftFlag(day)] = true;
+  if (offer) offer.quota--;
+  if (source === "delivery" && job.id !== "job_ride_hailing") {
+    const key = deliveryOrderFlag(state);
+    state.flags[key] = Number(state.flags[key] ?? 0) + 1;
+  }
+  pushLog(state, job.icon, session.deliveryPay ? `开始「${job.name}」，完班底薪 ¥${session.deliveryPay.base}，按送达订单提成；本班报价已锁定` : deliveryParttimeShift ? "开始「兼职外卖」八小时班次，按小游戏实际配送收入结算" : rideHailingShift ? "开始「" + job.name + "」十小时班次，按实际送达单数结算" : "开始「" + job.name + "」，完成小游戏后结算");
+  return { ok: true, session, result: pendingResult(session) };
+}
+export function performJob(state: GameState, key: string): WorkResult {
+  const offer = state.laborMarket.offers.find(item => item.uid === key);
+  const job = defMap.get(offer?.jobId ?? key);
+  if (!job) return { ok: false, reason: "岗位不存在或已招满" };
+  if (job.id === "job_ride_hailing") return { ok: false, reason: "网约车班次只能通过手机网约车 App 开始" };
+  if (job.kind === "formal") {
+    const started=beginWork(state,job,'formal');
+    return job.id.endsWith('_counselor')&&started.ok&&started.session?completeWork(state,started.session.id,0):started;
+  }
+  if (offer) return beginWork(state, job, "market", offer);
+  if (job.locationId) return beginWork(state, job, "site");
+  return { ok: false, reason: "请到劳务市场选择今日岗位" };
+}
+export function takeJobOffer(state: GameState, uid: string): WorkResult & { mode?: "worked" | "scheduled" } {
+  const result = performJob(state, uid);
+  return { ...result, mode: result.ok ? "worked" : undefined };
+}
+export function workQuestJob(state: GameState, quest: { jobId?: string; offerUid?: string; day?: number }): WorkResult {
+  if (!quest.jobId) return { ok: false, reason: "不是工作任务" };
+  if (quest.day != null && quest.day > gameDay(state.time)) return { ok: false, reason: "还未到排班日期" };
+  return performJob(state, quest.offerUid ?? quest.jobId);
+}
+/** 旧版单次参考价，仅保留兼容；手机兼职班次不再以此发薪。 */
+export function deliveryParttimeBasePay(state: GameState): number {
+  return { none: 15, bicycle: 19, e_bike: 25, tricycle: 22, car: 28 }[resolveVehicle(state)];
+}
+function deliveryOrderFlag(state: GameState): string {
+  return "delivery_order_" + gameDay(state.time);
+}
+export function rideHailingShiftFlag(day: number): string { return `ride_hailing_shift_started_${day}`; }
+export function deliveryOrdersRemaining(state: GameState, jobId = "job_delivery"): number {
+  if (jobId === "job_ride_hailing") return rideHailingOrdersRemaining(state);
+  const limit = DELIVERY_DAILY_LIMIT;
+  return Math.max(0, limit - Number(state.flags[deliveryOrderFlag(state)] ?? 0));
+}
+export function deliveryParttime(state: GameState): WorkResult & { pay?: number; deltas?: ReturnType<typeof collectDeltas> } {
+  const result = beginWork(state, defMap.get("job_delivery")!, "delivery");
+  return { ...result, pay: result.session?.baseWage, deltas: [] };
+}
+/** 固定结算价：每完成一单送达后计 25 元，不叠加评级、证书、技能或物价倍率。 */
+export function rideHailingParttimeBasePay(): number { return 25; }
+export function rideHailingOrdersRemaining(state: GameState): number {
+  return state.flags[rideHailingShiftFlag(gameDay(state.time))] ? 0 : RIDE_HAILING_DAILY_LIMIT;
+}
+export function rideHailingParttime(state: GameState): WorkResult & { pay?: number; deltas?: ReturnType<typeof collectDeltas> } {
+  const job = defMap.get("job_ride_hailing");
+  if (!job) return { ok: false, reason: "网约车岗位数据暂不可用" };
+  const result = beginWork(state, job, "delivery");
+  return { ...result, pay: result.session?.baseWage, deltas: [] };
+}
+
+/** The only settlement path. Repeated callbacks cannot grant a second wage or consume time. */
+export function completeWork(state: GameState, sessionId: string, scoreRatio = 0, skip = false, endedEarly = false): WorkResult {
+  const work = ensureWorkState(state);
+  const session = work.active;
+  if (!session || session.id !== sessionId || session.status === "settling" || work.settledIds.includes(sessionId))
+    return { ok: false, reason: "该班次已结算或不存在" };
+  const completedBefore = completedWorkShifts(state, session.jobId, session.standardMinutes);
+  if (skip && completedBefore < MASTERY_FULL_SHIFTS) return { ok: false, reason: "本岗位累计完成十次后才能选择跳过" };
+  const job = defMap.get(session.jobId);
+  if (!job) return { ok: false, reason: "岗位数据不存在" };
+  const deliveryParttimeShift = session.jobId === "job_delivery" && session.source === "delivery";
+  const rideHailingShift = session.jobId === "job_ride_hailing" && session.source === "delivery" &&
+    session.workedMinutes >= RIDE_HAILING_SHIFT_MINUTES;
+  const completedOrders = Number.isFinite(session.completedOrders)
+    ? Math.max(0, Math.floor(session.completedOrders ?? 0)) : 0;
+  const rideCfg = getMiniGameConfig(job.id);
+  const satisfactionFare = !skip && rideCfg?.type === "delivery" && rideCfg.mode === "rideshare" &&
+    Number.isFinite(session.deliveryEarnedFare);
+  const unitFare = rideCfg?.type === "delivery" ? rideCfg.payPerOrder ?? 25 : 25;
+  const earnedFare = deliveryParttimeShift
+    ? Number.isFinite(session.deliveryEarnedFare) ? Math.round(Math.max(0, session.deliveryEarnedFare ?? 0) * 100) / 100 : 0
+    : satisfactionFare
+    ? Math.round(Math.min(completedOrders * unitFare, Math.max(0, session.deliveryEarnedFare ?? 0)) * 100) / 100
+    : completedOrders * rideHailingParttimeBasePay();
+  const piecePay=!skip&&validDispatchPay(session.deliveryPay)?dispatchWage(session.deliveryPay,completedOrders,session.deliveryEarnedFare,!endedEarly):undefined;
+  const score = Number.isFinite(scoreRatio) ? Math.max(0, Math.min(1, scoreRatio)) : 0;
+  const overtimeBase = session.overtime ? Math.round(session.baseWage * 1.5) : session.baseWage;
+  const skipQuote = session.skipBaseWage ?? session.deliveryPay?.referenceIncome ?? (rideHailingShift ? 125 : deliveryParttimeShift ? 180 : session.baseWage);
+  const quotedBase = skip ? (session.overtime ? Math.round(skipQuote * 1.5) : skipQuote) : piecePay ? piecePay.total : deliveryParttimeShift || satisfactionFare || rideHailingShift ? earnedFare : overtimeBase;
+  const metered = !skip && (!!piecePay || deliveryParttimeShift || satisfactionFare || rideHailingShift);
+  const hasWageMinigame = getMiniGameConfig(job.id) !== undefined || !!ACTION_WORK_PROGRESS_JOB[job.id];
+  const qualified = skip || (piecePay ? completedOrders>0&&(session.source==='delivery'||score>=.6) : metered ? completedOrders > 0 : !hasWageMinigame || score >= .6);
+  const performanceAdjustedBase = !skip && !metered && hasWageMinigame
+    ? Math.round(quotedBase * minigameWageMultiplier(score)) : quotedBase;
+  const shiftLimit = session.wageBalanceVersion === 2 && !metered
+    ? Math.round((session.kind === "formal" ? 180 : 200) * priceMultiplier(state)) : Infinity;
+  const base = skip ? Math.round(Math.min(performanceAdjustedBase, shiftLimit) * SKIP_WAGE_RATIO) : Math.min(performanceAdjustedBase, shiftLimit);
+  const legacyRideHailingOrder = job.id === "job_ride_hailing" && session.source === "delivery" && !rideHailingShift;
+  const bonusRate = legacyRideHailingOrder ? .05 : getMiniGameConfig(job.id)?.perfectBonusRate ?? .05;
+  const bonus = metered || skip || score < .6 ? 0 : Math.min(Math.round(overtimeBase * bonusRate * score), Math.max(0, shiftLimit - base));
+  // Once a real shift is settled, keep its explicit count independent of legacy work minutes.
+  (work.completedShifts ??= {})[job.id] = completedBefore;
+  session.status = "settling";
+  work.settledIds.push(sessionId);
+  if (work.settledIds.length > 512) work.settledIds.shift();
+  const elapsedHours = Math.max(0, session.endMinute - nowWorkMinute(state)) / 60;
+  const paidEffects: Effects = { ...session.effects, money: session.kind === "day" ? base + bonus : undefined };
+  if (!skip && hasWageMinigame && score < .6) paidEffects.skills = undefined;
+  const { crossedDay } = advanceTime(state, elapsedHours, () => {
+    applyEffects(state, paidEffects, job.icon);
+    if (session.kind === "formal") creditWorkedShift(state, session, base, bonus, qualified);
+  });
+  const pieceText=piecePay?`送达 ${completedOrders} 单，底薪 ¥${piecePay.base} + 订单提成 ¥${piecePay.commission} = 本班工资 ¥${piecePay.total}${endedEarly?'（提前结束，未领取完班底薪）':''}${session.kind==='formal'?'；已记入待发工资，按七日周期结算':'；已到账'}（交通罚款已在配送途中扣除）`:undefined;
+  work.wageRecords.push({
+    id: session.id, jobId: job.id, day: deliveryParttimeShift || rideHailingShift ? session.day : gameDay(state.time), kind: session.kind === "formal" ? "formal" : "day",
+    base, gameBonus: bonus, attendanceBonus: 0, total: base + bonus,
+    note: skip ? '自主跳过小游戏，八折工资；班次耗时与发薪周期照常' : pieceText ?? (deliveryParttimeShift ? `送达 ${completedOrders} 单，实际配送收入 ¥${base}（交通罚款已在配送途中扣除）`
+      : satisfactionFare ? `实际送达 ${completedOrders} 位乘客，按满意度计酬 ¥${base}`
+      : rideHailingShift ? `实际送达 ${completedOrders} 单，每单 ¥${rideHailingParttimeBasePay()}` : !skip && hasWageMinigame && score < .3 ? '未完成有效工作，本班无工资，时间与体力已消耗' : session.kind === "formal" ? "本班工资已计入待发工资" : skip ? "熟练跳过，八折工资" : "下班到账"),
+  });
+  if (work.wageRecords.length > 500) work.wageRecords.splice(0, work.wageRecords.length - 500);
+  if (session.offerUid) {
+    state.laborMarket.offers = state.laborMarket.offers.filter(offer => offer.uid !== session.offerUid || offer.quota > 0);
+  }
+  state.flags["worked_" + job.id + "_" + session.day] = true;
+  if (job.requirements?.oncePerDay) state.flags[job.requirements.oncePerDay] = session.day;
+  if (qualified) state.flags.ever_worked = true;
+  if (qualified && !state.flags["job_done_" + job.id]) {
+    state.flags["job_done_" + job.id] = true;
+    state.flags.jobs_done_count = Number(state.flags.jobs_done_count ?? 0) + 1;
+  }
+  if (qualified) {
+  recordJob(state);
+  onWorkDone(state, job.id, session.kind === "day" ? base + bonus : 0);
+  recordCareerProgress(state, defMap.get(ACTION_WORK_PROGRESS_JOB[job.id]??'')??job);
+  if (['steel_shift','glass_quality_shift','aluminum_recycle_shift'].includes(job.id)) grantWorkerDormStay(state);
+  if (job.locationId) recordClothingWorkMilestone(state, job.locationId);
+  recordRemasterAction(state, { kind: "work_completed", jobId: session.jobId, workedMinutes: session.workedMinutes });
+  for (const quest of state.quests ?? []) {
+    if (quest.type === "job" && quest.jobId === job.id && quest.day === session.day &&
+        (quest.status === "pending" || quest.status === "active")) quest.status = "done";
+  }
+  work.masteryMinutes[job.id] = (work.masteryMinutes[job.id] ?? 0) + session.workedMinutes;
+  if (!endedEarly) (work.completedShifts ??= {})[job.id] = completedBefore + 1;
+  }
+  delete work.active;
+  processWorkCalendar(state);
+  reconcileStatuses(state, { heavyWork: job.heavy, staminaCost: -(paidEffects.stamina ?? 0) });
+  const payText = skip ? `自选跳过小游戏，${session.kind === 'formal' ? '记入待发' : '到账'} ¥${base}（工资 80%）` : pieceText ?? (deliveryParttimeShift ? `送达 ${completedOrders} 单，实际配送收入 ¥${base}（交通罚款已在配送途中扣除）` : satisfactionFare ? `送达 ${completedOrders} 位乘客，满意度车费到账 ¥${base}` : rideHailingShift
+    ? `完成 ${completedOrders} 单，到账 ¥${base}`
+    : (session.kind === "day" ? "到账" : "记入待发") + " ¥" + (base + bonus));
+  pushLog(state, "💼", job.name + "下班，" + payText);
+  if (completedBefore < MASTERY_FULL_SHIFTS && completedWorkShifts(state,job.id,session.standardMinutes) >= MASTERY_FULL_SHIFTS)
+    pushLog(state, "⭐", job.name + "已完成十次：今后可选择跳过小游戏领取八折工资，也可照常挑战领取完整工资和表现奖励");
+  return { ok: true, crossedDay, result: {
+    actionId: job.id, icon: job.icon, name: session.source === "delivery" && job.id === "job_delivery" ? "兼职外卖" : job.name,
+    duration: session.workedMinutes / 60, deltas: collectDeltas(paidEffects), sound: job.sound,
+    verdict: piecePay || deliveryParttimeShift ? payText : payText + "（基础 ¥" + base + "，表现奖金 ¥" + bonus + "）" + (!qualified ? '。本班表现未达标，不累计熟练度与职业进度；已消耗的时间和体力不会退还。' : ''), quality: skip ? undefined : score,
+  } };
 }

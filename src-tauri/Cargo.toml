@@ -1,6 +1,6 @@
 [package]
 name = "urban-life"
-version = "1.25.0"
+version = "1.49.8"
 description = "都市生活 - 桌面端都市生活模拟游戏"
 authors = ["Urban Life Team"]
 edition = "2021"

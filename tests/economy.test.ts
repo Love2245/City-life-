@@ -12,6 +12,7 @@ import {
 import { sleepSettlement, advanceHours } from "../src/game/core/time";
 import { performAction } from "../src/game/core/actions";
 import { evaluateTarot } from "../src/game/core/tarot";
+import { setActionLocation } from "./helpers/actionLocation";
 
 describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () => {
   describe("产权买房", () => {
@@ -50,14 +51,17 @@ describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () =
       expect(s.living.mode).toBe("gov"); // 状态未被污染
     });
 
-    it("已有产权不能重复购买", () => {
+    it("允许再购一套产权房：多套持有、自住更好的一套、其余出租", () => {
+      // v0.94 起产权支持多套（buyProperty 文档：允许多套及相同房型，其余自动出租），
+      // 旧的「已有产权不能重复购买」断言属于单套时代，已随功能演进失效。
       const s = createInitialState();
-      s.player.money = 100000;
-      buyProperty(s, "own_old_unit");
+      s.player.money = 300000;
+      expect(buyProperty(s, "own_old_unit").ok).toBe(true);
       const r2 = buyProperty(s, "own_apartment");
-      expect(r2.ok).toBe(false);
-      expect(r2.reason).toContain("重复购买");
-      expect(s.living.ownedId).toBe("own_old_unit");
+      expect(r2.ok).toBe(true);
+      expect(r2.price).toBe(80000);
+      expect(s.living.ownedId).toBe("own_apartment"); // 自住更好的一套
+      expect(s.living.mode).toBe("own");
     });
 
     it("自有房睡觉免按天房费", () => {
@@ -83,8 +87,8 @@ describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () =
       expect(s.player.money).toBe(before);
     });
 
-    it("getBuyTiers 提供 3 档可购房源", () => {
-      expect(getBuyTiers().length).toBe(3);
+    it("getBuyTiers 提供 6 档可购房源", () => {
+      expect(getBuyTiers().length).toBe(6);
       expect(getBuyTiers()[0].buyPrice).toBeGreaterThan(0);
     });
   });
@@ -189,6 +193,7 @@ describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () =
       const s = createInitialState();
       s.player.money = 10000;
       buyInvestment(s, "deposit", 1000);
+      s.time.day = 30;
       settleInvestments(s);
       const inv = s.economy.investments[0];
       // v1.3b6：月息 0.0013（年化 1.55%），1000 * 1.0013 四舍五入 = 1001
@@ -231,15 +236,18 @@ describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () =
       const s = createInitialState();
       s.player.money = 50000;
       s.time = { ...s.time, hour: 12, minute: 0 }; // 名牌店 10-22 点营业
+      setActionLocation(s, "buy_luxury_coat");
       const r1 = performAction(s, "buy_luxury_coat");
       expect(r1.ok).toBe(true);
       expect(s.economy.ownedLuxury).toContain("luxury_coat");
+      setActionLocation(s, "buy_luxury_watch");
       const r2 = performAction(s, "buy_luxury_watch");
       expect(r2.ok).toBe(true);
+      setActionLocation(s, "buy_luxury_bag");
       const r3 = performAction(s, "buy_luxury_bag");
       expect(r3.ok).toBe(true);
       expect(s.economy.ownedLuxury.length).toBe(3);
-      // 50000 − 3000 − 10000 − 15000 = 22000 ≥ 20000 → 恶魔（15）
+      // 50000 − 2999 − 10000 − 15000 = 22001 ≥ 20000 → 恶魔（15）
       evaluateTarot(s);
       expect(s.tarot.unlocked).toContain(15);
     });
@@ -248,6 +256,7 @@ describe("经济闭环 v0.94（产权房 / 购车 / 投资 / 奢侈品）", () =
       const s = createInitialState();
       s.player.money = 50000;
       s.time = { ...s.time, hour: 12, minute: 0 };
+      setActionLocation(s, "buy_luxury_coat");
       performAction(s, "buy_luxury_coat");
       performAction(s, "buy_luxury_coat");
       expect(s.economy.ownedLuxury.filter((x) => x === "luxury_coat").length).toBe(1); // 去重

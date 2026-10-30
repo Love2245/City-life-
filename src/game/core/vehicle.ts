@@ -1,6 +1,6 @@
 /**
  * v1.20 载具押金制租赁：租用 → 交押金；退租或买断 → 退还押金（买断可抵扣押金）。
- * 纯逻辑层。载具类型：bicycle（仅买断）/ e_bike / tricycle / car（可租可买）。
+ * 纯逻辑层。载具类型：bicycle / e_bike / tricycle / car（均可租可买）。
  * 旧版 30 天月租档已废弃，旧档迁移时按原月租金折算为押金，转为不限期的押金租赁。
  */
 import type { GameState } from "../types";
@@ -18,6 +18,7 @@ export const VEHICLE_NAMES: Record<string, string> = {
 
 /** 载具押金（租用需交，退租/买断时退还或抵扣） */
 export const VEHICLE_DEPOSIT: Record<string, number> = {
+  bicycle: 100,
   e_bike: 600,
   tricycle: 1200,
   car: 3000,
@@ -56,8 +57,9 @@ function isRenting(state: GameState, type: string): boolean {
  * 同一车型已拥有或已租用则拒绝重复租用。
  */
 export function rentVehicle(state: GameState, type: string, price?: number): RentResult {
-  const cost = price ?? VEHICLE_DEPOSIT[type];
-  if (!cost) return { ok: false, reason: "未知载具" };
+  const baseDeposit = VEHICLE_DEPOSIT[type];
+  if (!baseDeposit) return { ok: false, reason: "未知载具" };
+  const cost = price ?? scaleCost(state, baseDeposit);
   if (state.flags[`item_${type}`] && state.vehicles[type]) {
     return { ok: false, reason: `已经租着/拥有这辆${VEHICLE_NAMES[type] ?? type}了` };
   }
@@ -69,6 +71,7 @@ export function rentVehicle(state: GameState, type: string, price?: number): Ren
     return { ok: false, reason: `金钱不足（押金需 ${cost} 元）` };
   }
   state.player.money -= cost;
+  recordMoney(state, -cost); // 周记：租车押金计入支出（退租时等额退回计入收入）
   state.flags[`item_${type}`] = true;
   state.vehicles[type] = { day: state.time.day, month: state.time.month, year: state.time.year, deposit: cost };
   pushLog(state, "🔑", `租了一辆${VEHICLE_NAMES[type] ?? type}（押金 ${cost} 元），退租或买断时押金退还`);
@@ -119,6 +122,7 @@ export function returnVehicle(state: GameState, type: string): RentResult {
   delete state.vehicles[type];
   state.flags[`item_${type}`] = false;
   state.player.money += deposit;
+  recordMoney(state, deposit); // 周记：退押金计入收入（与租时支出对应）
   pushLog(state, "🔑", `退租${VEHICLE_NAMES[type] ?? type}，押金 ${deposit} 元已退还`);
   return { ok: true, price: deposit };
 }

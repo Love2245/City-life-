@@ -22,6 +22,22 @@
     ]
   },
   {
+    "id": "npc_guest_room",
+    "name": "朋友家客房",
+    "icon": "🛏️",
+    "desc": "朋友为你留的一晚客房，明早起身后记得道谢",
+    "gradient": "linear-gradient(135deg, #51475f, #88749a)",
+    "pos": {
+      "x": 190,
+      "y": 270
+    },
+    "regions": [
+      "downtown_residential"
+    ],
+    "locked": true,
+    "unlockFlag": "npc_guest_room_unlocked"
+  },
+  {
     "id": "convenience_store",
     "name": "便利店",
     "icon": "🏪",
@@ -41,14 +57,14 @@
     "id": "library",
     "name": "图书馆",
     "icon": "📚",
-    "desc": "免费空调 + 免费知识，穷人的天堂（晚 6 点关门）",
+    "desc": "免费空调 + 免费知识，穷人的天堂（早 7 点开门 / 晚 6 点关门）",
     "gradient": "linear-gradient(135deg, #4a6741, #7a9e5c)",
     "pos": {
       "x": 300,
       "y": 200
     },
     "openHours": {
-      "start": 9,
+      "start": 7,
       "end": 18
     },
     "regions": [
@@ -89,7 +105,7 @@
       "end": 22
     },
     "regions": [
-      "downtown_center",
+      "downtown_commercial",
       "downtown_residential"
     ]
   },
@@ -113,7 +129,7 @@
   },
   {
     "id": "housing_agency",
-    "name": "房屋中介",
+    "name": "房屋租赁所",
     "icon": "🏢",
     "desc": "攒够了钱，来这里签个像样的住处（晚 6 点关门）",
     "gradient": "linear-gradient(135deg, #3d5c7a, #5c8eb0)",
@@ -126,7 +142,7 @@
       "end": 18
     },
     "regions": [
-      "downtown_center"
+      "downtown_commercial"
     ]
   },
   {
@@ -282,7 +298,7 @@
     "gradient": "linear-gradient(135deg, #2a3a5e, #4a6a9e)",
     "regions": [
       "downtown_center",
-      "downtown_mall"
+      "mall_interior"
     ],
     "openHours": {
       "start": 11,
@@ -305,33 +321,98 @@
   },
   {
     "id": "high_speed_rail",
-    "name": "高铁站",
-    "icon": "🚄",
-    "desc": "通往其他城市的高速铁路枢纽（暂未开放）",
+    "name": "火车站",
+    "icon": "🚆",
+    "desc": "城际火车发车点，购票后按班次检票乘车",
     "gradient": "linear-gradient(135deg, #1e2c5a, #3a4a8a)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": {
+      "start": 0,
+      "end": 24
+    }
+  },
+  {
+    "id": "bus_station",
+    "name": "巴士站",
+    "icon": "🚌",
+    "desc": "树堰区的城际巴士发车点，紫羊区路线购票后按班次检票；伯月新区快线全天每小时整点一班，票价 8 元、车程 45 分钟",
+    "gradient": "linear-gradient(135deg, #2a3a6a, #4a5a8a)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "flower_market",
+    "name": "花鸟市场",
+    "icon": "🌸",
+    "desc": "花、盆栽、宠物鸟和金鱼摊位周末开放，宠物医院与用品服务每天营业",
+    "gradient": "linear-gradient(135deg, #3a6b56, #7aae78)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 21
+    }
+  },
+  {
+    "id": "snack_street",
+    "name": "小吃街",
+    "icon": "🍢",
+    "desc": "老城最热闹的烟火街，能买小吃，也能在这里摆摊赚更多钱",
+    "gradient": "linear-gradient(135deg, #7a3f36, #c5794e)",
     "regions": [
       "downtown_station"
     ],
     "openHours": {
       "start": 6,
       "end": 24
-    },
-    "locked": true
+    }
   },
   {
-    "id": "bus_station",
-    "name": "巴士站",
-    "icon": "🚌",
-    "desc": "城际巴士发车点（暂未开放）",
-    "gradient": "linear-gradient(135deg, #2a3a6a, #4a5a8a)",
+    "id": "school",
+    "name": "学校",
+    "icon": "🏫",
+    "desc": "小学和中学校园，白天有通用辅导与托管兼职",
+    "gradient": "linear-gradient(135deg, #3e5d7b, #6b91ae)",
     "regions": [
       "downtown_station"
     ],
     "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "suburb_bus_station",
+    "name": "紫羊区巴士站",
+    "icon": "🚌",
+    "desc": "紫羊区城市边缘的城际巴士站，也可查看前往树堰区的班次",
+    "gradient": "linear-gradient(135deg, #315b5b, #5b9188)",
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
       "start": 6,
       "end": 23
-    },
-    "locked": true
+    }
+  },
+  {
+    "id": "suburb_train_station",
+    "name": "紫羊区火车站",
+    "icon": "🚆",
+    "desc": "紫羊区城市边缘的火车站，便宜但班次较少",
+    "gradient": "linear-gradient(135deg, #31516c, #6184a2)",
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": {
+      "start": 0,
+      "end": 24
+    }
   },
   {
     "id": "hospital",
@@ -358,6 +439,18 @@
     }
   },
   {
+    "id": "hotel_boyu_nightmarket",
+    "name": "泊月快捷酒店",
+    "icon": "🏨",
+    "desc": "泊月夜市东侧快捷酒店，逛完夜市可就近入住，108 元/晚；办理入住后可在此休息",
+    "gradient": "linear-gradient(135deg, #514265, #bf8f76)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true
+  },
+  {
     "id": "bathhouse",
     "name": "洗浴中心",
     "icon": "🫧",
@@ -375,10 +468,10 @@
     "id": "car_rental",
     "name": "汽车租赁行",
     "icon": "🚗",
-    "desc": "租汽车跑网约车/出租车，月租 3000（早 7 点开门 / 晚 9 点关门）",
+    "desc": "自行车、电动车、三轮车与汽车均可租用或买断；租用采用可退还押金，汽车需要驾驶本。",
     "gradient": "linear-gradient(135deg, #4a3a5e, #6a5a8e)",
     "regions": [
-      "downtown_center"
+      "downtown_commercial"
     ],
     "openHours": {
       "start": 7,
@@ -391,6 +484,34 @@
     "icon": "💎",
     "desc": "奢侈品专柜，买不起也来看看（早 10 点开门 / 晚 10 点关门）",
     "gradient": "linear-gradient(135deg, #6d4a2e, #a8803e)",
+    "regions": [
+      "mall_interior"
+    ],
+    "openHours": {
+      "start": 10,
+      "end": 22
+    }
+  },
+  {
+    "id": "clothing_store",
+    "name": "街角衣橱",
+    "icon": "👗",
+    "desc": "试穿整套服装，搭配帽子，满意后再付款（早 10 点开门 / 晚 10 点关门）",
+    "gradient": "linear-gradient(135deg, #6b3d62, #a85f8f)",
+    "regions": [
+      "mall_interior"
+    ],
+    "openHours": {
+      "start": 10,
+      "end": 22
+    }
+  },
+  {
+    "id": "budget_clothing_store",
+    "name": "布衣小铺",
+    "icon": "👕",
+    "desc": "商场外的临街小店，平价衣物随心搭配（早 10 点开门 / 晚 10 点关门）",
+    "gradient": "linear-gradient(135deg, #70634c, #a88b68)",
     "regions": [
       "downtown_mall"
     ],
@@ -406,7 +527,7 @@
     "desc": "家具与生活用品，给住处添点烟火气（早 9 点开门 / 晚 9 点关门）",
     "gradient": "linear-gradient(135deg, #5a4a2e, #8a6a3e)",
     "regions": [
-      "downtown_mall"
+      "mall_interior"
     ],
     "openHours": {
       "start": 9,
@@ -419,9 +540,7 @@
     "icon": "🐈",
     "desc": "领养猫咪、购买猫粮玩具，一站式宠物服务（早 9 点开门 / 晚 9 点关门）",
     "gradient": "linear-gradient(135deg, #5c3a6e, #8a5ca0)",
-    "regions": [
-      "downtown_mall"
-    ],
+    "regions": [],
     "openHours": {
       "start": 9,
       "end": 21
@@ -433,9 +552,7 @@
     "icon": "🏥",
     "desc": "猫咪受伤了就来这里：按伤势治疗，还出售药水、净化剂、复活石（早 8 点开门 / 晚 8 点关门）",
     "gradient": "linear-gradient(135deg, #2e6b5a, #4aa087)",
-    "regions": [
-      "downtown_center"
-    ],
+    "regions": [],
     "openHours": {
       "start": 8,
       "end": 20
@@ -482,7 +599,7 @@
     "id": "lake_park",
     "name": "环湖公园",
     "icon": "🚣",
-    "desc": "湖光山色，可散步跑步划船，比街心公园开阔得多",
+    "desc": "紫羊区城市边缘的环湖公园，可散步、跑步、划船，也能在岸边垂钓；湖里常见鲫鱼、鲤鱼和草鱼，稀有鱼不常出现",
     "gradient": "linear-gradient(135deg, #4a8a6b, #7abfa0)",
     "pos": {
       "x": 240,
@@ -510,7 +627,7 @@
       "suburban_edge"
     ],
     "openHours": {
-      "start": 9,
+      "start": 6,
       "end": 18
     }
   },
@@ -518,17 +635,13 @@
     "id": "temple",
     "name": "寺庙",
     "icon": "🛕",
-    "desc": "山间古寺，可做义工换取免费食宿。连续参加后解锁佛法会",
+    "desc": "山间古寺，钟声越过林梢。可以来听讲，也可以帮忙做些杂事。",
     "gradient": "linear-gradient(135deg, #8a6b3a, #c0a060)",
-    "pos": {
-      "x": 240,
-      "y": 160
-    },
     "regions": [
       "suburban_edge"
     ],
     "openHours": {
-      "start": 8,
+      "start": 6,
       "end": 18
     }
   },
@@ -590,7 +703,7 @@
     "id": "steel_factory",
     "name": "钢铁厂",
     "icon": "🔥",
-    "desc": "重工业区龙头，本版暂未开放",
+    "desc": "重工业区龙头，办理工业通行证后可接高薪重工",
     "gradient": "linear-gradient(135deg, #5a3a2a, #8a6050)",
     "pos": {
       "x": 120,
@@ -599,13 +712,14 @@
     "regions": [
       "heavy_industry"
     ],
-    "locked": true
+    "locked": true,
+    "unlockFlag": "route_heavy_industry"
   },
   {
     "id": "glass_factory",
     "name": "玻璃厂",
     "icon": "🪟",
-    "desc": "浮法玻璃生产线，本版暂未开放",
+    "desc": "浮法玻璃生产线，办理工业通行证后开放",
     "gradient": "linear-gradient(135deg, #4a6a8a, #7ab0c0)",
     "pos": {
       "x": 220,
@@ -614,13 +728,14 @@
     "regions": [
       "heavy_industry"
     ],
-    "locked": true
+    "locked": true,
+    "unlockFlag": "route_heavy_industry"
   },
   {
     "id": "aluminum_factory",
     "name": "铝厂",
     "icon": "🪨",
-    "desc": "电解铝车间，本版暂未开放",
+    "desc": "电解铝车间，办理工业通行证后开放",
     "gradient": "linear-gradient(135deg, #6a6a6a, #a0a0a0)",
     "pos": {
       "x": 300,
@@ -629,7 +744,24 @@
     "regions": [
       "heavy_industry"
     ],
-    "locked": true
+    "locked": true,
+    "unlockFlag": "route_heavy_industry"
+  },
+  {
+    "id": "worker_dormitory",
+    "name": "工人集体宿舍",
+    "icon": "🛏️",
+    "desc": "工厂职工的免费休息与淋浴点；完成任一工业班次后可登记入住",
+    "gradient": "linear-gradient(135deg, #3a4548, #697b78)",
+    "pos": {
+      "x": 210,
+      "y": 170
+    },
+    "regions": [
+      "heavy_industry"
+    ],
+    "locked": true,
+    "unlockFlag": "route_heavy_industry"
   },
   {
     "id": "electronics_store",
@@ -657,6 +789,725 @@
     "openHours": {
       "start": 8,
       "end": 20
+    }
+  },
+  {
+    "id": "hostel",
+    "name": "青年旅舍",
+    "icon": "🛏️",
+    "desc": "火车站附近的公共青年旅舍，可按晚入住并使用淋浴与休息设施",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_station"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true
+  },
+  {
+    "id": "minsu",
+    "name": "民宿",
+    "icon": "🏡",
+    "desc": "住宅区老小区里的公共民宿单间，可按晚入住；住客可使用住宿设施",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_residential"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true
+  },
+  {
+    "id": "old_apartment",
+    "name": "普通出租屋",
+    "icon": "🏠",
+    "desc": "住宅区同一栋公寓楼，政府过渡床位与普通月租房共用公共入口；当前房间按入住登记显示。",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_residential"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true,
+    "mapAnchor": {
+      "x": 32,
+      "y": 33
+    }
+  },
+  {
+    "id": "rental_apartment",
+    "name": "出租公寓",
+    "icon": "🏢",
+    "desc": "市中心可公开看房的精装出租公寓，月租 2000 元，每 30 天续缴；签约后开放住客居家功能",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true,
+    "mapAnchor": {
+      "x": 84,
+      "y": 67
+    }
+  },
+  {
+    "id": "suburb_room",
+    "name": "城市边缘小屋",
+    "icon": "🏡",
+    "desc": "城市边缘可公开看房的朴素出租小屋，月租 800 元；签约后开放住客居家功能",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "suburban_edge"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true,
+    "mapAnchor": {
+      "x": 8,
+      "y": 64
+    }
+  },
+  {
+    "id": "own_old_unit",
+    "name": "老破小产权房",
+    "icon": "🏚️",
+    "desc": "住宅区老小区的旧房子，一次性买断产权，从此不用再交房租",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_residential"
+    ],
+    "openHours": null,
+    "mapAnchor": {
+      "x": 55,
+      "y": 16
+    }
+  },
+  {
+    "id": "own_apartment",
+    "name": "精装公寓",
+    "icon": "🏢",
+    "desc": "市中心电梯公寓，电梯直达，买下就是自己的小窝",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_center"
+    ],
+    "openHours": null,
+    "mapAnchor": {
+      "x": 61,
+      "y": 17
+    }
+  },
+  {
+    "id": "own_villa",
+    "name": "城市住宅",
+    "icon": "🏡",
+    "desc": "月牙广场西北的小型独栋别墅区，数栋住宅沿花园小路排列，可到房屋中介查看产权房源",
+    "gradient": "linear-gradient(135deg, #3a3a5c, #5c4a6b)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": null,
+    "mapAnchor": {
+      "x": 15,
+      "y": 31
+    }
+  },
+  {
+    "id": "dev_museum",
+    "name": "博物馆",
+    "icon": "🏺",
+    "desc": "宽阔展厅收藏这座城市的旧时记忆，石器、器皿与历史陈列静静讲述一路走来的故事",
+    "gradient": "linear-gradient(135deg, #66533e, #b7996b)",
+    "regions": [
+      "development_culture"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "dev_science_museum",
+    "name": "科技馆",
+    "icon": "🔬",
+    "desc": "明亮的科技展厅以星空、机械和自然科学为主题，穹顶与展台勾勒出对未来的想象",
+    "gradient": "linear-gradient(135deg, #264f71, #66a5b8)",
+    "regions": [
+      "development_culture"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "dev_art_gallery",
+    "name": "美术馆",
+    "icon": "🎨",
+    "desc": "柔和天光落在画作和雕塑之间，安静的白色展廊为城市留出一处欣赏艺术的空间",
+    "gradient": "linear-gradient(135deg, #756d83, #c9b9aa)",
+    "regions": [
+      "development_culture"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "development_bus_station",
+    "name": "伯月新区巴士站",
+    "icon": "🚌",
+    "desc": "市三馆文化广场旁的伯月新区巴士站，往返树堰区每小时整点一班，票价 8 元、车程 45 分钟",
+    "gradient": "linear-gradient(135deg, #476b77, #a4baa9)",
+    "regions": [
+      "development_culture"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "dev_university",
+    "name": "教学楼",
+    "icon": "🎓",
+    "desc": "师范学院的教学楼，可旁听公开课、整理学习笔记",
+    "gradient": "linear-gradient(135deg, #3f6861, #98b68c)",
+    "regions": [
+      "campus_teacher"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 21
+    }
+  },
+  {
+    "id": "dev_food_street",
+    "name": "美食街",
+    "icon": "🍜",
+    "desc": "师范学院学生美食街，早餐铺、平价盖饭、面档与奶茶店沿街排开，主打上课前后随手吃的实惠餐点",
+    "gradient": "linear-gradient(135deg, #77503f, #cc9e68)",
+    "regions": [
+      "development_university"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "dev_incubator",
+    "name": "创业孵化基地",
+    "icon": "💡",
+    "desc": "纯办公的大学创业孵化基地；交付首件作品后，到市政大厅企业窗口注册公司入驻",
+    "gradient": "linear-gradient(135deg, #476977, #9cb7b9)",
+    "regions": [
+      "campus_teacher"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "company_office_single",
+    "name": "写字楼·公司单间",
+    "icon": "🏢",
+    "desc": "市中心写字楼内的六人独立单间，设员工区、主角工位及访客位置",
+    "gradient": "linear-gradient(135deg, #314b62, #91a9b1)",
+    "regions": ["downtown_commercial"],
+    "openHours": null
+  },
+  {
+    "id": "company_office_large",
+    "name": "写字楼·大办公室",
+    "icon": "🏢",
+    "desc": "十人团队办公室，独立会议区与分组工位",
+    "gradient": "linear-gradient(135deg, #3b5264, #a5bdc3)",
+    "regions": ["downtown_commercial"],
+    "openHours": null
+  },
+  {
+    "id": "company_office_floor",
+    "name": "写字楼·公司整层",
+    "icon": "🏙️",
+    "desc": "十六人完整办公楼层，包含前台、会议室、负责人办公室与开放办公区",
+    "gradient": "linear-gradient(135deg, #273a4c, #8caeb9)",
+    "regions": ["downtown_commercial"],
+    "openHours": null
+  },
+  {
+    "id": "moon_mountain",
+    "name": "月亮山·东月道观",
+    "icon": "⛰️",
+    "desc": "月亮山的石阶通向东月道观。善堂每日 6:00—18:00 开门，山道可以随时走走。",
+    "gradient": "linear-gradient(135deg, #355a56, #89a997)",
+    "regions": [
+      "development_reserve"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "treasure_lake",
+    "name": "珍宝湖水库",
+    "icon": "🏞️",
+    "desc": "清澈水面映着群山与天空，水库堤岸延伸向远处，林木和湖风构成自然保护区的宁静风景",
+    "gradient": "linear-gradient(135deg, #346c77, #92c0b9)",
+    "regions": [
+      "development_reserve"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "camping_base",
+    "name": "野营基地",
+    "icon": "⛺",
+    "desc": "林边营地提供每晚 30 元的帐篷住宿与淋浴设施，无需自带帐篷；白天可在指定区域享用自助烧烤。",
+    "gradient": "linear-gradient(135deg, #4e6850, #b0b77e)",
+    "regions": [
+      "development_reserve"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true
+  },
+  {
+    "id": "airport",
+    "name": "机场",
+    "icon": "✈️",
+    "desc": "泊月区的小型民用通航机场尚未开放，候机楼与通航跑道正在筹备；保留旧机场位置供后续开放与旧存档兼容。",
+    "gradient": "linear-gradient(135deg, #536e83, #b3c7cf)",
+    "regions": [
+      "development_airport"
+    ],
+    "openHours": null,
+    "locked": true
+  },
+  {
+    "id": "boyue_engineering_college",
+    "name": "教学楼",
+    "icon": "🎓",
+    "desc": "工程学院的教学楼，可旁听公开课、整理学习笔记",
+    "gradient": "linear-gradient(135deg, #406577, #9cbdba)",
+    "regions": [
+      "campus_engineering"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 21
+    }
+  },
+  {
+    "id": "boyue_food_street",
+    "name": "美食街",
+    "icon": "🍜",
+    "desc": "工程学院学生街以快速补能为主，盖饭、炒面、烤串和晚课后的热食档口沿街相连",
+    "gradient": "linear-gradient(135deg, #795440, #d2a576)",
+    "regions": [
+      "boyue_university"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_talent_apartment",
+    "name": "人才公寓",
+    "icon": "🏢",
+    "desc": "校内人才公寓，可在房屋租赁所签约",
+    "gradient": "linear-gradient(135deg, #536678, #b4b9b0)",
+    "regions": [
+      "campus_engineering"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_internet_cafe",
+    "name": "网吧",
+    "icon": "🖥️",
+    "desc": "校园街角的网吧设有整齐的电脑座位与休息吧台，屏幕的柔光映着安静交谈和专注的身影",
+    "gradient": "linear-gradient(135deg, #34445e, #777ca3)",
+    "regions": [
+      "boyue_university"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_cafe",
+    "name": "咖啡厅",
+    "icon": "☕",
+    "desc": "商场一侧的咖啡厅摆着木桌与绿植，吧台、落地窗和轻柔灯光为逛街的人留出片刻休息的空间",
+    "gradient": "linear-gradient(135deg, #6e5544, #bda17c)",
+    "regions": [
+      "boyue_mall"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_convenience_store",
+    "name": "便利店",
+    "icon": "🏪",
+    "desc": "泊月区临街便利店，服务校园、商场和附近居民，提供日常补给与简餐",
+    "gradient": "linear-gradient(135deg, #506c66, #acc5ad)",
+    "regions": [
+      "boyue_mall",
+      "boyue_university"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_fast_food",
+    "name": "快餐店",
+    "icon": "🍔",
+    "desc": "商场快餐店的点餐柜台面向宽敞座位区，明亮配色和整齐托盘让这里充满轻松的日常气息",
+    "gradient": "linear-gradient(135deg, #94553c, #e0ba72)",
+    "regions": [
+      "boyue_mall"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_gym",
+    "name": "健身房",
+    "icon": "🏋️",
+    "desc": "商场内的健身房将跑步机、力量器械和伸展空间依次排开，镜墙映着宽敞通道与明亮灯光",
+    "gradient": "linear-gradient(135deg, #475d6a, #9daeb6)",
+    "regions": [
+      "boyue_mall"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_western_restaurant",
+    "name": "西餐厅",
+    "icon": "🍽️",
+    "desc": "安静的西餐厅临着商场外的街景，餐桌、吊灯与开放式厨房在暖色灯光下勾勒出从容的用餐环境",
+    "gradient": "linear-gradient(135deg, #654c46, #bb9b80)",
+    "regions": [
+      "boyue_mall"
+    ],
+    "openHours": {
+      "start": 11,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_swimming_pool",
+    "name": "游泳馆",
+    "icon": "🏊",
+    "desc": "奥林匹克中心的游泳馆设有整齐泳道，池水映着屋顶采光窗，池边步道连接看台与更衣区",
+    "gradient": "linear-gradient(135deg, #2b6b83, #a0d3d6)",
+    "regions": [
+      "boyue_olympic"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_football_field",
+    "name": "足球场",
+    "icon": "⚽",
+    "desc": "平整草坪上的白色边线环绕足球场，球门与看台分列两侧，开阔天空下不时传来踢球和交谈声",
+    "gradient": "linear-gradient(135deg, #356946, #93b779)",
+    "regions": [
+      "boyue_olympic"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_basketball_court",
+    "name": "篮球场",
+    "icon": "🏀",
+    "desc": "运动中心的篮球场铺着清晰标线，篮架、场边座椅与照明灯相互呼应，居民沿步道聚到这里运动",
+    "gradient": "linear-gradient(135deg, #97674c, #cfaa78)",
+    "regions": [
+      "boyue_olympic"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_sports_store",
+    "name": "体育用品店",
+    "icon": "🎽",
+    "desc": "奥林匹克中心入口旁的体育用品店陈列球类、运动鞋和训练装备，玻璃橱窗映着广场与来往的人",
+    "gradient": "linear-gradient(135deg, #436875, #aabdc0)",
+    "regions": [
+      "boyue_olympic"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 22
+    }
+  },
+  {
+    "id": "boyue_nightclub",
+    "name": "夜总会",
+    "icon": "🪩",
+    "desc": "泊月夜市的夜总会在每天 18:00 至次日 06:00 开放，舞台灯光、卡座和门前霓虹构成夜晚的热闹景象",
+    "gradient": "linear-gradient(135deg, #453060, #ae5b95)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": {
+      "start": 18,
+      "end": 6
+    }
+  },
+  {
+    "id": "boyue_snack_street",
+    "name": "小吃街",
+    "icon": "🍢",
+    "desc": "泊月夜市的潮流餐饮区，现代街铺围绕步行广场经营创意小吃、融合料理、手作饮品与夜间餐桌",
+    "gradient": "linear-gradient(135deg, #754331, #cd9563)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_arcade",
+    "name": "电玩城",
+    "icon": "🕹️",
+    "desc": "亮着彩色灯光的电玩城沿通道排列街机与游戏机，入口休息区面向夜市街景，机台声在厅内交织",
+    "gradient": "linear-gradient(135deg, #334b70, #9d71ae)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_bathhouse",
+    "name": "洗浴中心",
+    "icon": "♨️",
+    "desc": "夜市一侧的洗浴中心设有明亮门厅与安静休息区，木质装饰和柔和灯光为来往居民留出舒缓空间",
+    "gradient": "linear-gradient(135deg, #665b53, #b8b19c)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "boyue_lounge_bar",
+    "name": "清吧",
+    "icon": "🍸",
+    "desc": "泊月夜市的清吧在每天 18:00 至次日 06:00 开放，木质吧台、靠窗座位和柔和音乐营造从容的夜晚",
+    "gradient": "linear-gradient(135deg, #4c3d50, #a78491)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": {
+      "start": 18,
+      "end": 6
+    }
+  },
+  {
+    "id": "boyue_texas_shop",
+    "name": "德州小店",
+    "icon": "🃏",
+    "desc": "泊月夜市街角的德州小店只在周末夜间 18:00 至次日 06:00 开放，安静牌桌、休息座椅和暖灯沿店内排列",
+    "gradient": "linear-gradient(135deg, #485747, #9e8b64)",
+    "regions": [
+      "boyue_night_market"
+    ],
+    "openHours": {
+      "start": 18,
+      "end": 6
+    },
+    "weekendNightOnly": true
+  },
+  {
+    "id": "commercial_exchange",
+    "name": "证券交易所",
+    "icon": "📈",
+    "desc": "交易大厅公布本市上市公司最新报价；个人买卖通过电脑上的顺顺花办理",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": {
+      "start": 8,
+      "end": 20
+    }
+  },
+  {
+    "id": "commercial_office",
+    "name": "写字楼",
+    "icon": "🏢",
+    "desc": "月牙广场西侧的办公楼，楼内企业招聘文员，也可以在大堂整理资料",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": {
+      "start": 7,
+      "end": 22
+    }
+  },
+  {
+    "id": "commercial_convenience_store",
+    "name": "便利店",
+    "icon": "🏪",
+    "desc": "商业街口的独立便利店，鲜食、饮料和日常调料全天供应",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": null
+  },
+  {
+    "id": "hotel_mooncourt",
+    "name": "月庭大酒店",
+    "icon": "🏨",
+    "desc": "商业区西南侧的独立酒店，提供豪华套房与特惠客房；预付一晚房费，住客堂食包含在内。",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": null,
+    "publicHousingEntry": true,
+    "mapAnchor": {
+      "x": 36,
+      "y": 68
+    }
+  },
+  {
+    "id": "commercial_street",
+    "name": "商业街",
+    "icon": "🛍️",
+    "desc": "广场北侧的步行街，沿街小店供应烤串、炒面与街头小吃",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial"
+    ],
+    "openHours": {
+      "start": 6,
+      "end": 24
+    }
+  },
+  {
+    "id": "municipal_hall",
+    "name": "市政大厅",
+    "icon": "🏛️",
+    "desc": "图书馆东侧的市政服务大厅，可办理学生通行证和工业通行证",
+    "gradient": "linear-gradient(135deg, #35546b, #9e8866)",
+    "regions": [
+      "downtown_commercial",
+      "downtown_center"
+    ],
+    "openHours": {
+      "start": 9,
+      "end": 18
+    }
+  },
+  {
+    "id": "campus_teacher_library",
+    "name": "图书馆",
+    "icon": "📚",
+    "regions": [
+      "campus_teacher"
+    ],
+    "desc": "师范学院的图书馆",
+    "gradient": "linear-gradient(135deg, #3f6861, #98b68c)",
+    "openHours": {
+      "start": 7,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_teacher_canteen",
+    "name": "食堂",
+    "icon": "🍚",
+    "regions": [
+      "campus_teacher"
+    ],
+    "desc": "师范学院的食堂",
+    "gradient": "linear-gradient(135deg, #3f6861, #98b68c)",
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_teacher_sports",
+    "name": "运动场",
+    "icon": "🏃",
+    "regions": [
+      "campus_teacher"
+    ],
+    "desc": "师范学院的运动场",
+    "gradient": "linear-gradient(135deg, #3f6861, #98b68c)",
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_teacher_affairs",
+    "name": "学工楼",
+    "icon": "🏫",
+    "regions": [
+      "campus_teacher"
+    ],
+    "desc": "师范学院的学工楼",
+    "gradient": "linear-gradient(135deg, #3f6861, #98b68c)",
+    "openHours": {
+      "start": 8,
+      "end": 18
+    }
+  },
+  {
+    "id": "campus_engineering_library",
+    "name": "图书馆",
+    "icon": "📚",
+    "regions": [
+      "campus_engineering"
+    ],
+    "desc": "工程学院的图书馆",
+    "gradient": "linear-gradient(135deg, #406577, #9cbdba)",
+    "openHours": {
+      "start": 7,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_engineering_canteen",
+    "name": "食堂",
+    "icon": "🍚",
+    "regions": [
+      "campus_engineering"
+    ],
+    "desc": "工程学院的食堂",
+    "gradient": "linear-gradient(135deg, #406577, #9cbdba)",
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_engineering_sports",
+    "name": "运动场",
+    "icon": "🏃",
+    "regions": [
+      "campus_engineering"
+    ],
+    "desc": "工程学院的运动场",
+    "gradient": "linear-gradient(135deg, #406577, #9cbdba)",
+    "openHours": {
+      "start": 6,
+      "end": 22
+    }
+  },
+  {
+    "id": "campus_engineering_affairs",
+    "name": "学工楼",
+    "icon": "🏫",
+    "regions": [
+      "campus_engineering"
+    ],
+    "desc": "工程学院的学工楼",
+    "gradient": "linear-gradient(135deg, #406577, #9cbdba)",
+    "openHours": {
+      "start": 8,
+      "end": 18
     }
   }
 ]

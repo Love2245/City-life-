@@ -114,8 +114,9 @@ describe("v0.99 关系 tick", () => {
     expect(findRelationship(s, "npc_zhao_gang")!.affinity).toBe(11);
   });
 
-  it("借款逾期：>30 天未还好感 -30 并拉黑", () => {
+  it("借款逾期且还不上：好感 -30 并拉黑", () => {
     const s = fresh();
+    s.player.money = 0; // v1.43：账上没钱才会走赖账分支
     const rel = ensureRelationship(s, "npc_zhao_gang");
     rel.affinity = 50;
     rel.state = "friend";
@@ -126,6 +127,24 @@ describe("v0.99 关系 tick", () => {
     expect(rel.affinity).toBe(20);
     expect(rel.loan).toBeUndefined();
     expect(s.romance.loanNpc).toBeUndefined();
+  });
+
+  it("借款逾期但账上还有钱：自动扣回欠款，只扣人情不拉黑（v1.43）", () => {
+    const s = fresh();
+    s.player.money = 500;
+    const rel = ensureRelationship(s, "npc_zhao_gang");
+    rel.affinity = 50;
+    rel.state = "friend";
+    rel.loan = { amount: 200, since: gameDay(s.time) - 31 };
+    s.romance.loanNpc = "npc_zhao_gang";
+    const logs = tickLoans(s);
+
+    expect(s.player.money).toBe(300); // 欠款被追回
+    expect(rel.state).toBe("friend");
+    expect(rel.affinity).toBe(40);
+    expect(rel.loan).toBeUndefined();
+    expect(s.romance.loanNpc).toBeUndefined();
+    expect(logs[0]).toContain("200");
   });
 });
 

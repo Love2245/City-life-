@@ -103,7 +103,7 @@ describe("v1.01 赤贫家庭短信适配", () => {
     s.family = "destitute";
     s.player.money = 100; // 触发 poor 条件
     const pool = smsPool(s);
-    expect(pool.some((x) => x.id === "sms_birthday")).toBe(false); // 妈妈发红包
+    expect(pool.some((x) => x.id === "sms_mom_care")).toBe(false); // 普通家庭关照
     expect(pool.some((x) => x.id === "sms_money")).toBe(false); // 爸打钱 200
     expect(pool.some((x) => x.id === "sms_weekend_dinner")).toBe(false); // 温馨周末关怀
   });
@@ -116,7 +116,7 @@ describe("v1.01 赤贫家庭短信适配", () => {
     expect(pool.some((x) => x.id === "sms_destitute_debtor")).toBe(true);
     expect(pool.some((x) => x.id === "sms_destitute_grandma_med")).toBe(true);
     expect(pool.some((x) => x.id === "sms_destitute_gambler")).toBe(true);
-    expect(pool.some((x) => x.id === "sms_destitute_birthday")).toBe(true); // 生日不发红包，只一碗长寿面
+    expect(pool.some((x) => x.id === "sms_destitute_care")).toBe(true); // 赤贫家庭生活关照
   });
 
   it("普通家庭不会收到赤贫专属短信", () => {
@@ -125,6 +125,6 @@ describe("v1.01 赤贫家庭短信适配", () => {
     const pool = smsPool(s);
     expect(pool.some((x) => x.id.startsWith("sms_destitute_"))).toBe(false);
     // 普通家庭仍可收到温馨关怀
-    expect(pool.some((x) => x.id === "sms_birthday" || x.id === "sms_weekend_dinner")).toBe(true);
+    expect(pool.some((x) => x.id === "sms_mom_care" || x.id === "sms_weekend_dinner")).toBe(true);
   });
 });

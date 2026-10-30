@@ -13,7 +13,7 @@
       "icon": "🪙",
       "desc": "家徒四壁，从小就要为一口饭发愁。没有退路，只有自己",
       "initialMoney": 0,
-      "monthlyPayment": -1000,
+      "monthlyPayment": -300,
       "monthlyNote": "每月 20 号寄 1000 元补贴家里",
       "attrMods": { "charm": -5, "stamina": -10, "log": "赤贫出身：营养不良（体力-10），没穿过好衣服（魅力-5）" },
       "staminaCapMod": -10,

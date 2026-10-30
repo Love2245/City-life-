@@ -8,13 +8,13 @@ import {
   VEHICLE_DEPOSIT,
   VEHICLE_BUY,
 } from "../src/game/core/vehicle";
-import { resolveVehicle, resolveTierForJob, getJobDef, settleJobEffects, mergedJobEffects } from "../src/game/core/jobs";
+import { checkJobRequirements, resolveVehicle, resolveTierForJob, getJobDef, settleJobEffects, mergedJobEffects, rideHailingParttime } from "../src/game/core/jobs";
 import { performAction } from "../src/game/core/actions";
 import { applyFamily } from "../src/game/core/families";
 
 describe("v1.20 载具押金制租赁", () => {
-  it("三档押金 600/1200/3000，自行车仅买断 300", () => {
-    expect(VEHICLE_DEPOSIT).toEqual({ e_bike: 600, tricycle: 1200, car: 3000 });
+  it("四档押金 100/600/1200/3000，自行车可租可买", () => {
+    expect(VEHICLE_DEPOSIT).toEqual({ bicycle:100,e_bike: 600, tricycle: 1200, car: 3000 });
     expect(VEHICLE_BUY.bicycle).toBe(300);
   });
 
@@ -91,6 +91,24 @@ describe("v1.20 载具押金制租赁", () => {
     expect(s.flags["item_e_bike"]).toBe(true);
     expect(s.player.money).toBe(400);
   });
+
+  it("租车押金随物价倍率调整，退租退回实际缴纳的金额", () => {
+    const s = createInitialState();
+    applyFamily(s, "ordinary");
+    s.time.hour = 10;
+    s.player.money = 900;
+    s.economy.priceIndex = 1.5;
+    s.locationId = "car_rental";
+
+    const rented = performAction(s, "rent_e_bike_shop");
+    expect(rented.ok).toBe(true);
+    expect(s.player.money).toBe(0);
+    expect(s.vehicles.e_bike?.deposit).toBe(900);
+
+    const returned = returnVehicle(s, "e_bike");
+    expect(returned).toMatchObject({ ok: true, price: 900 });
+    expect(s.player.money).toBe(900);
+  });
 });
 
 describe("载具与岗位联动", () => {
@@ -104,12 +122,14 @@ describe("载具与岗位联动", () => {
     expect(resolveVehicle(s)).toBe("car");
   });
 
-  it("快递岗 tricycle 档位最高", () => {
+  it("快递岗单位提供基础工具，自有三轮车只加成且不替代基础工资", () => {
     const s = createInitialState();
     const job = getJobDef("job_express")!;
-    expect(mergedJobEffects(s, job).money).toBe(65); // none 档
+    const base = mergedJobEffects(s, job).money!;
+    expect(base).toBe(job.effects.money);
     s.flags["item_tricycle"] = true;
-    expect(mergedJobEffects(s, job).money).toBe(120); // tricycle 档
+    expect(mergedJobEffects(s, job).money).toBe(Math.round(base * 1.12));
+    expect(mergedJobEffects(s, job).money).toBeGreaterThan(base);
   });
 
   it("v1.215 修复：e_bike 跑快递拿 e_bike 档（不再错拿 tricycle 高档）", () => {
@@ -118,7 +138,7 @@ describe("载具与岗位联动", () => {
     const job = getJobDef("job_express")!;
     const tier = resolveTierForJob(s, job);
     expect(tier).toBe("e_bike");
-    expect(mergedJobEffects(s, job).money).toBe(105); // 原实现跳档到 tricycle 120（+33% 错档）
+    expect(mergedJobEffects(s, job).money).toBe(Math.round(job.effects.money! * 1.1));
   });
 
   it("持 car 跑外卖回退到 e_bike 档（防跳档）", () => {
@@ -127,28 +147,35 @@ describe("载具与岗位联动", () => {
     const job = getJobDef("job_delivery")!;
     const tier = resolveTierForJob(s, job);
     expect(tier).toBe("e_bike");
-    expect(mergedJobEffects(s, job).money).toBe(105);
+    expect(mergedJobEffects(s, job).money).toBe(Math.round(job.effects.money! * 1.1));
   });
 
-  it("网约车岗需 car + 驾驶本", () => {
+  it("网约车班次必须持驾驶证、有汽车并安装手机 App", () => {
     const s = createInitialState();
-    s.player.stats.intelligence = 40;
-    s.player.skills.driving = 1;
     const job = getJobDef("job_ride_hailing")!;
     const job2 = getJobDef("job_taxi")!;
     expect(job.requirements?.flag).toBe("item_car");
     expect(job2.requirements?.flag).toBe("item_car");
+    expect(checkJobRequirements(s, job).ok).toBe(false);
+    s.flags.item_car = true;
+    s.player.skills.driving = 1;
+    expect(checkJobRequirements(s, job)).toMatchObject({ ok: true, intern: false });
+    expect(checkJobRequirements(s, job2)).toMatchObject({ ok: true, intern: false });
+    delete s.flags.item_car;
+    expect(rideHailingParttime(s).reason).toContain("驾驶证");
+    s.flags.item_driving_license = true;
+    expect(rideHailingParttime(s).reason).toContain("汽车");
+    s.flags.item_car = true;
+    expect(rideHailingParttime(s).reason).toContain("安装网约车软件");
   });
 
-  it("网约车工资浮动区间 90-140", () => {
+  it("网约车不再使用劳务市场随机底薪", () => {
     const s = createInitialState(42);
-    s.flags["item_car"] = true;
-    s.player.skills.driving = 1;
+    s.player.skills.driving = 0;
     const job = getJobDef("job_ride_hailing")!;
     for (let i = 0; i < 20; i++) {
       const eff = settleJobEffects(s, job);
-      expect(eff.money).toBeGreaterThanOrEqual(90);
-      expect(eff.money).toBeLessThanOrEqual(140);
+      expect(eff.money).toBe(0);
     }
   });
 
@@ -156,8 +183,8 @@ describe("载具与岗位联动", () => {
     const s = createInitialState(42);
     const job = getJobDef("job_sales")!;
     const eff = settleJobEffects(s, job);
-    expect(eff.money).toBeGreaterThanOrEqual(60);
-    expect(eff.money).toBeLessThanOrEqual(110);
+    expect(eff.money).toBeGreaterThanOrEqual(120);
+    expect(eff.money).toBeLessThanOrEqual(145);
   });
 });
 
@@ -191,14 +218,16 @@ describe("新行动集成", () => {
     expect(s.living.nightly?.lodgingId).toBe("hotel");
   });
 
-  it("已有固定住处不能开房", () => {
+  it("已有固定住处也能开房并保留政府床位", () => {
     const s = createInitialState();
     applyFamily(s, "ordinary");
     s.time.hour = 12;
     s.player.money = 500;
     s.locationId = "hotel";
     const r = performAction(s, "stay_hotel");
-    expect(r.ok).toBe(false);
+    expect(r.ok).toBe(true);
+    expect(s.living.mode).toBe("gov");
+    expect(s.living.awayNight?.lodgingId).toBe("hotel");
   });
 
   it("住院中出门被拦截", () => {

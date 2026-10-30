@@ -1,17 +1,23 @@
 /**
- * v1.37 对决背景：按「场地 × 时间段」选择背景图（资源来自 docs/battle-bg-prompts.md 的 AI 成品图）。
+ * v1.498 对决背景：现代街巷、公园及游乐场，按「场地 × 时间段」选择。
  *
  * 场地映射（由 locationId 决定）：
  * - park / lake_park      → 公园草地
- * - amusement_park / market_fair → 游乐场擂台
+ * - amusement_park / market_fair → 游乐场活动广场
  * - street（及其他未知）  → 街角巷口
- * - Boss（roundhead）     → 耄耋之王王座（不分时段）
+ * - Boss（roundhead）     → 现代猫咪赛事场馆（不分时段）
  * 时间段：6:00-17:00 白天 / 17:00-20:00 黄昏 / 20:00-6:00 夜晚。
  */
 
 export type BattleBgKey = "alley" | "park" | "arena" | "boss";
 
-const BG_MODULES = import.meta.glob<string>("../assets/bg/battle/*.png", {
+const BG_MODULES = import.meta.glob<string>("../assets/bg/battle/*.jpg", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+const CITY_BG_MODULES = import.meta.glob<string>("../assets/bg/battle/duel-1498/*.png", {
   eager: true,
   query: "?url",
   import: "default",
@@ -21,12 +27,12 @@ function indexBg(mods: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [path, url] of Object.entries(mods)) {
     const file = path.split("/").pop() ?? "";
-    out[file.replace(/\.png$/, "")] = url;
+    out[file.replace(/\.(?:jpg|png)$/, "")] = url;
   }
   return out;
 }
 
-const BG_ART = indexBg(BG_MODULES);
+const BG_ART = {...indexBg(BG_MODULES), ...indexBg(CITY_BG_MODULES)};
 
 /** 场地 → 背景 key（Boss 优先） */
 export function battleBgKeyFor(locationId: string, isBoss: boolean): BattleBgKey {

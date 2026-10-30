@@ -7,6 +7,7 @@
 import type { GameState, Investment } from "../types";
 import investData from "../data/invest.json";
 import { pushLog } from "../engine";
+import { recordMoney } from "./weekly";
 import { nextRandom } from "../rng";
 import { daysSurvived } from "./difficulty";
 
@@ -52,8 +53,11 @@ export function buyInvestment(
     return { ok: false, reason: `现金不足（需 ${rounded} 元）` };
   }
   state.player.money -= rounded;
-  // v0.992 修复：id 用持久化的自增序号（economy.nextInvSeq），杜绝「组合长度派生」在同日卖出再买入时复用 id 卖错单
-  const seq = state.economy.nextInvSeq ?? state.economy.investments.length + 1;
+  recordMoney(state, -rounded); // 周记：投资买入计入支出
+  // v0.992 修复：id 用持久化的自增序号（economy.nextInvSeq），杜绝「组合长度派生」在同日卖出再买入时复用 id 卖错单。
+  // 兜底同样扫描现有持仓 id 取最大序号：length+1 在有过卖出记录的档里会撞号。
+  const maxSeq = state.economy.investments.reduce((m, i) => Math.max(m, Number(String(i.id).split("_").pop()) || 0), 0);
+  const seq = state.economy.nextInvSeq ?? maxSeq + 1;
   const inv: Investment = {
     id: `inv_${state.time.year}-${state.time.month}-${state.time.day}_${seq}`,
     productId,
@@ -74,6 +78,7 @@ export function sellInvestment(state: GameState, id: string): { ok: boolean; rea
   const [inv] = state.economy.investments.splice(idx, 1);
   const prod = PROD_MAP.get(inv.productId);
   state.player.money += inv.value;
+  recordMoney(state, inv.value); // 周记：赎回变现计入收入
   const gain = inv.value - inv.principal;
   const pnl = gain >= 0 ? `赚了 +${gain} 元` : `亏了 ${gain} 元`;
   pushLog(state, "💰", `赎回${prod?.name ?? "投资"}，拿回 ${inv.value} 元（${pnl}）`);
@@ -82,20 +87,33 @@ export function sellInvestment(state: GameState, id: string): { ok: boolean; rea
 
 /**
  * 每月结算：每笔投资按产品期望收益率 ± 波动（rng）调整市值。
- * 存款波动为 0 → 固定正息；基金/股票用两次 rng 近似正态扰动。
- * 市值保底 1 元，避免归零。
+ * 存款波动为 0 → 固定正息；基金/股票引入真实风险：
+ *  - 月度收益围绕 expectedRate 对称波动（用现有 rng，读档可复现）；
+ *  - 允许负收益（本金可缩水），不再 Math.max(1,...) 保底成「永不亏」；
+ *  - 单月最大涨幅上限 +15%、单月最大跌幅下限 -12%，防止极端值把本金一次打穿；
+ *  - 仍保底市值 ≥1 元（本金不为负，避免归零后无法继续结算）。
  */
 export function settleInvestments(state: GameState): void {
   if (state.economy.investments.length === 0) return;
   let totalDelta = 0;
+  // 上限略高于股票当前声明的最大原始收益（2% + 12% = 14%），
+  // 这样安全阀仍在，但不会把产品期望收益的上尾系统性截掉。
+  const CAP_UP = 0.15; // 单月最大涨幅 +15%
+  const CAP_DOWN = -0.12; // 单月最大跌幅 -12%
   for (const inv of state.economy.investments) {
     const prod = PROD_MAP.get(inv.productId);
     if (!prod) continue;
-    let rate = prod.expectedRate;
-    if (prod.volatility > 0) {
-      const noise = (nextRandom(state.rng) + nextRandom(state.rng) - 1) * prod.volatility * 2;
-      rate += noise;
+    const heldFraction = Math.max(0, Math.min(1, (daysSurvived(state) - (inv.boughtDay ?? daysSurvived(state))) / 30));
+    let rate: number;
+    if (prod.volatility === 0) {
+      rate = prod.expectedRate; // 存款固定正息
+    } else {
+      const u = nextRandom(state.rng); // [0,1) 均匀，读档可复现
+      rate = prod.expectedRate + prod.volatility * (2 * u - 1);
+      if (rate > CAP_UP) rate = CAP_UP;
+      if (rate < CAP_DOWN) rate = CAP_DOWN;
     }
+    rate *= heldFraction;
     const newVal = Math.max(1, Math.round(inv.value * (1 + rate)));
     totalDelta += newVal - inv.value;
     inv.value = newVal;

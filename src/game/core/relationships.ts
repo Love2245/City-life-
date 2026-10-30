@@ -6,7 +6,8 @@
 import type { GameState, Relationship, RelationState } from "../types";
 import { gameDay } from "./calendar";
 import { getNpcDef, npcNick, allNpcs } from "./npcs";
-import { recordInteraction } from "./weekly";
+import { recordInteraction, recordMoney } from "./weekly";
+import { nextLogSequence } from "./logSequence";
 
 const AFFINITY_MIN = 0;
 const AFFINITY_MAX = 100;
@@ -97,6 +98,7 @@ export function addAffinity(
   // v1.01：好感变化后检查「熟人介绍」链路（如陈姐 → 王磊）
   for (const text of maybeIntroduceNpc(state)) {
     state.log.push({
+      sequence: nextLogSequence(state),
       day: state.time.day,
       period: periodOf(state.time.hour),
       hour: state.time.hour,
@@ -168,15 +170,14 @@ export function relationshipPerk(state: GameState, npcId: string): string | unde
   return npcPerkOf(state, npcId);
 }
 
-/** 可借款：已是朋友、具备 borrow 特权、无在途借款、未被拉黑 */
+/** 可借款：达到朋友及以上、具备 borrow 特权、无在途借款、未被拉黑 */
 export function canBorrow(state: GameState, npcId: string): boolean {
   const rel = findRelationship(state, npcId);
-  const def = getNpcDef(npcId);
   if (!rel || rel.state === "blocked") return false;
-  // v1.215 修复（P1-4）：用「当前好感推导的层级」判定——原 rel.state 在淡漠后残留 friend，
-  // 导致淡漠中的"朋友"仍能借钱、够格的同事（affinity 达标但 state 未同步）反而借不了。
-  if (currentState(rel) !== "friend") return false;
-  if (def?.perks?.["friend"] !== "borrow") return false;
+  // v1.43：挚友/恋人沿用朋友档 borrow 特权；特权本身负责向下回退到朋友档。
+  const level = currentState(rel);
+  if (level !== "friend" && level !== "close_friend" && level !== "lover") return false;
+  if (npcPerkOf(state, npcId) !== "borrow") return false;
   if (state.romance.loanNpc) return false;
   return true;
 }
@@ -207,7 +208,8 @@ export function tickRomance(state: GameState): string[] {
     if (rel.lastInteractionDay === undefined) continue;
     if (today - rel.lastInteractionDay > 14) {
       rel.affinity = 30;
-      logs.push(`与${npcNick(rel.npcId)}渐行渐远，感情冷却到 30`);
+      rel.state = relationLevel(rel.affinity);
+      logs.push(`与${npcNick(rel.npcId)}渐行渐远，关系降为${STATE_LABEL[rel.state]}（好感 30）`);
     }
   }
   return logs;
@@ -217,30 +219,65 @@ export function tickRomance(state: GameState): string[] {
 export function tickColleagueAffinity(state: GameState): string[] {
   const logs: string[] = [];
   if (!state.flags["employed"]) return logs;
+  const today = gameDay(state.time);
+  if (state.flags["colleagueAffinityDay"] === today) return logs;
+  let changed = 0;
   for (const rel of state.relationships) {
     const def = getNpcDef(rel.npcId);
     if (def?.type !== "colleague") continue;
     if (rel.state === "blocked") continue;
     const before = rel.affinity;
     rel.affinity = clampAffinity(before + 1);
-    logs.push(`和同事${npcNick(rel.npcId)}相处多了些默契（好感 ${before}→${rel.affinity}）`);
+    changed += 1;
+  }
+  if (changed > 0) {
+    state.flags["colleagueAffinityDay"] = today;
+    logs.push(`和 ${changed} 位同事相处多了些默契`);
   }
   return logs;
 }
 
-// 8.6.4.4) 借款逾期：欠款超 30 天未还 → 好感 -30 并拉黑
+// 8.6.4.4) 借款逾期：欠款超 30 天未还 → 先自动追回，追不回才拉黑
 export function tickLoans(state: GameState): string[] {
   const logs: string[] = [];
   const today = gameDay(state.time);
+  state.player.debt = Number.isFinite(state.player.debt) && state.player.debt > 0 ? state.player.debt : 0;
+
+  // 先追扣上次逾期留下的余额。只扣当前现金，不把玩家再次推成负数；
+  // 后续有收入时会继续偿还，直到 debt 清零。
+  if (state.player.debt > 0 && state.player.money > 0) {
+    const payment = Math.min(state.player.debt, state.player.money);
+    state.player.money -= payment;
+    state.player.debt -= payment;
+    recordMoney(state, -payment);
+    logs.push(`逾期借款追扣了 ${payment} 元，剩余欠款 ${state.player.debt} 元`);
+  }
+
   for (const rel of state.relationships) {
     if (!rel.loan) continue;
     if (today - rel.loan.since > 30) {
+      const owed = rel.loan.amount;
       const before = rel.affinity;
-      rel.affinity = clampAffinity(before - 30);
-      rel.state = "blocked";
+      const cash = Math.max(0, state.player.money);
+      const payment = Math.min(owed, cash);
+      if (payment > 0) {
+        state.player.money -= payment;
+        recordMoney(state, -payment);
+      }
+      const remaining = owed - payment;
+      state.player.debt += remaining;
       rel.loan = undefined;
       if (state.romance.loanNpc === rel.npcId) state.romance.loanNpc = undefined;
-      logs.push(`${npcNick(rel.npcId)}因久催不还拉黑了你（好感 ${before}→${rel.affinity}）`);
+      // 逾期不等于「不用还了」：先扣现有现金，剩余部分挂入 debt，
+      // 让后续收入继续被追扣，并保留关系惩罚。
+      if (remaining <= 0) {
+        rel.affinity = clampAffinity(before - 10);
+        logs.push(`欠${npcNick(rel.npcId)}的 ${owed} 元逾期已从现金中扣回，好感 ${before}→${rel.affinity}`);
+      } else {
+        rel.affinity = clampAffinity(before - 30);
+        rel.state = "blocked";
+        logs.push(`${npcNick(rel.npcId)}因久催不还拉黑了你（已扣 ${payment} 元，剩余欠款 ${remaining} 元，好感 ${before}→${rel.affinity}）`);
+      }
     }
   }
   return logs;

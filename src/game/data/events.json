@@ -674,7 +674,7 @@
           "gamble": {
             "cost": 0,
             "win": 50,
-            "lose": -50,
+            "lose": 0,
             "winChance": 0.3
           },
           "effects": {
@@ -1008,6 +1008,7 @@
           "autumn"
         ]
       },
+      "cooldown": 10,
       "choices": [
         {
           "label": "捡起来收好",
@@ -1073,6 +1074,7 @@
           "national_day"
         ]
       },
+      "once": true,
       "choices": [
         {
           "label": "去兼职赚一笔",
@@ -1125,14 +1127,12 @@
       "title": "人行道上的钱包",
       "icon": "👛",
       "text": "路过街角时，你脚边躺着一个鼓鼓的钱包，四下无人，只有监控探头闪着红点。",
-      "weight": 8,
+      "weight": 4,
       "tone": "neutral",
       "conditions": {
-        "region": [
-          "downtown",
-          "suburb"
-        ]
+        "locationIn": ["street", "park", "lake_park", "market", "flower_market", "snack_street", "labor_market", "convenience_store", "suburb_bus_station", "bus_station", "high_speed_rail", "amusement_park"]
       },
+      "cooldown": 45,
       "choices": [
         {
           "label": "原地等失主 / 交给派出所",
@@ -1169,6 +1169,13 @@
       "weight": 9,
       "tone": "positive",
       "conditions": {
+        "locationIn": [
+          "high_speed_rail"
+        ],
+        "period": [
+          "evening",
+          "night"
+        ],
         "region": [
           "downtown"
         ]
@@ -1250,7 +1257,8 @@
           "park",
           "street",
           "home"
-        ]
+        ],
+        "hasPet": false
       },
       "choices": [
         {
@@ -1363,13 +1371,15 @@
       "title": "马拉松封路",
       "icon": "🏃",
       "text": "城市马拉松开跑，主干道全线封闭，警车开道，人群沸腾。你要去的地方得绕好大一圈。",
-      "weight": 6,
+      "weight": 4,
       "tone": "neutral",
       "conditions": {
         "period": [
-          "morning"
-        ]
+                "morning"
+        ],
+        "locationIn": ["street", "park", "lake_park", "market", "flower_market", "snack_street", "labor_market", "convenience_store", "suburb_bus_station", "bus_station", "high_speed_rail", "amusement_park"]
       },
+      "cooldown": 14,
       "choices": [
         {
           "label": "绕路走小街（多花些时间）",
@@ -1544,11 +1554,13 @@
       "title": "周末临时工",
       "icon": "💪",
       "text": "有商家在门口贴出周末临时工招聘，一小时一结，干不干？",
-      "weight": 11,
+      "weight": 6,
       "conditions": {
         "weekend": true,
-        "minMoney": 1
+        "minMoney": 1,
+        "locationIn": ["street", "market", "snack_street", "labor_market", "convenience_store", "logistics_center", "electronics_factory", "farm", "pasture", "orchard", "high_speed_rail", "bus_station"]
       },
+      "cooldown": 7,
       "choices": [
         {
           "label": "干！赚点外快（-15 体力）",
@@ -2394,6 +2406,428 @@
       ],
       "cooldown": 6,
       "sound": "coin"
+    },
+    {
+      "id": "ev_eternal_rent_surge",
+      "title": "永恒账单",
+      "icon": "♾️",
+      "text": "永恒模式的城市不会停下来等你。房东发来通知：本周公共服务费上涨，但也有人愿意用劳动换折扣。",
+      "weight": 6,
+      "tone": "neutral",
+      "mode": "eternal",
+      "conditions": { "locationIn": ["home", "street", "labor_company"] },
+      "cooldown": 7,
+      "choices": [
+        {
+          "label": "接一份紧急短班",
+          "requires": { "attr": { "stamina": 25 } },
+          "effects": { "money": 80, "stamina": -20, "stress": 5, "flags": { "eternal_bill_worked": true }, "log": "你接下紧急短班，靠劳动抵消了额外开支" },
+          "outcome": "账单压力暂时缓解，但你也少了一段休息时间。"
+        },
+        {
+          "label": "先付费保住服务",
+          "requires": { "money": 60 },
+          "effects": { "money": -60, "mood": 3, "log": "你先把公共服务费付清，换来一周的安稳" },
+          "outcome": "钱变少了，生活却没有立刻失控。"
+        }
+      ],
+      "sound": "coin"
+    },
+    {
+      "id": "ev_eternal_route_offer",
+      "title": "远方的临时合同",
+      "icon": "🚉",
+      "text": "车站传来一份只在永恒模式出现的短期合同：报酬不错，但需要你在两天内完成往返。",
+      "weight": 5,
+      "tone": "positive",
+      "mode": "eternal",
+      "conditions": { "notFlag": "eternal_route_taken" },
+      "once": true,
+      "choices": [
+        {
+          "label": "接下合同",
+          "requires": { "money": 20, "attr": { "stamina": 35 } },
+          "effects": { "money": 180, "fame": 2, "flags": { "eternal_route_taken": true }, "log": "你完成了车站短期合同，带着报酬回到城市" },
+          "outcome": "永恒模式的机会更稀缺，也更值得准备。"
+        },
+        {
+          "label": "把机会留给别人",
+          "effects": { "mood": 2, "flags": { "eternal_route_taken": true }, "log": "你暂时放弃了远方合同，先稳住眼前生活" },
+          "outcome": "不是每个机会都要现在抓住，能做选择也是一种能力。"
+        }
+      ],
+      "sound": "success"
+    },
+    {
+      "id": "ev_eternal_cat_challenge",
+      "title": "永恒赛季邀请",
+      "icon": "🐾",
+      "text": "喵喵对决的永恒赛季开放了特别场：对手更强，奖励也更稳定。",
+      "weight": 4,
+      "tone": "positive",
+      "mode": "eternal",
+      "conditions": { "hasActivePet": true },
+      "cooldown": 14,
+      "choices": [
+        {
+          "label": "报名训练赛",
+          "requires": { "attr": { "stamina": 20 } },
+          "effects": { "stamina": -15, "mood": 8, "fame": 1, "flags": { "eternal_cat_season": true }, "log": "你带猫咪参加永恒赛季训练赛，默契提升了" },
+          "catEffect": { "mood": 8 },
+          "outcome": "强敌让猫咪更专注，你们的配合出现了新的可能。"
+        },
+        {
+          "label": "先观察赛况",
+          "effects": { "mood": 3, "log": "你在场边观察永恒赛季的对手套路" },
+          "outcome": "把情报带回家，也是一种准备。"
+        }
+      ],
+      "sound": "game"
+    },
+    {
+      "id": "ev_v141_station_delay",
+      "title": "站台临时调整",
+      "icon": "🚉",
+      "text": "广播突然通知站台调整，赶车的人群在老城车站里重新排起了队。",
+      "weight": 7,
+      "tone": "neutral",
+      "sound": "walk",
+      "conditions": { "locationIn": ["high_speed_rail", "bus_station"], "hourRange": { "start": 6, "end": 23 } },
+      "cooldown": 4,
+      "choices": [
+        { "label": "跟着工作人员重新排队", "effects": { "mood": 1, "log": "你按新的指引排好队，没有耽误行程。" }, "outcome": "车站的秩序慢慢恢复了。" },
+        { "label": "先坐下来等通知", "effects": { "hours": 0.5, "stress": -1, "log": "你耐心等了半小时，广播终于恢复正常。" }, "outcome": "有时慢一点，反而不容易走错。" }
+      ]
+    },
+    {
+      "id": "ev_v141_station_lost_item",
+      "title": "座椅下的车票夹",
+      "icon": "🎫",
+      "text": "你在候车椅下发现一个车票夹，里面有几张还没过期的票和一张写着联系电话的便签。",
+      "weight": 6,
+      "tone": "neutral",
+      "sound": "success",
+      "conditions": { "locationIn": ["high_speed_rail", "bus_station"] },
+      "cooldown": 5,
+      "choices": [
+        { "label": "交给失物招领", "effects": { "mood": 3, "fame": 1, "log": "你把车票夹交给了站务人员。" }, "outcome": "失物被登记了，失主或许很快就能找回来。" },
+        { "label": "按便签联系失主", "effects": { "stress": 1, "mood": 2, "log": "你拨通便签上的号码，约好把车票夹交还。" }, "outcome": "对方连声道谢，车站里多了一件顺利解决的小事。" }
+      ]
+    },
+    {
+      "id": "ev_v141_station_busker",
+      "title": "候车厅的小演奏",
+      "icon": "🎸",
+      "text": "候车厅角落有人抱着旧吉他演奏，匆忙的人群里慢慢停下了几双脚。",
+      "weight": 5,
+      "tone": "positive",
+      "sound": "read",
+      "conditions": { "locationIn": ["high_speed_rail", "bus_station"], "period": ["afternoon", "evening"] },
+      "cooldown": 6,
+      "choices": [
+        { "label": "留下来听一首", "effects": { "mood": 5, "stress": -3, "log": "你在候车厅听完了一首歌。" }, "outcome": "短短几分钟的音乐，让等车不再只是等待。" },
+        { "label": "投一点零钱", "effects": { "money": -5, "fame": 1, "mood": 3, "log": "你投了几枚硬币，演奏者向你点头致意。" }, "outcome": "城市里总有人用自己的方式把日子唱下去。" }
+      ]
+    },
+    {
+      "id": "ev_v141_station_last_departure",
+      "title": "末班车提醒",
+      "icon": "⏰",
+      "text": "站务员提醒你，今天的末班车快要发出，下一趟要等到明天。",
+      "weight": 6,
+      "tone": "neutral",
+      "sound": "error",
+      "conditions": { "locationIn": ["high_speed_rail", "bus_station"], "hourRange": { "start": 18, "end": 23 } },
+      "cooldown": 3,
+      "choices": [
+        { "label": "马上去看班次", "effects": { "stress": -1, "log": "你赶在末班车前重新确认了班次。" }, "outcome": "出发前多看一眼，免得在站台上干等。" },
+        { "label": "今天不赶了", "effects": { "mood": 2, "stress": -2, "log": "你决定不为一趟车打乱今晚的安排。" }, "outcome": "行程可以改期，心情也不必跟着误点。" }
+      ]
+    },
+    {
+      "id": "ev_v141_market_bargain",
+      "title": "周末花篮议价",
+      "icon": "🌷",
+      "text": "周末花市的人流渐渐多起来，一位摊主正在给整篮鲜花寻找合适的买家。",
+      "weight": 7,
+      "tone": "positive",
+      "sound": "coin",
+      "conditions": { "locationId": "flower_market", "weekend": true, "hourRange": { "start": 8, "end": 21 } },
+      "cooldown": 4,
+      "choices": [
+        { "label": "帮忙招呼顾客", "effects": { "mood": 3, "skills": { "service": 1 }, "log": "你帮摊主招呼了几位顾客，花篮很快卖了出去。" }, "outcome": "花香和吆喝声混在一起，周末的市场热闹起来。" },
+        { "label": "买一小束带回家", "requires": { "money": 25 }, "effects": { "money": -25, "mood": 6, "log": "你买了一小束鲜花，准备带回家摆起来。" }, "outcome": "一点颜色就能让普通房间显得不一样。" }
+      ]
+    },
+    {
+      "id": "ev_v141_market_stray_bird",
+      "title": "迷路的小鸟",
+      "icon": "🐦",
+      "text": "花市角落里有只受惊的小鸟撞进了遮雨棚，摊主们暂时找不到它的主人。",
+      "weight": 5,
+      "tone": "neutral",
+      "sound": "success",
+      "conditions": { "locationId": "flower_market", "weekend": true },
+      "cooldown": 7,
+      "choices": [
+        { "label": "帮忙安置并贴寻鸟启事", "effects": { "mood": 4, "fame": 1, "log": "你和摊主一起给小鸟准备了水，并贴出寻鸟启事。" }, "outcome": "市场里的人都多留了一份心。" },
+        { "label": "请宠物医院先检查", "effects": { "money": -10, "mood": 2, "log": "你请宠物医院先检查小鸟有没有受伤。" }, "outcome": "小鸟没有大碍，等找到主人就能回家。" }
+      ]
+    },
+    {
+      "id": "ev_v141_market_fish_tank",
+      "title": "金鱼缸的水草",
+      "icon": "🐠",
+      "text": "金鱼摊位前有人为水草怎么摆放争论起来，老板请你一起看看哪种更适合小缸。",
+      "weight": 5,
+      "tone": "positive",
+      "sound": "eat",
+      "conditions": { "locationId": "flower_market", "weekend": true, "period": ["morning", "afternoon"] },
+      "cooldown": 5,
+      "choices": [
+        { "label": "选容易打理的水草", "effects": { "mood": 3, "intelligence": 1, "log": "你建议先选耐活、不会遮住鱼缸的水草。" }, "outcome": "小缸也能有一块清爽的水下风景。" },
+        { "label": "选颜色最鲜艳的", "effects": { "mood": 4, "log": "你挑了颜色亮眼的水草，鱼缸立刻活泼了不少。" }, "outcome": "好看也是一种让人愿意认真照料的理由。" }
+      ]
+    },
+    {
+      "id": "ev_v141_market_hospital_delivery",
+      "title": "宠物医院的急件",
+      "icon": "🩺",
+      "text": "宠物医院要把一箱常用耗材送到市场另一头，值班人员一时走不开。",
+      "weight": 5,
+      "tone": "neutral",
+      "sound": "success",
+      "conditions": { "locationId": "flower_market", "hourRange": { "start": 9, "end": 17 } },
+      "cooldown": 5,
+      "choices": [
+        { "label": "顺手帮忙送过去", "effects": { "mood": 2, "skills": { "service": 1 }, "log": "你把急件稳稳送到了宠物医院。" }, "outcome": "小小的帮忙，让当天的接诊安排没有被打乱。" },
+        { "label": "先问清楚再决定", "effects": { "intelligence": 1, "log": "你先确认了物品和收件位置，再把路线记下来。" }, "outcome": "把事情问明白，也是可靠的一部分。" }
+      ]
+    },
+    {
+      "id": "ev_v141_snack_queue",
+      "title": "小吃街排长队",
+      "icon": "🍜",
+      "text": "招牌摊位前排起了长队，后面的人开始着急，摊主忙得顾不上解释。",
+      "weight": 7,
+      "tone": "neutral",
+      "sound": "walk",
+      "conditions": { "locationId": "snack_street", "hourRange": { "start": 11, "end": 21 } },
+      "cooldown": 4,
+      "choices": [
+        { "label": "帮忙维持队伍", "effects": { "mood": 2, "skills": { "service": 1 }, "log": "你帮摊主把队伍重新排好，顾客没再互相挤。" }, "outcome": "街边生意最怕乱，顺一顺就都舒服了。" },
+        { "label": "换一家小摊", "effects": { "mood": 3, "log": "你绕到旁边的小摊，发现那里也有不少好吃的。" }, "outcome": "不必所有人都挤在同一个招牌下面。" }
+      ]
+    },
+    {
+      "id": "ev_v141_snack_rain",
+      "title": "雨棚下的热气",
+      "icon": "🌧️",
+      "text": "一阵雨突然落下来，几个摊主把桌子往雨棚里收，热气和雨声混成一片。",
+      "weight": 6,
+      "tone": "neutral",
+      "sound": "rain",
+      "conditions": { "locationId": "snack_street", "weather": ["rain", "coldwave"] },
+      "cooldown": 4,
+      "choices": [
+        { "label": "帮摊主收桌椅", "effects": { "stamina": -3, "mood": 3, "log": "你帮忙把桌椅收进雨棚，给客人留出一条通道。" }, "outcome": "雨天的摊位更拥挤，但人情味也更近。" },
+        { "label": "买份热食避雨", "requires": { "money": 8 }, "effects": { "money": -8, "satiety": 12, "mood": 5, "log": "你买了份热食，坐在雨棚边听雨。" }, "outcome": "一口热气下肚，湿冷的天气也没那么难熬。" }
+      ]
+    },
+    {
+      "id": "ev_v141_snack_recipe",
+      "title": "摊主的试味勺",
+      "icon": "🥄",
+      "text": "一位摊主在试新酱料，邀请路人尝一口并说说味道是否适合做招牌。",
+      "weight": 5,
+      "tone": "positive",
+      "sound": "eat",
+      "conditions": { "locationId": "snack_street", "period": ["afternoon", "evening"] },
+      "cooldown": 6,
+      "choices": [
+        { "label": "认真说说层次", "effects": { "mood": 3, "skills": { "cooking": 1 }, "log": "你说了咸淡和香味的变化，摊主认真记了下来。" }, "outcome": "一道招牌往往就是这样一点点试出来的。" },
+        { "label": "只说自己喜欢", "effects": { "mood": 2, "charm": 1, "log": "你坦率地说了自己喜欢的口味。" }, "outcome": "每个人的舌头，都能给配方带来一点方向。" }
+      ]
+    },
+    {
+      "id": "ev_v141_school_workbook",
+      "title": "走廊里的错题本",
+      "icon": "📘",
+      "text": "学校走廊里落下一本错题本，里面密密麻麻写着孩子准备考试时的思路。",
+      "weight": 6,
+      "tone": "neutral",
+      "sound": "read",
+      "conditions": { "locationId": "school", "hourRange": { "start": 8, "end": 18 } },
+      "cooldown": 5,
+      "choices": [
+        { "label": "交给辅导老师", "effects": { "mood": 2, "fame": 1, "log": "你把错题本交给了辅导老师。" }, "outcome": "老师很快找到了本子的主人。" },
+        { "label": "在门卫处登记", "effects": { "intelligence": 1, "log": "你按学校流程把错题本登记在门卫处。" }, "outcome": "规矩不复杂，但能让东西更快回到主人手里。" }
+      ]
+    },
+    {
+      "id": "ev_v141_school_pickup",
+      "title": "放学后的等候区",
+      "icon": "🎒",
+      "text": "放学铃响后，等候区里还有几个孩子没有等到家长，老师需要有人帮忙维持秩序。",
+      "weight": 5,
+      "tone": "neutral",
+      "sound": "success",
+      "conditions": { "locationId": "school", "period": ["afternoon", "evening"] },
+      "cooldown": 6,
+      "choices": [
+        { "label": "陪他们做安静的游戏", "effects": { "stamina": -3, "mood": 3, "skills": { "service": 1 }, "log": "你陪孩子们做了会儿安静的游戏，等候区不再嘈杂。" }, "outcome": "等待家长的时间，也可以变得有秩序。" },
+        { "label": "帮老师登记接送信息", "effects": { "intelligence": 1, "skills": { "operation": 1 }, "log": "你帮老师把接送信息逐一核对清楚。" }, "outcome": "名单清楚了，老师也能放心不少。" }
+      ]
+    },
+    {
+      "id": "ev_v141_suburb_storm",
+      "title": "边缘车站的风雨",
+      "icon": "🌬️",
+      "text": "紫羊区边缘的风比城里更急，站牌旁的临时遮雨布被吹得啪啪作响。",
+      "weight": 6,
+      "tone": "negative",
+      "sound": "rain",
+      "conditions": { "locationIn": ["suburb_bus_station", "suburb_train_station"], "weather": ["rain", "coldwave"] },
+      "cooldown": 5,
+      "choices": [
+        { "label": "帮忙固定遮雨布", "requires": { "attr": { "stamina": 15 } }, "effects": { "stamina": -5, "mood": 2, "log": "你和工作人员一起把遮雨布重新固定好。" }, "outcome": "站台暂时稳住了，等车的人都能避开风雨。" },
+        { "label": "先去室内避一避", "effects": { "stress": -2, "log": "你先走进候车室，等风雨小一些再出发。" }, "outcome": "乡间天气变化快，留一点余地总没错。" }
+      ]
+    },
+    {
+      "id": "ev_v141_suburb_transfer",
+      "title": "两种方向的站牌",
+      "icon": "🪧",
+      "text": "同一块站牌上贴着进城巴士和乡间班车的时刻，第一次来的人很容易看混。",
+      "weight": 6,
+      "tone": "neutral",
+      "sound": "walk",
+      "conditions": { "locationIn": ["suburb_bus_station", "suburb_train_station"], "hourRange": { "start": 6, "end": 22 } },
+      "cooldown": 4,
+      "choices": [
+        { "label": "帮忙重新标注方向", "effects": { "intelligence": 1, "fame": 1, "log": "你和工作人员把两个方向的站牌重新标清楚。" }, "outcome": "清楚的箭头，能省下许多来回走错的时间。" },
+        { "label": "拍照留给自己看", "effects": { "mood": 1, "log": "你把站牌拍下来，准备下次出行时对照。" }, "outcome": "先把自己的路线理清，也是一种帮忙。" }
+      ]
+    },
+    {
+      "id": "ev_v141_suburb_machine",
+      "title": "站台售票机卡住了",
+      "icon": "🎟️",
+      "text": "紫羊区车站的自助售票机卡在确认页面，后面排队的人开始向工作人员招手。",
+      "weight": 5,
+      "tone": "neutral",
+      "sound": "error",
+      "conditions": { "locationId": "suburb_train_station", "hourRange": { "start": 6, "end": 21 } },
+      "cooldown": 6,
+      "choices": [
+        { "label": "帮忙疏导到人工窗口", "effects": { "mood": 2, "skills": { "service": 1 }, "log": "你把排队的人引到人工窗口，售票没有完全停摆。" }, "outcome": "机器会坏，但人可以先把事情接住。" },
+        { "label": "提醒大家先确认余额", "effects": { "intelligence": 1, "log": "你提醒后面的人先准备好零钱和证件。" }, "outcome": "提前准备能让人工窗口快不少。" }
+      ]
+    },
+    {
+      "id": "ev_v141_rural_loading",
+      "title": "进城前的装车",
+      "icon": "📦",
+      "text": "农村地带一批刚采摘的蔬菜准备进城，农户们正为如何装车不压坏发愁。",
+      "weight": 7,
+      "tone": "positive",
+      "sound": "success",
+      "conditions": { "locationIn": ["farm", "pasture", "orchard"], "hourRange": { "start": 7, "end": 18 } },
+      "cooldown": 5,
+      "choices": [
+        { "label": "帮忙按轻重分层", "requires": { "attr": { "stamina": 15 } }, "effects": { "stamina": -5, "mood": 3, "skills": { "operation": 1 }, "log": "你帮忙把蔬菜按轻重和耐压程度分层装好。" }, "outcome": "货物码得稳，进城路上就少一分损耗。" },
+        { "label": "帮忙核对清单", "effects": { "intelligence": 1, "mood": 2, "log": "你把筐数和清单逐一对上。" }, "outcome": "清晨的田埂上，账目也可以做得很清楚。" }
+      ]
+    },
+    {
+      "id": "ev_v141_rural_dog",
+      "title": "田埂边的看门狗",
+      "icon": "🐕",
+      "text": "一只看门狗隔着篱笆冲你叫了几声，农户赶来解释它其实只是对陌生脚步比较警惕。",
+      "weight": 5,
+      "tone": "neutral",
+      "sound": "walk",
+      "conditions": { "locationIn": ["farm", "pasture", "orchard"], "hourRange": { "start": 7, "end": 19 } },
+      "cooldown": 7,
+      "choices": [
+        { "label": "站远一点慢慢安抚", "effects": { "mood": 3, "skills": { "service": 1 }, "log": "你站在篱笆外，让狗先熟悉你的气味和声音。" }, "outcome": "它不再吠叫，只是歪着头看你。" },
+        { "label": "请农户带它回去", "effects": { "stress": -1, "log": "你请农户先把狗牵回屋旁，自己绕开篱笆。" }, "outcome": "保持距离，反而让彼此都安心。" }
+      ]
+    },
+    {
+      "id": "ev_rural_workwear_gift",
+      "title": "陈叔留给你的工装",
+      "icon": "🌾",
+      "text": "陈叔看你已经在农场、牧场和果园来回帮过几次忙，指了指棚里一套洗干净的耐脏工装：干活总穿自己的衣服也不是个事，这套你拿去穿。",
+      "weight": 1,
+      "tone": "positive",
+      "sound": "success",
+      "once": true,
+      "conditions": { "flag": "rural_workwear_event_ready" },
+      "choices": [
+        {
+          "label": "接过来，回去试试",
+          "effects": { "mood": 4, "cureFlags": ["rural_workwear_event_ready"], "log": "陈叔送了你一套农务工装，已经放进衣柜。" },
+          "items": { "farm_workwear": 1 },
+          "outcome": "布料结实，袖口也留了活动余量，确实是干活时穿的样子。"
+        },
+        {
+          "label": "请陈叔帮你留一套合身的",
+          "effects": { "mood": 3, "cureFlags": ["rural_workwear_event_ready"], "log": "陈叔把合身的农务工装交给你，已经放进衣柜。" },
+          "items": { "farm_workwear": 1 },
+          "outcome": "陈叔量了量你的肩宽，递来的工装穿起来正合适。"
+        }
+      ]
+    },
+    {
+      "id": "ev_service_apron_gift",
+      "title": "熟手才有的围裙",
+      "icon": "☕",
+      "text": "你在餐饮岗位上忙过几轮后，店里把一条干净的服务围裙叠好递给你：已经知道怎么在高峰期照顾客人了，别总借备用的。",
+      "weight": 1,
+      "tone": "positive",
+      "sound": "success",
+      "once": true,
+      "conditions": { "flag": "service_apron_event_ready" },
+      "choices": [
+        {
+          "label": "收下围裙",
+          "effects": { "mood": 3, "cureFlags": ["service_apron_event_ready"], "log": "你收到了一条服务围裙，已经放进衣柜。" },
+          "items": { "service_apron": 1 },
+          "outcome": "围裙上还留着淡淡的咖啡香，穿上它就知道今天又要忙起来了。"
+        },
+        {
+          "label": "谢谢，我会好好用",
+          "effects": { "charm": 1, "cureFlags": ["service_apron_event_ready"], "log": "你收到了一条服务围裙，已经放进衣柜。" },
+          "items": { "service_apron": 1 },
+          "outcome": "一件合身的工作服，是别人把你当作熟手的证明。"
+        }
+      ]
+    },
+    {
+      "id": "ev_delivery_vest_gift",
+      "title": "物流中心的配送马甲",
+      "icon": "📦",
+      "text": "物流中心的领班看你已经扛过几轮分拣和装卸，从柜子里拿出一件轻便马甲：反光条还清楚，跑仓库和配送点更安全，你拿去穿。",
+      "weight": 1,
+      "tone": "positive",
+      "sound": "success",
+      "once": true,
+      "conditions": { "flag": "delivery_vest_event_ready" },
+      "choices": [
+        {
+          "label": "穿上试试",
+          "effects": { "mood": 3, "cureFlags": ["delivery_vest_event_ready"], "log": "你收到了一件配送马甲，已经放进衣柜。" },
+          "items": { "delivery_vest": 1 },
+          "outcome": "马甲轻便，反光条在仓库灯下很醒目，干活时也不碍手。"
+        },
+        {
+          "label": "先收好备用",
+          "effects": { "mood": 2, "cureFlags": ["delivery_vest_event_ready"], "log": "你收到了一件配送马甲，已经放进衣柜。" },
+          "items": { "delivery_vest": 1 },
+          "outcome": "领班点点头：知道什么时候把安全放在前面，才算真正熟悉这份活。"
+        }
+      ]
     }
   ]
 }

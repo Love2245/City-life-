@@ -13,6 +13,7 @@ import {
   daysSurvived,
 } from "../src/game/core/difficulty";
 import type { EventDef } from "../src/game/types";
+import { checkJobRequirements, getJobDef } from "../src/game/core/jobs";
 
 describe("难度递增 v0.94", () => {
   it("存活天数换算正确", () => {
@@ -28,8 +29,33 @@ describe("难度递增 v0.94", () => {
     s.time = { ...s.time, year: 2026, month: 11, day: 1 }; // 开局 +90 天 → floor(90/30)=3
     expect(difficultyLevel(s)).toBe(3);
 
-    s.player.money = 100000; // +floor(100000/25000)=4 → 7，封顶 6
+    s.player.money = 400000; // 净资产贡献 4 级；与存活 3 级相加后封顶 6
     expect(difficultyLevel(s)).toBe(6);
+  });
+
+  it("净资产在 10 万前不提高难度，避免小额积蓄提前惩罚玩家", () => {
+    const s = createInitialState();
+    s.player.money = 99_999;
+    expect(difficultyLevel(s)).toBe(0);
+    s.player.money = 100_000;
+    expect(difficultyLevel(s)).toBe(1);
+  });
+
+  it("负净资产不会把难度等级降到 0 以下", () => {
+    const s = createInitialState();
+    s.player.money = -100000;
+    expect(difficultyLevel(s)).toBe(0);
+    expect(jobRequirementBonus(s)).toBe(0);
+  });
+
+  it("债务计入净资产扣减（净资产 = 现金 + 投资 − 债务）", () => {
+    const s = createInitialState();
+    s.player.money = 100_000;
+    expect(difficultyLevel(s)).toBe(1);
+    s.player.debt = 60_000; // 净资产降到 4 万，不到一个难度档
+    expect(difficultyLevel(s)).toBe(0);
+    s.player.debt = 40_000; // 净资产回到 6 万，仍不足 10 万门槛
+    expect(difficultyLevel(s)).toBe(0);
   });
 
   it("物价倍率 = economy.priceIndex", () => {
@@ -51,16 +77,28 @@ describe("难度递增 v0.94", () => {
     const s = createInitialState();
     s.time = { ...s.time, year: 2026, month: 11, day: 1 }; // level 3
     expect(jobRequirementBonus(s)).toBe(3);
-    s.player.money = 100000; // level 6
+    s.player.money = 400000; // level 6（存活 3 级 + 净资产 4 级后封顶）
     expect(jobRequirementBonus(s)).toBe(5); // reqBonusCap = 5
+  });
+
+  it("求职会按当前难度把加成计入岗位属性门槛", () => {
+    const s = createInitialState();
+    const job = getJobDef("job_factory_tech")!;
+    s.player.stats.intelligence = 40;
+    expect(checkJobRequirements(s, job).ok).toBe(true);
+    s.player.money = 100000; // 净资产升一级，门槛增加 1。
+    expect(checkJobRequirements(s, job)).toMatchObject({ ok: false, reason: "智力不足（需 41）" });
+    s.player.stats.intelligence = 41;
+    expect(checkJobRequirements(s, job).ok).toBe(true);
   });
 
   it("事件概率随难度上升且封顶", () => {
     const s = createInitialState();
     const p0 = eventProbability(s);
-    expect(p0).toBeGreaterThanOrEqual(0.16);
+    // v1.43：随机事件过于频繁，基础概率由 0.16 下调到 0.08
+    expect(p0).toBeGreaterThanOrEqual(0.08);
     s.time = { ...s.time, year: 2028, month: 1, day: 1 }; // level 6（封顶 0.38）
-    expect(eventProbability(s)).toBeLessThanOrEqual(0.38);
+    expect(eventProbability(s)).toBeLessThanOrEqual(0.25);
     expect(eventProbability(s)).toBeGreaterThanOrEqual(p0);
   });
 
@@ -83,6 +121,7 @@ describe("难度递增 v0.94", () => {
   it("事件难度区间门控：高难排除低难专属事件，准入高难事件", () => {
     const s = createInitialState();
     s.time = { ...s.time, year: 2027, month: 2, day: 20 }; // level 6
+    s.locationId = "street"; // v1.43：家是安全区，这些临时事件没有地点声明，故在街头判定
     const lowOnly = {
       id: "t_low", title: "", icon: "", text: "", weight: 1,
       conditions: { difficulty: { max: 1 } },

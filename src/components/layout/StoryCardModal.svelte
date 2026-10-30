@@ -3,10 +3,11 @@
   // 展示进行中的故事卡，玩家从 2~4 个解法（屈服 / 砸钱 / 无视 / 特殊）中选择。
   import { fade } from "svelte/transition";
   import { gameState } from "../../stores/gameStore.svelte";
-  import { uiState, showToast } from "../../stores/uiStore.svelte";
+  import { uiState, showToast, closeModal } from "../../stores/uiStore.svelte";
   import { activeStoryCards, resolveStoryCard, solutionFeasible } from "../../game/core/story";
   import { gameDay } from "../../game/core/calendar";
   import type { ResultDelta } from "../../game/types";
+  import { signed } from "../../lib/format";
   const payload = $derived(uiState.storyCardPayload);
   const entry = $derived(
     payload ? activeStoryCards(gameState).find((x) => x.act.cardId === payload.cardId) : undefined,
@@ -20,8 +21,7 @@
   );
 
   function close(): void {
-    uiState.modal = null;
-    uiState.storyCardPayload = null;
+    closeModal();
     resolved = null;
   }
 
@@ -52,8 +52,7 @@
       fame: "🌟", stress: "🔥", goal: "📦", conscience: "⚖️",
     };
     const icon = icons[d.key] ?? "";
-    const sign = d.value > 0 ? "+" : "";
-    return `${icon} ${sign}${d.value}`;
+    return `${icon} ${signed(d.value)}`;
   }
 </script>
 
@@ -79,7 +78,7 @@
         <div class="e-choices">
           {#each card.solutions as sol, idx}
             {@const check = solutionFeasible(gameState, card, sol)}
-            <button class="e-choice" class:disabled={!check.ok} onclick={() => pick(idx)}>
+            <button class="e-choice" class:disabled={!check.ok} disabled={!check.ok} title={!check.ok ? check.reason : undefined} onclick={() => pick(idx)}>
               <span class="c-kind kind-{sol.kind}">{KIND_LABEL[sol.kind]}</span>
               <span class="c-label">{sol.label}</span>
               <span class="c-desc dim">{sol.desc}</span>
@@ -90,6 +89,7 @@
           {/each}
         </div>
         <p class="dim tip">到期未处理将按「视而不见」结算，并记一次失约。</p>
+        <button class="btn story-later" onclick={close}>稍后处理</button>
       {:else}
         <div class="e-head">
           <span class="gi-emoji" style="font-size:34px;line-height:1">{card.icon}</span>

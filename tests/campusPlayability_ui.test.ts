@@ -1,0 +1,21 @@
+// @vitest-environment jsdom
+import {afterEach,beforeEach,describe,it,expect,vi} from 'vitest';
+import {mount,unmount,flushSync} from 'svelte';
+import RhythmGame from '../src/components/layout/minigames/RhythmGame.svelte';
+import FiveLaneStage from '../src/components/layout/minigames/FiveLaneStage.svelte';
+import {getMiniGameConfig,type RhythmCfg} from '../src/game/core/minigame';
+import {installDragScroll} from '../src/lib/dragScroll';
+import {uiState,setSceneMode,setGameMode,initZoom} from '../src/stores/uiStore.svelte';
+const mounted:{component:ReturnType<typeof mount>;node:HTMLElement}[]=[];
+function render(Component:any,props:any){const node=document.createElement('div');document.body.append(node);const component=mount(Component,{target:node,props});mounted.push({component,node});flushSync();return node;}
+beforeEach(()=>{localStorage.clear();uiState.sceneMode='3d';});
+afterEach(async()=>{for(const {component,node} of mounted.splice(0)){await unmount(component);node.remove();}vi.restoreAllMocks();});
+describe('五轨真实输入、旧谱面续玩与默认场景',()=>{
+ it('五个轨道支持数字键、字母和空格，不靠按住连发得分',()=>{const hit=vi.fn(),node=render(FiveLaneStage,{notes:[],elapsed:0,playing:true,onhit:hit,onstart:vi.fn(),onpause:vi.fn()});expect(node.querySelectorAll('.lane')).toHaveLength(5);for(const code of ['KeyD','KeyF','Space','KeyJ','KeyK'])window.dispatchEvent(new KeyboardEvent('keydown',{code,cancelable:true}));expect(hit.mock.calls.map(c=>c[0])).toEqual([0,1,2,3,4]);window.dispatchEvent(new KeyboardEvent('keydown',{code:'Space',repeat:true}));expect(hit).toHaveBeenCalledTimes(5);});
+ it('双触点可以同拍命中两个轨道，暂停时点击不生效',()=>{const hit=vi.fn(),node=render(FiveLaneStage,{notes:[],elapsed:0,playing:true,onhit:hit,onstart:vi.fn(),onpause:vi.fn()});const lanes=node.querySelectorAll('button.lane');lanes[0].dispatchEvent(new MouseEvent('pointerdown',{bubbles:true,cancelable:true}));lanes[4].dispatchEvent(new MouseEvent('pointerdown',{bubbles:true,cancelable:true}));expect(hit.mock.calls.map(c=>c[0])).toEqual([0,4]);});
+ it('旧三轨未完成演出保留时间、分数和判定，并以暂停状态恢复',()=>{const cfg=getMiniGameConfig('street_perform') as RhythmCfg,progress=vi.fn(),finish=vi.fn();const old={schema:'urban-life-rhythm',version:1,configuration:JSON.stringify([{...cfg,tracks:3,notes:2},1]),notesArr:[{track:0,hitAt:1000,judged:true,judge:'perfect'},{track:2,hitAt:5000,judged:false,judge:null}],elapsed:2300,score:100,combo:1,maxCombo:1,strayHits:0,started:true};const node=render(RhythmGame,{cfg,initialProgress:old,onProgress:progress,onFinish:finish});expect(node.textContent).toContain('节奏已暂停');const snapshot=progress.mock.calls.slice(-1)[0][0];expect(snapshot.elapsed).toBe(2300);expect(snapshot.notesArr).toEqual(old.notesArr);expect(snapshot.score).toBe(100);expect(finish).not.toHaveBeenCalled();expect(node.querySelectorAll('.lane')).toHaveLength(5);});
+ it('新装PE模式默认2D截图，主动选择3D后切换布局仍保留',()=>{uiState.gameMode='pe';initZoom();expect(uiState.sceneMode).toBe('2d');setGameMode('pe');expect(uiState.sceneMode).toBe('2d');setSceneMode('3d');setGameMode('pc');expect(uiState.sceneMode).toBe('3d');setGameMode('pe');expect(uiState.sceneMode).toBe('3d');initZoom();expect(uiState.sceneMode).toBe('3d');});
+});
+describe('拖动滚动不误触内容',()=>{
+ it('超过阈值才滚动、拖动后不触发帖子点击，表单控件仍可正常编辑',()=>{const stop=installDragScroll();const scroller=document.createElement('div');scroller.style.overflowY='auto';Object.defineProperty(scroller,'scrollHeight',{value:1000});Object.defineProperty(scroller,'clientHeight',{value:200});scroller.scrollTop=100;const button=document.createElement('button');button.textContent='帖子';const click=vi.fn();button.addEventListener('click',click);scroller.append(button);document.body.append(scroller);const pointer=(type:string,y:number,target:Element=button)=>{const e=new MouseEvent(type,{bubbles:true,cancelable:true,button:0,clientX:20,clientY:y});Object.defineProperties(e,{pointerId:{value:1},pointerType:{value:'mouse'}});target.dispatchEvent(e);};pointer('pointerdown',100);pointer('pointermove',97);expect(scroller.scrollTop).toBe(100);pointer('pointermove',50);expect(scroller.scrollTop).toBe(150);pointer('pointerup',50);button.click();expect(click).not.toHaveBeenCalled();const input=document.createElement('input');scroller.append(input);pointer('pointerdown',100,input);pointer('pointermove',10,input);expect(scroller.scrollTop).toBe(150);stop();scroller.remove();});
+});

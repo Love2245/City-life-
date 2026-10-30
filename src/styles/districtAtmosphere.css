@@ -1,0 +1,8 @@
+/* Background artwork stays unfiltered. Native time/weather variants still switch normally. */
+:root[data-game-mode] .scene-bg img,
+:root[data-game-mode] .loc-card.has-scene-bg::before,
+:root[data-game-mode] .map-board .map-image { filter:none!important; }
+:root[data-game-mode] .map-weather,
+:root[data-game-mode] .district-weather,
+:root[data-game-mode] .map-board::before,
+:root[data-game-mode] .map-board::after { display:none!important; animation:none!important; }

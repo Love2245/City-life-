@@ -3,16 +3,25 @@
  * 纯逻辑层：读 state 聚合各系数，供 time/cooking/projects 结算时相乘。
  */
 import type { GameState } from '../types';
+import {currentResidence} from './residence';
+import {HOME_ITEM_IDS,homeFurnitureKind} from './homeFurniture';
+import {FIXED_STAY_ITEMS} from './homeStay';
 
 type FacilityType = 'rest' | 'cook' | 'dev';
 
 /** 聚合某类设施的总效率系数（基础 1.0 → 装备 bonus 累乘） */
 export function facilityEfficiency(state: GameState, type: FacilityType): number {
   let eff = 1;
-  for (const itemId of Object.values(state.equipped)) {
+  const installed = new Set([...Object.keys(state.inventory ?? {}).filter(id => state.inventory[id] > 0), ...Object.values(state.equipped)]);
+  const lodging=currentResidence(state),fixed=Object.prototype.hasOwnProperty.call(FIXED_STAY_ITEMS,lodging.id);
+  if(fixed){
+    // A carried laptop remains usable. Beds, cookers and other furniture stay at home.
+    for(const itemId of installed)if(HOME_ITEM_IDS.has(itemId)&&homeFurnitureKind(itemId)!=='computer')installed.delete(itemId);
+  }
+  for (const itemId of installed) {
     const bonus = getFacilityBonus(state, itemId);
     const val = bonus?.[type];
-    if (val && val > 0) eff *= val;
+    if (val && val > 0) eff = Math.max(eff, val);
   }
   // 租房自带的 cook 设施基础 1.0，无额外加成也是 1.0
   return Math.max(0.5, Math.min(3, +eff.toFixed(3)));

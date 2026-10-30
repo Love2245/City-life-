@@ -1,33 +1,42 @@
 <script lang="ts">
+  import CatDuelDeck from "./CatDuelDeck.svelte";
+  import { onMount, untrack } from 'svelte';
+  import { isResidenceLocation } from "../game/core/residence";
   import { gameState } from "../stores/gameStore.svelte";
   import { uiState, showToast } from "../stores/uiStore.svelte";
   import { fade } from "svelte/transition";
   import { performAction } from "../game/core/actions";
-  import { activePetOf, setActivePet, catInventoryList, catCurHp, catMaxHp, catDowned, useCatItem } from "../game/core/catCare";
+  import { AUTO_FEEDER_ITEM_ID, AUTO_FEED_MIN_SATIETY, activePetOf, availableCatsOf, fosterCat, isCatFostered, reclaimCat, setActivePet, catInventoryList, catCurHp, catMaxHp, catDowned, useCatItem } from "../game/core/catCare";
   import { allCatDefs, getCatDef, hasCat } from "../game/core/cat";
-  import { getCardDef } from "../game/core/catBattle";
-  import { ensureCardPack, QUALITY_LABEL, type CardQuality } from "../game/core/cardPack";
   import {
     getAccessoryDef,
     ACC_QUALITY_LABEL,
     equipAccessory,
     unequipAccessory,
   } from "../game/core/catAccessory";
-  import { playSound } from "../lib/audio";
-  import type { CatCardDef, CatAccessoryEffect, PetState } from "../game/types";
+  import { playSound,playActionSound } from "../lib/audio";
+  import type { CatAccessoryDef, CatAccessoryEffect } from "../game/types";
 
-  /** v1.38：照顾 / 卡包 / 饰品 / 图鉴 */
-  type Tab = "care" | "cards" | "accessory" | "dex";
+  /** 照顾 / 携带 / 卡包 / 饰品 / 图鉴 / 寄养 */
+  type Tab = "care" | "carry" | "cards" | "accessory" | "dex" | "foster";
   let tab = $state<Tab>("care");
 
-  const pets = $derived(gameState.pets);
+  $effect(() => {
+    const requested = uiState.catPanelTab;
+    if (requested !== tab) tab = requested;
+  });
+
+  const pets = $derived(availableCatsOf(gameState));
+  const fosteredPets = $derived(gameState.pets.filter(isCatFostered));
   const active = $derived(activePetOf(gameState));
   /** v1.39：照顾目标猫——优先携带猫；未携带且在家时可选家里任意一只 */
-  let selectedPetUid = $state<string | null>(null);
-  const carePet = $derived(active ?? (selectedPetUid ? gameState.pets.find((p) => p.uid === selectedPetUid) : undefined));
+  let selectedPetUid = $state<string | null>(untrack(() => uiState.catPanelPetUid));
+  onMount(() => { uiState.catPanelPetUid = null; });
+  const atHome = $derived(isResidenceLocation(gameState));
+  const carePet = $derived(atHome && selectedPetUid ? pets.find(p => p.uid === selectedPetUid) ?? active : active ?? (atHome ? pets.find(p => p.uid === selectedPetUid) : undefined));
   const catDefs = $derived(allCatDefs());
   /** v1.38 P2：携带/送回猫咪仅限在家（home）操作 */
-  const atHome = $derived(gameState.locationId === "home");
+  const atFlowerMarket = $derived(gameState.locationId === "flower_market");
 
   const RARITY_LABEL: Record<string, string> = {
     common: "普通",
@@ -51,6 +60,12 @@
 
   function close(): void {
     uiState.modal = null;
+    uiState.catPanelTab = "care";
+  }
+
+  function selectTab(next: Tab): void {
+    tab = next;
+    uiState.catPanelTab = next;
   }
 
   function care(actionId: string): void {
@@ -60,7 +75,7 @@
       showToast(`🚫 ${r.reason ?? "现在做不了这件事"}`);
       return;
     }
-    playSound("success");
+    playActionSound(actionId,r.result?.sound??'success');
     showToast(r.result?.verdict ?? "猫咪照顾好了");
   }
 
@@ -98,22 +113,13 @@
     return "bar-ok";
   }
 
-  /** v1.39 卡包：逐张展示（含重复卡），数量与显示完全一致 */
-  function packEntries(pet: PetState): Array<{ def: CatCardDef; uid: string }> {
-    const out: Array<{ def: CatCardDef; uid: string }> = [];
-    for (const e of ensureCardPack(pet)) {
-      const def = getCardDef(e.defId);
-      if (def) out.push({ def, uid: e.uid });
-    }
-    return out;
-  }
 
   /** v1.38 拥有的饰品清单（id → 数量），用于「饰品」页 */
   const ownedList = $derived(
     Object.entries(gameState.ownedAccessories)
       .filter(([, n]) => (n ?? 0) > 0)
       .map(([id, n]) => ({ def: getAccessoryDef(id), count: n ?? 0 }))
-      .filter((x) => x.def),
+      .filter((x): x is { def: CatAccessoryDef; count: number } => !!x.def),
   );
   const ownedCount = $derived(ownedList.reduce((s, a) => s + a.count, 0));
 
@@ -157,6 +163,27 @@
     playSound("success");
     showToast(`🏠 把「${name}」留在了家里`);
   }
+
+  function boardCat(uid: string): void {
+    const result = fosterCat(gameState, uid);
+    if (!result.ok) {
+      showToast(`🚫 ${result.reason ?? "现在不能办理寄养"}`);
+      return;
+    }
+    if (selectedPetUid === uid) selectedPetUid = null;
+    playSound("success");
+    showToast(result.verdict ?? "猫咪已免费寄养");
+  }
+
+  function bringCatHome(uid: string): void {
+    const result = reclaimCat(gameState, uid);
+    if (!result.ok) {
+      showToast(`🚫 ${result.reason ?? "现在不能领回"}`);
+      return;
+    }
+    playSound("success");
+    showToast(result.verdict ?? "猫咪已免费领回");
+  }
 </script>
 
 <div class="overlay hud-scope" onclick={close} transition:fade={{ duration: 150 }}>
@@ -168,21 +195,66 @@
 
     <!-- 标签页 -->
     <div class="tabs">
-      <button class="tab" class:on={tab === "care"} onclick={() => (tab = "care")}>照顾</button>
-      <button class="tab" class:on={tab === "cards"} onclick={() => (tab = "cards")}>卡包</button>
-      <button class="tab" class:on={tab === "accessory"} onclick={() => (tab = "accessory")}>饰品</button>
-      <button class="tab" class:on={tab === "dex"} onclick={() => (tab = "dex")}>图鉴</button>
+      <button class="tab" class:on={tab === "care"} onclick={() => selectTab("care")}>照顾</button>
+      <button class="tab" class:on={tab === "carry"} onclick={() => selectTab("carry")}>携带</button>
+      <button class="tab" class:on={tab === "cards"} onclick={() => selectTab("cards")}>卡包</button>
+      <button class="tab" class:on={tab === "accessory"} onclick={() => selectTab("accessory")}>饰品</button>
+      <button class="tab" class:on={tab === "dex"} onclick={() => selectTab("dex")}>图鉴</button>
+      <button class="tab" class:on={tab === "foster"} onclick={() => selectTab("foster")}>寄养</button>
     </div>
 
     {#key tab}
       <div class="tab-body">
-      {#if pets.length === 0}
+      {#if tab === "foster"}
+        <div class="section-title">🏠 花鸟市场宠物寄养</div>
+        <div class="train-tip">免费寄养，随时可领回。寄养期间猫咪不会衰减、生病或跑掉，等级、经验、卡组、饰品和当前状态都会保留；寄养猫暂时不能携带、照顾或参战。</div>
+        {#if !atFlowerMarket}
+          <div class="empty-sub dim">请前往花鸟市场的宠物商店办理寄养或领回。你可以先在这里查看寄养规则。</div>
+        {/if}
+        {#if pets.length > 0}
+          <div class="section-title">可寄养的猫咪</div>
+          <div class="pet-list">
+            {#each pets as p (p.uid)}
+              <div class="pet-row">
+                <span class="pet-icon">{p.icon}</span>
+                <span class="pet-name">{p.name}</span>
+                <span class="pet-lv dim">Lv.{p.level}</span>
+                <button class="home-btn" disabled={!atFlowerMarket} onclick={() => boardCat(p.uid)}>免费寄养</button>
+              </div>
+            {/each}
+          </div>
+        {:else if fosteredPets.length === 0}
+          <div class="empty-sub dim">你还没有猫咪。先领养或遇到一只猫，才能使用寄养服务。</div>
+        {/if}
+        {#if fosteredPets.length > 0}
+          <div class="section-title">寄养中的猫咪</div>
+          <div class="pet-list">
+            {#each fosteredPets as p (p.uid)}
+              <div class="pet-row">
+                <span class="pet-icon">{p.icon}</span>
+                <span class="pet-name">{p.name}</span>
+                <span class="pet-lv dim">Lv.{p.level}</span>
+                <button class="home-btn" disabled={!atFlowerMarket} onclick={() => bringCatHome(p.uid)}>免费领回</button>
+              </div>
+            {/each}
+          </div>
+        {/if}
+      {:else if pets.length === 0 && tab !== "dex"}
         <div class="empty">
           <div class="empty-icon">🐾</div>
-          <div class="empty-text">还没有猫咪</div>
-          <div class="empty-sub dim">去商场「宠物用品店」领养一只，或在街头、公园碰碰运气——说不定能遇到一只愿意跟你回家的小猫。</div>
+          {#if fosteredPets.length > 0}
+            <div class="empty-text">你的猫咪都在寄养中</div>
+            <div class="empty-sub dim">寄养期间暂时不能携带、照顾或参战。可以随时去花鸟市场宠物商店领回。</div>
+            <button class="home-btn" onclick={() => selectTab("foster")}>查看寄养猫咪</button>
+          {:else}
+            <div class="empty-text">还没有猫咪</div>
+            <div class="empty-sub dim">去商场「宠物用品店」领养一只，或在街头、公园碰碰运气——说不定能遇到一只愿意跟你回家的小猫。</div>
+          {/if}
         </div>
       {:else if tab === "care"}
+      {#if (gameState.inventory[AUTO_FEEDER_ITEM_ID] ?? 0) > 0}
+        <div class="train-tip">🤖 自动照料机运行中：未寄养猫咪饱食度低于 {AUTO_FEED_MIN_SATIETY} 时消耗背包猫粮补到至少 {AUTO_FEED_MIN_SATIETY}，干净度低于 {AUTO_FEED_MIN_SATIETY} 时恢复到 100；无需携带，不会自动治病。</div>
+      {/if}
       <!-- v1.39 照顾目标：携带猫优先；未携带且在家时可照顾家里任意一只 -->
       {#if carePet}
         {@const def = getCatDef(carePet.catId)}
@@ -278,9 +350,18 @@
         </div>
       {/if}
 
-      <!-- 猫咪列表 / 切换携带（v1.38 P2：仅在家可切换携带） -->
+    {:else if tab === "carry"}
+      <div class="carry-head">
+        <div class="section-title">外出携带</div>
+        <div class="train-tip dim">携带的猫咪可以参与户外训练、遭遇与对决；切换和送回仅能在家完成。</div>
+      </div>
       {#if atHome}
-        <div class="section-title">我的猫咪（点击切换携带）</div>
+        {#if active}
+          <div class="carry-current">当前携带：{active.icon} <strong>{active.name}</strong><button class="home-btn carry-home" onclick={sendHome}>送回家</button></div>
+        {:else}
+          <div class="carry-current muted">还没有携带猫咪，选一只一起出门吧。</div>
+        {/if}
+        <div class="section-title">我的猫咪（点击携带）</div>
         <div class="pet-list">
           {#each pets as p (p.uid)}
             <button class="pet-row" class:active-pet={p.uid === active?.uid} onclick={() => switchCat(p.uid)}>
@@ -302,36 +383,7 @@
         </div>
       {/if}
     {:else if tab === "cards"}
-      {#if !active}
-        <div class="empty">
-          <div class="empty-text">先携带一只猫咪</div>
-          <div class="empty-sub dim">卡包属于当前携带中的猫咪，下方选一只携带即可查看。</div>
-        </div>
-      {:else}
-        {@const pack = packEntries(active)}
-        <div class="section-title">🃏 {active.name} 的卡包（共 {pack.length} 张）</div>
-        <!-- v1.39 牌组统计：攻击/防御/技能数量一目了然 -->
-        <div class="pack-stats">
-          <span class="pack-stat atk">⚔️ 攻击 {pack.filter(c => c.def.type === 'attack').length}</span>
-          <span class="pack-stat def">🛡️ 防御 {pack.filter(c => c.def.type === 'defend').length}</span>
-          <span class="pack-stat skill">✨ 技能 {pack.filter(c => c.def.type === 'skill').length}</span>
-        </div>
-        <div class="pack-scroll">
-          <div class="card-grid">
-            {#each pack as c (c.uid)}
-              <div class="pack-card q{c.def.quality ?? 0}">
-                <div class="pc-head">
-                  <span class="pc-icon">{c.def.icon}</span>
-                  <span class="pc-name">{c.def.name}</span>
-                  <span class="pc-quality">{QUALITY_LABEL[(c.def.quality ?? 0) as CardQuality]}</span>
-                </div>
-                <div class="pc-cost">💧 {c.def.cost}</div>
-                <div class="pc-desc">{c.def.desc}</div>
-              </div>
-            {/each}
-          </div>
-        </div>
-      {/if}
+      {#if active}<CatDuelDeck session={gameState} petUid={active.uid}/>{:else}<p>先携带一只猫咪，即可编辑出战牌组。所有猫共用卡牌收藏。</p>{/if}
     {:else if tab === "accessory"}
       {#if !active}
         <div class="empty">
@@ -339,6 +391,7 @@
           <div class="empty-sub dim">饰品需佩戴在携带中的猫咪身上，先选一只携带。</div>
         </div>
       {:else}
+        <p class="train-tip">新版喵喵对决使用统一基础属性，饰品不再增加竞技数值。已购买、佩戴和旧版加成记录继续保留。</p>
         <div class="section-title">💍 我的饰品（共 {ownedCount} 件）</div>
         {#if ownedList.length === 0}
           <div class="empty-sub dim">还没有饰品。可在宠物用品店购买，或在猫咪争霸赛夺冠时随机获得（档位越高品质越好）。</div>
@@ -470,6 +523,7 @@
   .panel-close:active { transform: scale(0.9); }
   .tabs {
     display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
@@ -653,6 +707,20 @@
     align-items: center;
     gap: 8px;
   }
+  .carry-head { display: flex; flex-direction: column; gap: 3px; }
+  .carry-current {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 9px 11px;
+    border: 1px solid rgba(255, 209, 102, 0.28);
+    border-radius: 10px;
+    background: rgba(255, 209, 102, 0.08);
+    font-size: 12.5px;
+  }
+  .carry-current.muted { color: var(--text-dim, #9aa3c7); }
+  .carry-home { margin-left: auto; border: 0; border-radius: 8px; padding: 5px 8px; font: inherit; font-size: 11px; font-weight: 700; cursor: pointer; }
   .train-limit {
     font-size: 11px;
     font-weight: 600;

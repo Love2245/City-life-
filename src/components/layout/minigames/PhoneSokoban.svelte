@@ -4,6 +4,8 @@
   通关全部关卡即「满分」。
 -->
 <script lang="ts">
+  import PhoneGameStage from "./PhoneGameStage.svelte";
+  import { playSound } from "../../../lib/audio";
   import {
     LEVELS,
     parseLevel,
@@ -16,7 +18,7 @@
   } from "../../../game/core/sokoban";
   import type { SokobanState } from "../../../game/core/sokoban";
 
-  let { onPerfect = () => {} }: { onPerfect?: (gameId: string) => void } = $props();
+  let { onPerfect = () => {}, paused = false }: { onPerfect?: (gameId: string) => void; paused?: boolean } = $props();
 
   let levelIdx = $state(0);
   let level = $state<SokobanState>(parseLevel(LEVELS[0]));
@@ -25,12 +27,13 @@
   let perfectSent = false;
 
   function move(dx: number, dy: number): void {
-    if (message.includes("通关")) return;
+    if (paused || message.includes("通关")) return;
     const r = moveState(level, dx, dy);
     if (!r.moved) return;
     level = r.state;
     moves++;
     if (isWin(level)) {
+      playSound("success");
       if (levelIdx < LEVELS.length - 1) {
         levelIdx++;
         level = parseLevel(LEVELS[levelIdx]);
@@ -51,23 +54,32 @@
     moves = 0;
     message = "";
   }
+
+  function onKeydown(event: KeyboardEvent): void {
+    if (paused) return;
+    const directions: Record<string, [number, number]> = {
+      ArrowUp: [0, -1],
+      ArrowDown: [0, 1],
+      ArrowLeft: [-1, 0],
+      ArrowRight: [1, 0],
+    };
+    const direction = directions[event.key];
+    if (!direction) return;
+    event.preventDefault();
+    move(...direction);
+  }
 </script>
 
-<svelte:window onkeydown={(e) => {
-  const k = e.key;
-  if (k === "ArrowUp") move(0, -1);
-  else if (k === "ArrowDown") move(0, 1);
-  else if (k === "ArrowLeft") move(-1, 0);
-  else if (k === "ArrowRight") move(1, 0);
-}} />
+<svelte:window onkeydown={onKeydown} />
 
-<div class="sk">
-  <div class="sk-head">
+<div class="sk"><PhoneGameStage title="推箱子" description="把所有箱子推到圆形目标点。箱子只能推动，留意墙角与身后的空间。">
+ {#snippet hud()}  <div class="sk-head">
     <span>📦 第 {levelIdx + 1}/{LEVELS.length} 关</span>
     <span>步数 {moves}</span>
-    <button class="sk-btn" onclick={restartLevel}>重开本关</button>
+    <button type="button" class="sk-btn" onclick={restartLevel}>重开本关</button>
   </div>
-  <div class="sk-board" style="grid-template-columns: repeat({level.grid[0].length}, 1fr);">
+{/snippet}
+ {#snippet boardView()}  <div class="sk-board" style={`--sk-cols:${level.grid[0].length};--sk-rows:${level.grid.length};grid-template-columns:repeat(${level.grid[0].length},minmax(0,1fr))`}>
     {#each Array.from({ length: level.grid.length }) as _, y}
       {#each Array.from({ length: level.grid[0].length }) as _, x}
         {@const isGoal = level.goals.has(`${x},${y}`)}
@@ -83,102 +95,20 @@
       {/each}
     {/each}
   </div>
-  {#if message}<div class="sk-msg">{message}</div>{/if}
-  <div class="sk-pad">
-    <button class="sk-btn" onclick={() => move(0, -1)}>↑</button>
+{/snippet}
+ {#snippet feedback()}  <div class="sk-msg" class:sk-msg-empty={!message} aria-hidden={!message}>{message}</div>
+{/snippet}
+ {#snippet controls()}  <div class="sk-pad">
+    <button type="button" class="sk-btn" onclick={() => move(0, -1)}>↑</button>
     <div class="sk-row">
-      <button class="sk-btn" onclick={() => move(-1, 0)}>←</button>
-      <button class="sk-btn" onclick={() => move(0, 1)}>↓</button>
-      <button class="sk-btn" onclick={() => move(1, 0)}>→</button>
+      <button type="button" class="sk-btn" onclick={() => move(-1, 0)}>←</button>
+      <button type="button" class="sk-btn" onclick={() => move(0, 1)}>↓</button>
+      <button type="button" class="sk-btn" onclick={() => move(1, 0)}>→</button>
     </div>
   </div>
-</div>
+{/snippet}
+</PhoneGameStage></div>
 
 <style>
-  .sk {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  .sk-head {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 12.5px;
-    font-weight: 700;
-    width: 100%;
-    justify-content: space-between;
-  }
-  .sk-btn {
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: rgba(255, 209, 102, 0.12);
-    border: 1px solid rgba(255, 209, 102, 0.35);
-    color: var(--accent, #ffd166);
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    min-width: 34px;
-    transition: background 0.18s ease, transform 0.15s ease;
-  }
-  .sk-btn:hover {
-    background: rgba(255, 209, 102, 0.24);
-    transform: translateY(-1px);
-  }
-  .sk-board {
-    display: grid;
-    gap: 2px;
-    background: #1d2434;
-    border: 1px solid #2f3a52;
-    border-radius: 10px;
-    padding: 6px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
-  }
-  .sk-cell {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    color: #c8d4f0;
-    border-radius: 4px;
-    transition: background 0.15s ease;
-  }
-  .sk-cell.goal {
-    background: rgba(108, 198, 255, 0.15);
-    box-shadow: inset 0 0 0 1px rgba(108, 198, 255, 0.35);
-  }
-  .sk-cell.box {
-    background: rgba(255, 209, 102, 0.18);
-    border-radius: 6px;
-  }
-  .sk-cell.box.goal {
-    background: rgba(123, 216, 143, 0.22);
-    box-shadow: inset 0 0 0 1px rgba(123, 216, 143, 0.5);
-  }
-  .sk-cell.player {
-    border-radius: 50%;
-  }
-  .sk-msg {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--ok, #7bd88f);
-    animation: msg-in 0.3s ease;
-  }
-  @keyframes msg-in {
-    from { opacity: 0; transform: translateY(4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .sk-pad {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-  .sk-row {
-    display: flex;
-    gap: 6px;
-  }
+.sk{height:100%;min-height:0}.sk-board{display:grid;grid-template-rows:repeat(var(--sk-rows),minmax(0,1fr));gap:3px;padding:9px;border:3px solid #8b9d8b;border-radius:15px;background:#142b34;box-shadow:0 12px 28px #0004;width:min(100cqw,calc(100cqh * var(--sk-cols) / var(--sk-rows)),600px)!important;aspect-ratio:var(--sk-cols) / var(--sk-rows)!important}.sk-cell{display:flex;align-items:center;justify-content:center;min-height:0;min-width:0;font-size:clamp(18px,7cqw,42px);color:#9aafae;border-radius:6px;background:#aac1af10}.sk-cell.goal{background:#ecc77725;box-shadow:inset 0 0 0 2px #d4b37666;color:#f5d68e}.sk-cell.box{background:linear-gradient(135deg,#c69a64,#856040);box-shadow:inset 0 0 0 3px #dfbf8d55,0 3px 5px #0004}.sk-cell.box.goal{background:#537e62;box-shadow:inset 0 0 0 3px #abdd9a}.sk-cell.player{background:#91c5b838;border-radius:40%}.sk-msg{font-size:13px;font-weight:700;color:#9cdda6;min-height:20px}.sk-msg-empty{visibility:hidden}
 </style>

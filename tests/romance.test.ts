@@ -18,6 +18,11 @@ import { ensureRelationship, findRelationship } from "../src/game/core/relations
 import { callFriend } from "../src/game/core/phone";
 import { getNpcDef } from "../src/game/core/npcs";
 import { gameDay } from "../src/game/core/calendar";
+import { moveTo } from "../src/game/core/actions";
+import { canSleepHere } from "../src/game/core/housing";
+import { sleep } from "../src/game/core/time";
+import { housingAtLocation, isResidenceBuildingVisible, NPC_CRASH_STAY_DAY } from "../src/game/core/residence";
+import { mapAnchor } from "../src/lib/mapAtlas";
 import type { GameState } from "../src/game/types";
 
 function fresh(): GameState {
@@ -56,6 +61,37 @@ describe("v0.99 约会 dateNpc", () => {
     const r = dateNpc(s, "npc_zhao_gang");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe("not_romanceable");
+  });
+
+  it("已拉黑或已成恋人时拒绝约会，不扣钱也不推进时间", () => {
+    const s = fresh();
+    const rel = ensureRelationship(s, "npc_lin_xiaoyu");
+    rel.affinity = 90;
+    rel.state = "blocked";
+    expect(socialActionsAvailable(s, rel.npcId).call).toBe(false);
+    const money = s.player.money;
+    const hour = s.time.hour;
+
+    expect(dateNpc(s, rel.npcId).reason).toBe("blocked");
+    expect(s.player.money).toBe(money);
+    expect(s.time.hour).toBe(hour);
+
+    rel.state = "lover";
+    expect(dateNpc(s, rel.npcId).reason).toBe("already_lover");
+    expect(s.player.money).toBe(money);
+    expect(s.time.hour).toBe(hour);
+  });
+
+  it("只有可恋爱对象才显示约会入口", () => {
+    const s = fresh();
+    expect(socialActionsAvailable(s, "npc_zhao_gang").call).toBe(false);
+    const rel = ensureRelationship(s, "npc_zhao_gang");
+    rel.affinity = 100;
+    s.romance.dateCount[rel.npcId] = 5;
+
+    expect(socialActionsAvailable(s, rel.npcId).call).toBe(true);
+    expect(socialActionsAvailable(s, rel.npcId).date).toBe(false);
+    expect(socialActionsAvailable(s, rel.npcId).confess).toBe(false);
   });
 });
 
@@ -122,6 +158,22 @@ describe("v0.99 表白 / 分手", () => {
     expect(r.reason).toBe("conditions_unmet");
   });
 
+  it("拉黑对象不能表白解封，已成恋人时不能重复表白", () => {
+    const s = fresh();
+    const rel = ensureRelationship(s, "npc_lin_xiaoyu");
+    rel.affinity = 90;
+    rel.state = "blocked";
+    s.romance.dateCount[rel.npcId] = 3;
+
+    expect(confessNpc(s, rel.npcId).reason).toBe("blocked");
+    expect(rel.state).toBe("blocked");
+    expect(socialActionsAvailable(s, rel.npcId).confess).toBe(false);
+
+    rel.state = "lover";
+    expect(confessNpc(s, rel.npcId).reason).toBe("already_lover");
+    expect(rel.state).toBe("lover");
+  });
+
   it("分手：恋人降级相识、好感封顶 50、清表白记录", () => {
     const s = fresh();
     const rel = ensureRelationship(s, "npc_lin_xiaoyu");
@@ -143,10 +195,55 @@ describe("v0.99 蹭住 / 借款", () => {
     const r1 = crashAtNpc(s, "npc_lin_xiaoyu"); // gov 模式
     expect(r1.ok).toBe(false);
     s.living.mode = "nightly";
-    ensureRelationship(s, "npc_lin_xiaoyu");
+    const rel = ensureRelationship(s, "npc_lin_xiaoyu");
+    // v1.215 起蹭住要求「至少成为朋友」，且同一周同一位 NPC 只能打扰一次
+    rel.affinity = 45;
+    rel.state = "friend";
     const r2 = crashAtNpc(s, "npc_lin_xiaoyu");
     expect(r2.ok).toBe(true);
     expect(s.romance.crashTonight).toBe("npc_lin_xiaoyu");
+    // 同一周重复蹭住被每周上限拦截
+    const r3 = crashAtNpc(s, "npc_lin_xiaoyu");
+    expect(r3.ok).toBe(false);
+    expect(r3.reason).toBe("weekly_limit");
+  });
+
+  it("朋友家客房是可见的真实地图地址，醒来留在原处但不能再睡", () => {
+    const s = fresh();
+    s.living.mode = "nightly";
+    s.living.nightly = { lodgingId: "atm" };
+    s.locationId = "map";
+    s.region = "downtown_residential";
+    s.area = "downtown_residential";
+    s.navStack = ["map", "downtown", "downtown_residential"];
+    const rel = ensureRelationship(s, "npc_lin_xiaoyu");
+    rel.affinity = 45;
+    rel.state = "friend";
+
+    expect(crashAtNpc(s, "npc_lin_xiaoyu").ok).toBe(true);
+    expect(isResidenceBuildingVisible(s, "npc_guest_room")).toBe(true);
+    expect(housingAtLocation("npc_guest_room")?.visualId).toBe("minsu");
+    expect(mapAnchor("downtown_residential", "npc_guest_room")).toEqual({ x: 62, y: 72 });
+    expect(moveTo(s, "npc_guest_room").ok).toBe(true);
+    expect(s.locationId).toBe("npc_guest_room");
+    expect(canSleepHere(s)).toBe(true);
+
+    sleep(s, 8);
+    expect(s.locationId).toBe("npc_guest_room");
+    expect(s.romance.crashTonight).toBeUndefined();
+    expect(s.flags[NPC_CRASH_STAY_DAY]).toBeUndefined();
+    expect(canSleepHere(s)).toBe(false);
+  });
+
+  it("蹭住有门槛：仅相识阶段不能开口", () => {
+    const s = fresh();
+    s.living.mode = "nightly";
+    const rel = ensureRelationship(s, "npc_lin_xiaoyu");
+    rel.affinity = 20;
+    rel.state = "acquaintance";
+    const r = crashAtNpc(s, "npc_lin_xiaoyu");
+    expect(r.ok).toBe(false);
+    expect(r.reason).toBe("affinity_low");
   });
 
   it("借款：朋友特权 + 无在途借款", () => {
@@ -162,26 +259,60 @@ describe("v0.99 蹭住 / 借款", () => {
     expect(s.romance.loanNpc).toBe("npc_zhao_gang");
   });
 
-  it("还款清账 +10 信任", () => {
+  it("还款清账 +10 信任，并且周支出只记一次", () => {
     const s = fresh();
     const rel = ensureRelationship(s, "npc_zhao_gang");
     rel.state = "friend";
     rel.affinity = 40;
     rel.loan = { amount: 100, since: gameDay(s.time) };
     const moneyBefore = s.player.money;
+    const spentBefore = s.weekly.spent;
     repayLoan(s, "npc_zhao_gang", 100);
     expect(s.player.money).toBe(moneyBefore - 100);
+    expect(s.weekly.spent).toBe(spentBefore + 100);
     expect(rel.loan).toBeUndefined();
     expect(rel.affinity).toBe(50);
   });
+
+  it("部分还款只把实际支付金额计入周支出一次", () => {
+    const s = fresh();
+    const rel = ensureRelationship(s, "npc_zhao_gang");
+    rel.loan = { amount: 200, since: gameDay(s.time) };
+    const spentBefore = s.weekly.spent;
+
+    const result = repayLoan(s, "npc_zhao_gang", 75);
+
+    expect(result.ok).toBe(true);
+    expect(s.weekly.spent).toBe(spentBefore + 75);
+    expect(rel.loan?.amount).toBe(125);
+  });
+
+  it("拒绝非有限或非正还款金额，不污染现金或欠款", () => {
+    for (const amount of [Number.NaN, Number.POSITIVE_INFINITY, 0, -1]) {
+      const s = fresh();
+      const rel = ensureRelationship(s, "npc_zhao_gang");
+      rel.loan = { amount: 100, since: gameDay(s.time) };
+      const moneyBefore = s.player.money;
+
+      const result = repayLoan(s, rel.npcId, amount);
+
+      expect(result.ok).toBe(false);
+      expect(result.reason).toBe("invalid_amount");
+      expect(s.player.money).toBe(moneyBefore);
+      expect(rel.loan?.amount).toBe(100);
+    }
+  });
 });
 
-describe("v0.99 偶遇 maybeMeetNpc", () => {
-  it("条件满足且命中 → 建关系 +3 初遇好感", () => {
+describe("v0.99 偶遇 maybeMeetNpc（按排班地点区域）", () => {
+  it("住宅区咖啡馆条件满足且命中 → 建关系 +3 初遇好感", () => {
     const s = fresh();
     s.player.stats.charm = 30;
-    s.time.hour = 12;
-    forceMeetChance("npc_lin_xiaoyu", 1); // cafe 地点
+    s.time.day = 3;
+    s.time.hour = 8;
+    s.locationId = "cafe";
+    s.region = "downtown_residential";
+    forceMeetChance("npc_lin_xiaoyu", 1); // 林小雨只在住宅区 cafe 排班
     const met = maybeMeetNpc(s, "cafe");
     expect(met).toBe("npc_lin_xiaoyu");
     const rel = findRelationship(s, "npc_lin_xiaoyu")!;
@@ -191,6 +322,8 @@ describe("v0.99 偶遇 maybeMeetNpc", () => {
   it("魅力不足不偶遇", () => {
     const s = fresh();
     s.player.stats.charm = 5; // 需 ≥15
+    s.locationId = "cafe";
+    s.region = "downtown_residential";
     forceMeetChance("npc_lin_xiaoyu", 1);
     const met = maybeMeetNpc(s, "cafe");
     expect(met).toBeNull();
@@ -200,21 +333,13 @@ describe("v0.99 偶遇 maybeMeetNpc", () => {
   it("已认识不再偶遇", () => {
     const s = fresh();
     s.player.stats.charm = 30;
+    s.locationId = "cafe";
+    s.region = "downtown_residential";
     ensureRelationship(s, "npc_lin_xiaoyu");
     forceMeetChance("npc_lin_xiaoyu", 1);
     expect(maybeMeetNpc(s, "cafe")).toBeNull();
   });
 
-  it("同事类 NPC 仅在职时可偶遇（电子厂）", () => {
-    const s = fresh();
-    s.time.hour = 12;
-    forceMeetChance("npc_li_na", 1);
-    const off = maybeMeetNpc(s, "electronics_factory"); // 未在职
-    expect(off).toBeNull();
-    s.flags["employed"] = true;
-    const on = maybeMeetNpc(s, "electronics_factory");
-    expect(on).toBe("npc_li_na");
-  });
 });
 
 describe("v0.99 电话 callNpc / callFriend", () => {

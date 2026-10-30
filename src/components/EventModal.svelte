@@ -1,14 +1,39 @@
 <script lang="ts">
   import { gameState } from "../stores/gameStore.svelte";
-  import { uiState } from "../stores/uiStore.svelte";
+  import { uiState, showToast, closeModal } from "../stores/uiStore.svelte";
   import { fade } from "svelte/transition";
-  import { applyEventChoice } from "../game/core/events";
+  import { motionDurationMs, motionEasing } from "../lib/motion";
+  import { applyEventChoice, eventChoiceNetEffect } from "../game/core/events";
   import { checkRequirements } from "../game/core/actions";
   import { randomSlogan } from "../game/core/slogan";
   import { playSound } from "../lib/audio";
+  import { SHOP_CATALOG } from "../game/core/shop";
+  import { signed } from "../lib/format";
   import type { EventDef, EventChoice, ResultDelta } from "../game/types";
 
   const payload = $derived(uiState.eventPayload as EventDef | null);
+  /** v1.42 集市特卖动态商品：事件文案与购买按钮始终显示实际商品和折后价。 */
+  const marketDeal = $derived.by(() => {
+    if (payload?.id !== "ev_market_fair_deal") return undefined;
+    const idx = typeof gameState.flags.fair_deal_idx === "number" ? gameState.flags.fair_deal_idx : -1;
+    const price = typeof gameState.flags.fair_deal_price === "number" ? gameState.flags.fair_deal_price : 0;
+    const item = SHOP_CATALOG[idx];
+    return item && price > 0 ? { item, price, original: item.offline } : undefined;
+  });
+
+  function eventText(event: EventDef): string {
+    if (marketDeal) {
+      return `${event.text}\n\n今日特卖：${marketDeal.item.icon} ${marketDeal.item.name} · 原价 ¥${marketDeal.original} → 七五折 ¥${marketDeal.price}（每天仅刷新一次）`;
+    }
+    return event.text;
+  }
+
+  function choiceLabel(choice: EventChoice, index: number): string {
+    if (marketDeal && payload?.id === "ev_market_fair_deal" && index === 0) {
+      return `购买「${marketDeal.item.name}」 · ¥${marketDeal.price}`;
+    }
+    return choice.label;
+  }
 
   /** 弹窗出现时播放事件音效 */
   $effect(() => {
@@ -19,8 +44,7 @@
   let resolved = $state<{ deltas: ResultDelta[]; gambleResult?: "win" | "lose"; outcome?: string | null; slogan?: string | null } | null>(null);
 
   function close(): void {
-    uiState.modal = null;
-    uiState.eventPayload = null;
+    closeModal();
     resolved = null;
   }
 
@@ -51,13 +75,12 @@
       satiety: "🍚", intelligence: "🧠", charm: "💄", fitness: "💪", fame: "🌟", stress: "🔥",
     };
     const icon = icons[d.key] ?? "";
-    const sign = d.value > 0 ? "+" : "";
-    return `${icon} ${sign}${d.value}`;
+    return `${icon} ${signed(d.value)}`;
   }
 </script>
 
 {#if payload}
-  <div class="overlay hud-scope" onclick={() => close()} transition:fade={{ duration: 150 }}>
+  <div class="overlay hud-scope" onclick={() => close()} transition:fade={{ duration: motionDurationMs("--dur-base"), easing: motionEasing("--ease-out") }}>
     <div class="modal event-modal" onclick={(e) => e.stopPropagation()}>
       {#if !resolved}
         <!-- 阶段 1：选择 -->
@@ -65,13 +88,17 @@
           <span class="gi-emoji" style="font-size:40px;line-height:1">{payload.icon}</span>
           <div class="e-title">{payload.title}</div>
         </div>
-        <p class="e-text">{payload.text}</p>
+        <p class="e-text">{eventText(payload)}</p>
 
         <div class="e-choices">
           {#each payload.choices as choice, idx}
             {@const check = choiceCheck(choice)}
-            <button class="e-choice" class:disabled={!check.ok} onclick={() => pick(idx)}>
-              {choice.label}
+            {@const net = eventChoiceNetEffect(choice)}
+            <button class="e-choice" class:disabled={!check.ok} disabled={!check.ok} title={!check.ok ? check.reason : undefined} onclick={() => pick(idx)}>
+              {choiceLabel(choice, idx)}
+              {#if net.tone === "negative"}
+                <span class="e-risk">⚠ 有风险</span>
+              {/if}
               {#if choice.gamble}
                 <span class="e-gamble">🎲 押 {choice.gamble.cost} 元，中 {choice.gamble.win} / 输 {choice.gamble.lose}（{Math.round(choice.gamble.winChance * 100)}%）</span>
               {/if}
@@ -124,7 +151,6 @@
     align-items: center;
     justify-content: center;
     z-index: 110;
-    animation: fadeIn 0.15s ease;
   }
   .event-modal {
     width: 420px;
@@ -152,6 +178,7 @@
     line-height: 1.7;
     color: var(--text-main);
     margin-bottom: 14px;
+    white-space: pre-line;
   }
   .e-choices {
     display: flex;
@@ -168,7 +195,7 @@
     background: var(--bg-soft);
     border: 1px solid var(--border);
     font-size: 13.5px;
-    transition: all 0.15s ease;
+    transition: all var(--dur-fast) var(--ease-out);
   }
   .e-choice:hover:not(.disabled) {
     border-color: var(--accent);
@@ -185,6 +212,12 @@
   .e-lock {
     font-size: 11px;
     color: var(--warn);
+  }
+  /* v1.43 修复：负期望选项的风险提示（克制、不暴露具体数值） */
+  .e-risk {
+    font-size: 11px;
+    color: var(--danger);
+    font-weight: 700;
   }
   .gamble-result {
     text-align: center;

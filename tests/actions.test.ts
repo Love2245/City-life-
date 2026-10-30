@@ -1,3 +1,4 @@
+import { pendingStreetPerformance,settleStreetPerformance } from '../src/game/core/streetPerformance';
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "../src/game/core/state";
 import { gameDay } from "../src/game/core/calendar";
@@ -5,11 +6,13 @@ import { applyFamily } from "../src/game/core/families";
 import {
   performAction,
   canPerform,
+  actionTagsOf,
   getAction,
   moveTo,
   isLocationOpen,
   getLocation,
 } from "../src/game/core/actions";
+import { setActionLocation } from "./helpers/actionLocation";
 
 describe("行动系统：基本执行（小时制）", () => {
   it("加载了地点与行动数据", () => {
@@ -18,11 +21,12 @@ describe("行动系统：基本执行（小时制）", () => {
 
   it("执行图书馆自习：智力 +3、-8 体力、推进 2 小时", () => {
     const s = createInitialState();
-    s.time.hour = 10; // 图书馆 9-18 点营业
+    s.time.hour = 10; // 图书馆 7-18 点营业
     const intel0 = s.player.stats.intelligence;
     const stamina0 = s.player.attrs.stamina;
     const hour0 = s.time.hour;
 
+    setActionLocation(s, "study_library");
     const r = performAction(s, "study_library");
     expect(r.ok).toBe(true);
     expect(s.player.stats.intelligence).toBe(intel0 + 3);
@@ -30,16 +34,68 @@ describe("行动系统：基本执行（小时制）", () => {
     expect(s.time.hour).toBe(hour0 + 2); // duration 2h
   });
 
-  it("行动带时长：买饮料 0.5 小时", () => {
+  it("行动带时长：打包买饮料即时完成", () => {
     const s = createInitialState();
+    setActionLocation(s, "buy_drink_convenience");
     const hour0 = s.time.hour;
-    performAction(s, "buy_drink_convenience");
+    const before = { ...s.player.attrs };
+    expect(performAction(s, "buy_drink_convenience").ok).toBe(true);
     expect(s.time.hour).toBe(hour0);
-    expect(s.time.minute).toBe(30);
+    expect(s.time.minute).toBe(0);
+    expect(s.inventory.drink).toBe(1);
+    expect(s.player.attrs.stamina).toBe(before.stamina);
+    expect(s.player.attrs.satiety).toBe(before.satiety);
+
+    const dineIn = createInitialState();
+    dineIn.player.attrs.stamina = 20; dineIn.player.attrs.satiety = 20; dineIn.player.attrs.mood = 20;
+    setActionLocation(dineIn, "buy_drink_convenience");
+    expect(performAction(dineIn, "buy_drink_convenience", { dine: "eat" }).ok).toBe(true);
+    expect(dineIn.inventory.drink ?? 0).toBe(0);
+    expect(dineIn.player.attrs).toMatchObject({ stamina: 30, satiety: 22, mood: 23 }); // +4 饱腹后，堂食半小时自然消耗 2 点
+  });
+
+  it("两处咖啡厅共用每日两杯限额，未结束的街头演出会阻止再次开场", () => {
+    const coffee = createInitialState(71);
+    coffee.time.hour = 12;
+    coffee.player.money = 200;
+    setActionLocation(coffee, "drink_cafe");
+    expect(performAction(coffee, "drink_cafe").ok).toBe(true);
+    setActionLocation(coffee, "boyue_drink_cafe");
+    expect(performAction(coffee, "boyue_drink_cafe").ok).toBe(true);
+    setActionLocation(coffee, "drink_cafe");
+    expect(canPerform(coffee, getAction("drink_cafe")!)).toMatchObject({ ok: false });
+    coffee.time.day += 2;
+    expect(canPerform(coffee, getAction("drink_cafe")!).ok).toBe(true);
+
+    const busking = createInitialState(72);
+    busking.time.hour = 12;
+    busking.player.stats.charm = 40;
+    busking.player.attrs.stamina = 100;
+    setActionLocation(busking, "street_perform");
+    expect(performAction(busking, "street_perform").ok).toBe(true);
+    expect(canPerform(busking, getAction("street_perform")!)).toMatchObject({ ok: false });
+    settleStreetPerformance(busking,pendingStreetPerformance(busking)!.id,0);
+    busking.time.day += 1;
+    expect(canPerform(busking, getAction("street_perform")!).ok).toBe(true);
+  });
+
+  it("盲盒行动标签与实扣金额都按当前物价倍率结算", () => {
+    const state = createInitialState(73);
+    state.time.hour = 22;
+    state.economy.priceIndex = 1.5;
+    state.player.money = 100;
+    setActionLocation(state, "convenience_blind_box");
+    const action = getAction("convenience_blind_box")!;
+
+    expect(actionTagsOf(action, state)).toContainEqual({ text: "-15💰", cls: "cost" });
+    expect(canPerform(state, action).ok).toBe(true);
+    expect(performAction(state, action.id).ok).toBe(true);
+    expect(state.player.money).toBe(85);
   });
 
   it("需求不满足时行动被拒绝（公园锻炼需体力 25）", () => {
     const s = createInitialState();
+    setActionLocation(s, "exercise_park");
     s.player.attrs.stamina = 5;
     const r = performAction(s, "exercise_park");
     expect(r.ok).toBe(false);
@@ -51,6 +107,7 @@ describe("行动系统：基本执行（小时制）", () => {
     s.player.attrs.stamina = 80;
     s.player.attrs.satiety = 80;
     s.player.money = 100;
+    setActionLocation(s, "buy_lunch_convenience");
     const r = performAction(s, "buy_lunch_convenience"); // 便利店 24h
     expect(r.ok).toBe(true);
     expect(r.reason ?? "").not.toContain("困到不行");
@@ -60,6 +117,7 @@ describe("行动系统：基本执行（小时制）", () => {
     const s = createInitialState();
     s.time.hour = 22;
     s.time.day = 5;
+    setActionLocation(s, "wander_street");
     // 用行动模拟（无 8h 普通行动，用 performAction + 时长验证 advanceHours）
     const r = performAction(s, "wander_street"); // 1h
     expect(r.crossedDay).toBe(false); // 23:00 未跨天
@@ -97,12 +155,13 @@ describe("行动系统：设施门槛（home）", () => {
 });
 
 describe("行动系统：营业时间（openHours）", () => {
-  it("图书馆 9-18 点营业", () => {
+  it("图书馆 7-18 点营业", () => {
     const lib = getLocation("library")!;
     expect(isLocationOpen(lib, 9)).toBe(true);
     expect(isLocationOpen(lib, 17)).toBe(true);
     expect(isLocationOpen(lib, 18)).toBe(false); // end 不含
-    expect(isLocationOpen(lib, 8)).toBe(false);
+    expect(isLocationOpen(lib, 7)).toBe(true);
+    expect(isLocationOpen(lib, 6)).toBe(false);
   });
 
   it("便利店 24 小时（缺省全天）", () => {
@@ -115,6 +174,7 @@ describe("行动系统：营业时间（openHours）", () => {
     const s = createInitialState();
     s.time.hour = 20;
     moveTo(s, "library"); // 打烊拒绝
+    s.locationId = "library";
     const a = getAction("study_library")!;
     const check = canPerform(s, a);
     expect(check.ok).toBe(false);
@@ -140,6 +200,7 @@ describe("行动系统：营业时间（openHours）", () => {
 describe("行动系统：图书馆书籍（v1.20）", () => {
   it("读哲学总集：提升智力 + 弹出一段书中片段", () => {
     const s = createInitialState();
+    s.locationId = "library";
     s.time.hour = 10;
     applyFamily(s, "ordinary");
     const a = getAction("book_philosophy")!;
@@ -155,6 +216,7 @@ describe("行动系统：图书馆书籍（v1.20）", () => {
 
   it("同一本书读满 10 次后不再提升属性", () => {
     const s = createInitialState();
+    s.locationId = "library";
     s.time.hour = 10;
     applyFamily(s, "ordinary");
     s.flags["book_book_philosophy_count"] = 10;

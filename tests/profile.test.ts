@@ -155,7 +155,9 @@ describe("v0.991 结局结算：发点 + 回忆录 + 解锁", () => {
     expect(p.memoirs.length).toBe(1);
     expect(p.memoirs[0].endingId).toBe(ending.id);
     expect(p.unlocked.eternal).toBe(true);
-    expect(p.unlocked.story).toBe(true);
+    // v1.395 暂停剧情模式开放；结局进度改为 Profile.unlockedEndings 跨周目保存。
+    expect(p.unlocked.story).toBe(false);
+    expect(p.unlockedEndings).toContain(ending.id);
   });
 
   it("多次结算点数持续累积（需多次游玩）", () => {

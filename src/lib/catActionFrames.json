@@ -1,0 +1,450 @@
+{
+  "opponents/bully": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      108,
+      974,
+      684
+    ],
+    "hurt": [
+      1133,
+      73,
+      850,
+      707
+    ]
+  },
+  "opponents/burger": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      3,
+      115,
+      935,
+      703
+    ],
+    "hurt": [
+      1043,
+      89,
+      719,
+      746
+    ]
+  },
+  "opponents/chubby": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      77,
+      112,
+      720,
+      657
+    ],
+    "hurt": [
+      1185,
+      115,
+      757,
+      667
+    ]
+  },
+  "opponents/frenzied": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      90,
+      1050,
+      700
+    ],
+    "hurt": [
+      1178,
+      99,
+      805,
+      677
+    ]
+  },
+  "opponents/ghost": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      82,
+      1050,
+      682
+    ],
+    "hurt": [
+      1153,
+      67,
+      821,
+      683
+    ]
+  },
+  "opponents/killerqueen": {
+    "width": 2172,
+    "height": 724,
+    "attack": [
+      7,
+      14,
+      1018,
+      696
+    ],
+    "hurt": [
+      1230,
+      7,
+      927,
+      712
+    ]
+  },
+  "opponents/lightning": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      54,
+      1051,
+      697
+    ],
+    "hurt": [
+      1173,
+      118,
+      810,
+      627
+    ]
+  },
+  "opponents/mangy": {
+    "width": 1994,
+    "height": 789,
+    "attack": [
+      0,
+      0,
+      1061,
+      789
+    ],
+    "hurt": [
+      1129,
+      109,
+      865,
+      680
+    ]
+  },
+  "opponents/marshmallow": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      17,
+      1016,
+      776
+    ],
+    "hurt": [
+      1098,
+      59,
+      879,
+      731
+    ]
+  },
+  "opponents/mechat": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      0,
+      132,
+      991,
+      733
+    ],
+    "hurt": [
+      1095,
+      76,
+      679,
+      785
+    ]
+  },
+  "opponents/minion": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      21,
+      94,
+      866,
+      734
+    ],
+    "hurt": [
+      1071,
+      201,
+      686,
+      664
+    ]
+  },
+  "opponents/necromancer": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      2,
+      78,
+      1058,
+      669
+    ],
+    "hurt": [
+      1218,
+      95,
+      750,
+      647
+    ]
+  },
+  "opponents/piglet": {
+    "width": 1952,
+    "height": 806,
+    "attack": [
+      13,
+      81,
+      945,
+      685
+    ],
+    "hurt": [
+      1241,
+      80,
+      700,
+      686
+    ]
+  },
+  "opponents/skeleton": {
+    "width": 1918,
+    "height": 820,
+    "attack": [
+      6,
+      79,
+      1147,
+      741
+    ],
+    "hurt": [
+      1200,
+      34,
+      689,
+      778
+    ]
+  },
+  "opponents/snowman": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      16,
+      102,
+      897,
+      762
+    ],
+    "hurt": [
+      1032,
+      106,
+      722,
+      757
+    ]
+  },
+  "opponents/stray": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      17,
+      108,
+      957,
+      731
+    ],
+    "hurt": [
+      1028,
+      154,
+      734,
+      663
+    ]
+  },
+  "opponents/tiger": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      113,
+      1032,
+      631
+    ],
+    "hurt": [
+      1073,
+      71,
+      910,
+      679
+    ]
+  },
+  "opponents/webbing": {
+    "width": 1855,
+    "height": 848,
+    "attack": [
+      1,
+      115,
+      1006,
+      674
+    ],
+    "hurt": [
+      1030,
+      138,
+      825,
+      642
+    ]
+  },
+  "players/android": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      31,
+      51,
+      1000,
+      739
+    ],
+    "hurt": [
+      1191,
+      44,
+      771,
+      724
+    ]
+  },
+  "players/black": {
+    "width": 1774,
+    "height": 887,
+    "attack": [
+      0,
+      173,
+      958,
+      648
+    ],
+    "hurt": [
+      1019,
+      214,
+      755,
+      599
+    ]
+  },
+  "players/cow": {
+    "width": 2172,
+    "height": 724,
+    "attack": [
+      0,
+      77,
+      1058,
+      600
+    ],
+    "hurt": [
+      1424,
+      85,
+      748,
+      587
+    ]
+  },
+  "players/glass": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      124,
+      1122,
+      646
+    ],
+    "hurt": [
+      1196,
+      211,
+      787,
+      552
+    ]
+  },
+  "players/golden": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      48,
+      1009,
+      744
+    ],
+    "hurt": [
+      1193,
+      41,
+      788,
+      730
+    ]
+  },
+  "players/mint": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      4,
+      85,
+      1065,
+      668
+    ],
+    "hurt": [
+      1193,
+      89,
+      781,
+      670
+    ]
+  },
+  "players/orange": {
+    "width": 2172,
+    "height": 724,
+    "attack": [
+      8,
+      66,
+      1156,
+      652
+    ],
+    "hurt": [
+      1279,
+      0,
+      887,
+      724
+    ]
+  },
+  "players/roundhead": {
+    "width": 2079,
+    "height": 756,
+    "attack": [
+      0,
+      0,
+      1076,
+      756
+    ],
+    "hurt": [
+      1128,
+      0,
+      951,
+      756
+    ]
+  },
+  "players/spider": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      143,
+      1130,
+      624
+    ],
+    "hurt": [
+      1267,
+      174,
+      709,
+      562
+    ]
+  },
+  "players/white": {
+    "width": 1983,
+    "height": 793,
+    "attack": [
+      0,
+      49,
+      1064,
+      708
+    ],
+    "hurt": [
+      1125,
+      110,
+      858,
+      640
+    ]
+  }
+}

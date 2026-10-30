@@ -98,9 +98,14 @@
     opacity: 0.8;
   }
   .w-text {
+    /* 告警文案 26-30 字，nowrap+ellipsis 会在窄栏/手机端裁掉关键动作指引。
+       条幅 pointer-events:none（不挡游戏点击）使 title 悬浮不可用，
+       改为最多两行截断，优先保证完整信息可见。 */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   /* 分级配色：均为深底 + 亮字，任何主题下都可读 */

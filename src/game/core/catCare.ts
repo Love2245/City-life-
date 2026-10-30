@@ -8,12 +8,18 @@
 import type { CatCombatAttrs, CatInjury, CatInjuryLevel, CatItemDef, CatTrainType, GameState, PetState } from "../types";
 import { pushLog } from "../engine";
 import { recordMoney } from "./weekly";
+import { nextRandom } from "../rng";
 import { getCatDef, computeCatAttrs } from "./cat";
 import { addItem, removeItem, itemCount } from "./items";
+import { gameDay } from "./calendar";
 import catItemsData from "../data/catItems.json";
 
 export const CAT_ITEM_DATA = catItemsData as unknown as { version: number; items: CatItemDef[] };
 export const CAT_ITEMS: CatItemDef[] = CAT_ITEM_DATA.items;
+/** 自动照料机沿用旧 ID，作为背包常驻设备并随存档持久化。 */
+export const AUTO_FEEDER_ITEM_ID = "cat_auto_feeder";
+// 保留旧存档 flag，跨版本继续执行每日最多一条自动照料汇总反馈。
+const AUTO_CARE_NOTICE_DAY_FLAG = "cat_auto_feeder_notice_day";
 
 const catItemMap = new Map<string, CatItemDef>(CAT_ITEMS.map((i) => [i.id, i]));
 
@@ -42,6 +48,8 @@ export function catInventoryList(state: GameState): Array<{ item: CatItemDef; qt
  * ------------------------------------------------------------------ */
 
 export const CARE_MAX = 100;
+/** 饱食值是 0–100 的整数；低于 1/3 时（0–33）触发自动喂食。 */
+export const AUTO_FEED_MIN_SATIETY = Math.ceil(CARE_MAX / 3);
 /** 低于此阈值触发惩罚（饱食→属性下降 / 干净→心情额外下降） */
 export const CARE_LOW = 30;
 /** 低于此阈值触发严重惩罚 */
@@ -87,7 +95,43 @@ export const TRAIN_LABEL: Record<CatTrainType, string> = {
  * ------------------------------------------------------------------ */
 
 export function getPet(state: GameState, uid: string): PetState | undefined {
-  return state.pets.find((p) => p.uid === uid);
+  const pet = state.pets.find((p) => p.uid === uid);
+  return pet && !isCatFostered(pet) ? pet : undefined;
+}
+
+/** 寄养猫仍是玩家所有的猫，但暂时不能参与日常玩法。 */
+export function isCatFostered(pet: PetState): boolean {
+  return pet.fostered === true;
+}
+
+/** 当前可照顾、携带及参战的猫咪。 */
+export function availableCatsOf(state: GameState): PetState[] {
+  return state.pets.filter((pet) => !isCatFostered(pet));
+}
+
+/** 花鸟市场宠物商店的免费寄养入口；原地保留整只 PetState，避免等级/卡组等资料丢失。 */
+export function fosterCat(state: GameState, uid: string): CatActionResult {
+  if (state.locationId !== "flower_market") return { ok: false, reason: "请到花鸟市场宠物商店办理寄养" };
+  const pet = state.pets.find((p) => p.uid === uid);
+  if (!pet) return { ok: false, reason: "没有找到这只猫咪" };
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」已经在寄养了` };
+  if (state.catBattle?.playerUid === uid) {
+    return { ok: false, reason: "当前对决结算并结束后才能寄养这只猫咪" };
+  }
+  pet.fostered = true;
+  if (state.activePet === uid) state.activePet = undefined;
+  pushLog(state, "🏠", `「${pet.name}」已在花鸟市场宠物商店免费寄养；它的状态、等级和卡组都会保留`);
+  return { ok: true, verdict: `「${pet.name}」已免费寄养。寄养期间不会衰减、生病或跑掉，随时可以领回。` };
+}
+
+/** 在花鸟市场宠物商店领回寄养猫，不收费用，也不改动养成资料。 */
+export function reclaimCat(state: GameState, uid: string): CatActionResult {
+  if (state.locationId !== "flower_market") return { ok: false, reason: "请到花鸟市场宠物商店领回猫咪" };
+  const pet = state.pets.find((p) => p.uid === uid);
+  if (!pet || !isCatFostered(pet)) return { ok: false, reason: "没有找到这只寄养中的猫咪" };
+  pet.fostered = false;
+  pushLog(state, "🐾", `已从花鸟市场宠物商店免费领回「${pet.name}」`);
+  return { ok: true, verdict: `「${pet.name}」已免费领回，原有状态和养成进度都保留着。` };
 }
 
 /** 当前携带的猫咪 */
@@ -149,6 +193,7 @@ export function catDowned(pet: PetState): boolean {
 
 /** 宠物医院恢复生命：按当前缺失量收费，恢复至满血 */
 export function restoreCatHp(state: GameState, pet: PetState): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能治疗` };
   const max = catMaxHp(pet);
   const cur = catCurHp(pet);
   if (cur >= max) return { ok: false, reason: "「" + pet.name + "」生命值是满的，不需要治疗" };
@@ -259,7 +304,13 @@ function actualGain(prev: number, add: number): number {
 }
 
 /** 喂食：消耗猫粮恢复饱食（+心情）。itemId 缺省时自动用背包里最高档猫粮。 */
-export function feedCat(state: GameState, pet: PetState, itemId?: string): CatActionResult {
+export function feedCat(
+  state: GameState,
+  pet: PetState,
+  itemId?: string,
+  opts: { silent?: boolean; clearSickness?: boolean } = {},
+): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能照顾` };
   const item = itemId ? getCatItem(itemId) : bestFoodItem(state);
   if (!item) return { ok: false, reason: "背包里没有猫粮，先去买一些吧" };
   if (!removeItem(state, item.id, 1)) return { ok: false, reason: `背包里没有${item.name}了` };
@@ -269,12 +320,15 @@ export function feedCat(state: GameState, pet: PetState, itemId?: string): CatAc
   pet.care.mood = clampCare(pet.care.mood + (item.mood ?? 0));
   // v1.39 喂猫粮可恢复少量生命值
   const hpGain = item.hp ? healCatHp(pet, item.hp) : 0;
-  clearSicknessIfRecovered(state, pet);
-  pushLog(
-    state,
-    item.icon,
-    `给「${pet.name}」喂了${item.name}（饱食 +${satGain}${item.mood ? `，心情 +${moodGain}` : ""}${hpGain > 0 ? `，生命 +${hpGain}` : ""}）`,
-  );
+  if (opts.clearSickness !== false) clearSicknessIfRecovered(state, pet, !opts.silent);
+  state.flags["cat_cared_once"] = true;
+  if (!opts.silent) {
+    pushLog(
+      state,
+      item.icon,
+      `给「${pet.name}」喂了${item.name}（饱食 +${satGain}${item.mood ? `，心情 +${moodGain}` : ""}${hpGain > 0 ? `，生命 +${hpGain}` : ""}）`,
+    );
+  }
   return {
     ok: true,
     deltas: [
@@ -284,6 +338,53 @@ export function feedCat(state: GameState, pet: PetState, itemId?: string): CatAc
     ],
     verdict: `${pet.name}吃得心满意足，冲你打了个呼噜。`,
   };
+}
+
+/**
+ * 自动照料机 tick：照料所有未寄养的猫（不要求携带）。饱食低于 34 时消耗猫粮补至
+ * 至少 34；干净低于 34 时自动恢复到 100。每游戏日最多汇总反馈一次。
+ */
+export function tickCatAutoFeeder(state: GameState): string[] {
+  if (itemCount(state, AUTO_FEEDER_ITEM_ID) <= 0) return [];
+
+  const fed: string[] = [];
+  const cleaned: string[] = [];
+  const stillHungry: string[] = [];
+  let portions = 0;
+  for (const pet of availableCatsOf(state)) {
+    if (pet.care.satiety < AUTO_FEED_MIN_SATIETY) {
+      let petPortions = 0;
+      while (pet.care.satiety < AUTO_FEED_MIN_SATIETY) {
+        const food = bestFoodItem(state);
+        if (!food) break;
+        const before = pet.care.satiety;
+        const result = feedCat(state, pet, food.id, { silent: true, clearSickness: false });
+        if (!result.ok || pet.care.satiety <= before) break;
+        petPortions++;
+        portions++;
+      }
+      if (petPortions > 0) fed.push(pet.name);
+      if (pet.care.satiety < AUTO_FEED_MIN_SATIETY) stillHungry.push(pet.name);
+    }
+    if (pet.care.hygiene < AUTO_FEED_MIN_SATIETY) {
+      pet.care.hygiene = CARE_MAX;
+      cleaned.push(pet.name);
+    }
+  }
+
+  if (fed.length === 0 && cleaned.length === 0 && stillHungry.length === 0) return [];
+  const today = gameDay(state.time);
+  if (state.flags[AUTO_CARE_NOTICE_DAY_FLAG] === today) return [];
+  state.flags[AUTO_CARE_NOTICE_DAY_FLAG] = today;
+
+  const details = [
+    fed.length > 0 ? `为${fed.length}只猫补充${portions}份猫粮（${fed.join("、")}）` : "",
+    cleaned.length > 0 ? `为${cleaned.length}只猫完成清洁（${cleaned.join("、")}）` : "",
+  ].filter(Boolean).join("；");
+  const shortage = stillHungry.length > 0
+    ? `；猫粮不足，${stillHungry.join("、")}的饱食度仍低于 ${AUTO_FEED_MIN_SATIETY}`
+    : "";
+  return [`自动照料机：${details || "无须照料"}${shortage}`];
 }
 
 function bestFoodItem(state: GameState): CatItemDef | undefined {
@@ -299,6 +400,7 @@ function bestFoodItem(state: GameState): CatItemDef | undefined {
 
 /** 清洁：花钱恢复干净度（+心情）。开销计入周记。 */
 export function cleanCat(state: GameState, pet: PetState): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能照顾` };
   if (state.player.money < CLEAN_COST) {
     return { ok: false, reason: `给猫洗澡需要 ${CLEAN_COST} 元，钱不够了` };
   }
@@ -309,6 +411,7 @@ export function cleanCat(state: GameState, pet: PetState): CatActionResult {
   pet.care.hygiene = clampCare(pet.care.hygiene + CLEAN_HYGIENE);
   pet.care.mood = clampCare(pet.care.mood + CLEAN_MOOD);
   clearSicknessIfRecovered(state, pet);
+  state.flags["cat_cared_once"] = true;
   pushLog(state, "🛁", `给「${pet.name}」洗了个澡（干净度 +${hygGain}，心情 +${moodGain}，-${CLEAN_COST} 元）`);
   return {
     ok: true,
@@ -323,6 +426,7 @@ export function cleanCat(state: GameState, pet: PetState): CatActionResult {
 
 /** 玩耍：消耗背包里最好的玩具恢复心情（玩具的 mood 生效；无玩具时基础恢复） */
 export function playWithCat(state: GameState, pet: PetState): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能照顾` };
   const toy = bestToyItem(state);
   const moodBase = toy?.mood ? PLAY_MOOD + toy.mood : PLAY_MOOD;
   if (toy) removeItem(state, toy.id, 1);
@@ -330,6 +434,7 @@ export function playWithCat(state: GameState, pet: PetState): CatActionResult {
   pet.care.mood = clampCare(pet.care.mood + moodBase);
   pet.care.satiety = clampCare(pet.care.satiety - PLAY_SATIETY_COST);
   clearSicknessIfRecovered(state, pet);
+  state.flags["cat_cared_once"] = true;
   pushLog(
     state,
     toy?.icon ?? "🧶",
@@ -359,6 +464,7 @@ function bestToyItem(state: GameState): CatItemDef | undefined {
 
 /** v1.38 使用猫咪特殊用品（药水 / 净化剂 / 复活石说明） */
 export function useCatItem(state: GameState, pet: PetState, itemId: string): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能使用用品` };
   const item = getCatItem(itemId);
   if (!item) return { ok: false, reason: "未知用品" };
   if (itemId === "cat_potion") {
@@ -384,6 +490,7 @@ export function useCatItem(state: GameState, pet: PetState, itemId: string): Cat
     if (!removeItem(state, item.id, 1)) return { ok: false, reason: `背包里没有${item.name}了` };
     pet.sick = false;
     pet.neglectDays = 0;
+    pet.consecutiveSickDays = 0;
     const moodGain = actualGain(pet.care.mood, 8);
     pet.care.mood = clampCare(pet.care.mood + 8);
     pushLog(state, "✨", `给「${pet.name}」用了净化剂，病气一扫而空（心情 +${moodGain}）`);
@@ -397,6 +504,7 @@ export function useCatItem(state: GameState, pet: PetState, itemId: string): Cat
 
 /** 训练：每日上限 + 收益递减 + 心情效率 + 用品加成。开销计入周记。 */
 export function trainCat(state: GameState, pet: PetState, type: CatTrainType): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能训练` };
   if (catDowned(pet)) {
     return { ok: false, reason: "「" + pet.name + "」生命值归零倒下了，先带它去宠物医院治疗吧" };
   }
@@ -439,27 +547,30 @@ export function trainCat(state: GameState, pet: PetState, type: CatTrainType): C
 export function tickCatCareDaily(state: GameState): string[] {
   const logs: string[] = [];
   const bedBonus = catMoodBonus(state);
-  for (const pet of state.pets) {
+  for (const pet of availableCatsOf(state)) {
     pet.care.satiety = clampCare(pet.care.satiety - DAILY_SATIETY_DECAY);
     pet.care.mood = clampCare(pet.care.mood - DAILY_MOOD_DECAY + bedBonus);
     pet.care.hygiene = clampCare(pet.care.hygiene - DAILY_HYGIENE_DECAY);
-    // v1.395 每日回复最大生命值的 20%。
-    // 倒地（0 HP）的猫咪不参与自动恢复——按设计必须去宠物医院治疗才能重新参战，
-    // 否则睡一觉就自动站起来，「生命归零需就医」的规则形同虚设。
-    if (catDowned(pet)) {
-      logs.push(`${pet.name}还倒在地上，得送宠物医院治疗才能重新站起来`);
-    } else {
-      const hpRecover = Math.round(catMaxHp(pet) * DAILY_HP_RECOVER_PCT);
-      if (hpRecover > 0 && catCurHp(pet) < catMaxHp(pet)) {
-        const healed = healCatHp(pet, hpRecover);
-        if (healed > 0) logs.push(`${pet.name}休息了一晚，生命恢复了 ${healed} 点`);
-      }
+    // v1.39 每日回复最大生命值的 20%；倒地猫咪也会缓慢恢复，恢复到正值后即可参战。
+    const hpRecover = Math.round(catMaxHp(pet) * DAILY_HP_RECOVER_PCT);
+    if (hpRecover > 0 && catCurHp(pet) < catMaxHp(pet)) {
+      const healed = healCatHp(pet, hpRecover);
+      if (healed > 0) logs.push(`${pet.name}休息了一晚，生命恢复了 ${healed} 点`);
     }
     if (pet.care.hygiene < CARE_LOW) {
       pet.care.mood = clampCare(pet.care.mood - DIRTY_MOOD_PENALTY);
     }
+    // 先根据设备运行前的自然日结状态判断是否康复，避免自动照料机间接代替治病。
+    clearSicknessIfRecovered(state, pet);
     pet.trainedToday = 0;
     pet.trainCounts = {};
+  }
+
+  // 每日衰减后先自动喂食，再判定照顾疏忽；低于 34 点的猫会在当日日结时被补粮。
+  logs.push(...tickCatAutoFeeder(state));
+
+  const runaway: PetState[] = [];
+  for (const pet of availableCatsOf(state)) {
 
     // v1.38 生病机制：连续低数值（饱食或心情 < 30）超过 2 天 → 生病
     if (pet.care.satiety < CARE_LOW || pet.care.mood < CARE_LOW) {
@@ -471,26 +582,42 @@ export function tickCatCareDaily(state: GameState): string[] {
     } else {
       pet.neglectDays = 0;
     }
-    clearSicknessIfRecovered(state, pet);
+    if (pet.sick) {
+      // 缺少计数器的旧存档从本次首次观测起算，绝不追溯既往病程。
+      pet.consecutiveSickDays = Math.max(0, pet.consecutiveSickDays ?? 0) + 1;
+      if (pet.consecutiveSickDays >= 7) runaway.push(pet);
+    } else {
+      pet.consecutiveSickDays = 0;
+    }
 
     // 低数值提醒
-    if (pet.care.satiety < CARE_LOW) logs.push(`${pet.name}饿得直叫，快喂点吃的吧`);
+    if (pet.care.satiety < CARE_LOW && itemCount(state, AUTO_FEEDER_ITEM_ID) <= 0) {
+      logs.push(`${pet.name}饿得直叫，快喂点吃的吧`);
+    }
     if (pet.care.mood < CARE_LOW) logs.push(`${pet.name}情绪低落，陪它玩玩吧`);
     if (pet.care.hygiene < CARE_LOW) logs.push(`${pet.name}身上脏兮兮的，该洗个澡了`);
-    if (pet.care.satiety < CARE_CRITICAL || pet.care.mood < CARE_CRITICAL || pet.care.hygiene < CARE_CRITICAL) {
+    if ((pet.care.satiety < CARE_CRITICAL && itemCount(state, AUTO_FEEDER_ITEM_ID) <= 0)
+      || pet.care.mood < CARE_CRITICAL || pet.care.hygiene < CARE_CRITICAL) {
       logs.push(`⚠️ ${pet.name}的某项状态已经非常低了，再不照顾可能会生病！`);
     }
+  }
+  if (runaway.length > 0) {
+    const runawayUids = new Set(runaway.map((pet) => pet.uid));
+    state.pets = state.pets.filter((candidate) => !runawayUids.has(candidate.uid));
+    if (state.activePet && runawayUids.has(state.activePet)) state.activePet = undefined;
+    logs.push(`😿 ${runaway.map((pet) => `「${pet.name}」`).join("、")}已经连续生病七天，悄悄跑掉了。猫咪图鉴和已有记录会保留。`);
   }
   return logs;
 }
 
 /** v1.38 数值恢复后清除生病状态（饱食与心情都回到健康线） */
-export function clearSicknessIfRecovered(state: GameState, pet: PetState): boolean {
-  if (!pet.sick) return false;
+export function clearSicknessIfRecovered(state: GameState, pet: PetState, emitLog = true): boolean {
+  if (!pet.sick || isCatFostered(pet)) return false;
   if (pet.care.satiety >= CARE_LOW && pet.care.mood >= CARE_LOW) {
     pet.sick = false;
     pet.neglectDays = 0;
-    pushLog(state, "💚", `「${pet.name}」的病好了，又变得活蹦乱跳！`);
+    pet.consecutiveSickDays = 0;
+    if (emitLog) pushLog(state, "💚", `「${pet.name}」的病好了，又变得活蹦乱跳！`);
     return true;
   }
   return false;
@@ -512,6 +639,10 @@ export const CAT_FOOD_SIZE: Record<CatFoodSize, { qty: number; priceMul: number;
 export function buyCatItem(state: GameState, itemId: string, opts?: BuyCatItemOpts): CatActionResult {
   const item = getCatItem(itemId);
   if (!item) return { ok: false, reason: "未知猫咪用品" };
+  if (item.id === AUTO_FEEDER_ITEM_ID) {
+    if (state.pets.length === 0) return { ok: false, reason: "先领养至少一只猫咪，才能购买自动照料机" };
+    if (itemCount(state, item.id) > 0) return { ok: false, reason: "已经有一台自动照料机了，无需重复购买" };
+  }
   const size = opts?.size ?? "small";
   let qty = 1;
   let price = item.price;
@@ -560,6 +691,8 @@ export function injuryTreatCost(level: CatInjuryLevel): number {
       return 80;
     case "heavy":
       return 150;
+    default:
+      return 30;
   }
 }
 
@@ -573,6 +706,8 @@ export function injuryTrainEfficiency(inj: CatInjury | undefined): number {
       return 0.5;
     case "heavy":
       return 0.3;
+    default:
+      return 1;
   }
 }
 
@@ -586,6 +721,8 @@ export function injuryAttrMultiplier(inj: CatInjury | undefined): number {
       return 0.75;
     case "heavy":
       return 0.6;
+    default:
+      return 1;
   }
 }
 
@@ -604,6 +741,7 @@ export function applyBattleInjury(
   pet: PetState,
   opts?: { heavier?: boolean },
 ): void {
+  if (isCatFostered(pet)) return;
   const roll = randomInjuryLevel(state.rng);
   let level: CatInjuryLevel = opts?.heavier && roll === "light" ? "medium" : roll;
   if (pet.injured) level = escalateInjury(pet.injured).level;
@@ -618,17 +756,10 @@ export function applyBattleInjury(
 
 /** 随机伤势等级（轻 60% / 中 30% / 重 10%） */
 function randomInjuryLevel(rng: { seed: number; calls: number }): CatInjuryLevel {
-  const r = rngValue(rng);
+  const r = nextRandom(rng);
   if (r < 0.6) return "light";
   if (r < 0.9) return "medium";
   return "heavy";
-}
-
-/** 消耗一次 rng 并返回 [0,1) */
-function rngValue(rng: { seed: number; calls: number }): number {
-  rng.seed = (rng.seed * 1664525 + 1013904223) >>> 0;
-  rng.calls += 1;
-  return rng.seed / 4294967296;
 }
 
 function absoluteDayOf(state: GameState): number {
@@ -638,6 +769,7 @@ function absoluteDayOf(state: GameState): number {
 
 /** 宠物医院治疗：按伤势收费 → 伤势降一级（重伤多次治疗）。返回是否治愈。 */
 export function treatInjury(state: GameState, pet: PetState): CatActionResult {
+  if (isCatFostered(pet)) return { ok: false, reason: `「${pet.name}」正在寄养，暂时不能治疗` };
   if (!pet.injured) return { ok: false, reason: "「" + pet.name + "」没有受伤，不需要治疗" };
   const cost = injuryTreatCost(pet.injured.level);
   if (state.player.money < cost) {

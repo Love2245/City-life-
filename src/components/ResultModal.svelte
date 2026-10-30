@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { uiState, showEvent } from "../stores/uiStore.svelte";
+  import { uiState, showEvent, closeModal } from "../stores/uiStore.svelte";
   import { fade } from "svelte/transition";
-  import { playSound } from "../lib/audio";
+  import { playActionSound } from "../lib/audio";
   import type { ActionResult } from "../game/types";
+  import { formatDuration } from "../game/core/quests";
+  import { signed } from "../lib/format";
 
   const payload = $derived(uiState.resultPayload as ActionResult | null);
 
@@ -10,19 +12,20 @@
   $effect(() => {
     if (!payload) return;
     const sum = payload.deltas.reduce((acc, d) => acc + d.value, 0);
-    playSound(payload.sound ?? (sum >= 0 ? "success" : "error"));
+    playActionSound(payload.actionId,payload.sound ?? (sum >= 0 ? "success" : "error"));
   });
 
   /** 关闭结算弹窗；若有排队的事件则弹出 */
   function close(): void {
-    uiState.modal = null;
     uiState.resultPayload = null;
     uiState.workDialogue = null; // v0.965 负责人对话随弹窗关闭清空
     const pending = uiState.pendingEvent;
     if (pending) {
       uiState.pendingEvent = null;
       showEvent(pending);
+      return;
     }
+    closeModal();
   }
 
   function fmt(v: number, key: string): string {
@@ -38,8 +41,7 @@
       key === "fitness" ? "💪" :
       key === "fame" ? "🌟" :
       key === "stress" ? "🔥" : "";
-    const prefix = v > 0 ? "+" : "";
-    return `${icon} ${prefix}${v}`;
+    return `${icon} ${signed(v)}`;
   }
 </script>
 
@@ -66,7 +68,7 @@
         <div class="r-title">{payload.name}</div>
       </div>
 
-      <div class="r-time dim">用时 {payload.duration} 小时</div>
+      <div class="r-time dim">实际用时 {formatDuration(payload.duration)}</div>
 
       <div class="r-deltas">
         {#each payload.deltas as d, i}
@@ -81,7 +83,7 @@
           </div>
         {/each}
         {#if payload.deltas.length === 0}
-          <div class="r-delta dim">没有明显变化</div>
+          <div class="r-delta dim">{payload.actionId === "municipal_apply_student_pass" ? "已取得学生通行证" : "没有明显变化"}</div>
         {/if}
       </div>
 
@@ -189,6 +191,7 @@
     border-radius: 4px;
     margin-bottom: 16px;
     line-height: 1.6;
+    white-space: pre-line;
   }
   .r-dialogue {
     display: flex;

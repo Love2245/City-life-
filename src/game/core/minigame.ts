@@ -1,3 +1,4 @@
+import {validDispatchPay} from '../../lib/streetDispatch/pay.js';
 /**
  * 工作小游戏引擎（v0.96）：每份工作各具特色的迷你玩法。
  * 纯逻辑层：配置读取、难度系数、音游判定、评分奖励。
@@ -9,7 +10,7 @@
  * - rhythm：音游（下落音符 + 判定线，锻炼 / 卖唱）
  *
  * 全局难度系数 DIFFICULTY = 0.965：作为判定窗与限时/下落速度的缩放基础值（<1 → 略严格）。
- * 设计原则：无压力无惩罚——非完美不扣数值；得分比例映射为工资加成（0~5%）。
+ * 工作结算按评级调整基础工资；额外表现奖金上限为 5%。
  */
 import type { Effects, GameState, SkillKey } from "../types";
 import { applyEffects, pushLog } from "../engine";
@@ -18,6 +19,9 @@ import minigameData from "../data/minigames.json";
 // v1.3b2 技能减时：只读数据表（不引 jobs.ts / actions.ts，避免循环依赖）
 import jobsData from "../data/jobs.json";
 import actionsData from "../data/actions.json";
+import locationsData from "../data/locations.json";
+import { gameDay } from "./calendar";
+import { chance, createRng } from "../rng";
 
 /** 全局难度系数（判定阈值 / 速度 / 容错调整的基础值） */
 
@@ -26,8 +30,13 @@ export type DifficultyTier = 'easy' | 'normal' | 'hard';
 export const DIFF_TIER_SCALE: Record<DifficultyTier, number> = { easy: 1.15, normal: 0.965, hard: 0.78 };
 export function getDifficulty(state: import('../types').GameState): DifficultyTier {
   const v = state.flags['difficulty_tier'];
-  if (typeof v === 'string' && (v === 'easy' || v === 'normal' || v === 'hard')) return v;
+  if (v === 0) return 'easy';
+  if (v === 2) return 'hard';
   return 'normal';
+}
+/** 存档 flags 仅支持布尔值/数字，以 0/1/2 持久化难度档位。 */
+export function setDifficulty(state: import('../types').GameState, tier: DifficultyTier): void {
+  state.flags['difficulty_tier'] = tier === 'easy' ? 0 : tier === 'hard' ? 2 : 1;
 }
 export function scaledDifficulty(state: import('../types').GameState): number {
   return DIFF_TIER_SCALE[getDifficulty(state)];
@@ -61,6 +70,7 @@ export interface SequenceCfg {
 
 export interface QuizCfg {
   type: "quiz";
+  theme?: 'market'|'station';
   title: string;
   icon: string;
   desc: string;
@@ -88,10 +98,12 @@ export interface WhackCfg {
 
 export interface RhythmCfg {
   type: "rhythm";
+  /** 显式选择节奏演出类型，不依赖标题文案。 */
+  activity?: "singing" | "training";
   title: string;
   icon: string;
   desc: string;
-  /** 轨道数（1-3） */
+  /** 轨道数（新版统一五轨；旧存档保留原谱面） */
   tracks: number;
   /** 音符总数 */
   notes: number;
@@ -100,6 +112,46 @@ export interface RhythmCfg {
   /** 音符下落时长（ms） */
   fallMs: number;
   perfectBonusRate?: number;
+}
+
+/** v1.41 游乐场保龄球：轻量二维投掷，组件负责动画与命中表现。 */
+export interface BowlingCfg {
+  type: "bowling";
+  title: string;
+  icon: string;
+  desc: string;
+  attempts?: number;
+  pinCount?: number;
+  timeLimit?: number;
+  perfectBonusRate?: number;
+  prize?: { tiers: AmusementPrizeTier[] };
+}
+
+/** v1.41 游乐场飞镖气球：点击气球投掷，避开特殊气球。 */
+export interface DartsCfg {
+  type: "darts";
+  title: string;
+  icon: string;
+  desc: string;
+  darts?: number;
+  balloons?: number;
+  heartBalloons?: number;
+  timeLimit?: number;
+  perfectBonusRate?: number;
+  prize?: { tiers: AmusementPrizeTier[] };
+}
+
+/** v1.41 游乐场套圈：选择目标柱投掷，目标距离和价值不同。 */
+export interface RingTossCfg {
+  type: "ringtoss";
+  title: string;
+  icon: string;
+  desc: string;
+  rings?: number;
+  targetCount?: number;
+  timeLimit?: number;
+  perfectBonusRate?: number;
+  prize?: { tiers: AmusementPrizeTier[] };
 }
 
 /** v1.20 中国象棋（公园「象棋大爷」）：内置简易对弈，胜/负/和由组件自行判定 */
@@ -167,6 +219,8 @@ export interface RestaurantCfg {
   maxWaiting?: number;
   /** 主品展示形态（仅视觉），不影响逻辑 */
   mode?: "burger" | "cup" | "snack";
+  /** 酒保使用独立调酒工序；旧咖啡、网吧饮品不受影响。 */
+  craftMode?: "cocktail";
   /** 底部食材栏（主品原料） */
   ingredients: { id: string; name: string; icon: string }[];
   /**
@@ -201,18 +255,22 @@ export interface RestaurantCfg {
    * 0 或不填 = 无上限（仅受体力 / 时间约束）。用于平衡「时长远超其他工作却工资持平」。
    */
   stallCustomerCap?: number;
+  /** 本次场馆停止营业的绝对游戏分钟；缺省为全天营业。 */
+  stallCloseMinute?: number;
 }
 
 /** 工厂流水线 / 物流分拣：传送带零件按顺序抓取组装，错抓或漏抓目标扣血，完成升级加速 */
 export interface FactoryCfg {
   type: "factory";
+  /** 重工业工位；缺省保留电子厂装配和物流扫码分拣。 */
+  workshop?: "steel" | "aluminum" | "glass";
   title: string;
   icon: string;
   desc: string;
   perfectBonusRate?: number;
   /** v1.3b2 全局限时（秒），缺省不限（数据层已统一为 30） */
   timeLimit?: number;
-  /** 生命值（错抓/漏抓目标零件扣 1），默认 3 */
+  /** 操作失误容错次数，默认 3 */
   lives?: number;
   /** 达标产量（达成即满分结束），默认 15 */
   productsToWin?: number;
@@ -223,7 +281,7 @@ export interface FactoryCfg {
   recipeMax?: number;
   /** 生成目标零件的概率，默认 0.4 */
   targetWeight?: number;
-  /** 流水线零件池 */
+  /** 工单零件池；共用装配工位，物流入口共用扫码分拣工位。 */
   parts: { id: string; name: string; icon: string }[];
 }
 
@@ -291,7 +349,7 @@ export interface DispatchCfg {
   labels?: { guest: string; resource: string };
 }
 
-// ---- v1.3 beta2：Canvas 配送模板（外卖 / 快递 / 网约车） ----
+// ---- v1.475：城市行车、装载核验与站点交付 ----
 
 /** 地图节点（取货点 / 送达点）；x,y 为路口坐标，door 为建筑门口坐标（车停到门口） */
 export interface DeliveryPoint {
@@ -307,11 +365,9 @@ export interface DeliveryPoint {
 }
 
 /**
- * v1.3b2 配送模板：网格路网 + Dijkstra 寻路 + 订单状态机（备货 → 取货 → 送达）。
- * 三种 mode 共用同一套地图几何，仅替换取送点池、文案与主题色：
- * - food：外卖（餐厅 → 住户）
- * - parcel：快递（仓库 → 收件地址）
- * - rideshare：网约车 / 出租车（上车点 → 下车点）
+ * 三个职业使用连续现场与纵深道路流程。
+ * food：核对餐袋；parcel：按可见地址集中分拣，再逐件交付。
+ * rideshare：一次一位乘客，自由驾驶接送，满意度影响车费。
  */
 export interface DeliveryCfg {
   type: "delivery";
@@ -320,13 +376,20 @@ export interface DeliveryCfg {
   desc: string;
   perfectBonusRate?: number;
   mode: "food" | "parcel" | "rideshare";
-  /** 限时（秒），默认 30 */
+  /** 实际收入班次直接按岗位规则结算，不显示挑战内的原始流水。 */
+  actualIncome?: boolean;
+  deliveryPay?: import("../types").DeliveryPayTerms;
+  /** 固定工资配送班次的含加班倍率底薪，用于显示实际班次预计结算。 */
+  fixedShiftBase?: number;
+  /** 固定工资配送班次按达标比例计算表现奖金。 */
+  shiftBonusRate?: number;
+  /** 营业时长（秒），普通班 90、加班班次 120；说明与后台暂停期间不计时。 */
   timeLimit?: number;
-  /** 达标单数（完成即满分），默认 5 */
+  /** 满分目标单数；达标后仍可继续营业至计时结束。 */
   targetOrders?: number;
-  /** 每单展示收入（元，仅界面展示，不直接进钱包） */
+  /** 基础配送费或车费；载客按满意度折算并由工作层结算。 */
   payPerOrder?: number;
-  /** 同时在手订单上限，默认 3 */
+  /** 初始同时在手单数，外卖允许 1–6 单，快递按批取货，载客固定 1。 */
   maxActive?: number;
   /** 取货点池（餐厅 / 仓库 / 上车点） */
   pickups: DeliveryPoint[];
@@ -338,20 +401,43 @@ export interface DeliveryCfg {
   theme?: { road?: string; accent?: string };
 }
 
-export type MiniGameConfig = SequenceCfg | QuizCfg | WhackCfg | RhythmCfg | ChessCfg | MemoryCfg | SortCfg | RestaurantCfg | FactoryCfg | CheckoutCfg | DispatchCfg | DeliveryCfg;
+export type MiniGameConfig = SequenceCfg | QuizCfg | WhackCfg | RhythmCfg | ChessCfg | MemoryCfg | SortCfg | RestaurantCfg | FactoryCfg | CheckoutCfg | DispatchCfg | DeliveryCfg | BowlingCfg | DartsCfg | RingTossCfg;
 
 // ---- 配置读取 ----
 
 const GAMES = (minigameData as { games: Record<string, MiniGameConfig> }).games;
+/** v1.41：小吃街沿用周末集市摆摊玩法；学校辅导使用独立的通识答题配置。 */
+const MINIGAME_ALIASES: Record<string, string> = {
+  stall_snack_street: "stall_market_fair",
+  commercial_street_stall: "stall_market_fair",
+  job_commercial_office_assistant: "job_office_assistant",
+};
+
+function resolveMiniGameKey(key: string): string {
+  return GAMES[key] ? key : MINIGAME_ALIASES[key] ?? key;
+}
 
 /** 按 key（jobId 或 actionId）取小游戏配置；无配置返回 undefined（该工作不弹小游戏） */
 export function getMiniGameConfig(key: string): MiniGameConfig | undefined {
-  return GAMES[key];
+  const cfg = GAMES[resolveMiniGameKey(key)];
+  if (cfg?.type === "rhythm") return { ...cfg, activity: key === "street_perform" ? "singing" : cfg.activity ?? "training" };
+  if (cfg?.type === "restaurant" && key === "job_boyue_bartender") return { ...cfg, craftMode: "cocktail" };
+  return cfg;
 }
 
 /** 所有已配置的小游戏 key（测试完整性用） */
 export function configuredMiniGameKeys(): string[] {
   return Object.keys(GAMES);
+}
+
+/** 配送挑战沿用现行小游戏 20% 加班概率，只增加现实秒数，不改变游戏工时或工资。 */
+export const DELIVERY_SHIFT_TIME = { normal: 90, overtime: 120, overtimeChance: 0.2 } as const;
+
+/** 开班时用班次种子决定一次，调用独立随机流，不消耗存档的全局随机序列。 */
+export function deliveryShiftTimeLimit(seed: number): 90 | 120 {
+  return chance(createRng(seed), DELIVERY_SHIFT_TIME.overtimeChance)
+    ? DELIVERY_SHIFT_TIME.overtime
+    : DELIVERY_SHIFT_TIME.normal;
 }
 
 // ---- v1.3 beta2：单局时长统一 + 技能减时 ----
@@ -381,6 +467,10 @@ export function miniGameTimeFactor(level: number): number {
  */
 const MG_SKILL_OVERRIDE: Record<string, SkillKey> = {
   stall_street_night: "cooking",
+  stall_snack_street: "cooking",
+  stall_dev_food_street: "cooking",
+  stall_boyue_food_street: "cooking",
+  stall_boyue_snack_street: "cooking",
   temple_volunteer: "service",
   street_singing: "operation",
   // v1.3b2 补齐：这些岗位 jobs.json 里没写技能收益，但玩法明确对应某项技能
@@ -393,6 +483,7 @@ const MG_SKILL_OVERRIDE: Record<string, SkillKey> = {
   job_sorting: "operation",
   job_loading: "operation",
   job_training_assistant: "programming",
+  job_school_tutor: "service",
 };
 
 type EffectSkills = { effects?: { skills?: Partial<Record<string, number>> } };
@@ -448,7 +539,8 @@ function scaleCount(v: number | undefined, f: number, field: string): number | u
 
 /**
  * 按时长系数缩放配置（**深拷贝**，绝不修改模块级 GAMES）。
- * 只缩放「总时长」与「总数量」；**不缩放** spawnMs / patienceMs / intervalMs / fallMs /
+ * 只缩放「总时长」与「总数量」；配送时长保持班次固定值，目标单数仍沿用技能缩放。
+ * **不缩放** spawnMs / patienceMs / intervalMs / fallMs /
  * maxWaiting / lives 等密度与容错字段 —— 时长短了数量同比减少，单位时间难度恒定。
  * chess（自由对弈）不参与缩放。
  */
@@ -458,7 +550,7 @@ export function scaleMiniGameConfig<T extends MiniGameConfig>(cfg: T, factor: nu
   if (f >= 1 || c.type === "chess") return c;
 
   const any = c as unknown as Record<string, unknown>;
-  if (typeof any.timeLimit === "number") {
+  if (typeof any.timeLimit === "number" && c.type !== "delivery") {
     any.timeLimit = Math.max(8, Math.round((any.timeLimit as number) * f));
   }
   for (const field of ["rounds", "targets", "totalCustomers", "customers", "productsToWin", "guestsTotal", "notes", "targetOrders"]) {
@@ -477,12 +569,45 @@ export function scaleMiniGameConfig<T extends MiniGameConfig>(cfg: T, factor: nu
  * 与纯查表的 getMiniGameConfig 分离：查表函数保持无状态、可被测试直接断言原始数据。
  */
 export function getMiniGameConfigFor(state: GameState, key: string): MiniGameConfig | undefined {
-  const base = GAMES[key];
+  const base = getMiniGameConfig(key);
   if (!base) return undefined;
   const skill = mainSkillOfMiniGame(key);
-  if (!skill) return JSON.parse(JSON.stringify(base)) as MiniGameConfig;
-  const lv = state.player.skills[skill] ?? 0;
-  return scaleMiniGameConfig(base, miniGameTimeFactor(lv));
+  const cfg = skill
+    ? scaleMiniGameConfig(base, miniGameTimeFactor(state.player.skills[skill] ?? 0))
+    : JSON.parse(JSON.stringify(base)) as MiniGameConfig;
+  if (cfg.type === "delivery") {
+    const session = state.work?.active;
+    if (session?.jobId === key) {
+      if(validDispatchPay(session.deliveryPay)){cfg.deliveryPay={...session.deliveryPay};cfg.actualIncome=true;}
+      else if (session.source === "delivery" && (key === "job_delivery" || key === "job_ride_hailing")) cfg.actualIncome = true;
+      else {
+        cfg.fixedShiftBase = Math.round(session.baseWage * (session.overtime ? 1.5 : 1));
+        cfg.shiftBonusRate = cfg.perfectBonusRate ?? 0.05;
+        if (session.wageBalanceVersion === 2) {
+          const ceiling = session.kind === "formal" ? 180 : 200;
+          cfg.fixedShiftBase = Math.min(ceiling, cfg.fixedShiftBase);
+          cfg.shiftBonusRate = Math.min(cfg.shiftBonusRate, Math.max(0, ceiling - cfg.fixedShiftBase) / Math.max(1, cfg.fixedShiftBase));
+        }
+      }
+    }
+    // 独立玩法及旧班次均为普通 90 秒；真实班次只读开班时保存的秒数，读档不会重抽。
+    cfg.timeLimit = session?.jobId === key && session.deliveryTimeLimitSec === DELIVERY_SHIFT_TIME.overtime
+      ? DELIVERY_SHIFT_TIME.overtime
+      : DELIVERY_SHIFT_TIME.normal;
+  }
+  if (cfg.type === "restaurant" && cfg.stall) {
+    const action = (actionsData as { id: string; locationId?: string }[]).find(row => row.id === key);
+    const loc = (locationsData as { id: string; openHours?: { start: number; end: number } | null }[]).find(row => row.id === action?.locationId);
+    const hours = loc?.openHours;
+    if (hours && hours.start !== hours.end) {
+      const minute = state.time.hour * 60 + state.time.minute;
+      const start = hours.start * 60, end = hours.end * 60;
+      const open = start < end ? minute >= start && minute < end : minute >= start || minute < end;
+      const now = gameDay(state.time) * 1440 + minute;
+      cfg.stallCloseMinute = !open ? now : gameDay(state.time) * 1440 + end + (start > end && minute >= start ? 1440 : 0);
+    }
+  }
+  return cfg;
 }
 
 /** 估算单局时长（秒），用于测试守护「30 秒基准」 */
@@ -508,13 +633,12 @@ export function estimateMiniGameSec(cfg: MiniGameConfig): number {
 export type TimingJudge = "perfect" | "good" | "ok" | "miss";
 
 /**
- * 判定窗口（ms，基础值 × 难度系数）。
- * v0.965 调宽基准（90→110 / 150→185 / 230→280），整体更宽松、容错更高。
+ * 判定窗口（ms，基础值 × 难度系数），精确落点比边缘命中获得更高分。
  */
 export const JUDGE_WINDOW = {
-  perfect: Math.round(110 * DIFFICULTY),
-  good: Math.round(185 * DIFFICULTY),
-  ok: Math.round(280 * DIFFICULTY),
+  perfect: Math.round(65 * DIFFICULTY),
+  good: Math.round(115 * DIFFICULTY),
+  ok: Math.round(175 * DIFFICULTY),
 };
 
 export const JUDGE_SCORE: Record<TimingJudge, number> = {
@@ -533,24 +657,62 @@ export const JUDGE_LABEL: Record<TimingJudge, string> = {
 
 /** 根据按键时刻与理想时刻的偏差（ms）判定 */
 export function judgeTiming(offsetMs: number): TimingJudge {
+  return judgeTimingAtScale(offsetMs, 1);
+}
+
+/** 按玩家选择的小游戏难度缩放判定窗。easy 放宽，hard 收紧。 */
+export function judgeTimingAtScale(offsetMs: number, difficultyScale: number): TimingJudge {
   const abs = Math.abs(offsetMs);
-  if (abs <= JUDGE_WINDOW.perfect) return "perfect";
-  if (abs <= JUDGE_WINDOW.good) return "good";
-  if (abs <= JUDGE_WINDOW.ok) return "ok";
+  const window = getJudgeWindow(difficultyScale);
+  if (abs <= window.perfect) return "perfect";
+  if (abs <= window.good) return "good";
+  if (abs <= window.ok) return "ok";
   return "miss";
+}
+
+export function getJudgeWindow(difficultyScale = 1): typeof JUDGE_WINDOW {
+  return {
+    perfect: Math.round(65 * DIFFICULTY * difficultyScale),
+    good: Math.round(115 * DIFFICULTY * difficultyScale),
+    ok: Math.round(175 * DIFFICULTY * difficultyScale),
+  };
 }
 
 /**
  * 限时（秒）按难度系数缩放。
- * v0.965：改为放宽（×1.15），给玩家更充裕的时间，降低压力。
  */
-export function scaleTimeLimit(baseSec: number): number {
-  return Math.max(4, Math.round(baseSec * 1.15 * 10) / 10);
+export function scaleTimeLimit(baseSec: number, difficultyScale = 1): number {
+  return Math.max(4, Math.round(baseSec * difficultyScale * 10) / 10);
 }
 
-/** 失误容忍（v0.965：下限提升到 2，更宽容） */
-export function scaleWrongLimit(base: number): number {
-  return Math.max(2, Math.floor(base * DIFFICULTY));
+/** 以旧版容忍下限 2 为标准，easy 多容忍一次，hard 少容忍一次。 */
+export function scaleWrongLimit(base: number, tier: DifficultyTier = "normal"): number {
+  const normalLimit = Math.max(2, Math.floor(base * DIFFICULTY));
+  return tier === "easy" ? normalLimit + 1 : tier === "hard" ? Math.max(1, normalLimit - 1) : normalLimit;
+}
+
+/** 超过配置容错次数逐次扣分；不再只把满分改为 94 分。 */
+export function applyWrongLimit(score: number, mistakes: number, wrongLimit?: number): number {
+  if (typeof wrongLimit !== "number" || mistakes <= wrongLimit) return score;
+  return Math.max(0, score - Math.min(.5, (mistakes - wrongLimit) * .12));
+}
+
+/** 在小游戏宿主统一缩放配置，避免各组件自行解释 timeLimit。 */
+export function applyMiniGameDifficulty(config: MiniGameConfig, state: GameState): MiniGameConfig {
+  const tier = getDifficulty(state);
+  const difficultyScale = scaledDifficulty(state);
+  const adjusted = { ...config } as MiniGameConfig & { timeLimit?: number; wrongLimit?: number };
+  if (adjusted.type === 'restaurant') {
+    adjusted.customerTypes = adjusted.customerTypes.map(customer=>({...customer,
+      patience:Math.max(12,Math.round(customer.patience*difficultyScale*.9))}));
+  }
+  if (typeof adjusted.timeLimit === "number" && adjusted.timeLimit > 0) {
+    adjusted.timeLimit = scaleTimeLimit(adjusted.timeLimit, difficultyScale);
+  }
+  if (typeof adjusted.wrongLimit === "number") {
+    adjusted.wrongLimit = scaleWrongLimit(adjusted.wrongLimit, tier);
+  }
+  return adjusted;
 }
 
 // ---- 表现评级（v0.965 玩法反馈） ----
@@ -561,7 +723,7 @@ export const GRADE_LABEL: Record<GameGrade, string> = {
   S: "神级表现",
   A: "干得漂亮",
   B: "中规中矩",
-  C: "勉强过关",
+  C: "尚未达标",
   D: "有待努力",
 };
 
@@ -628,7 +790,6 @@ export interface AmusementPrizeTier {
 
 /** 游乐场小游戏 key（付费入场 + 分数换奖品） */
 export const AMUSEMENT_GAME_KEYS = [
-  "amusement_icecream",
   "amusement_bowling",
   "amusement_dart",
   "amusement_ringtoss",

@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "date": "2026-09-21",
+  "canvas": [1024, 1536],
+  "assets": [
+    { "id": "suit", "target": "src/assets/portraits/player/layers/suit/default.png" },
+    { "id": "luxury_coat", "target": "src/assets/portraits/player/layers/luxury_coat/default.png" },
+    { "id": "shirt", "target": "src/assets/portraits/player/layers/shirt/default.png" },
+    { "id": "plain_white_tee", "target": "src/assets/portraits/player/layers/plain_white_tee/default.png" },
+    { "id": "plain_black_tee", "target": "src/assets/portraits/player/layers/plain_black_tee/default.png" },
+    { "id": "plain_gray_tee", "target": "src/assets/portraits/player/layers/plain_gray_tee/default.png" },
+    { "id": "plain_gray_pants", "target": "src/assets/portraits/player/layers/plain_gray_pants/default.png" },
+    { "id": "pinstripe_shirt", "target": "src/assets/portraits/player/layers/pinstripe_shirt/default.png" },
+    { "id": "cable_knit_sweater", "target": "src/assets/portraits/player/layers/cable_knit_sweater/default.png" },
+    { "id": "taupe_double_suit", "target": "src/assets/portraits/player/layers/taupe_double_suit/default.png" },
+    { "id": "cream_relaxed_shirt", "target": "src/assets/portraits/player/layers/cream_relaxed_shirt/default.png" }
+  ]
+}
+

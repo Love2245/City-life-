@@ -13,6 +13,7 @@ describe("手机：给家人打电话（按家庭分流）", () => {
     s.family = "destitute";
     const r = callFamily(s);
     expect(r.ok).toBe(true);
+    expect(s.flags["socialized_once"]).toBe(true);
     expect(s.player.attrs.mood).toBe(70 - 4);
     expect(s.player.stress).toBe(6);
     expect(s.time.hour).toBe(7); // 通话 0.5h → 7:30
@@ -43,6 +44,18 @@ describe("手机：给家人打电话（按家庭分流）", () => {
     expect(r.ok).toBe(true);
     expect(s.player.attrs.mood).toBe(70 + 6);
     expect(s.player.stress).toBe(0);
+  });
+
+  it("成功联系后按天冷却，冷却失败不再重复推进状态", () => {
+    const s = fresh();
+    expect(callFamily(s).ok).toBe(true);
+    expect(s.flags["socialized_once"]).toBe(true);
+    s.flags["socialized_once"] = false;
+
+    const cooledDown = callFamily(s);
+    expect(cooledDown.ok).toBe(false);
+    expect(cooledDown.reason).toBe("cooling");
+    expect(s.flags["socialized_once"]).toBe(false);
   });
 });
 

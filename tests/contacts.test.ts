@@ -8,18 +8,11 @@ import {
   tickContactBenefits,
   callContact,
 } from "../src/game/core/contacts";
-import { checkJobRequirements, getJobDef } from "../src/game/core/jobs";
-import { applyJob } from "../src/game/core/career";
+import { applyForJob, checkJobRequirements, getJobDef } from "../src/game/core/jobs";
 import type { GameState } from "../src/game/types";
 
 function fresh(): GameState {
   const s = createInitialState(1);
-  // 给足属性以便就业/加联系人判定
-  s.player.attrs.health = 100;
-  s.player.attrs.stamina = 100;
-  s.player.stats.intelligence = 60;
-  s.player.stats.charm = 60;
-  s.player.skills.service = 3; // 满足咖啡店/便利店固定岗技能门槛，便于测试证书豁免
   return s;
 }
 
@@ -31,7 +24,7 @@ describe("v0.978 联系人系统", () => {
     expect(defaultContacts()).toHaveLength(2);
   });
 
-  it("addContact 幂等 + 发欢迎短信 + 内推免证书", () => {
+  it("addContact 幂等 + 发欢迎短信 + 保留内推记录", () => {
     const s = fresh();
     const before = s.smsInbox.length;
     expect(addContact(s, "cafe_clerk")).toBe(true);
@@ -50,26 +43,36 @@ describe("v0.978 联系人系统", () => {
     expect(isReferred(s, "job_convenience_clerk")).toBe(true);
   });
 
-  it("内推后可免证书直接正式入职（intern=false）", () => {
+  it("内推保留社交标记，可免证书但仍需满足属性和技能要求", () => {
     const s = fresh();
     const job = getJobDef("job_cafe_staff")!;
-    // 内推前：无证可实习（ok:true, intern:true）
-    const base = checkJobRequirements(s, job);
-    expect(base.ok).toBe(true);
-    expect(base.intern).toBe(true);
-    // 内推后：免证书直接正式入职（intern:false）
+    s.player.attrs.health = 100;
+    s.player.skills.service = 3;
+    expect(checkJobRequirements(s, job)).toMatchObject({ ok: false, intern: false });
     addContact(s, "cafe_clerk");
+    expect(isReferred(s, job.id)).toBe(true);
     const r = checkJobRequirements(s, job);
     expect(r.ok).toBe(true);
     expect(r.intern).toBe(false);
+    expect(applyForJob(s, job).ok).toBe(true);
+    expect(s.career.jobId).toBe(job.id);
   });
 
-  it("无内推时无证进入证书岗为实习态（intern=true）", () => {
+  it("无内推时必须满足岗位技能与证书要求，达标后正式录用", () => {
     const s = fresh();
     const job = getJobDef("job_cafe_staff")!;
     const r = checkJobRequirements(s, job);
-    expect(r.ok).toBe(true);
-    expect(r.intern).toBe(true);
+    expect(r.ok).toBe(false);
+    expect(r.intern).toBe(false);
+    expect(applyForJob(s, job).ok).toBe(false);
+    expect(s.career.jobId).toBeNull();
+
+    s.player.attrs.health = 100;
+    s.player.skills.service = 3;
+    s.flags.item_certificate = true;
+    expect(checkJobRequirements(s, job).ok).toBe(true);
+    expect(applyForJob(s, job).ok).toBe(true);
+    expect(s.career.kind).toBe("weekly");
   });
 
   it("tickContactBenefits 按间隔发送教程短信并结算效果", () => {
@@ -86,9 +89,10 @@ describe("v0.978 联系人系统", () => {
 
   it("入职电子厂自动加组长联系人", () => {
     const s = fresh();
-    const job = getJobDef("job_factory_line")!;
-    const res = applyJob(s, job);
+    const job = getJobDef("job_factory_qc")!;
+    const res = applyForJob(s, job);
     expect(res.ok).toBe(true);
+    expect(s.career.jobId).toBe(job.id);
     expect(hasContact(s, "factory_leader")).toBe(true);
   });
 
